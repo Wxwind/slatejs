@@ -2,9 +2,9 @@
   "name": "slate",
   "version": "0.0.0",
   "description": "",
-  "main": "index.cjs.js",
-  "module": "index.esm.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "types": "dist/es/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "rollup --config"
