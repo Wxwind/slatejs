@@ -1,6 +1,6 @@
 {
-  "name": "slate",
-  "version": "0.0.0",
+  "name": "slatejs",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",

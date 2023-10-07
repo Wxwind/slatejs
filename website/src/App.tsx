@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import './App.css';
-import { add } from 'slate';
+import ReactTimeline from './Timeline';
+import { rows } from './testData';
 
 function App() {
-  return <>{add(1, 2)}</>;
+  return <ReactTimeline time={0} model={{ rows }} />;
 }
 
 export default App;
