@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter website dev",
-    "build:slate": "pnpm --filter slate build",
-    "lint:slate": "pnpm --filter slate lint",
+    "build:slatejs": "pnpm --filter slatejs build",
+    "lint:slatejs": "pnpm --filter slatejs lint",
     "preview": "pnpm --filter website preview"
   },
   "dependencies": {
