@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "main": "dist/cjs/index.js",
-  "module": "dist/es/index.js",
+  "module": "src/index.ts",
   "types": "dist/es/index.d.ts",
   "type": "module",
   "scripts": {
@@ -14,10 +14,18 @@
   ],
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.1",
+    "@svgr/rollup": "^8.1.0",
+    "postcss": "^8.4.31",
+    "rollup-plugin-postcss": "^4.0.2",
     "tslib": "^2.6.0",
     "typescript": "^5.0.2"
   },
   "dependencies": {
+    "@types/node": "^20.8.3",
     "rollup-plugin-dts": "^5.3.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   }
 }

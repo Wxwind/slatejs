@@ -6,6 +6,7 @@
     "rootDir": "src",
     "emitDeclarationOnly": true,
     "target": "es6",
+    "jsx": "react-jsx"
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "/src/assets/*"]
 }

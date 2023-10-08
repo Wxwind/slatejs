@@ -1,9 +1,14 @@
+import { TimelineEditor } from 'slatejs';
 import './App.css';
-import ReactTimeline from './Timeline';
-import { rows } from './testData';
 
 function App() {
-  return <ReactTimeline time={0} model={{ rows }} />;
+  return (
+    <div className="w-screen h-screen">
+      <div className="w-1/2 h-40">
+        <TimelineEditor scene={undefined} />
+      </div>
+    </div>
+  );
 }
 
 export default App;
