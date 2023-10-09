@@ -1,10 +1,16 @@
 import { FC } from 'react';
 
-interface TimelineTracksProps {}
+interface TimelineTracksProps {
+  width: number;
+}
 
 const TimelineTracks: FC<TimelineTracksProps> = (props) => {
-  const {} = props;
-  return <div>TimelineTracks</div>;
+  const { width } = props;
+  return (
+    <div className="timeline-tracks" style={{ width: `${width}px` }}>
+      TimelineTracks
+    </div>
+  );
 };
 
 export default TimelineTracks;

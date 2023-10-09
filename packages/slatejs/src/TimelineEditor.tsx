@@ -16,7 +16,7 @@ const TimelineEditor: FC<TimelineEditorProps> = (props) => {
     return () => {
       window.removeEventListener('resize', cutScene.signals.windowResized.emit);
     };
-  }, []);
+  }, [cutScene.signals.windowResized]);
 
   return (
     <div style={{ width: '100%', height: '320px', position: 'absolute' }}>
