@@ -44,8 +44,9 @@ const Timeline: FC<TimelineProps> = (props) => {
           console.error("error: couldn't find scroller");
           return;
         }
-        console.log('click time canvas, e.offsetx', e.offsetX, e);
-        cutScene.setTime((e.offsetX + scrollerRef.current.scrollLeft) / scale);
+        if (e.target === timeCanvasRef.current) {
+          cutScene.setTime((e.offsetX + scrollerRef.current.scrollLeft) / scale);
+        }
       };
 
       const onMouseUp = (e: MouseEvent) => {
