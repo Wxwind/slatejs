@@ -55,6 +55,7 @@
     left: -8px;
     width: 16px;
     height: 100%;
+    pointer-events: none;
     background: linear-gradient(90deg, transparent 8px, #f00 8px, #f00 9px, transparent 9px) 0% 0% / 16px 16px repeat-y;
   }
 }

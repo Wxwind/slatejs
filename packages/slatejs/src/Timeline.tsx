@@ -44,6 +44,7 @@ const Timeline: FC<TimelineProps> = (props) => {
           console.error("error: couldn't find scroller");
           return;
         }
+        console.log('click time canvas, e.offsetx', e.offsetX, e);
         cutScene.setTime((e.offsetX + scrollerRef.current.scrollLeft) / scale);
       };
 
@@ -118,10 +119,10 @@ const Timeline: FC<TimelineProps> = (props) => {
   const updateTimeMark = useCallback(() => {
     const scroller = scrollerRef.current;
     if (isNil(scroller)) return;
+    // 8 = scrollmark.width / 2
     const offsetLeft = player.currentTime * scale - scroller.scrollLeft - 8;
 
     const timeMarkLeft = offsetLeft + 'px';
-    console.log('set timemark left', offsetLeft, player.currentTime, scale, scroller.scrollLeft);
     setTimeMarkLeft(timeMarkLeft);
   }, [player.currentTime, scale]);
 
@@ -142,7 +143,6 @@ const Timeline: FC<TimelineProps> = (props) => {
 
       scroller.scrollLeft = (scroller.scrollLeft * value) / prevScale;
       updateMarks();
-      console.log('b');
       updateTimeMark();
       setPrevScale(value);
     },
