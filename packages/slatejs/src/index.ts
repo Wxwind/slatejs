@@ -1,4 +1,4 @@
-export * from './CutScene/CutScene';
+export * from './core';
 export { default as Timeline } from './Timeline';
 export type { TimelineProps } from './Timeline';
 export { default as Controls } from './Controls';

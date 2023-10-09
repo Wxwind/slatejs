@@ -1,4 +1,4 @@
-export class Signal<T extends unknown[]> {
+export class Signal<T extends unknown[] = []> {
   listeners: ((...args: T) => void)[] = [];
 
   public active: boolean = true;
