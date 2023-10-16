@@ -3,8 +3,6 @@ export class Signal<T extends unknown[] = []> {
 
   public active: boolean = true;
 
-  constructor() {}
-
   on = (fn: (...args: T) => void) => {
     this.listeners.push(fn);
   };

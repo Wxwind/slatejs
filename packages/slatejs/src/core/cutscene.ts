@@ -25,7 +25,7 @@ export class CutScene {
   player = new Player();
   timeline = new Timeline();
 
-  duration = 500;
+  duration = 500; // total seconds in timeline
 
   constructor() {
     this.signals.timeChanged.on(this.timeline.update);

@@ -20,6 +20,7 @@ const Timeline: FC<TimelineProps> = (props) => {
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
 
+  // FIXME: may not update while cutScene.duration update.
   const timelineTrackWidth = useMemo(() => {
     return cutScene.duration * scale;
   }, [cutScene.duration, scale]);

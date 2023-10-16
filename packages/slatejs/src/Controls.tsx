@@ -11,9 +11,9 @@ const Controls: FC<ControlsProps> = (props) => {
   return (
     <div className="controls">
       <div className="controls-btn">
-        <img src={PrevSVG} />
-        <img src={PlaySVG} />
-        <img src={NextSVG} />
+        <img alt="" src={PrevSVG} />
+        <img alt="" src={PlaySVG} />
+        <img alt="" src={NextSVG} />
       </div>
     </div>
   );
