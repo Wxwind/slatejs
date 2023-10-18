@@ -1,3 +1,6 @@
+/**
+ * Mangage time and the play of timeline
+ */
 export class Player {
   private _audio: HTMLAudioElement | null = null;
   private _isPlaying: boolean = false;

@@ -1,6 +1,6 @@
-import { Timeline } from './timeline';
+import { Timeline } from './Timeline';
 import { Signal } from '../utils';
-import { Player } from './player';
+import { Player } from './Player';
 
 export class CutScene {
   signals = {

@@ -20,7 +20,7 @@ const TimelineEditor: FC<TimelineEditorProps> = (props) => {
 
   return (
     <div style={{ width: '100%', height: '320px', position: 'absolute' }}>
-      {/* <Controls /> */}
+      <Controls />
       <Timeline cutScene={cutScene} />
     </div>
   );

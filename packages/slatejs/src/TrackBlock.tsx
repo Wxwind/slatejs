@@ -7,7 +7,7 @@ interface TrackBlockProps {
 
 const TrackBlock: FC<TrackBlockProps> = (props) => {
   const { cutScene } = props;
-  return <div>TrackBlock</div>;
+  return <div className="track-block">TrackBlock</div>;
 };
 
 export default TrackBlock;

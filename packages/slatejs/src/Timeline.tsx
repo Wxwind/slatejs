@@ -2,7 +2,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CutScene } from './core';
 import { isNil } from './utils';
 import TimeMarkIcon from './TimeMarkIcon';
-import TimelineTracks from './TimelineTracks';
+import TimelineTracksPanel from './TimelineTracksPanel';
 
 export interface TimelineProps {
   cutScene: CutScene;
@@ -20,7 +20,8 @@ const Timeline: FC<TimelineProps> = (props) => {
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
 
-  // FIXME: may not update while cutScene.duration update.
+  /* FIXME: may not update while cutScene.duration update cuz cutScene.duration
+  is external variable. */
   const timelineTrackWidth = useMemo(() => {
     return cutScene.duration * scale;
   }, [cutScene.duration, scale]);
@@ -152,23 +153,28 @@ const Timeline: FC<TimelineProps> = (props) => {
   );
 
   useEffect(() => {
-    signals.windowResized.on(updateMarks);
     signals.timeChanged.on(updateTimeMark);
+
+    return () => {
+      signals.timeChanged.off(updateTimeMark);
+    };
+  }, [signals.timeChanged, updateTimeMark]);
+
+  useEffect(() => {
     signals.timelineScaled.on(handleTimelineScaledSignal);
 
     return () => {
-      signals.windowResized.off(updateMarks);
-      signals.timeChanged.off(updateTimeMark);
       signals.timelineScaled.off(handleTimelineScaledSignal);
     };
-  }, [
-    signals.timeChanged,
-    signals.timelineScaled,
-    signals.windowResized,
-    handleTimelineScaledSignal,
-    updateMarks,
-    updateTimeMark,
-  ]);
+  }, [handleTimelineScaledSignal, signals.timelineScaled]);
+
+  useEffect(() => {
+    signals.windowResized.on(updateMarks);
+
+    return () => {
+      signals.windowResized.off(updateMarks);
+    };
+  }, [signals.windowResized, updateMarks]);
 
   useEffect(() => {
     const timelineDOM = timelineRef.current;
@@ -184,7 +190,7 @@ const Timeline: FC<TimelineProps> = (props) => {
     <div className="timeline" ref={timelineRef}>
       <canvas height={32} className="timeline-time-canvas" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
       <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
-        <TimelineTracks width={timelineTrackWidth} />
+        <TimelineTracksPanel width={timelineTrackWidth} />
       </div>
       <div className="timeline-timeMark" style={{ left: timeMarkLeft }}>
         <TimeMarkIcon />
