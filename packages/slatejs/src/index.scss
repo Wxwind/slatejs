@@ -15,12 +15,18 @@
 }
 
 .controls {
+  position: relative;
   width: 100%;
+  top: -32px;
   height: 32px;
   background-color: #333;
 
   .controls-btn {
     display: flex;
+
+    > img {
+      cursor: pointer;
+    }
   }
 }
 
