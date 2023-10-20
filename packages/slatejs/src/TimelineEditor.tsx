@@ -4,6 +4,9 @@ import Timeline from './Timeline';
 import { CutScene } from './core';
 
 export interface TimelineEditorProps {
+  /**
+   * cutScene can be used only for fetch store or add/remove event listerner.
+   */
   cutScene: CutScene;
 }
 

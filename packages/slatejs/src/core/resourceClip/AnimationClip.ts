@@ -1,11 +1,11 @@
 import { ResourceClipBase } from './ResourceClipBase';
 
 export class AnimationClip extends ResourceClipBase {
-  private start: number;
-  private end: number;
-  private id: string;
-  private layerId: string;
-  private name: string;
+  start: number;
+  end: number;
+  id: string;
+  layerId: string;
+  name: string;
 
   constructor(data: AnimationJson) {
     super();

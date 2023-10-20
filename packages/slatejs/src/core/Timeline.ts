@@ -6,19 +6,23 @@ import { AnimationClip } from './resourceClip';
 export class Timeline {
   private prevTime = 0;
 
-  private animations: AnimationClip[] = [];
+  private _animations: AnimationClip[] = [];
+
+  public get animations(): AnimationClip[] {
+    return this._animations;
+  }
 
   update = (time: number) => {};
 
   addAnimation = (anim: AnimationClip) => {
-    this.animations.push(anim);
+    this._animations.push(anim);
   };
 
   removeAnimation = (anim: AnimationClip) => {
-    const i = this.animations.indexOf(anim);
+    const i = this._animations.indexOf(anim);
 
     if (i !== -1) {
-      this.animations.splice(i, 1);
+      this._animations.splice(i, 1);
     }
   };
 }

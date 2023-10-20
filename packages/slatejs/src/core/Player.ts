@@ -31,16 +31,16 @@ export class Player {
   }
 
   play = () => {
-    this.isPlaying = true;
+    this._isPlaying = true;
   };
 
   pause = () => {
-    this.isPlaying = false;
+    this._isPlaying = false;
   };
 
   tick = (deltaTime: number) => {
-    if (this.isPlaying) {
-      this.currentTime += (deltaTime / 1000) * this.playRate;
+    if (this._isPlaying) {
+      this._currentTime += (deltaTime / 1000) * this._playRate;
     }
   };
 }

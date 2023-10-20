@@ -2,6 +2,7 @@ import { Timeline } from './Timeline';
 import { Signal } from '../utils';
 import { Player } from './Player';
 import { AnimationClip } from './resourceClip';
+import { ResoucesStore } from '../store';
 
 export class CutScene {
   signals = {
@@ -29,6 +30,9 @@ export class CutScene {
   duration = 500; // total seconds in timeline
 
   private prevTime = 0;
+
+  // store used only by react, expose internal apis and datas.
+  resourcesStore = new ResoucesStore(this);
 
   constructor() {
     this.signals.timeChanged.on(this.timeline.update);

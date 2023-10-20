@@ -1,12 +1,12 @@
 import { FC } from 'react';
-import { CutScene } from './core';
+import { ResourceClipBase } from './core/resourceClip';
 
 interface TrackBlockProps {
-  cutScene: CutScene;
+  resourceClip: ResourceClipBase;
 }
 
 const TrackBlock: FC<TrackBlockProps> = (props) => {
-  const { cutScene } = props;
+  const { resourceClip } = props;
   return <div className="track-block">TrackBlock</div>;
 };
 

@@ -3,6 +3,7 @@ import { CutScene } from './core';
 import { isNil } from './utils';
 import TimeMarkIcon from './TimeMarkIcon';
 import TimelineTracksPanel from './TimelineTracksPanel';
+import { useStore } from './hooks';
 
 export interface TimelineProps {
   cutScene: CutScene;
@@ -19,6 +20,8 @@ const Timeline: FC<TimelineProps> = (props) => {
   const [scale, setScale] = useState(32); // scale == pixels per seconds
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
+
+  const resourceClips = useStore(cutScene.resourcesStore);
 
   /* FIXME: may not update while cutScene.duration update cuz cutScene.duration
   is external variable. */
@@ -190,7 +193,7 @@ const Timeline: FC<TimelineProps> = (props) => {
     <div className="timeline" ref={timelineRef}>
       <canvas height={32} className="timeline-time-canvas" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
       <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
-        <TimelineTracksPanel width={timelineTrackWidth} />
+        <TimelineTracksPanel width={timelineTrackWidth} resourceClips={resourceClips || []} />
       </div>
       <div className="timeline-timeMark" style={{ left: timeMarkLeft }}>
         <TimeMarkIcon />
