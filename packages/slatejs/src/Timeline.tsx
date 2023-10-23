@@ -21,8 +21,6 @@ const Timeline: FC<TimelineProps> = (props) => {
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
 
-  const resourceClips = useStore(cutScene.resourcesStore);
-
   /* FIXME: may not update while cutScene.duration update cuz cutScene.duration
   is external variable. */
   const timelineTrackWidth = useMemo(() => {
@@ -193,7 +191,7 @@ const Timeline: FC<TimelineProps> = (props) => {
     <div className="timeline" ref={timelineRef}>
       <canvas height={32} className="timeline-time-canvas" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
       <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
-        <TimelineTracksPanel width={timelineTrackWidth} resourceClips={resourceClips || []} />
+        <TimelineTracksPanel width={timelineTrackWidth} cutScene={cutScene} />
       </div>
       <div className="timeline-timeMark" style={{ left: timeMarkLeft }}>
         <TimeMarkIcon />

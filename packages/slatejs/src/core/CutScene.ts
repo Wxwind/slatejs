@@ -1,8 +1,8 @@
 import { Timeline } from './Timeline';
-import { Signal } from '../utils';
 import { Player } from './Player';
 import { AnimationClip } from './resourceClip';
-import { ResoucesStore } from '../store';
+import { ResoucesStore, SelectedResouceStore } from '../store';
+import { Signal } from '../signal';
 
 export class CutScene {
   signals = {
@@ -10,10 +10,8 @@ export class CutScene {
 
     //animations
 
-    animationAdded: new Signal<[AnimationClip]>(),
-    animationRemoved: new Signal<[AnimationClip]>(),
     animationRenamed: new Signal(),
-    animationModified: new Signal(),
+    animationModified: new Signal<[AnimationClip]>(),
     animationSelected: new Signal(),
 
     // events
@@ -31,8 +29,13 @@ export class CutScene {
 
   private prevTime = 0;
 
+  // export to SelectedResouceStore
+  selectedAnim: AnimationClip | undefined;
+
   // store used only by react, expose internal apis and datas.
   resourcesStore = new ResoucesStore(this);
+
+  selectedResourceStore = new SelectedResouceStore(this);
 
   constructor() {
     this.signals.timeChanged.on(this.timeline.update);
@@ -74,14 +77,10 @@ export class CutScene {
     this.signals.timeChanged.emit(time);
   };
 
-  addAnimation = (anim: AnimationClip) => {
-    this.timeline.addAnimation(anim);
-    this.signals.animationAdded.emit(anim);
-  };
-
-  removeAnimation = (anim: AnimationClip) => {
-    this.timeline.removeAnimation(anim);
-    this.signals.animationRemoved.emit(anim);
+  selectAnimation = (animId: string) => {
+    const anim = this.timeline.animations.find((a) => a.data.id === animId);
+    if (anim === this.selectedAnim) return;
+    this.selectedAnim = anim;
   };
 
   toJson = () => {};

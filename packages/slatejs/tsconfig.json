@@ -4,7 +4,7 @@
     "outDir": "dist",
     "lib": ["ESNext", "DOM"],
     "rootDir": "src",
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "target": "es6",
     "jsx": "react-jsx"
   },

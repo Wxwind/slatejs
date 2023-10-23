@@ -1,9 +1,13 @@
-import { Signal } from '../utils';
+import { Signal } from '../signal';
 
 export abstract class StoreBase<T> {
   private listeners = new Signal<[]>();
 
   protected data: T | undefined;
+
+  init = () => {
+    this.refreshData();
+  };
 
   subscribe = (fn: () => void) => {
     this.listeners.addListener(fn);
@@ -19,4 +23,6 @@ export abstract class StoreBase<T> {
   protected emit = () => {
     this.listeners.emit();
   };
+
+  protected abstract refreshData: () => void;
 }

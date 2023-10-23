@@ -51,6 +51,36 @@
     .timeline-tracks-panel {
       height: 100%;
       background: linear-gradient(#555 1px, transparent 1px) 0% 0% / 32px 32px repeat;
+
+      .track-block {
+        position: absolute;
+        height: 31px;
+        background-color: #88f;
+        border: 0px;
+        border-top: 1px solid #aaf;
+        border-left: 1px solid #aaf;
+        border-radius: 2px;
+        overflow: hidden;
+        user-select: none;
+
+        .resize-left {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 6px;
+          height: 30px;
+          cursor: w-resize;
+        }
+
+        .resize-right {
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 6px;
+          height: 30px;
+          cursor: e-resize;
+        }
+      }
     }
   }
   .timeline-timeMark {
