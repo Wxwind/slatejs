@@ -11,6 +11,8 @@ interface TrackBlockProps {
 const TrackBlock: FC<TrackBlockProps> = (props) => {
   const { resourceJSON, cutScene } = props;
 
+  const { scale } = cutScene.useScaleStore();
+
   const handleClickBlock = () => {
     cutScene.selectAnimation(resourceJSON.id);
   };
@@ -24,9 +26,8 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
       const onMouseMove = (e: MouseEvent) => {
         mx = e.movementX;
 
-        // TODO: replace with timeline.scale
-        resourceJSON.start += mx / 32;
-        resourceJSON.end += mx / 32;
+        resourceJSON.start += mx / scale;
+        resourceJSON.end += mx / scale;
 
         if (resourceJSON.start < 0) {
           const offset = -resourceJSON.start;
@@ -35,7 +36,7 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
         }
 
         my += e.movementY;
-        console.log(my);
+
         if (my >= 30) {
           // TODO: clamp max layer
           resourceJSON.layerId += 1;
@@ -56,7 +57,7 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutScene.resourcesStore, resourceJSON]
+    [cutScene.resourcesStore, resourceJSON, scale]
   );
 
   const handleDragLeft = useCallback(
@@ -65,7 +66,7 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
       const onMouseMove = (e: MouseEvent) => {
         const mx = e.movementX;
 
-        const offset = mx / 32;
+        const offset = mx / scale;
         resourceJSON.start = clamp(resourceJSON.start + offset, 0, resourceJSON.end);
         cutScene.resourcesStore.updateAnimation(resourceJSON.id, resourceJSON);
       };
@@ -78,7 +79,7 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutScene.resourcesStore, resourceJSON]
+    [cutScene.resourcesStore, resourceJSON, scale]
   );
 
   const handleDragRight = useCallback(
@@ -87,7 +88,7 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
       const onMouseMove = (e: MouseEvent) => {
         const mx = e.movementX;
 
-        const offset = mx / 32;
+        const offset = mx / scale;
         resourceJSON.end = Math.max(resourceJSON.start, resourceJSON.end + offset);
         cutScene.resourcesStore.updateAnimation(resourceJSON.id, resourceJSON);
       };
@@ -100,7 +101,7 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutScene.resourcesStore, resourceJSON]
+    [cutScene.resourcesStore, resourceJSON, scale]
   );
 
   return (
@@ -110,9 +111,9 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
       onMouseDown={handleMouseDown}
       style={{
         position: 'absolute',
-        left: resourceJSON.start * 32,
+        left: resourceJSON.start * scale,
         top: resourceJSON.layerId * 32,
-        width: (resourceJSON.end - resourceJSON.start) * 32,
+        width: (resourceJSON.end - resourceJSON.start) * scale,
       }}
     >
       <div className="resize-left" onMouseDown={handleDragLeft} />

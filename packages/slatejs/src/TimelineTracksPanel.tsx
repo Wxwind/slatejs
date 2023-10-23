@@ -12,18 +12,18 @@ interface TimelineTracksProps {
 const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
   const { width, cutScene } = props;
   const resourceJSONs = useStore(cutScene.resourcesStore);
+  const { scale } = cutScene.useScaleStore();
 
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      const start = e.nativeEvent.offsetX / 32;
+      const start = e.nativeEvent.offsetX / scale;
       const end = start + 2;
       const layer = Math.floor(e.nativeEvent.offsetY / 32);
 
       const anim = AnimationClip.construct('animation', start, end, layer);
-      console.log(anim);
       cutScene.resourcesStore.addAnimation(anim);
     },
-    [cutScene]
+    [cutScene.resourcesStore, scale]
   );
 
   return (

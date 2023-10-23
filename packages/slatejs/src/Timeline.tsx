@@ -17,7 +17,7 @@ const Timeline: FC<TimelineProps> = (props) => {
   const timelineRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const timeCanvasRef = useRef<HTMLCanvasElement>(null);
-  const [scale, setScale] = useState(32); // scale == pixels per seconds
+  const { scale, setScale } = cutScene.useScaleStore(); // scale == pixels per seconds
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
 
@@ -150,7 +150,7 @@ const Timeline: FC<TimelineProps> = (props) => {
       updateTimeMark();
       setPrevScale(value);
     },
-    [prevScale, updateMarks, updateTimeMark]
+    [prevScale, setScale, updateMarks, updateTimeMark]
   );
 
   useEffect(() => {

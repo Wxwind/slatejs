@@ -1,7 +1,7 @@
 import { Timeline } from './Timeline';
 import { Player } from './Player';
 import { AnimationClip } from './resourceClip';
-import { ResoucesStore, SelectedResouceStore } from '../store';
+import { ResoucesStore, SelectedResouceStore, createScaleStore } from '../store';
 import { Signal } from '../signal';
 
 export class CutScene {
@@ -36,6 +36,9 @@ export class CutScene {
   resourcesStore = new ResoucesStore(this);
 
   selectedResourceStore = new SelectedResouceStore(this);
+
+  // store to manage data used only for react
+  useScaleStore = createScaleStore();
 
   constructor() {
     this.signals.timeChanged.on(this.timeline.update);
