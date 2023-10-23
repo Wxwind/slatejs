@@ -31,12 +31,11 @@ export class CutScene {
   // export to SelectedResouceStore
   selectedAnim: AnimationClip | undefined;
 
-  // store used only by react, expose internal apis and datas.
+  // store used only by react, expose internal apis and datas (sync data from internal to self)
   resourcesStore = new ResoucesStore(this);
-
   selectedResourceStore = new SelectedResouceStore(this);
 
-  // store to manage data used only for react
+  // store to manage data not concerned by cutScene and used only for react
   useScaleStore = createScaleStore();
 
   constructor() {
