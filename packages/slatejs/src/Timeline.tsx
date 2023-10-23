@@ -27,17 +27,6 @@ const Timeline: FC<TimelineProps> = (props) => {
     return cutScene.duration * scale;
   }, [cutScene.duration, scale]);
 
-  const handleTimelineScaled = useCallback(
-    (e: WheelEvent) => {
-      if (e.altKey) {
-        e.preventDefault();
-        const newScale = Math.max(2, scale + e.deltaY / 10);
-        signals.timelineScaled.emit(newScale);
-      }
-    },
-    [scale, signals.timelineScaled]
-  );
-
   const handleClickTimeCanvas = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
       e.preventDefault();
@@ -120,6 +109,7 @@ const Timeline: FC<TimelineProps> = (props) => {
     }
   }, [cutScene.duration, scale]);
 
+  /* FIXME: may not update cus currentTime is also an external variable */
   const updateTimeMark = useCallback(() => {
     const scroller = scrollerRef.current;
     if (isNil(scroller)) return;
@@ -153,6 +143,17 @@ const Timeline: FC<TimelineProps> = (props) => {
     [prevScale, setScale, updateMarks, updateTimeMark]
   );
 
+  const handleTimelineScaled = useCallback(
+    (e: WheelEvent) => {
+      if (e.altKey) {
+        e.preventDefault();
+        const newScale = Math.max(2, scale + e.deltaY / 10);
+        handleTimelineScaledSignal(newScale);
+      }
+    },
+    [handleTimelineScaledSignal, scale]
+  );
+
   useEffect(() => {
     signals.timeChanged.on(updateTimeMark);
 
@@ -160,14 +161,6 @@ const Timeline: FC<TimelineProps> = (props) => {
       signals.timeChanged.off(updateTimeMark);
     };
   }, [signals.timeChanged, updateTimeMark]);
-
-  useEffect(() => {
-    signals.timelineScaled.on(handleTimelineScaledSignal);
-
-    return () => {
-      signals.timelineScaled.off(handleTimelineScaledSignal);
-    };
-  }, [handleTimelineScaledSignal, signals.timelineScaled]);
 
   useEffect(() => {
     signals.windowResized.on(updateMarks);

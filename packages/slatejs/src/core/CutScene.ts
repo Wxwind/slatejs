@@ -18,7 +18,6 @@ export class CutScene {
 
     playingChanged: new Signal<[boolean]>(),
     timeChanged: new Signal<[number]>(),
-    timelineScaled: new Signal<[number]>(),
     windowResized: new Signal(),
   };
 
