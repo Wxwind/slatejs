@@ -1,5 +1,5 @@
 import { isNil } from '../utils';
-import { AnimationClip, AnimationJson, AnimationUpdatedJson } from './resourceClip';
+import { AnimationClip, AnimationUpdatedJson } from './resourceClip';
 
 /**
  * Manage resource clips and sample resouces driven by player
