@@ -9,5 +9,5 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./src/**/*", "/src/assets/*"]
+  "include": ["src"]
 }
