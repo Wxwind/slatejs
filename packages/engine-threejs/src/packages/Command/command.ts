@@ -3,5 +3,5 @@ export interface ICommand {
 
   undo: () => void;
 
-  toString: () => void;
+  toString: () => string;
 }

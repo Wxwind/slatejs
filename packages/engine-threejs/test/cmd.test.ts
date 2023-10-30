@@ -9,7 +9,7 @@ export class EmptyCommand implements ICommand {
     console.log(`command '${this.name}' undo`);
   };
   toString = () => {
-    console.log(`EmptyCommand: name = '${this.name}' `);
+    return `EmptyCommand: name = '${this.name}' `;
   };
 }
 

@@ -18,7 +18,6 @@ export const Timeline: FC<TimelineProps> = (props) => {
       x: x + ui.deltaX,
       y: y + ui.deltaY,
     };
-    console.log(newPos);
     setPos(newPos);
   };
 

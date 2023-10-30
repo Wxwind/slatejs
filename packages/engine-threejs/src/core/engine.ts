@@ -1,12 +1,14 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Loader } from './loader';
+import * as THREE from 'three';
+import { Control } from './control';
 
 export class Engine {
   scene: Scene;
   camera: PerspectiveCamera;
   renderer: WebGLRenderer;
-  controls: OrbitControls;
+  controls: Control;
 
   animateID: number;
 
@@ -29,8 +31,6 @@ export class Engine {
     renderer.setSize(el.clientWidth, el.clientHeight);
     el.appendChild(renderer.domElement);
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-
     const load = async (url: string) => {
       const t = await this.loader.loadTexture(url);
       scene.environment = t;
@@ -42,7 +42,7 @@ export class Engine {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
-    this.controls = controls;
+    this.controls = new Control(camera, renderer);
     this.animateID = requestAnimationFrame(this.update);
   }
 
@@ -53,7 +53,28 @@ export class Engine {
   };
 
   dispose = () => {
-    this.scene.clear();
+    const clearMatAndGeo = (obj: THREE.Mesh) => {
+      if (Array.isArray(obj.material)) {
+        obj.material.forEach((m) => m.dispose());
+      } else {
+        obj.material.dispose();
+      }
+      obj.geometry.dispose();
+    };
+
+    const removeObj = (obj: THREE.Object3D) => {
+      if (obj instanceof THREE.Mesh) {
+        clearMatAndGeo(obj);
+      }
+
+      for (const o of obj.children) {
+        removeObj(o);
+      }
+
+      obj.clear();
+    };
+
+    removeObj(this.scene);
     this.renderer.dispose();
     this.renderer.forceContextLoss();
     this.parentEl.removeChild(this.renderer.domElement);

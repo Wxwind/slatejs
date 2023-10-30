@@ -7,7 +7,12 @@
     "noEmit": true,
     "target": "es6",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["jest"]
   },
   "include": ["src"]
 }
