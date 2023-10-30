@@ -5,7 +5,9 @@
     "lib": ["ESNext", "DOM"],
     "rootDir": "src",
     "noEmit": true,
-    "target": "es6"
+    "target": "es6",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["./src/**/*", "/src/assets/*"]
 }

@@ -22,7 +22,7 @@ const TimelineEditor: FC<TimelineEditorProps> = (props) => {
   }, [cutScene.signals.windowResized]);
 
   return (
-    <div style={{ width: '100%', height: '320px', position: 'absolute' }}>
+    <div className="timeline-editor">
       <Controls cutScene={cutScene} />
       <Timeline cutScene={cutScene} />
     </div>
