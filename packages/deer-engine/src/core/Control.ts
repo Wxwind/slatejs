@@ -7,6 +7,7 @@ export class Control {
 
   constructor(camera: PerspectiveCamera, domElement: HTMLCanvasElement) {
     const controls = new OrbitControls(camera, domElement);
+    controls.listenToKeyEvents(window);
 
     controls.enableDamping = true;
 

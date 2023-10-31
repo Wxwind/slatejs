@@ -1,16 +1,17 @@
 import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { Loader } from './loader';
+import { Loader } from './Loader';
 import * as THREE from 'three';
-import { Control } from './control';
+import { Control } from './Control';
 import { CommandManager } from '@/packages/command';
+import { EntityStore } from '@/store/EntityStore';
 
-export class Engine {
+export class DeerScene {
   scene: Scene;
   camera: PerspectiveCamera;
   renderer: WebGLRenderer;
   controls: Control;
 
-  animateID: number;
+  animateID: number = -1;
 
   parentEl: HTMLElement;
 
@@ -18,6 +19,7 @@ export class Engine {
 
   public readonly clock = new Clock();
   readonly commandManager = new CommandManager();
+  readonly entityStore = new EntityStore(this);
 
   constructor(containerId: string, defaulteHDRUrl: string) {
     const el = document.getElementById(containerId);
@@ -48,7 +50,7 @@ export class Engine {
     this.camera = camera;
     this.renderer = renderer;
     this.controls = new Control(camera, renderer.domElement);
-    this.animateID = requestAnimationFrame(this.update);
+    this.update();
 
     window.addEventListener('resize', this.onWindowResize);
   }

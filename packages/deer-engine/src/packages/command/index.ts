@@ -1,2 +1,2 @@
-export * from './command';
+export * from './ICommand';
 export * from './commandManager';

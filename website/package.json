@@ -12,10 +12,10 @@
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-menubar": "^1.0.4",
-    "engine-threejs": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
+    "deer-engine": "workspace:*",
     "slatejs": "workspace:*"
   },
   "devDependencies": {

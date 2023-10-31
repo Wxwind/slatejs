@@ -1,5 +1,5 @@
 {
-  "name": "engine-threejs",
+  "name": "deer-engine",
   "version": "0.0.1",
   "description": "",
   "main": "dist/cjs/index.js",

@@ -1,4 +1,4 @@
-import { ICommand } from './command';
+import { ICommand } from './ICommand';
 
 export class CommandManager {
   private history: ICommand[] = [];
