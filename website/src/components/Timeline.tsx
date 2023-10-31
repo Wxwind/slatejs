@@ -1,7 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 import { CutScene, TimelineEditor } from 'slatejs';
-import { Engine } from 'engine-threejs';
 
 interface TimelineProps {}
 

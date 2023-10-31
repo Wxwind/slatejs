@@ -1,7 +1,7 @@
 {
   "name": "slatejs",
   "version": "0.0.1",
-  "description": "",
+  "description": "cinematic timeline editor for web",
   "main": "dist/cjs/index.js",
   "module": "src/index.ts",
   "types": "dist/es/index.d.ts",
@@ -18,7 +18,14 @@
     "lint": "tsc -p ./tsconfig.json"
   },
   "keywords": [
-    "slate"
+    "slate",
+    "slatejs",
+    "timeline",
+    "animation",
+    "editor"
+  ],
+  "files": [
+    "dist"
   ],
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.1",

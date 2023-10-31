@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter website dev",
-    "dev:eg": "pnpm --filter engine-threejs watch",
-    "build": "pnpm run build:eg && pnpm run build:slatejs && pnpm --filter website build",
+    "dev:eg": "pnpm --filter deer-engine watch",
+    "build": "pnpm run build:eg && pnpm run build:slatejs && pnpm run build:scene",
+    "build:scene": "pnpm --filter website build",
     "build:slatejs": "pnpm --filter slatejs build",
-    "build:eg": "pnpm --filter engine-threejs build",
+    "build:eg": "pnpm --filter deer-engine build",
     "lint:slatejs": "pnpm --filter slatejs lint",
-    "lint:eg": "pnpm --filter engine-threejs lint",
+    "lint:eg": "pnpm --filter deer-engine lint",
     "preview": "pnpm --filter website preview"
   },
   "dependencies": {
