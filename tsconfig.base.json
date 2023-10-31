@@ -12,12 +12,10 @@
     "jsx": "react",
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "declarationMap": true,
+    "declarationMap": false,
+    "declaration": false,
     "stripInternal": true,
-    "declaration": true,
-    "paths": {
-
-    },
+    "paths": {},
     "forceConsistentCasingInFileNames": true
-  },
+  }
 }

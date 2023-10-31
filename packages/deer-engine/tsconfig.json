@@ -5,6 +5,8 @@
     "lib": ["ESNext", "DOM"],
     "rootDir": "src",
     "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
     "target": "es6",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

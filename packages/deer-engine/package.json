@@ -7,7 +7,7 @@
   "types": "dist/es/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "rollup --config",
+    "build": "rollup --config rollup.config.js",
     "watch": "node scripts/watch.cjs",
     "lint": "tsc -p ./tsconfig.json",
     "test": "jest"
@@ -17,6 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "@rollup/plugin-alias": "^5.0.1",
+    "@rollup/plugin-typescript": "^11.1.1",
     "@types/jest": "^29.5.6",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
