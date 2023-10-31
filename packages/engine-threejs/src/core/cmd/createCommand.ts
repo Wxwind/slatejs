@@ -12,6 +12,7 @@ export class CreateCommand implements ICommand {
     const mat = new THREE.MeshStandardMaterial();
 
     const cube = new THREE.Mesh(geometry, mat);
+    cube.updateMatrix();
     this.obj = cube;
     this.parent.add(cube);
   };

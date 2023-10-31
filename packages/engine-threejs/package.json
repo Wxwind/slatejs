@@ -2,11 +2,13 @@
   "name": "engine-threejs",
   "version": "0.0.1",
   "description": "",
-  "main": "src/index.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
   "types": "dist/es/index.d.ts",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "rollup --config",
+    "watch": "node scripts/watch.cjs",
     "lint": "tsc -p ./tsconfig.json",
     "test": "jest"
   },

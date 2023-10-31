@@ -1,8 +1,8 @@
-import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { Loader } from './loader';
 import * as THREE from 'three';
 import { Control } from './control';
+import { CommandManager } from '@/packages/command';
 
 export class Engine {
   scene: Scene;
@@ -16,6 +16,9 @@ export class Engine {
 
   loader: Loader = new Loader();
 
+  public readonly clock = new Clock();
+  readonly commandManager = new CommandManager();
+
   constructor(containerId: string, defaulteHDRUrl: string) {
     const el = document.getElementById(containerId);
     if (el) {
@@ -26,7 +29,9 @@ export class Engine {
 
     const scene = new Scene();
 
-    const camera = new PerspectiveCamera(75, el.clientWidth / el.clientHeight, 0.1, 1000);
+    const camera = new PerspectiveCamera(75, el.clientWidth / el.clientHeight, 0.1, 10000);
+    camera.position.set(400, 200, 0);
+
     const renderer = new WebGLRenderer();
     renderer.setSize(el.clientWidth, el.clientHeight);
     el.appendChild(renderer.domElement);
@@ -42,15 +47,31 @@ export class Engine {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
-    this.controls = new Control(camera, renderer);
+    this.controls = new Control(camera, renderer.domElement);
     this.animateID = requestAnimationFrame(this.update);
+
+    window.addEventListener('resize', this.onWindowResize);
   }
 
-  update = () => {
-    requestAnimationFrame(this.update);
-    this.controls.update();
+  private onWindowResize = () => {
+    this.camera.aspect = this.parentEl.clientWidth / this.parentEl.clientHeight;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(this.parentEl.clientWidth, this.parentEl.clientHeight);
+  };
+
+  private update = () => {
+    this.animateID = requestAnimationFrame(this.update);
+    this.controls.update(this.clock.getDelta());
     this.renderer.render(this.scene, this.camera);
   };
+
+  // load new scene from .egAsset file
+  loadSceneAsync = async () => {
+    this.dispose();
+  };
+
+  saveScene = () => {};
 
   dispose = () => {
     const clearMatAndGeo = (obj: THREE.Mesh) => {
@@ -80,5 +101,7 @@ export class Engine {
     this.parentEl.removeChild(this.renderer.domElement);
 
     cancelAnimationFrame(this.animateID);
+
+    window.removeEventListener('resize', this.onWindowResize);
   };
 }

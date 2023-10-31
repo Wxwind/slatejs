@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter website dev",
-    "build": "pnpm --filter website build",
+    "dev:eg": "pnpm --filter engine-threejs watch",
+    "build": "pnpm run build:eg && pnpm run build:slatejs && pnpm --filter website build",
     "build:slatejs": "pnpm --filter slatejs build",
     "build:eg": "pnpm --filter engine-threejs build",
     "lint:slatejs": "pnpm --filter slatejs lint",
