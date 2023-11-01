@@ -1,12 +1,10 @@
 import { isNil } from '../utils';
-import { AnimationClip, AnimationUpdatedJson } from './resourceClip';
+import { AnimationClip, AnimationUpdatedJson } from './actionClip';
 
 /**
  * Manage resource clips and sample resouces driven by player
  */
 export class Timeline {
-  private prevTime = 0;
-
   private _animations: AnimationClip[] = [];
 
   // Expose to ResoucesStore
@@ -14,7 +12,9 @@ export class Timeline {
     return this._animations;
   }
 
-  update = (time: number) => {};
+  update = (curTime: number) => {
+    this._animations.forEach((a) => a.onUpdate(curTime));
+  };
 
   findAnimation = (id: string) => {
     const anim = this._animations.find((a) => a.data.id === id);

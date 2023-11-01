@@ -1,6 +1,6 @@
 import { FC, useCallback } from 'react';
 import { useStore } from './hooks/useStore';
-import { AnimationClip } from './core/resourceClip';
+import { AnimationClip } from './core/actionClip';
 import TrackBlock from './TrackBlock';
 import { CutScene } from './core';
 

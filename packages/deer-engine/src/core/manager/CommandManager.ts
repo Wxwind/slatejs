@@ -4,11 +4,11 @@ import { CommandId, DeerScene } from '..';
 import { isNil } from '@/util';
 
 export class CommandManager {
-  private commandManager: CommandStack;
+  private readonly commandStack: CommandStack;
   private readonly cmdToStoreMap: Record<CommandId, StoreBase[]>;
 
   constructor(scene: DeerScene) {
-    this.commandManager = scene.commandStack;
+    this.commandStack = scene.commandStack;
     this.cmdToStoreMap = this.genCmdToStoreMap(scene);
   }
 
@@ -23,18 +23,18 @@ export class CommandManager {
   };
 
   execute = (cmd: ICommand) => {
-    this.commandManager.execute(cmd);
+    this.commandStack.execute(cmd);
     this.cmdToStoreMap[cmd.id].forEach((s) => s.refreshData());
   };
 
   undo = () => {
-    const cmd = this.commandManager.undo();
+    const cmd = this.commandStack.undo();
     if (isNil(cmd)) return;
     this.cmdToStoreMap[cmd.id].forEach((s) => s.refreshData());
   };
 
   redo = () => {
-    const cmd = this.commandManager.redo();
+    const cmd = this.commandStack.redo();
     if (isNil(cmd)) return;
     this.cmdToStoreMap[cmd.id].forEach((s) => s.refreshData());
   };

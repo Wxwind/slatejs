@@ -1,4 +1,4 @@
 export * from './typeGuard';
-export * from './util';
+export * from './utils';
 export * from './replaceEqualDeep';
 export * from './math';

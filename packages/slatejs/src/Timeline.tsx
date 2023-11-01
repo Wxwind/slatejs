@@ -3,7 +3,6 @@ import { CutScene } from './core';
 import { isNil } from './utils';
 import TimeMarkIcon from './TimeMarkIcon';
 import TimelineTracksPanel from './TimelineTracksPanel';
-import { useStore } from './hooks';
 
 export interface TimelineProps {
   cutScene: CutScene;

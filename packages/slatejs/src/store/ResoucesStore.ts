@@ -1,14 +1,14 @@
 import { CutScene } from '../core';
-import { AnimationClip, AnimationUpdatedJson, ResourceJson } from '../core/resourceClip';
+import { AnimationClip, AnimationUpdatedJson, ActionClipJson } from '../core/actionClip';
 import { deepClone, replaceEqualDeep } from '../utils';
 import { StoreBase } from './StoreBase';
 
-export class ResoucesStore extends StoreBase<ResourceJson[]> {
+export class ResoucesStore extends StoreBase<ActionClipJson[]> {
   constructor(private cutScene: CutScene) {
     super();
   }
 
-  private oldData: ResourceJson[] | undefined;
+  private oldData: ActionClipJson[] | undefined;
 
   addAnimation = (anim: AnimationClip) => {
     this.cutScene.timeline.addAnimation(anim);

@@ -1,6 +1,6 @@
 import { Timeline } from './Timeline';
 import { Player } from './Player';
-import { AnimationClip } from './resourceClip';
+import { AnimationClip } from './actionClip';
 import { ResoucesStore, SelectedResouceStore, createScaleStore } from '../store';
 import { Signal } from '../signal';
 

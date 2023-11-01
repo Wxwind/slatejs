@@ -4,7 +4,9 @@ import * as THREE from 'three';
 import { Control } from './Control';
 import { CommandStack } from '@/packages/command';
 import { EntityStore } from '@/store/EntityStore';
-import { CommandManager } from './command';
+import { CommandManager } from './manager';
+import { EntityManager } from './manager/EntityManager';
+import { Entity } from './entity';
 
 export class DeerScene {
   scene: Scene;
@@ -20,15 +22,18 @@ export class DeerScene {
 
   private readonly clock = new Clock();
 
+  // Manager
+  readonly entityManager = new EntityManager(this);
+
+  // Store
+  readonly entityStore = new EntityStore(this);
+
   /**
    * CommandManager is the only entry if want to exec recordable action.
    * Used by both app and engine itself.
    */
-  readonly commandManager = new CommandManager(this);
   readonly commandStack = new CommandStack();
-
-  // Store
-  readonly entityStore = new EntityStore(this);
+  readonly commandManager = new CommandManager(this);
 
   constructor(containerId: string, defaulteHDRUrl: string) {
     const el = document.getElementById(containerId);
@@ -41,7 +46,7 @@ export class DeerScene {
     const scene = new Scene();
 
     const camera = new PerspectiveCamera(75, el.clientWidth / el.clientHeight, 0.1, 10000);
-    camera.position.set(400, 200, 0);
+    camera.position.set(20, 20, 0);
 
     const renderer = new WebGLRenderer();
     renderer.setSize(el.clientWidth, el.clientHeight);

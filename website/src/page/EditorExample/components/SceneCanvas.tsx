@@ -1,15 +1,12 @@
-import { DeerEngine, DeerScene } from 'deer-engine';
+import { DEER_ENGINE_SCENE } from '@/config';
+import { DeerEngine } from 'deer-engine';
 import { FC, useEffect } from 'react';
 
-interface SceneCanvasProps {}
-
-export const SceneCanvas: FC<SceneCanvasProps> = (props) => {
-  const {} = props;
-
+export const SceneCanvas: FC = (props) => {
   useEffect(() => {
-    DeerEngine.instance.createScene('eg-scene', '/hdr/default.hdr');
+    DeerEngine.instance.createScene(DEER_ENGINE_SCENE, '/hdr/default.hdr');
     return () => {
-      DeerEngine.instance.deleteScene('eg-scene');
+      DeerEngine.instance.deleteScene(DEER_ENGINE_SCENE);
     };
   }, []);
 

@@ -1,3 +1,4 @@
-export * from './cmd';
 export * from './type';
-export * from './CommandManager';
+
+export * from './CreateEntityCommand';
+export * from './DeleteEntityCommand';

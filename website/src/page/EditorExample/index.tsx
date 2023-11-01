@@ -1,8 +1,6 @@
 import { Timeline } from '@/components';
-import { Header } from './components';
 import { FC } from 'react';
-import { SceneCanvas } from './components';
-import { MainPanel } from './components/MainPanel';
+import { SceneCanvas, MainPanel, Header } from './components';
 
 export const EditorExample: FC = () => {
   return (

@@ -1,1 +1,1 @@
-export const DEERENGINE_SCENE = 'eg-scene';
+export const DEER_ENGINE_SCENE = 'eg-scene';

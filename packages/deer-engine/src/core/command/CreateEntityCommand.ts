@@ -1,11 +1,11 @@
 import { ICommand } from '@/packages/command';
 import { isNil } from '@/util';
 import * as THREE from 'three';
-import { DeerEngine } from '../../DeerEngine';
-import { DeerScene } from '../../DeerScene';
-import { CommandId } from '../type';
+import { DeerEngine } from '../DeerEngine';
+import { DeerScene } from '../DeerScene';
+import { CommandId } from './type';
 
-export class CreateCommand implements ICommand {
+export class CreateEntityCommand implements ICommand {
   id: CommandId = 'CreateEntity';
 
   private obj: THREE.Mesh | null = null;

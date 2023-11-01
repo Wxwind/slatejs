@@ -1,9 +1,9 @@
 import { CutScene } from '../core';
-import { AnimationClip, ResourceClipBase, ResourceJson } from '../core/resourceClip';
+import { AnimationClip, ActionClip, ActionClipJson } from '../core/actionClip';
 import { deepClone } from '../utils';
 import { StoreBase } from './StoreBase';
 
-export class SelectedResouceStore extends StoreBase<ResourceJson> {
+export class SelectedResouceStore extends StoreBase<ActionClipJson> {
   constructor(private cutScene: CutScene) {
     super();
   }

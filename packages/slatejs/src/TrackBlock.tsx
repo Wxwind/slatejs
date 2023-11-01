@@ -1,11 +1,11 @@
 import { FC, useCallback } from 'react';
-import { ResourceJson } from './core/resourceClip';
+import { ActionClipJson } from './core/actionClip';
 import { CutScene } from './core';
 import { clamp } from './utils';
 
 interface TrackBlockProps {
   cutScene: CutScene;
-  resourceJSON: ResourceJson;
+  resourceJSON: ActionClipJson;
 }
 
 const TrackBlock: FC<TrackBlockProps> = (props) => {

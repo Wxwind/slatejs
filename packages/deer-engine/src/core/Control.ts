@@ -15,7 +15,7 @@ export class Control {
 
     controls.screenSpacePanning = false;
 
-    controls.minDistance = 100;
+    controls.minDistance = 5;
     controls.maxDistance = 500;
 
     controls.maxPolarAngle = Math.PI / 2;
