@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["ESNext", "DOM"],
-    "rootDir": "src",
     "noEmit": true,
     "declaration": false,
     "declarationMap": false,
@@ -16,5 +15,5 @@
     },
     "types": ["jest"]
   },
-  "include": ["src"]
+  "include": ["src", "test"]
 }

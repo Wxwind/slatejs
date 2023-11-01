@@ -1,11 +1,16 @@
 import { ICommand } from '@/packages/command';
 import { isNil } from '@/util';
 import * as THREE from 'three';
+import { DeerEngine } from '../../DeerEngine';
+import { DeerScene } from '../../DeerScene';
+import { CommandId } from '../type';
 
 export class CreateCommand implements ICommand {
+  id: CommandId = 'CreateEntity';
+
   private obj: THREE.Mesh | null = null;
 
-  constructor(private parent: THREE.Object3D) {}
+  constructor(private scene: DeerScene, private parent: THREE.Object3D) {}
 
   execute: () => void = () => {
     const geometry = new THREE.BoxGeometry();
@@ -15,6 +20,7 @@ export class CreateCommand implements ICommand {
     cube.updateMatrix();
     this.obj = cube;
     this.parent.add(cube);
+    this.scene.entityStore.refreshData();
   };
 
   undo: () => void = () => {

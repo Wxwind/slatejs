@@ -1,6 +1,6 @@
 import { ICommand } from './ICommand';
 
-export class CommandManager {
+export class CommandStack {
   private history: ICommand[] = [];
   private nowIndex = -1; // record index of last cmd executed
 
@@ -20,18 +20,19 @@ export class CommandManager {
   };
 
   undo = () => {
-    if (this.history.length === 0) return false;
+    if (this.history.length === 0) return null;
     const cmd = this.history[this.history.length - 1];
     cmd.undo();
     this.nowIndex--;
-    return true;
+    return cmd;
   };
 
   redo = () => {
-    if (this.history[this.nowIndex + 1] === undefined) return false;
-    this.history[this.nowIndex + 1].execute();
+    if (this.history[this.nowIndex + 1] === undefined) return null;
+    const cmd = this.history[this.nowIndex + 1];
+    cmd.execute();
     this.nowIndex++;
-    return true;
+    return cmd;
   };
 
   top = () => {

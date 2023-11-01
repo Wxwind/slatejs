@@ -1,7 +1,10 @@
-import { CommandManager, ICommand } from '../src/packages/command';
+import { CommandStack, ICommand } from '../src/packages/command';
+import { CommandId } from '../src/core/command';
 
 export class EmptyCommand implements ICommand {
   constructor(private name: string) {}
+  id: CommandId = 'CreateEntity';
+
   execute = () => {
     console.log(`command '${this.name}' execute`);
   };
@@ -19,7 +22,7 @@ const cmd3 = new EmptyCommand('step3');
 const cmd4 = new EmptyCommand('step4');
 
 test('exec cmd123', () => {
-  const cmdMgr = new CommandManager();
+  const cmdMgr = new CommandStack();
   cmdMgr.execute(cmd1);
   cmdMgr.execute(cmd2);
   cmdMgr.execute(cmd3);
@@ -28,7 +31,7 @@ test('exec cmd123', () => {
 });
 
 test('undo cmd32 should now be cmd1', () => {
-  const cmdMgr = new CommandManager();
+  const cmdMgr = new CommandStack();
   cmdMgr.execute(cmd1);
   cmdMgr.execute(cmd2);
   cmdMgr.execute(cmd3);
@@ -39,7 +42,7 @@ test('undo cmd32 should now be cmd1', () => {
 });
 
 test('redo cmd2 should now be cmd2', () => {
-  const cmdMgr = new CommandManager();
+  const cmdMgr = new CommandStack();
   cmdMgr.execute(cmd1);
   cmdMgr.execute(cmd2);
   cmdMgr.execute(cmd3);
@@ -51,7 +54,7 @@ test('redo cmd2 should now be cmd2', () => {
 });
 
 test('exec cmd4 should clear dirty command(cmd3)', () => {
-  const cmdMgr = new CommandManager();
+  const cmdMgr = new CommandStack();
   cmdMgr.execute(cmd1);
   cmdMgr.execute(cmd2);
   cmdMgr.execute(cmd3);
@@ -69,7 +72,7 @@ test('exec cmd4 should clear dirty command(cmd3)', () => {
 });
 
 test('undo shold not work when history is empty', () => {
-  const cmdMgr = new CommandManager();
+  const cmdMgr = new CommandStack();
   const isDid = cmdMgr.undo();
-  expect(isDid).toBe(false);
+  expect(isDid).toBeFalsy();
 });

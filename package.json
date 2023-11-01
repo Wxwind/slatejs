@@ -10,6 +10,7 @@
     "build:scene": "pnpm --filter website build",
     "build:slatejs": "pnpm --filter slatejs build",
     "build:eg": "pnpm --filter deer-engine build",
+    "lint": "pnpm --filter website lint",
     "lint:slatejs": "pnpm --filter slatejs lint",
     "lint:eg": "pnpm --filter deer-engine lint",
     "preview": "pnpm --filter website preview"

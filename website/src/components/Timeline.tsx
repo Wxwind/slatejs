@@ -1,11 +1,8 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 import { CutScene, TimelineEditor } from 'slatejs';
 
-interface TimelineProps {}
-
-export const Timeline: FC<TimelineProps> = (props) => {
-  const {} = props;
+export const Timeline: FC = () => {
   const [scene, setScene] = useState(new CutScene());
   const [pos, setPos] = useState<{ x: number; y: number }>();
 

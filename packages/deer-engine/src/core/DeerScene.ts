@@ -2,8 +2,9 @@ import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { Loader } from './Loader';
 import * as THREE from 'three';
 import { Control } from './Control';
-import { CommandManager } from '@/packages/command';
+import { CommandStack } from '@/packages/command';
 import { EntityStore } from '@/store/EntityStore';
+import { CommandManager } from './command';
 
 export class DeerScene {
   scene: Scene;
@@ -17,8 +18,16 @@ export class DeerScene {
 
   loader: Loader = new Loader();
 
-  public readonly clock = new Clock();
-  readonly commandManager = new CommandManager();
+  private readonly clock = new Clock();
+
+  /**
+   * CommandManager is the only entry if want to exec recordable action.
+   * Used by both app and engine itself.
+   */
+  readonly commandManager = new CommandManager(this);
+  readonly commandStack = new CommandStack();
+
+  // Store
   readonly entityStore = new EntityStore(this);
 
   constructor(containerId: string, defaulteHDRUrl: string) {
