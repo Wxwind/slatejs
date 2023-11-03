@@ -32,7 +32,9 @@ export class StartTimePointer implements IDirectableTimePointer {
   }
 
   triggerForward = (curTime: number, prevTime: number) => {
-    if (curTime >= this.time) {
+    // IDirectable's startTime-endTime means [startTime, endTime) when play forward and
+    // [endTime, startTime) when play backward.
+    if (curTime >= this.target.startTime) {
       if (!this._isTrigged) {
         console.log('startTimePointer: target Enter in TriggerForward');
         this._isTrigged = true;
@@ -43,14 +45,16 @@ export class StartTimePointer implements IDirectableTimePointer {
   };
 
   triggerBackward = (curTime: number, prevTime: number) => {
-    // curTime <= 0 means end play and exit cutScene controlled mode (will restore origin state).
-    // curTime <= 0 happens in click stop btn by user or playReverse().
-    // Q: why need curTime <= 0 ?
-    // A: the ideal condition is curTime <= this.time, but this way will
-    // causes onReverseExit() in triggerBackward() will be called immediately
-    // after onEnter() in triggerForward(). So we need <= 0 to make sure
-    // onReverseExit can be trigged for IDirectables whose start time = 0
-    if (curTime < this.time || curTime <= 0) {
+    // curTime <= 0 means end play and exit cutScene controlled mode (will restore origin state)
+    // for CutSceneGroup when clicking stop btn by user or playReverse() to end.
+    // Q: why need 'curTime <= 0' ? Why not just 'curTime <= this.target.startTime' ?
+    // A: curTime <= this.time looks good, but this way will cause folling problems:
+    // 1. will causes onReverseExit() in triggerBackward() will be called immediately
+    // after onEnter() in triggerForward() if curTime === this.time.
+    // 2. will be trigged accidently. For example, clip's time is 2~5s, but we play the CutScene backward
+    // from 8s to 5s (means [8,5) exactly), onReverseExit() will raise.
+    // So we need <= 0 to make sure onReverseExit can be trigged for IDirectables whose start time = 0
+    if (curTime < this.target.startTime || curTime <= 0) {
       if (this._isTrigged) {
         console.log('startTimePointer: target ReverseExit in TriggerBackward');
         this._isTrigged = false;
