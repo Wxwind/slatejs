@@ -1,7 +1,7 @@
 import { FC, useCallback } from 'react';
 import { useStore } from './hooks/useStore';
-import { AnimationClip } from './core/actionClip';
-import TrackBlock from './TrackBlock';
+import { AnimationClip } from './core';
+import TrackClip from './TrackClip';
 import { CutScene } from './core';
 
 interface TimelineTracksProps {
@@ -29,7 +29,7 @@ const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
   return (
     <div className="timeline-tracks-panel" style={{ width: `${width}px` }} onDoubleClick={handleDoubleClick}>
       {(resourceJSONs || []).map((a) => (
-        <TrackBlock key={a.id} resourceJSON={a} cutScene={cutScene} />
+        <TrackClip key={a.id} resourceJSON={a} cutScene={cutScene} />
       ))}
     </div>
   );

@@ -3,14 +3,14 @@ import Controls from './Controls';
 import Timeline from './Timeline';
 import { CutScene } from './core';
 
-export interface TimelineEditorProps {
+export interface CutSceneEditorProps {
   /**
    * cutScene can be used only for fetch store or add/remove event listerner.
    */
   cutScene: CutScene;
 }
 
-const TimelineEditor: FC<TimelineEditorProps> = (props) => {
+export const CutSceneEditor: FC<CutSceneEditorProps> = (props) => {
   const { cutScene } = props;
 
   useEffect(() => {
@@ -28,5 +28,3 @@ const TimelineEditor: FC<TimelineEditorProps> = (props) => {
     </div>
   );
 };
-
-export default TimelineEditor;

@@ -1,18 +1,20 @@
 import { Timeline } from './Timeline';
-import { Player } from './Player';
-import { AnimationClip } from './actionClip';
+import { PlayState, CutSceneDirector } from './CutSceneDirector';
 import { ResoucesStore, SelectedResouceStore, createScaleStore } from '../store';
 import { Signal } from '../signal';
+import { ActionClip } from './ActionClip';
 
 export class CutScene {
-  signals = {
+  // bridge between cutscene core and cutscene ui.
+  // TODO: may replace s external store.
+  readonly signals = {
     editorCleared: new Signal(),
 
     //animations
 
-    animationRenamed: new Signal(),
-    animationModified: new Signal<[AnimationClip]>(),
-    animationSelected: new Signal(),
+    // animationRenamed: new Signal(),
+    // animationModified: new Signal<[AnimationClip]>(),
+    // animationSelected: new Signal(),
 
     // events
 
@@ -21,25 +23,26 @@ export class CutScene {
     windowResized: new Signal(),
   };
 
-  player = new Player();
-  timeline = new Timeline();
-
-  duration = 500; // total seconds in timeline
+  readonly timeline = new Timeline();
+  readonly player = new CutSceneDirector(this.timeline);
 
   private prevTime = 0;
 
   // export to SelectedResouceStore
-  selectedAnim: AnimationClip | undefined;
+  selectedAnim: ActionClip | undefined;
 
-  // store used only by react, expose internal apis and datas (sync data from internal to self)
-  resourcesStore = new ResoucesStore(this);
-  selectedResourceStore = new SelectedResouceStore(this);
+  // store used only by react, expose internal (= cutscene core) apis and datas (sync data from core to store itself)
+  readonly resourcesStore = new ResoucesStore(this);
+  readonly selectedResourceStore = new SelectedResouceStore(this);
 
-  // store to manage data not concerned by cutScene and used only for react
-  useScaleStore = createScaleStore();
+  // store to manage data not concerned by cutScene core and used only for cutScene ui
+  readonly useScaleStore = createScaleStore();
+
+  public get viewTimeMax(): number {
+    return this.timeline.viewTimeMax;
+  }
 
   constructor() {
-    this.signals.timeChanged.on(this.timeline.update);
     this.init();
   }
 
@@ -51,7 +54,7 @@ export class CutScene {
 
   private animate = (time: number) => {
     this.player.tick(time - this.prevTime);
-    if (this.player.isPlaying) {
+    if (this.player.playState !== PlayState.Stop) {
       this.signals.timeChanged.emit(this.player.currentTime);
     }
 
@@ -60,7 +63,7 @@ export class CutScene {
   };
 
   isPlaying = () => {
-    return this.player.isPlaying;
+    return this.player.playState;
   };
 
   play = () => {
@@ -74,8 +77,8 @@ export class CutScene {
   };
 
   setTime = (time: number) => {
-    this.player.currentTime = Math.max(0, time);
-    this.signals.timeChanged.emit(time);
+    this.player.currentTime = time;
+    this.signals.timeChanged.emit(this.player.currentTime);
   };
 
   selectAnimation = (animId: string) => {

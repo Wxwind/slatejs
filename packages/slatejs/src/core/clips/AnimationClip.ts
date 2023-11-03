@@ -1,5 +1,5 @@
-import { ActionClip, ActionClipJson } from './ActionClip';
-import { genUUID } from '../../utils';
+import { ActionClip, ActionClipJson } from '..';
+import { genUUID } from '@/utils';
 
 export class AnimationClip extends ActionClip {
   data: AnimationJson;
@@ -9,7 +9,10 @@ export class AnimationClip extends ActionClip {
     this.data = data;
   }
 
-  onUpdate = (time: number) => {
+  Enter: () => void = () => {};
+  Exit: () => void = () => {};
+
+  Update = (time: number) => {
     if (time < this.data.start || time > this.data.end) {
       return;
     }

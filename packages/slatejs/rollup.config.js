@@ -4,11 +4,24 @@ import url from '@rollup/plugin-url';
 import postcss from 'rollup-plugin-postcss';
 import svgr from '@svgr/rollup';
 import dts from 'rollup-plugin-dts';
+import alias from '@rollup/plugin-alias';
 
 export default [
   {
     input: 'src/index.ts',
-    plugins: [typescript(), url(), postcss({})],
+    plugins: [
+      typescript(),
+      url(),
+      postcss({}),
+      alias({
+        entries: [
+          {
+            find: '@/',
+            replacement: 'src/',
+          },
+        ],
+      }),
+    ],
     output: [
       {
         file: 'dist/cjs/index.js',
@@ -22,7 +35,20 @@ export default [
   },
   {
     input: 'src/index.ts',
-    plugins: [typescript(), dts(), postcss({})],
+    plugins: [
+      typescript(),
+      url(),
+      dts(),
+      postcss({}),
+      alias({
+        entries: [
+          {
+            find: '@/',
+            replacement: 'src/',
+          },
+        ],
+      }),
+    ],
     output: [
       {
         file: 'dist/cjs/index.d.ts',

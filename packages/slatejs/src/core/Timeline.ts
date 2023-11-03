@@ -1,19 +1,30 @@
+import { AnimationUpdatedJson } from './clips';
 import { isNil } from '../utils';
-import { AnimationClip, AnimationUpdatedJson } from './actionClip';
+import { ActionClip } from './ActionClip';
+import { CutSceneGroup } from './CutSceneGroup';
 
 /**
  * Manage resource clips and sample resouces driven by player
  */
 export class Timeline {
-  private _animations: AnimationClip[] = [];
+  private _animations: ActionClip[] = [];
+  private _viewTimeMax = 500; // max seconds could be displayed in timeline
+  private groups: CutSceneGroup[] = [];
 
   // Expose to ResoucesStore
-  public get animations(): AnimationClip[] {
+  public get animations(): ActionClip[] {
     return this._animations;
   }
 
-  update = (curTime: number) => {
-    this._animations.forEach((a) => a.onUpdate(curTime));
+  public get viewTimeMax(): number {
+    return this._viewTimeMax;
+  }
+  public set viewTimeMax(v: number) {
+    this._viewTimeMax = v;
+  }
+
+  sample = (curTime: number, prevTime: number) => {
+    this._animations.forEach((a) => a.onUpdate(curTime, prevTime));
   };
 
   findAnimation = (id: string) => {
@@ -22,7 +33,7 @@ export class Timeline {
     return anim;
   };
 
-  addAnimation = (anim: AnimationClip) => {
+  addAnimation = (anim: ActionClip) => {
     this._animations.push(anim);
   };
 
@@ -31,7 +42,7 @@ export class Timeline {
     anim.data = { ...anim.data, ...delta };
   };
 
-  removeAnimation = (anim: AnimationClip) => {
+  removeAnimation = (anim: ActionClip) => {
     const i = this._animations.indexOf(anim);
 
     if (i !== -1) {

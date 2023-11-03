@@ -1,6 +1,5 @@
-import { CutScene } from '../core';
-import { AnimationClip, ActionClip, ActionClipJson } from '../core/actionClip';
-import { deepClone } from '../utils';
+import { CutScene, ActionClip, ActionClipJson } from '@/core';
+import { deepClone } from '@/utils';
 import { StoreBase } from './StoreBase';
 
 export class SelectedResouceStore extends StoreBase<ActionClipJson> {

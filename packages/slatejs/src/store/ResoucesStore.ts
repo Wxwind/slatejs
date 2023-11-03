@@ -1,5 +1,4 @@
-import { CutScene } from '../core';
-import { AnimationClip, AnimationUpdatedJson, ActionClipJson } from '../core/actionClip';
+import { ActionClipJson, CutScene, AnimationClip, AnimationUpdatedJson } from '../core';
 import { deepClone, replaceEqualDeep } from '../utils';
 import { StoreBase } from './StoreBase';
 

@@ -1,0 +1,39 @@
+import { ActionClip } from './ActionClip';
+import { CutScene } from './CutScene';
+import { CutSceneDirector } from './CutSceneDirector';
+import { CutSceneTrack } from './CutSceneTrack';
+import { IDirectable } from './IDirectable';
+
+export abstract class CutSceneGroup implements IDirectable {
+  private _tracks: CutSceneTrack[] = [];
+  private _root: CutSceneDirector;
+
+  constructor(director: CutSceneDirector) {
+    this._root = director;
+  }
+
+  get parent() {
+    return null;
+  }
+
+  get root(): CutSceneDirector {
+    return this._root;
+  }
+
+  get startTime() {
+    return this._root?.playTimeMin || 0;
+  }
+
+  get endTime() {
+    return this._root?.playTimeMax || 0;
+  }
+
+  onInitialize: () => boolean = () => {
+    return false;
+  };
+  onEnter: () => void = () => {};
+  onUpdate: (time: number) => void = () => {};
+  onExit: () => void = () => {};
+  onReverseEnter: () => void = () => {};
+  onReverseExit: () => void = () => {};
+}

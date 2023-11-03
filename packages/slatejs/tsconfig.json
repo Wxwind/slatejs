@@ -6,7 +6,11 @@
     "rootDir": "src",
     "noEmit": true,
     "target": "es6",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["./src/**/*", "/src/assets/*"]
 }

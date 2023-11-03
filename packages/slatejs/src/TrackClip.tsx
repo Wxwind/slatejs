@@ -1,6 +1,5 @@
 import { FC, useCallback } from 'react';
-import { ActionClipJson } from './core/actionClip';
-import { CutScene } from './core';
+import { CutScene, ActionClipJson } from './core';
 import { clamp } from './utils';
 
 interface TrackBlockProps {
@@ -8,7 +7,7 @@ interface TrackBlockProps {
   resourceJSON: ActionClipJson;
 }
 
-const TrackBlock: FC<TrackBlockProps> = (props) => {
+const TrackClip: FC<TrackBlockProps> = (props) => {
   const { resourceJSON, cutScene } = props;
 
   const { scale } = cutScene.useScaleStore();
@@ -123,4 +122,4 @@ const TrackBlock: FC<TrackBlockProps> = (props) => {
   );
 };
 
-export default TrackBlock;
+export default TrackClip;

@@ -20,11 +20,11 @@ const Timeline: FC<TimelineProps> = (props) => {
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
 
-  /* FIXME: may not update while cutScene.duration update cuz cutScene.duration
+  /* FIXME: may not update while cutScene.viewTimeMax update cuz cutScene.viewTimeMax
   is external variable. */
   const timelineTrackWidth = useMemo(() => {
-    return cutScene.duration * scale;
-  }, [cutScene.duration, scale]);
+    return cutScene.viewTimeMax * scale;
+  }, [cutScene.viewTimeMax, scale]);
 
   const handleClickTimeCanvas = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
@@ -53,6 +53,7 @@ const Timeline: FC<TimelineProps> = (props) => {
     [cutScene, scale]
   );
 
+  /* FIXME: may not update cus currentTime is also an external variable */
   const updateMarks = useCallback(() => {
     const canvas = timeCanvasRef.current;
     const scroller = scrollerRef.current;
@@ -68,8 +69,8 @@ const Timeline: FC<TimelineProps> = (props) => {
 
     ctx.translate(-scroller.scrollLeft, 0);
 
-    const duration = cutScene.duration;
-    const width = duration * scale;
+    const viewTimeMax = cutScene.viewTimeMax;
+    const width = viewTimeMax * scale;
     const scale4 = scale / 4;
 
     for (let i = 0.5; i <= width; i += scale) {
@@ -98,7 +99,7 @@ const Timeline: FC<TimelineProps> = (props) => {
 
     const step = Math.max(1, Math.floor(64 / scale));
 
-    for (let i = 0; i < duration; i += step) {
+    for (let i = 0; i < viewTimeMax; i += step) {
       const minute = Math.floor(i / 60);
       const second = Math.floor(i % 60);
 
@@ -106,7 +107,7 @@ const Timeline: FC<TimelineProps> = (props) => {
 
       ctx.fillText(text, i * scale, 13);
     }
-  }, [cutScene.duration, scale]);
+  }, [cutScene.viewTimeMax, scale]);
 
   /* FIXME: may not update cus currentTime is also an external variable */
   const updateTimeMark = useCallback(() => {
