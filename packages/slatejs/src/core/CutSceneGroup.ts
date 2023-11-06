@@ -12,6 +12,14 @@ export abstract class CutSceneGroup implements IDirectable {
     this._root = director;
   }
 
+  get children(): IDirectable[] {
+    return this._tracks;
+  }
+
+  get isActive(): boolean {
+    return true;
+  }
+
   get parent() {
     return null;
   }

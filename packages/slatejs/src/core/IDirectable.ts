@@ -4,8 +4,12 @@ import { CutSceneDirector } from './CutSceneDirector';
 export interface IDirectable {
   get root(): CutSceneDirector | null;
   get parent(): IDirectable | null;
+  get children(): IDirectable[];
+
   get startTime(): number;
   get endTime(): number;
+
+  get isActive(): boolean;
 
   onInitialize: () => boolean;
 

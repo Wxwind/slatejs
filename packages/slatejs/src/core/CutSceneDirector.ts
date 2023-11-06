@@ -7,13 +7,14 @@ export enum PlayState {
 }
 
 /**
- * Mangage time and the play of timeline
+ * Play timeline in edit mode.
  */
 export class CutSceneDirector {
   private _playState: PlayState = PlayState.Stop;
 
   private _currentTime = 0;
   private _previousTime = 0;
+  private _lastStartPlayTime = 0;
 
   private _playRate = 1;
 
@@ -76,10 +77,18 @@ export class CutSceneDirector {
 
   play = () => {
     this.playState = PlayState.PlayForward;
+    this._lastStartPlayTime = this.currentTime;
   };
 
   playReverse = () => {
     this.playState = PlayState.PlayBackward;
+
+    if (this.currentTime === 0) {
+      this.currentTime = this.playTimeMax;
+      this._lastStartPlayTime = 0;
+    } else {
+      this._lastStartPlayTime = this.currentTime;
+    }
   };
 
   pause = () => {
@@ -87,15 +96,28 @@ export class CutSceneDirector {
   };
 
   stop = () => {
+    const t = this.playState !== PlayState.Stop ? this._lastStartPlayTime : 0;
+    this.timeline.sample(t);
     this.playState = PlayState.Stop;
   };
 
   tick = (deltaTime: number) => {
     if (this.playState === PlayState.Stop) return;
 
+    if (this.playState === PlayState.PlayForward && this.currentTime >= this.playTimeMax) {
+      this.stop();
+      return;
+    }
+
+    if (this.playState === PlayState.PlayBackward && this.currentTime <= 0) {
+      this.stop();
+      return;
+    }
+
     const delta = (deltaTime / 1000) * this.playRate;
-    this.previousTime = this._currentTime;
+
     this.currentTime += this.playState === PlayState.PlayForward ? delta : -delta;
-    this.timeline.sample(this.currentTime, this.previousTime);
+    this.timeline.sample(this.currentTime);
+    this.previousTime = this.currentTime;
   };
 }

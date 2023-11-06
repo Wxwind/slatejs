@@ -15,6 +15,14 @@ export abstract class ActionClip implements IDirectable {
   private _endTime = 0;
   private _parent: IDirectable;
 
+  get children(): IDirectable[] {
+    return [];
+  }
+
+  get isActive(): boolean {
+    return true;
+  }
+
   get root() {
     return this._parent.root;
   }

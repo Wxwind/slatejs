@@ -5,6 +5,14 @@ export abstract class CutSceneTrack implements IDirectable {
   private _clips: ActionClip[] = [];
   private _parent: IDirectable;
 
+  get children(): IDirectable[] {
+    return this._clips;
+  }
+
+  get isActive(): boolean {
+    return true;
+  }
+
   get parent() {
     return this._parent;
   }
