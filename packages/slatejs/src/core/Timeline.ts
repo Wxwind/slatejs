@@ -2,11 +2,10 @@ import { AnimationUpdatedJson } from './clips';
 import { isNil } from '../utils';
 import { ActionClip } from './ActionClip';
 import { CutSceneGroup } from './CutSceneGroup';
-import { EndTimePointer, IDirectableTimePointer, StartTimePointer } from './TimePointer';
-import { startTransition } from 'react';
+import { EndTimePointer, IDirectableTimePointer, StartTimePointer, UpdateTimePointer } from './TimePointer';
 
 /**
- * Manage resource clips and sample resouces driven by player
+ * Manage and sample IDirectables driven by player
  */
 export class Timeline {
   private _animations: ActionClip[] = [];
@@ -16,7 +15,7 @@ export class Timeline {
   private _curTime = 0;
 
   private _timePointers: IDirectableTimePointer[] = [];
-  private _startTimePointers: IDirectableTimePointer[] = [];
+  private _updateTimePointers: UpdateTimePointer[] = [];
 
   // Expose to ResoucesStore
   public get animations(): ActionClip[] {
@@ -54,47 +53,47 @@ export class Timeline {
     this._prevTime = this._curTime;
   };
 
-  // Initialize start time pointers bottom to top.
-  // Initialize start&end time pointers by the time pointed.
+  // Initialize update time pointers bottom to top.
+  // Initialize start&end time pointers order by the time pointed.
   // Make sure the timepointer event order is
   // group enter -> track enter -> clip enter -> clip exit -> track exit -> group exit
   private initializeTimePointers = () => {
     const timePointers: IDirectableTimePointer[] = [];
-    const startTimePointers: IDirectableTimePointer[] = [];
+    const updateTimePointer: UpdateTimePointer[] = [];
 
     for (const group of [...this._groups].reverse()) {
       if (group.isActive && group.onInitialize()) {
-        const p1 = new StartTimePointer(group);
-        timePointers.push(p1);
+        timePointers.push(new StartTimePointer(group));
 
         for (const track of [...group.children].reverse()) {
           if (track.isActive && track.onInitialize()) {
-            const p2 = new StartTimePointer(track);
-            timePointers.push(p2);
+            timePointers.push(new StartTimePointer(track));
 
             for (const clip of [...track.children].reverse()) {
               if (clip.isActive && track.onInitialize()) {
-                const p3 = new StartTimePointer(clip);
-                timePointers.push(p3);
-
-                startTimePointers.push(p3);
+                timePointers.push(new StartTimePointer(clip));
+                // -----
+                const u3 = new UpdateTimePointer(clip);
+                updateTimePointer.push(u3);
                 timePointers.push(new EndTimePointer(clip));
               }
             }
 
-            startTimePointers.push(p2);
+            const u2 = new UpdateTimePointer(track);
+            updateTimePointer.push(u2);
             timePointers.push(new EndTimePointer(track));
           }
         }
 
-        startTimePointers.push(p1);
+        const u1 = new UpdateTimePointer(group);
+        updateTimePointer.push(u1);
         timePointers.push(new EndTimePointer(group));
       }
     }
 
     timePointers.sort((p1, p2) => p1.time - p2.time);
     this._timePointers = timePointers;
-    this._startTimePointers = startTimePointers;
+    this._updateTimePointers = updateTimePointer;
   };
 
   private sampleTimepointers = (curTime: number, prevTime: number) => {
@@ -108,7 +107,7 @@ export class Timeline {
       }
     }
 
-    for (const p of this._startTimePointers) {
+    for (const p of this._updateTimePointers) {
       p.update(curTime, prevTime);
     }
   };

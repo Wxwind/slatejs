@@ -7,15 +7,12 @@ export interface IDirectableTimePointer {
   triggerForward: (curTime: number, prevTime: number) => void;
 
   triggerBackward: (curTime: number, prevTime: number) => void;
-
-  update: (curTime: number, prevTime: number) => void;
 }
 
 export class StartTimePointer implements IDirectableTimePointer {
   private _target: IDirectable;
 
   private _isTrigged: boolean;
-  private _lastStartTime: number;
 
   get target(): IDirectable {
     return this._target;
@@ -28,7 +25,6 @@ export class StartTimePointer implements IDirectableTimePointer {
   constructor(target: IDirectable) {
     this._target = target;
     this._isTrigged = false;
-    this._lastStartTime = target.startTime;
   }
 
   triggerForward = (curTime: number, prevTime: number) => {
@@ -45,14 +41,14 @@ export class StartTimePointer implements IDirectableTimePointer {
   };
 
   triggerBackward = (curTime: number, prevTime: number) => {
-    // curTime <= 0 means end play and exit cutScene controlled mode (will restore origin state)
+    // curTime <= 0 means end play and exit cutScene controlled mode (will restore to its original state)
     // for CutSceneGroup when clicking stop btn by user or playReverse() to end.
     // Q: why need 'curTime <= 0' ? Why not just 'curTime <= this.target.startTime' ?
-    // A: curTime <= this.time looks good, but this way will cause folling problems:
+    // A: curTime <= this.target.startTime will cause folling problems:
     // 1. will causes onReverseExit() in triggerBackward() will be called immediately
-    // after onEnter() in triggerForward() if curTime === this.time.
+    // after onEnter() in triggerForward() if curTime === this.target.startTime.
     // 2. will be trigged accidently. For example, clip's time is 2~5s, but we play the CutScene backward
-    // from 8s to 5s (means [8,5) exactly), onReverseExit() will raise.
+    // from 8s to 5s (means [8,5) exactly), onReverseExit() will be raised.
     // So we need <= 0 to make sure onReverseExit can be trigged for IDirectables whose start time = 0
     if (curTime < this.target.startTime || curTime <= 0) {
       if (this._isTrigged) {
@@ -61,22 +57,6 @@ export class StartTimePointer implements IDirectableTimePointer {
         this.target.onUpdate(0, IDirectableToLocalTime(this.target, prevTime));
         this.target.onReverseExit();
       }
-    }
-  };
-
-  update = (curTime: number, prevTime: number) => {
-    if (
-      curTime >= this.target.startTime &&
-      curTime < this.target.endTime &&
-      curTime > 0 &&
-      curTime < (this.target.root?.playTimeLength || Number.MAX_SAFE_INTEGER)
-    ) {
-      const delta = this.target.startTime - this._lastStartTime;
-      const localCurTime = IDirectableToLocalTime(this.target, curTime);
-      const localPrevTime = IDirectableToLocalTime(this.target, prevTime + delta);
-
-      this.target.onUpdate(localCurTime, localPrevTime);
-      this._lastStartTime = this.target.startTime;
     }
   };
 }
@@ -123,8 +103,39 @@ export class EndTimePointer implements IDirectableTimePointer {
       }
     }
   };
+}
+
+export class UpdateTimePointer {
+  private _target: IDirectable;
+
+  private _lastStartTime: number;
+
+  get target(): IDirectable {
+    return this._target;
+  }
+
+  get time(): number {
+    return this.target.endTime;
+  }
+
+  constructor(target: IDirectable) {
+    this._target = target;
+    this._lastStartTime = target.startTime;
+  }
 
   update = (curTime: number, prevTime: number) => {
-    throw new Error('EndTimePointer should never be called');
+    if (
+      curTime >= this.target.startTime &&
+      curTime < this.target.endTime &&
+      curTime > 0 &&
+      curTime < (this.target.root?.playTimeLength || Number.MAX_SAFE_INTEGER)
+    ) {
+      const delta = this.target.startTime - this._lastStartTime;
+      const localCurTime = IDirectableToLocalTime(this.target, curTime);
+      const localPrevTime = IDirectableToLocalTime(this.target, prevTime + delta);
+
+      this.target.onUpdate(localCurTime, localPrevTime);
+      this._lastStartTime = this.target.startTime;
+    }
   };
 }

@@ -1,5 +1,9 @@
 import { Timeline } from './Timeline';
 
+/**
+ * PlayState in editor mode has no state called 'paused' because
+ * 'paused' is the same as 'stopped'
+ */
 export enum PlayState {
   Stop = 'Stop',
   PlayForward = 'PlayForward',
@@ -80,7 +84,7 @@ export class CutSceneDirector {
     this._lastStartPlayTime = this.currentTime;
   };
 
-  playReverse = () => {
+  reverse = () => {
     this.playState = PlayState.PlayBackward;
 
     if (this.currentTime === 0) {

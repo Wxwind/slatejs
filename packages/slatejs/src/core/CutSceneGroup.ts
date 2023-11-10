@@ -1,5 +1,3 @@
-import { ActionClip } from './ActionClip';
-import { CutScene } from './CutScene';
 import { CutSceneDirector } from './CutSceneDirector';
 import { CutSceneTrack } from './CutSceneTrack';
 import { IDirectable } from './IDirectable';
@@ -37,7 +35,7 @@ export abstract class CutSceneGroup implements IDirectable {
   }
 
   onInitialize: () => boolean = () => {
-    return false;
+    return true;
   };
   onEnter: () => void = () => {};
   onUpdate: (time: number) => void = () => {};
