@@ -1,3 +1,4 @@
+import { Entity } from 'deer-engine';
 import { CutSceneDirector } from './CutSceneDirector';
 import { CutSceneTrack } from './CutSceneTrack';
 import { IDirectable } from './IDirectable';
@@ -5,6 +6,7 @@ import { IDirectable } from './IDirectable';
 export abstract class CutSceneGroup implements IDirectable {
   private _tracks: CutSceneTrack[] = [];
   private _root: CutSceneDirector;
+  protected abstract actor: Entity | null;
 
   constructor(director: CutSceneDirector) {
     this._root = director;

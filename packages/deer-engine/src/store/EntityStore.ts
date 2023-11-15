@@ -1,5 +1,5 @@
 import { isNil } from '@/util';
-import { CreateEntityCommand, DeerScene } from '..';
+import { CreateEntityCommand, DeerScene, DeleteEntityCommand } from '..';
 import { StoreBase } from './StoreBase';
 import { Object3D } from 'three';
 
@@ -20,15 +20,13 @@ export class EntityStore extends StoreBase<EntityStoreData> {
     //   const p = this.scene.entityManager.getEntityById(parentId);
     //   p && (parentObj = p);
     // }
-    const cmd = new CreateEntityCommand(this.scene, this.scene.scene);
+    const cmd = new CreateEntityCommand(this.scene, null, 'Object Cube');
     this.scene.commandManager.execute(cmd);
-    this.refreshData();
   };
 
-  deleteEntity = () => {
-    const cmd = new CreateEntityCommand(this.scene, this.scene.scene);
+  deleteEntity = (entityId: string) => {
+    const cmd = new DeleteEntityCommand(this.scene, entityId);
     this.scene.commandManager.execute(cmd);
-    this.refreshData();
   };
 
   refreshData: () => void = () => {

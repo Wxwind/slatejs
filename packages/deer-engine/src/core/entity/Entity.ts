@@ -2,25 +2,26 @@ import { isNil } from '@/util';
 import { Component, TransformComponent } from '../component';
 import { genUUID } from '@/util/utils';
 import { UUID_PREFIX_ENTITY } from '@/config';
-import { Object3D } from 'three';
+import { DeerScene } from '../DeerScene';
 
 export class Entity {
   id: string;
+  name: string;
   private readonly compMap = new Map<string, Component>();
   private readonly compArray: Component[] = [];
 
-  get rootComp(): TransformComponent {
-    return this.getComponentByType('Transform');
-  }
+  public readonly rootComp: TransformComponent;
 
-  constructor(parent: Object3D) {
+  constructor(name: string, parent: TransformComponent | DeerScene) {
     this.id = genUUID(UUID_PREFIX_ENTITY);
-    const transformComp = new TransformComponent(parent);
+    const transformComp = new TransformComponent(this, parent);
     this.addComponent(transformComp);
+    this.rootComp = transformComp;
+    this.name = name;
   }
 
-  addComponentByNew = <T extends Component>(compCtor: new () => T) => {
-    const comp = new compCtor();
+  addComponentByNew = <T extends Component>(compCtor: new (entity: Entity) => T) => {
+    const comp = new compCtor(this);
     this.compMap.set(comp.id, comp);
     this.compArray.push(comp);
   };
@@ -81,7 +82,14 @@ export class Entity {
   };
 
   onDestory = () => {
-    this.compArray.forEach((a) => a.onDestory());
+    for (const c of this.compArray) {
+      if (c === this.rootComp) {
+        continue;
+      }
+      c.onDestory();
+    }
+    this.rootComp.onDestory();
+
     this.compMap.clear();
     this.compArray.length = 0;
   };

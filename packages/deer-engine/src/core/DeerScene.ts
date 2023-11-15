@@ -6,7 +6,7 @@ import { CommandStack } from '@/packages/command';
 import { EntityStore } from '@/store/EntityStore';
 import { CommandManager } from './manager';
 import { EntityManager } from './manager/EntityManager';
-import { Entity } from './entity';
+import { TransformComponent } from './component';
 
 export class DeerScene {
   scene: Scene;
@@ -88,6 +88,10 @@ export class DeerScene {
   };
 
   saveScene = () => {};
+
+  addChild = (trans: TransformComponent) => {
+    this.scene.add(trans.rootObj);
+  };
 
   dispose = () => {
     const clearMatAndGeo = (obj: THREE.Mesh) => {

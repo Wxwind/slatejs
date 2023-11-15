@@ -8,20 +8,17 @@ import { CommandId } from './type';
 export class DeleteEntityCommand implements ICommand {
   id: CommandId = 'DeleteEntity';
 
-  private obj: THREE.Mesh | null = null;
+  constructor(private scene: DeerScene, private entityId: string) {}
 
-  constructor(private scene: DeerScene, private parent: THREE.Object3D) {}
-
-  execute: () => void = () => {};
+  execute: () => void = () => {
+    this.scene.entityManager.removeEntityById(this.entityId);
+  };
 
   undo: () => void = () => {
-    if (isNil(this.obj)) {
-      console.warn("obj doesn't exist");
-      return;
-    }
+    // TODO: undo delete entity
   };
 
   toString: () => string = () => {
-    return `CreateCommand: obj = ${this.obj?.name || '<missing>'}, parent = ${this.parent?.name || '<missing>'}`;
+    return `DeleteEntityCommand: entityId = ${this.entityId}`;
   };
 }

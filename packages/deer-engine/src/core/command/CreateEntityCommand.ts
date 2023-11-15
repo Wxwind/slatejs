@@ -1,26 +1,21 @@
 import { ICommand } from '@/packages/command';
 import { isNil } from '@/util';
-import * as THREE from 'three';
-import { DeerEngine } from '../DeerEngine';
 import { DeerScene } from '../DeerScene';
 import { CommandId } from './type';
+import { Entity } from '../entity';
+import { MeshComponent, TransformComponent } from '../component';
 
 export class CreateEntityCommand implements ICommand {
   id: CommandId = 'CreateEntity';
 
-  private obj: THREE.Mesh | null = null;
+  private obj: Entity | null = null;
 
-  constructor(private scene: DeerScene, private parent: THREE.Object3D) {}
+  constructor(private scene: DeerScene, private parent: TransformComponent | string | null, private name: string) {}
 
   execute: () => void = () => {
-    const geometry = new THREE.BoxGeometry();
-    const mat = new THREE.MeshStandardMaterial();
-
-    const cube = new THREE.Mesh(geometry, mat);
-    cube.updateMatrix();
+    const cube = this.scene.entityManager.createEntity(this.name, this.parent);
+    cube.addComponentByNew(MeshComponent);
     this.obj = cube;
-    this.parent.add(cube);
-    this.scene.entityStore.refreshData();
   };
 
   undo: () => void = () => {
@@ -28,16 +23,19 @@ export class CreateEntityCommand implements ICommand {
       console.warn("obj doesn't exist");
       return;
     }
-    if (Array.isArray(this.obj.material)) {
-      this.obj.material.forEach((m) => m.dispose());
-    } else {
-      this.obj.material.dispose();
+    this.obj.onDestory();
+  };
+
+  private getParentName = () => {
+    if (typeof this.parent === 'string') {
+      return this.scene.entityManager.getEntityById(this.parent);
     }
-    this.obj.geometry.dispose();
-    this.parent.remove(this.obj);
+    return this.parent?.entity.name;
   };
 
   toString: () => string = () => {
-    return `CreateCommand: obj = ${this.obj?.name || '<missing>'}, parent = ${this.parent?.name || '<missing>'}`;
+    return `CreateEntityCommand: obj = ${this.obj?.name || '<missing>'}, parent = ${
+      this.getParentName() || '<missing>'
+    }`;
   };
 }

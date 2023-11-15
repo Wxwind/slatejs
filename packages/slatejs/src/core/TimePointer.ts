@@ -47,8 +47,8 @@ export class StartTimePointer implements IDirectableTimePointer {
     // A: curTime <= this.target.startTime will cause folling problems:
     // 1. will causes onReverseExit() in triggerBackward() will be called immediately
     // after onEnter() in triggerForward() if curTime === this.target.startTime.
-    // 2. will be trigged accidently. For example, clip's time is 2~5s, but we play the CutScene backward
-    // from 8s to 5s (means [8,5) exactly), onReverseExit() will be raised.
+    // 2. will be trigged accidently. For example, clip's time is 5~8s, but we play the CutScene backward
+    // from 5s to 2s (means [5,2) exactly), onReverseExit() will be raised.
     // So we need <= 0 to make sure onReverseExit can be trigged for IDirectables whose start time = 0
     if (curTime < this.target.startTime || curTime <= 0) {
       if (this._isTrigged) {
