@@ -7,3 +7,4 @@ export * from './CutSceneDirector';
 export * from './Timeline';
 export * from './clips';
 export * from './TimePointer';
+export * from './ISerializable';

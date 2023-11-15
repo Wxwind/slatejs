@@ -2,14 +2,21 @@ import { Entity } from 'deer-engine';
 import { CutSceneDirector } from './CutSceneDirector';
 import { CutSceneTrack } from './CutSceneTrack';
 import { IDirectable } from './IDirectable';
+import { genUUID } from '@/utils';
 
 export abstract class CutSceneGroup implements IDirectable {
   private _tracks: CutSceneTrack[] = [];
   private _root: CutSceneDirector;
+  private _id: string;
   protected abstract actor: Entity | null;
 
   constructor(director: CutSceneDirector) {
     this._root = director;
+    this._id = genUUID('csg');
+  }
+
+  get id(): string {
+    return this._id;
   }
 
   get children(): IDirectable[] {

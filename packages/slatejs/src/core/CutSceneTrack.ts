@@ -1,9 +1,15 @@
+import { genUUID } from '@/utils';
 import { ActionClip } from './ActionClip';
 import { IDirectable } from './IDirectable';
 
 export abstract class CutSceneTrack implements IDirectable {
   private _clips: ActionClip[] = [];
   private _parent: IDirectable;
+  private _id: string;
+
+  get id(): string {
+    return this._id;
+  }
 
   get children(): IDirectable[] {
     return this._clips;
@@ -31,6 +37,7 @@ export abstract class CutSceneTrack implements IDirectable {
 
   constructor(parent: IDirectable) {
     this._parent = parent;
+    this._id = genUUID('cst');
   }
 
   onInitialize: () => boolean = () => {

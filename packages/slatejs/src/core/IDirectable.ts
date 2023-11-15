@@ -10,6 +10,7 @@ export interface IDirectable {
   get endTime(): number;
 
   get isActive(): boolean;
+  get id(): string;
 
   onInitialize: () => boolean;
 

@@ -25,7 +25,7 @@ export class ResoucesStore extends StoreBase<ActionClipJson[]> {
   };
 
   protected refreshData = () => {
-    const newData = this.cutScene.timeline.animations.map((a) => deepClone(a.data));
+    const newData = this.cutScene.timeline.groups.map((a) => deepClone(a));
     const resData = replaceEqualDeep(this.oldData, newData);
     this.oldData = this.data;
     this.data = resData;

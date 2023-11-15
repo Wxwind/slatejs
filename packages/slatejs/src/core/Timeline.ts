@@ -3,11 +3,12 @@ import { isNil } from '../utils';
 import { ActionClip } from './ActionClip';
 import { CutSceneGroup } from './CutSceneGroup';
 import { EndTimePointer, IDirectableTimePointer, StartTimePointer, UpdateTimePointer } from './TimePointer';
+import { ISerializable } from './ISerializable';
 
 /**
  * Manage and sample IDirectables driven by player
  */
-export class Timeline {
+export class Timeline implements ISerializable {
   private _animations: ActionClip[] = [];
   private _viewTimeMax = 500; // max seconds could be displayed in timeline
   private _groups: CutSceneGroup[] = [];
@@ -18,8 +19,8 @@ export class Timeline {
   private _updateTimePointers: UpdateTimePointer[] = [];
 
   // Expose to ResoucesStore
-  public get animations(): ActionClip[] {
-    return this._animations;
+  public get groups(): CutSceneGroup[] {
+    return this._groups;
   }
 
   public get viewTimeMax(): number {
@@ -110,6 +111,16 @@ export class Timeline {
     for (const p of this._updateTimePointers) {
       p.update(curTime, prevTime);
     }
+  };
+
+  toJson: () => string = () => {
+    // TODO: save and load json
+
+    for (const group of this._groups) {
+      // for (const track of group.) {
+      // }
+    }
+    return '';
   };
 
   findAnimation = (id: string) => {

@@ -1,3 +1,4 @@
+import { genUUID } from '@/utils';
 import { CutSceneDirector } from './CutSceneDirector';
 import { IDirectable } from './IDirectable';
 
@@ -14,6 +15,11 @@ export abstract class ActionClip implements IDirectable {
   private _startTime = 0;
   private _endTime = 0;
   private _parent: IDirectable;
+  private _id: string;
+
+  get id(): string {
+    return this._id;
+  }
 
   get children(): IDirectable[] {
     return [];
@@ -41,6 +47,7 @@ export abstract class ActionClip implements IDirectable {
 
   constructor(parent: IDirectable) {
     this._parent = parent;
+    this._id = genUUID('csc');
   }
 
   onInitialize: () => boolean = () => {
@@ -52,5 +59,5 @@ export abstract class ActionClip implements IDirectable {
   onReverseEnter: () => void = () => {};
   onReverseExit: () => void = () => {};
 
-  abstract serialize(): Record<string, unknown>;
+  abstract serialize: () => string;
 }
