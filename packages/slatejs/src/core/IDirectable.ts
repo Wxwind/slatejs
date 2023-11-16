@@ -11,6 +11,7 @@ export interface IDirectable {
 
   get isActive(): boolean;
   get id(): string;
+  get name(): string;
 
   onInitialize: () => boolean;
 

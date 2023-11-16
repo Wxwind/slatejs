@@ -1,21 +1,19 @@
 import { genUUID } from '@/utils';
-import { CutSceneDirector } from './CutSceneDirector';
 import { IDirectable } from './IDirectable';
-
-export type ActionClipJson = {
-  start: number;
-  end: number;
-  id: string;
-  layerId: number;
-  name: string;
-};
+import { ActionClipData, ClipType } from './type';
 
 export abstract class ActionClip implements IDirectable {
-  abstract data: ActionClipJson;
+  abstract data: ActionClipData;
   private _startTime = 0;
   private _endTime = 0;
   private _parent: IDirectable;
   private _id: string;
+
+  abstract get type(): ClipType;
+
+  get name(): string {
+    return this.data.name;
+  }
 
   get id(): string {
     return this._id;
@@ -58,6 +56,4 @@ export abstract class ActionClip implements IDirectable {
   onExit: () => void = () => {};
   onReverseEnter: () => void = () => {};
   onReverseExit: () => void = () => {};
-
-  abstract serialize: () => string;
 }

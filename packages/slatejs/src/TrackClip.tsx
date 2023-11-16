@@ -1,10 +1,10 @@
 import { FC, useCallback } from 'react';
-import { CutScene, ActionClipJson } from './core';
+import { CutScene, ActionClipData } from './core';
 import { clamp } from './utils';
 
 interface TrackBlockProps {
   cutScene: CutScene;
-  resourceJSON: ActionClipJson;
+  resourceJSON: ActionClipData;
 }
 
 const TrackClip: FC<TrackBlockProps> = (props) => {
@@ -13,7 +13,7 @@ const TrackClip: FC<TrackBlockProps> = (props) => {
   const { scale } = cutScene.useScaleStore();
 
   const handleClickBlock = () => {
-    cutScene.selectAnimation(resourceJSON.id);
+    cutScene.selectObject(resourceJSON.id);
   };
 
   // drag block

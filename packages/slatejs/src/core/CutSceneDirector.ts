@@ -1,4 +1,10 @@
-import { Timeline } from './Timeline';
+import { SLATEJS_VERSION } from '@/config';
+import { isNil } from '@/utils';
+import { ActionClip } from './ActionClip';
+import { CutSceneGroup } from './CutSceneGroup';
+import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
+import { ActorGroup } from './groups';
+import { CutSceneData, GroupData, TrackData, ActionClipData, GroupType } from './type';
 
 /**
  * PlayState in editor mode has no state called 'paused' because
@@ -77,7 +83,27 @@ export class CutSceneDirector {
     return this.playTimeMax - this.playTimeMin;
   }
 
-  constructor(private timeline: Timeline) {}
+  private _viewTimeMax = 500; // max seconds could be displayed in timeline
+  private _groups: CutSceneGroup[] = [];
+
+  private _timePointers: IDirectableTimePointer[] = [];
+  private _updateTimePointers: UpdateTimePointer[] = [];
+
+  // Expose to ResoucesStore
+  public get groups(): CutSceneGroup[] {
+    return this._groups;
+  }
+
+  public get viewTimeMax(): number {
+    return this._viewTimeMax;
+  }
+  public set viewTimeMax(v: number) {
+    this._viewTimeMax = v;
+  }
+
+  public get curTime(): number {
+    return this._currentTime;
+  }
 
   play = () => {
     this.playState = PlayState.PlayForward;
@@ -101,7 +127,7 @@ export class CutSceneDirector {
 
   stop = () => {
     const t = this.playState !== PlayState.Stop ? this._lastStartPlayTime : 0;
-    this.timeline.sample(t);
+    this.sample(t);
     this.playState = PlayState.Stop;
   };
 
@@ -121,7 +147,176 @@ export class CutSceneDirector {
     const delta = (deltaTime / 1000) * this.playRate;
 
     this.currentTime += this.playState === PlayState.PlayForward ? delta : -delta;
-    this.timeline.sample(this.currentTime);
+    this.sample(this.currentTime);
     this.previousTime = this.currentTime;
+  };
+
+  private sample = (curTime: number) => {
+    this._currentTime = curTime;
+
+    if (this._previousTime === this._currentTime) {
+      return;
+    }
+
+    // init
+    if (this._currentTime > 0 && this._previousTime === 0) {
+      this.initializeTimePointers();
+    }
+
+    // sample
+    if (this._timePointers.length > 0) {
+      this.sampleTimepointers(this._currentTime, this._previousTime);
+    }
+
+    this._previousTime = this._currentTime;
+  };
+
+  // Initialize update time pointers bottom to top.
+  // Initialize start&end time pointers order by the time pointed.
+  // Make sure the timepointer event order is
+  // group enter -> track enter -> clip enter -> clip exit -> track exit -> group exit
+  private initializeTimePointers = () => {
+    const timePointers: IDirectableTimePointer[] = [];
+    const updateTimePointer: UpdateTimePointer[] = [];
+
+    for (const group of [...this._groups].reverse()) {
+      if (group.isActive && group.onInitialize()) {
+        timePointers.push(new StartTimePointer(group));
+
+        for (const track of [...group.children].reverse()) {
+          if (track.isActive && track.onInitialize()) {
+            timePointers.push(new StartTimePointer(track));
+
+            for (const clip of [...track.children].reverse()) {
+              if (clip.isActive && track.onInitialize()) {
+                timePointers.push(new StartTimePointer(clip));
+                // -----
+                const u3 = new UpdateTimePointer(clip);
+                updateTimePointer.push(u3);
+                timePointers.push(new EndTimePointer(clip));
+              }
+            }
+
+            const u2 = new UpdateTimePointer(track);
+            updateTimePointer.push(u2);
+            timePointers.push(new EndTimePointer(track));
+          }
+        }
+
+        const u1 = new UpdateTimePointer(group);
+        updateTimePointer.push(u1);
+        timePointers.push(new EndTimePointer(group));
+      }
+    }
+
+    timePointers.sort((p1, p2) => p1.time - p2.time);
+    this._timePointers = timePointers;
+    this._updateTimePointers = updateTimePointer;
+  };
+
+  private sampleTimepointers = (curTime: number, prevTime: number) => {
+    if (curTime > prevTime) {
+      for (const p of this._timePointers) {
+        p.triggerForward(curTime, prevTime);
+      }
+    } else if (curTime < prevTime) {
+      for (const p of this._timePointers) {
+        p.triggerBackward(curTime, prevTime);
+      }
+    }
+
+    for (const p of this._updateTimePointers) {
+      p.update(curTime, prevTime);
+    }
+  };
+
+  toJsonObject: () => CutSceneData = () => {
+    // TODO: save and load json
+    const groups: GroupData[] = [];
+
+    for (const group of this._groups) {
+      const tracks: TrackData[] = [];
+
+      for (const track of group.children) {
+        const clips: ActionClipData[] = [];
+
+        for (const clip of track.children) {
+          const actionClip = clip as ActionClip;
+          clips.push(actionClip.data);
+        }
+
+        const trackData: TrackData = {
+          id: track.id,
+          name: track.name,
+          children: clips,
+        };
+        tracks.push(trackData);
+      }
+
+      const groupsData: GroupData = {
+        id: group.id,
+        name: group.name,
+        entityId: group.actor?.id,
+        children: tracks,
+      };
+      groups.push(groupsData);
+    }
+
+    const cutSceneData: CutSceneData = {
+      version: SLATEJS_VERSION,
+      data: groups,
+    };
+    return cutSceneData;
+  };
+
+  toJson: () => string = () => {
+    return JSON.stringify(this.toJsonObject());
+  };
+
+  parseJson = (data: string) => {
+    const d = JSON.parse(data) as CutSceneData;
+    // TODO: parse json
+  };
+
+  findGroup = (groupId: string) => {
+    return this._groups.find((a) => a.id === groupId);
+  };
+
+  addGroup = (type: GroupType) => {
+    let newGroup = null;
+    switch (type) {
+      case 'Actor':
+        newGroup = new ActorGroup(this);
+        break;
+
+      default:
+        break;
+    }
+
+    if (isNil(newGroup)) {
+      console.error(`can not add group of type ${type}`);
+      return;
+    }
+
+    this._groups.push(newGroup);
+    return newGroup;
+  };
+
+  removeGroup = (groupId: string) => {
+    const index = this._groups.findIndex((a) => a.id === groupId);
+    if (isNil(index)) {
+      console.log(`can not remove group(id = '${groupId}')`);
+      return;
+    }
+
+    this._groups.splice(index, 1);
+  };
+
+  findTrack = (groupId: string, trackId: string) => {
+    return this.findGroup(groupId)?.findTrack(trackId);
+  };
+
+  findClip = (groupId: string, trackId: string, clipId: string) => {
+    return this.findGroup(groupId)?.findTrack(trackId)?.findClip(clipId);
   };
 }

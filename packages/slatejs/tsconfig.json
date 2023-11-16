@@ -3,11 +3,12 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["ESNext", "DOM"],
-    "rootDir": "src",
+    "rootDir": ".",
     "noEmit": true,
     "target": "es6",
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "resolveJsonModule": true,
     "paths": {
       "@/*": ["src/*"]
     }

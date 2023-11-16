@@ -1,19 +1,19 @@
-import { CutScene, ActionClip, ActionClipJson } from '@/core';
+import { CutScene, IDirectable } from '@/core';
 import { deepClone } from '@/utils';
 import { StoreBase } from './StoreBase';
 
-export class SelectedResouceStore extends StoreBase<ActionClipJson> {
+export class SelectedResouceStore extends StoreBase<IDirectable> {
   constructor(private cutScene: CutScene) {
     super();
   }
 
   selectResourceClip = (id: string) => {
-    this.cutScene.selectAnimation(id);
+    this.cutScene.selectObject(id);
     this.refreshData();
   };
 
   protected refreshData = () => {
-    this.data = deepClone(this.cutScene.selectedAnim?.data);
+    this.data = this.cutScene.selectedObject ? deepClone(this.cutScene.selectedObject) : undefined;
     this.emit();
   };
 }

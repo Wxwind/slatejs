@@ -11,7 +11,7 @@ export interface TimelineProps {
 const Timeline: FC<TimelineProps> = (props) => {
   const { cutScene } = props;
   const signals = cutScene.signals;
-  const player = cutScene.player;
+  const player = cutScene.director;
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);

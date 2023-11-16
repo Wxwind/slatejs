@@ -4,7 +4,7 @@ export * from './CutSceneTrack';
 export * from './CutSceneGroup';
 export * from './IDirectable';
 export * from './CutSceneDirector';
-export * from './Timeline';
 export * from './clips';
 export * from './TimePointer';
 export * from './ISerializable';
+export * from './type';

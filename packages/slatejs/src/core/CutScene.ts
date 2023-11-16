@@ -1,12 +1,12 @@
-import { Timeline } from './Timeline';
 import { PlayState, CutSceneDirector } from './CutSceneDirector';
 import { ResoucesStore, SelectedResouceStore, createScaleStore } from '../store';
 import { Signal } from '../signal';
 import { ActionClip } from './ActionClip';
+import { IDirectable } from './IDirectable';
 
 export class CutScene {
   // bridge between cutscene core and cutscene ui.
-  // TODO: may replace s external store.
+  // TODO: may replace with external store.
   readonly signals = {
     editorCleared: new Signal(),
 
@@ -23,13 +23,12 @@ export class CutScene {
     windowResized: new Signal(),
   };
 
-  readonly timeline = new Timeline();
-  readonly player = new CutSceneDirector(this.timeline);
+  readonly director = new CutSceneDirector();
 
   private prevTime = 0;
 
   // export to SelectedResouceStore
-  selectedAnim: ActionClip | undefined;
+  selectedObject: IDirectable | undefined;
 
   // store used only by react, expose internal (= cutscene core) apis and datas (sync data from core to store itself)
   readonly resourcesStore = new ResoucesStore(this);
@@ -39,7 +38,7 @@ export class CutScene {
   readonly useScaleStore = createScaleStore();
 
   public get viewTimeMax(): number {
-    return this.timeline.viewTimeMax;
+    return this.director.viewTimeMax;
   }
 
   constructor() {
@@ -53,9 +52,9 @@ export class CutScene {
   };
 
   private animate = (time: number) => {
-    this.player.tick(time - this.prevTime);
-    if (this.player.playState !== PlayState.Stop) {
-      this.signals.timeChanged.emit(this.player.currentTime);
+    this.director.tick(time - this.prevTime);
+    if (this.director.playState !== PlayState.Stop) {
+      this.signals.timeChanged.emit(this.director.currentTime);
     }
 
     this.prevTime = time;
@@ -63,31 +62,36 @@ export class CutScene {
   };
 
   isPlaying = () => {
-    return this.player.playState;
+    return this.director.playState;
   };
 
   play = () => {
-    this.player.play();
+    this.director.play();
     this.signals.playingChanged.emit(true);
   };
 
   pause = () => {
-    this.player.pause();
+    this.director.pause();
     this.signals.playingChanged.emit(false);
   };
 
   setTime = (time: number) => {
-    this.player.currentTime = time;
-    this.signals.timeChanged.emit(this.player.currentTime);
+    this.director.currentTime = time;
+    this.signals.timeChanged.emit(this.director.currentTime);
   };
 
-  selectAnimation = (animId: string) => {
-    const anim = this.timeline.animations.find((a) => a.data.id === animId);
-    if (anim === this.selectedAnim) return;
-    this.selectedAnim = anim;
+  selectObject = (groupid: string) => {
+    // FIXME
+    const obj = this.director.findGroup(groupid);
+    if (obj === this.selectedObject) return;
+    this.selectedObject = obj;
   };
 
-  toJson = () => {};
+  toJson = () => {
+    return this.director.toJson();
+  };
 
-  parseJson = () => {};
+  parseJson = (json: string) => {
+    this.director.parseJson(json);
+  };
 }

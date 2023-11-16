@@ -2,24 +2,24 @@ import { ActionClip, IDirectable } from '..';
 import { genUUID } from '@/utils';
 import { ActionClipData, ClipType } from '../type';
 
-export class AnimationClip extends ActionClip {
-  data: AnimationClipData;
+export class TransformClip extends ActionClip {
+  data: TransformClipData;
 
   get type(): ClipType {
     return 'Animation';
   }
 
-  constructor(parent: IDirectable, data: AnimationClipData) {
+  constructor(parent: IDirectable, data: TransformClipData) {
     super(parent);
     this.data = data;
   }
 
   static construct(parent: IDirectable, name: string, start: number, end: number, layerId: string) {
     const id = genUUID();
-    return new AnimationClip(parent, { id, name, start, end, layerId });
+    return new TransformClip(parent, { id, name, start, end, layerId });
   }
 }
 
-export interface AnimationClipData extends ActionClipData {}
+export interface TransformClipData extends ActionClipData {}
 
-export type UpdateAnimationDataDto = Partial<Omit<AnimationClipData, 'id'>>;
+export type UpdateTransformClipDataDto = Partial<Omit<TransformClipData, 'id'>>;

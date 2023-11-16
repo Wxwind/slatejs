@@ -20,7 +20,7 @@ const Controls: FC<ControlsProps> = (props) => {
           alt=""
           src={PrevSVG}
           onClick={() => {
-            cutScene.setTime(cutScene.player.currentTime - 1);
+            cutScene.setTime(cutScene.director.currentTime - 1);
           }}
         />
         <img
@@ -34,7 +34,7 @@ const Controls: FC<ControlsProps> = (props) => {
           alt=""
           src={NextSVG}
           onClick={() => {
-            cutScene.setTime(cutScene.player.currentTime + 1);
+            cutScene.setTime(cutScene.director.currentTime + 1);
           }}
         />
       </div>
