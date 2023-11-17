@@ -1,4 +1,5 @@
-import { Cutscene, AnimationClip, UpdateAnimationDataDto, CutsceneData, ClipType, ActionClip } from '../core';
+import { DeerEngine } from 'deer-engine';
+import { Cutscene, CutsceneData, ClipType, ActionClip } from '../core';
 import { deepClone, isNil, replaceEqualDeep } from '../utils';
 import { StoreBase } from './StoreBase';
 
@@ -29,6 +30,19 @@ export class CutsceneDataStore extends StoreBase<CutsceneData> {
 
   removeClip = (groupId: string, trackId: string, clipId: string) => {
     this.cutscene.director.findTrack(groupId, trackId)?.removeClip(clipId);
+    this.refreshData();
+  };
+
+  addGroup = (entityId: string) => {
+    const group = this.cutscene.director.addGroup('Actor');
+    if (isNil(group)) return;
+
+    group.actor = DeerEngine.instance.activeScene?.entityManager.getEntityById(entityId);
+    this.refreshData();
+  };
+
+  removeGroup = (entityId: string) => {
+    this.cutscene.director.removeGroup(entityId);
     this.refreshData();
   };
 

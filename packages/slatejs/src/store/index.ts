@@ -1,5 +1,5 @@
 export * from './StoreBase';
-export * from './ResoucesStore';
+export * from './CutsceneDataStore';
 export * from './SelectedResourceStore';
 
 export * from './InternalStore';

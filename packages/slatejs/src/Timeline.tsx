@@ -28,6 +28,8 @@ export const Timeline: FC<TimelineProps> = (props) => {
     return cutscene.viewTimeMax * scale;
   }, [cutscene.viewTimeMax, scale]);
 
+  console.log('timelineTrackWidth', scale, cutscene.viewTimeMax);
+
   const cutsceneData = useStore(cutscene.cutsceneDataStore);
 
   const handleClickTimeCanvas = useCallback(
@@ -188,9 +190,11 @@ export const Timeline: FC<TimelineProps> = (props) => {
     <div className="timeline" ref={timelineRef}>
       <canvas height={32} className="timeline-time-canvas" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
       <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
-        {cutsceneData?.data.map((a) => {
-          return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} cutscene={cutscene} data={a} />;
-        })}
+        <div style={{ width: `${timelineTrackWidth}px` }}>
+          {cutsceneData?.data.map((a) => {
+            return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} cutscene={cutscene} data={a} />;
+          })}
+        </div>
       </div>
       <div className="timeline-timeMark" style={{ left: timeMarkLeft }}>
         <TimeMarkIcon />

@@ -10,7 +10,7 @@ export abstract class CutsceneGroup implements IDirectable {
   private _tracks: CutsceneTrack[] = [];
   private _root: CutsceneDirector;
   private _id: string;
-  protected abstract _actor: Entity | null;
+  protected abstract _actor: Entity | undefined;
 
   constructor(director: CutsceneDirector) {
     this._root = director;
@@ -49,6 +49,10 @@ export abstract class CutsceneGroup implements IDirectable {
 
   get actor() {
     return this._actor;
+  }
+
+  set actor(value: Entity | undefined) {
+    this._actor = value;
   }
 
   onInitialize: () => boolean = () => {

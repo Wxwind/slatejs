@@ -1,18 +1,19 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
-import { getScene } from '@/api';
+import { getActiveScene, getEngineApi } from '@/api';
+import { transformKeymap } from './keymap';
 
 export const Header: FC = () => {
   const handleCreateEntity = () => {
-    getScene()?.entityStore.createEntity();
+    getActiveScene()?.entityStore.createEntity();
   };
 
   const handleRedo = () => {
-    getScene()?.commandManager.redo();
+    getEngineApi()?.redo();
   };
 
   const handleUndo = () => {
-    getScene()?.commandManager.undo();
+    getEngineApi()?.undo();
   };
 
   return (
@@ -29,7 +30,7 @@ export const Header: FC = () => {
             alignOffset={-3}
           >
             <Menubar.Item className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400">
-              New Project <div className="ml-auto pl-5">⌘ N</div>
+              New Project <div className="ml-auto pl-5">{transformKeymap('shift n')}</div>
             </Menubar.Item>
             <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
           </Menubar.Content>
@@ -51,13 +52,13 @@ export const Header: FC = () => {
               className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
               onSelect={handleUndo}
             >
-              Undo <div className="ml-auto pl-5">⌘ Z</div>
+              Undo <div className="ml-auto pl-5">{transformKeymap('shift z')}</div>
             </Menubar.Item>
             <Menubar.Item
               className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
               onSelect={handleRedo}
             >
-              Redo <div className="ml-auto pl-5">⌘ ⇧ Z</div>
+              Redo <div className="ml-auto pl-5">{transformKeymap('shift ctrl z')}</div>
             </Menubar.Item>
             <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
           </Menubar.Content>

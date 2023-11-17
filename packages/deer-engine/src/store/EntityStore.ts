@@ -1,11 +1,10 @@
-import { isNil } from '@/util';
 import { CreateEntityCommand, DeerScene, DeleteEntityCommand } from '..';
 import { StoreBase } from './StoreBase';
-import { Object3D } from 'three';
 
 export type EntityStoreData = {
   data: unknown;
-  createEntity: () => void;
+  createEntity: (parentId?: string | null) => void;
+  deleteEntity: (entityId: string) => void;
 };
 
 export class EntityStore extends StoreBase<EntityStoreData> {
@@ -14,13 +13,7 @@ export class EntityStore extends StoreBase<EntityStoreData> {
   }
 
   createEntity = (parentId: string | null = null) => {
-    // TODO: support set parent
-    // let parentObj: Object3D = this.scene.scene;
-    // if (!isNil(parentId)) {
-    //   const p = this.scene.entityManager.getEntityById(parentId);
-    //   p && (parentObj = p);
-    // }
-    const cmd = new CreateEntityCommand(this.scene, null, 'Object Cube');
+    const cmd = new CreateEntityCommand(this.scene, parentId, 'Object Cube');
     this.scene.commandManager.execute(cmd);
   };
 
@@ -30,7 +23,7 @@ export class EntityStore extends StoreBase<EntityStoreData> {
   };
 
   refreshData: () => void = () => {
-    this.data = { data: null, createEntity: this.createEntity };
+    this.data = { data: null, createEntity: this.createEntity, deleteEntity: this.deleteEntity };
     this.emit();
   };
 }

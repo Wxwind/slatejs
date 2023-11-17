@@ -4,7 +4,8 @@ import { FC, useEffect } from 'react';
 
 export const SceneCanvas: FC = (props) => {
   useEffect(() => {
-    DeerEngine.instance.createScene(DEER_ENGINE_SCENE, '/hdr/default.hdr');
+    const scene = DeerEngine.instance.createScene(DEER_ENGINE_SCENE, '/hdr/default.hdr');
+    DeerEngine.instance.activeScene = scene;
     return () => {
       DeerEngine.instance.deleteScene(DEER_ENGINE_SCENE);
     };

@@ -6,9 +6,20 @@ export class DeerEngine {
 
   private sceneMap = new Map<string, DeerScene>();
 
+  private _activeScene: DeerScene | null = null;
+
+  public get activeScene(): DeerScene | null {
+    return this._activeScene;
+  }
+
+  public set activeScene(v: DeerScene | null) {
+    this._activeScene = v;
+  }
+
   createScene = (containerId: string, defaulteHDRUrl: string) => {
     const scene = new DeerScene(containerId, defaulteHDRUrl);
     this.sceneMap.set(containerId, scene);
+    return scene;
   };
 
   getScene = (id: string) => {
