@@ -10,6 +10,16 @@ import json from '@rollup/plugin-json';
 export default [
   {
     input: 'src/index.ts',
+    output: [
+      {
+        file: 'dist/cjs/index.js',
+        format: 'cjs',
+      },
+      {
+        file: 'dist/es/index.js',
+        format: 'es',
+      },
+    ],
     plugins: [
       typescript(),
       json(),
@@ -24,19 +34,21 @@ export default [
         ],
       }),
     ],
-    output: [
-      {
-        file: 'dist/cjs/index.js',
-        format: 'cjs',
-      },
-      {
-        file: 'dist/es/index.js',
-        format: 'es',
-      },
-    ],
   },
   {
     input: 'src/index.ts',
+    output: [
+      {
+        file: 'dist/cjs/index.d.ts',
+        format: 'cjs',
+        sourcemap: true,
+      },
+      {
+        file: 'dist/es/index.d.ts',
+        format: 'es',
+        sourcemap: true,
+      },
+    ],
     plugins: [
       typescript(),
       url(),
@@ -51,18 +63,6 @@ export default [
           },
         ],
       }),
-    ],
-    output: [
-      {
-        file: 'dist/cjs/index.d.ts',
-        format: 'cjs',
-        sourcemap: true,
-      },
-      {
-        file: 'dist/es/index.d.ts',
-        format: 'es',
-        sourcemap: true,
-      },
     ],
   },
 ];

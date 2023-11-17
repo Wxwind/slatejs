@@ -2,6 +2,9 @@
 const rollup = require('rollup');
 const typescript = require('@rollup/plugin-typescript');
 const alias = require('@rollup/plugin-alias');
+const json = require('@rollup/plugin-json');
+const url = require('@rollup/plugin-url');
+const postcss = require('rollup-plugin-postcss');
 
 const watchOptions = {
   input: 'src/index.ts',
@@ -17,6 +20,9 @@ const watchOptions = {
   ],
   plugins: [
     typescript(),
+    json(),
+    url(),
+    postcss({}),
     alias({
       entries: [
         {
