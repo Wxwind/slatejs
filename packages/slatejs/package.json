@@ -3,19 +3,20 @@
   "version": "0.0.1",
   "description": "cinematic timeline editor for web",
   "main": "dist/cjs/index.js",
-  "module": "src/index.ts",
+  "module": "dist/es/index.js",
   "types": "dist/es/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/es/index.d.ts",
-      "import": "./src/index.ts",
+      "import": "./dist/es/index.js",
       "require": "./dist/cjs/index.js"
     }
   },
   "type": "module",
   "scripts": {
     "build": "rollup --config",
-    "lint": "tsc -p ./tsconfig.json"
+    "lint": "tsc -p ./tsconfig.json",
+    "watch": "node scripts/watch.cjs"
   },
   "keywords": [
     "slate",

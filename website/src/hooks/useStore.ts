@@ -14,12 +14,6 @@ export const useEngineStore = <T>(store: EngineStore<T>) => {
   return data;
 };
 
-export const getEngineApi = () => {
-  const scene = DeerEngine.instance.getScene(DEER_ENGINE_SCENE);
-  if (isNil(scene)) return;
-  return scene.commandManager;
-};
-
 export const useEntityStoreData = () => {
   const scene = DeerEngine.instance.getScene(DEER_ENGINE_SCENE);
   if (isNil(scene)) throw new Error('could not get scene');
