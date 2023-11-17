@@ -1,7 +1,7 @@
 import { Entity } from 'deer-engine';
-import { CutSceneGroup } from '../CutSceneGroup';
+import { CutsceneGroup } from '../CutsceneGroup';
 
-export class ActorGroup extends CutSceneGroup {
+export class ActorGroup extends CutsceneGroup {
   protected _actor: Entity | null = null;
 
   get name(): string {

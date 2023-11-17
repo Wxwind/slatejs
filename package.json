@@ -7,7 +7,7 @@
     "dev": "pnpm --filter website dev",
     "dev:eg": "pnpm --filter deer-engine watch",
     "build": "pnpm run build:eg && pnpm run build:slatejs && pnpm run build:scene",
-    "build:scene": "pnpm --filter website build",
+    "build:website": "pnpm --filter website build",
     "build:slatejs": "pnpm --filter slatejs build",
     "build:eg": "pnpm --filter deer-engine build",
     "lint": "pnpm --filter website lint",

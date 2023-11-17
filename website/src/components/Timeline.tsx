@@ -1,9 +1,9 @@
 import { FC, useRef, useState } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
-import { CutScene, CutSceneEditor } from 'slatejs';
+import { Cutscene, CutsceneEditor } from 'slatejs';
 
 export const Timeline: FC = () => {
-  const [scene, setScene] = useState(new CutScene());
+  const [scene, setScene] = useState(new Cutscene());
   const [pos, setPos] = useState<{ x: number; y: number }>();
 
   const nodeRef = useRef(null);
@@ -24,7 +24,7 @@ export const Timeline: FC = () => {
   return (
     <Draggable nodeRef={nodeRef} handle=".controls" position={pos} onDrag={handleDrag}>
       <div ref={nodeRef} className="w-3/4 h-80 absolute bottom-20 left-0 right-0 m-auto">
-        <CutSceneEditor cutScene={scene} />
+        <CutsceneEditor cutscene={scene} />
       </div>
     </Draggable>
   );

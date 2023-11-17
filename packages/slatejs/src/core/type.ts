@@ -1,4 +1,4 @@
-export type CutSceneData = {
+export type CutsceneData = {
   version: string;
   data: GroupData[];
 };

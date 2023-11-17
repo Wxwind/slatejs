@@ -1,6 +1,8 @@
-import { ActionClip, IDirectable } from '..';
 import { genUUID } from '@/utils';
 import { ActionClipData, ClipType } from '../type';
+import { ActionClip } from '../ActionClip';
+import { IDirectable } from '../IDirectable';
+import { CutsceneTrack } from '../CutsceneTrack';
 
 export class AnimationClip extends ActionClip {
   data: AnimationClipData;
@@ -14,7 +16,7 @@ export class AnimationClip extends ActionClip {
     this.data = data;
   }
 
-  static construct(parent: IDirectable, name: string, start: number, end: number, layerId: string) {
+  static construct(parent: CutsceneTrack, name: string, start: number, end: number, layerId: string) {
     const id = genUUID();
     return new AnimationClip(parent, { id, name, start, end, layerId });
   }

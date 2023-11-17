@@ -1,8 +1,8 @@
 import { clamp } from '@/utils';
-import { CutSceneDirector } from './CutSceneDirector';
+import { CutsceneDirector } from './CutsceneDirector';
 
 export interface IDirectable {
-  get root(): CutSceneDirector | null;
+  get root(): CutsceneDirector | null;
   get parent(): IDirectable | null;
   get children(): IDirectable[];
 

@@ -1,18 +1,18 @@
 import { Entity } from 'deer-engine';
-import { CutSceneDirector } from './CutSceneDirector';
-import { CutSceneTrack } from './CutSceneTrack';
+import { CutsceneDirector } from './CutsceneDirector';
+import { CutsceneTrack } from './CutsceneTrack';
 import { IDirectable } from './IDirectable';
 import { genUUID, isNil } from '@/utils';
 import { TransformTrack } from './tracks';
 import { TrackType } from './type';
 
-export abstract class CutSceneGroup implements IDirectable {
-  private _tracks: CutSceneTrack[] = [];
-  private _root: CutSceneDirector;
+export abstract class CutsceneGroup implements IDirectable {
+  private _tracks: CutsceneTrack[] = [];
+  private _root: CutsceneDirector;
   private _id: string;
   protected abstract _actor: Entity | null;
 
-  constructor(director: CutSceneDirector) {
+  constructor(director: CutsceneDirector) {
     this._root = director;
     this._id = genUUID('csg');
   }
@@ -35,7 +35,7 @@ export abstract class CutSceneGroup implements IDirectable {
     return null;
   }
 
-  get root(): CutSceneDirector {
+  get root(): CutsceneDirector {
     return this._root;
   }
 

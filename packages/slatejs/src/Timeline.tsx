@@ -1,30 +1,34 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CutScene } from './core';
+import { Cutscene } from './core';
 import { isNil } from './utils';
 import TimeMarkIcon from './TimeMarkIcon';
-import TimelineTracksPanel from './TimelineTracksPanel';
+import TimelineTracksPanel from './TimelineTrackPanel';
+import { useStore } from './hooks';
+import { TimelineGroupPanel } from './TimelineGroupPanel';
 
 export interface TimelineProps {
-  cutScene: CutScene;
+  cutscene: Cutscene;
 }
 
-const Timeline: FC<TimelineProps> = (props) => {
-  const { cutScene } = props;
-  const signals = cutScene.signals;
-  const player = cutScene.director;
+export const Timeline: FC<TimelineProps> = (props) => {
+  const { cutscene } = props;
+  const signals = cutscene.signals;
+  const player = cutscene.director;
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const timeCanvasRef = useRef<HTMLCanvasElement>(null);
-  const { scale, setScale } = cutScene.useScaleStore(); // scale == pixels per seconds
+  const { scale, setScale } = cutscene.useScaleStore(); // scale == pixels per seconds
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
 
-  /* FIXME: may not update while cutScene.viewTimeMax update cuz cutScene.viewTimeMax
-  is external variable. */
+  /* FIXME: may not update while cutscene.viewTimeMax update cuz cutscene.viewTimeMax
+  is external variable. It's better to draw timeline with canvas. */
   const timelineTrackWidth = useMemo(() => {
-    return cutScene.viewTimeMax * scale;
-  }, [cutScene.viewTimeMax, scale]);
+    return cutscene.viewTimeMax * scale;
+  }, [cutscene.viewTimeMax, scale]);
+
+  const cutsceneData = useStore(cutscene.cutsceneDataStore);
 
   const handleClickTimeCanvas = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
@@ -36,7 +40,7 @@ const Timeline: FC<TimelineProps> = (props) => {
           return;
         }
         if (e.target === timeCanvasRef.current) {
-          cutScene.setTime((e.offsetX + scrollerRef.current.scrollLeft) / scale);
+          cutscene.setTime((e.offsetX + scrollerRef.current.scrollLeft) / scale);
         }
       };
 
@@ -50,7 +54,7 @@ const Timeline: FC<TimelineProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutScene, scale]
+    [cutscene, scale]
   );
 
   /* FIXME: may not update cus currentTime is also an external variable */
@@ -69,7 +73,7 @@ const Timeline: FC<TimelineProps> = (props) => {
 
     ctx.translate(-scroller.scrollLeft, 0);
 
-    const viewTimeMax = cutScene.viewTimeMax;
+    const viewTimeMax = cutscene.viewTimeMax;
     const width = viewTimeMax * scale;
     const scale4 = scale / 4;
 
@@ -107,7 +111,7 @@ const Timeline: FC<TimelineProps> = (props) => {
 
       ctx.fillText(text, i * scale, 13);
     }
-  }, [cutScene.viewTimeMax, scale]);
+  }, [cutscene.viewTimeMax, scale]);
 
   /* FIXME: may not update cus currentTime is also an external variable */
   const updateTimeMark = useCallback(() => {
@@ -184,7 +188,9 @@ const Timeline: FC<TimelineProps> = (props) => {
     <div className="timeline" ref={timelineRef}>
       <canvas height={32} className="timeline-time-canvas" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
       <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
-        <TimelineTracksPanel width={timelineTrackWidth} cutScene={cutScene} />
+        {cutsceneData?.data.map((a) => {
+          return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} cutscene={cutscene} data={a} />;
+        })}
       </div>
       <div className="timeline-timeMark" style={{ left: timeMarkLeft }}>
         <TimeMarkIcon />
@@ -192,5 +198,3 @@ const Timeline: FC<TimelineProps> = (props) => {
     </div>
   );
 };
-
-export default Timeline;

@@ -4,15 +4,15 @@ import PauseSVG from './assets/pause.svg';
 import PrevSVG from './assets/prev.svg';
 import NextSVG from './assets/next.svg';
 import classnames from 'classnames';
-import { CutScene } from './core';
+import { Cutscene } from './core';
 
 export interface ControlsProps {
   className?: string;
-  cutScene: CutScene;
+  cutscene: Cutscene;
 }
 
-const Controls: FC<ControlsProps> = (props) => {
-  const { className, cutScene } = props;
+export const Controls: FC<ControlsProps> = (props) => {
+  const { className, cutscene } = props;
   return (
     <div className={classnames('controls', className)}>
       <div className="controls-btn">
@@ -20,26 +20,24 @@ const Controls: FC<ControlsProps> = (props) => {
           alt=""
           src={PrevSVG}
           onClick={() => {
-            cutScene.setTime(cutScene.director.currentTime - 1);
+            cutscene.setTime(cutscene.director.currentTime - 1);
           }}
         />
         <img
           alt=""
           src={PlaySVG}
           onClick={() => {
-            cutScene.isPlaying() ? cutScene.pause() : cutScene.play();
+            cutscene.isPlaying() ? cutscene.pause() : cutscene.play();
           }}
         />
         <img
           alt=""
           src={NextSVG}
           onClick={() => {
-            cutScene.setTime(cutScene.director.currentTime + 1);
+            cutscene.setTime(cutscene.director.currentTime + 1);
           }}
         />
       </div>
     </div>
   );
 };
-
-export default Controls;

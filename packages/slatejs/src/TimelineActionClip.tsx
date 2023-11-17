@@ -1,51 +1,39 @@
 import { FC, useCallback } from 'react';
-import { CutScene, ActionClipData } from './core';
+import { Cutscene, ActionClipData } from './core';
 import { clamp } from './utils';
 
-interface TrackBlockProps {
-  cutScene: CutScene;
-  resourceJSON: ActionClipData;
+interface TimelineActionClipProps {
+  cutscene: Cutscene;
+  data: ActionClipData;
 }
 
-const TrackClip: FC<TrackBlockProps> = (props) => {
-  const { resourceJSON, cutScene } = props;
+export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
+  const { data, cutscene } = props;
 
-  const { scale } = cutScene.useScaleStore();
+  const { scale } = cutscene.useScaleStore();
 
   const handleClickBlock = () => {
-    cutScene.selectObject(resourceJSON.id);
+    cutscene.selectObject(data.id);
   };
 
   // drag block
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       let mx = 0;
-      let my = 0;
 
       const onMouseMove = (e: MouseEvent) => {
         mx = e.movementX;
 
-        resourceJSON.start += mx / scale;
-        resourceJSON.end += mx / scale;
+        data.start += mx / scale;
+        data.end += mx / scale;
 
-        if (resourceJSON.start < 0) {
-          const offset = -resourceJSON.start;
-          resourceJSON.start += offset;
-          resourceJSON.end += offset;
+        if (data.start < 0) {
+          const offset = -data.start;
+          data.start += offset;
+          data.end += offset;
         }
-
-        my += e.movementY;
-
-        if (my >= 30) {
-          // TODO: clamp max layer
-          resourceJSON.layerId += 1;
-          my = 0;
-        } else if (my <= -30) {
-          resourceJSON.layerId = Math.max(0, resourceJSON.layerId - 1);
-          my = 0;
-        }
-
-        cutScene.resourcesStore.updateAnimation(resourceJSON.id, resourceJSON);
+        // FIXME
+        // cutscene.cutsceneDataStore.updateClip(data.id, data);
       };
 
       const onMouseUp = (e: MouseEvent) => {
@@ -56,7 +44,7 @@ const TrackClip: FC<TrackBlockProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutScene.resourcesStore, resourceJSON, scale]
+    [cutscene.cutsceneDataStore, data, scale]
   );
 
   const handleDragLeft = useCallback(
@@ -66,8 +54,9 @@ const TrackClip: FC<TrackBlockProps> = (props) => {
         const mx = e.movementX;
 
         const offset = mx / scale;
-        resourceJSON.start = clamp(resourceJSON.start + offset, 0, resourceJSON.end);
-        cutScene.resourcesStore.updateAnimation(resourceJSON.id, resourceJSON);
+        data.start = clamp(data.start + offset, 0, data.end);
+        // FIXME
+        //cutscene.cutsceneDataStore.updateClip(data.id, data);
       };
 
       const onMouseUp = (e: MouseEvent) => {
@@ -78,7 +67,7 @@ const TrackClip: FC<TrackBlockProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutScene.resourcesStore, resourceJSON, scale]
+    [cutscene.cutsceneDataStore, data, scale]
   );
 
   const handleDragRight = useCallback(
@@ -88,8 +77,9 @@ const TrackClip: FC<TrackBlockProps> = (props) => {
         const mx = e.movementX;
 
         const offset = mx / scale;
-        resourceJSON.end = Math.max(resourceJSON.start, resourceJSON.end + offset);
-        cutScene.resourcesStore.updateAnimation(resourceJSON.id, resourceJSON);
+        data.end = Math.max(data.start, data.end + offset);
+        // FIXME
+        //cutscene.cutsceneDataStore.updateClip(data.id, data);
       };
 
       const onMouseUp = (e: MouseEvent) => {
@@ -100,26 +90,23 @@ const TrackClip: FC<TrackBlockProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutScene.resourcesStore, resourceJSON, scale]
+    [cutscene.cutsceneDataStore, data, scale]
   );
 
   return (
     <div
-      className="track-block"
+      className="timeline-action-clip"
       onClick={handleClickBlock}
       onMouseDown={handleMouseDown}
       style={{
         position: 'absolute',
-        left: resourceJSON.start * scale,
-        top: resourceJSON.layerId * 32,
-        width: (resourceJSON.end - resourceJSON.start) * scale,
+        left: data.start * scale,
+        width: (data.end - data.start) * scale,
       }}
     >
       <div className="resize-left" onMouseDown={handleDragLeft} />
       <div className="resize-right" onMouseDown={handleDragRight} />
-      <div>{resourceJSON.name}</div>
+      <div>{data.name}</div>
     </div>
   );
 };
-
-export default TrackClip;

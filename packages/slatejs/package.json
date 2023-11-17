@@ -28,6 +28,7 @@
     "dist"
   ],
   "devDependencies": {
+    "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-typescript": "^11.1.1",
     "@rollup/plugin-url": "^8.0.2",
     "@svgr/rollup": "^8.1.0",
@@ -43,10 +44,10 @@
     "react-dom": ">=16.8.0"
   },
   "dependencies": {
-    "deer-engine": "workspace:*",
     "@rollup/plugin-alias": "^5.0.1",
     "@types/uuid": "^9.0.6",
     "classnames": "^2.3.2",
+    "deer-engine": "workspace:*",
     "uuid": "^9.0.1",
     "zustand": "^4.4.4"
   }

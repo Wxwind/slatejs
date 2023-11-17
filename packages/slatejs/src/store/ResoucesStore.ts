@@ -1,31 +1,39 @@
-import { CutScene, AnimationClip, UpdateAnimationDataDto, CutSceneData } from '../core';
-import { deepClone, replaceEqualDeep } from '../utils';
+import { Cutscene, AnimationClip, UpdateAnimationDataDto, CutsceneData, ClipType, ActionClip } from '../core';
+import { deepClone, isNil, replaceEqualDeep } from '../utils';
 import { StoreBase } from './StoreBase';
 
-export class ResoucesStore extends StoreBase<CutSceneData> {
-  constructor(private cutScene: CutScene) {
+export class CutsceneDataStore extends StoreBase<CutsceneData> {
+  constructor(private cutscene: Cutscene) {
     super();
   }
 
-  private oldData: CutSceneData | undefined;
+  private oldData: CutsceneData | undefined;
 
-  addAnimation = (groupId: string, trackId: string, anim: AnimationClip) => {
-    this.cutScene.timeline.addClip(groupId, trackId, anim);
+  addClip = (groupId: string, trackId: string, clipType: ClipType) => {
+    this.cutscene.director.findTrack(groupId, trackId)?.addClip(clipType);
     this.refreshData();
   };
 
-  updateAnimation = (id: string, anim: UpdateAnimationDataDto) => {
-    this.cutScene.timeline.updateClip(id, anim);
+  updateClip = <T extends ActionClip = ActionClip>(
+    groupId: string,
+    trackId: string,
+    clipId: string,
+    updateDataDto: Partial<Omit<T['data'], 'id'>>
+  ) => {
+    const clip = this.cutscene.director.findClip(groupId, trackId, clipId);
+    if (isNil(clip)) return;
+
+    clip.data = { ...updateDataDto, ...clip.data };
     this.refreshData();
   };
 
-  removeAnimation = (anim: AnimationClip) => {
-    this.cutScene.timeline.removeClip(anim);
+  removeClip = (groupId: string, trackId: string, clipId: string) => {
+    this.cutscene.director.findTrack(groupId, trackId)?.removeClip(clipId);
     this.refreshData();
   };
 
   protected refreshData = () => {
-    const newData = deepClone(this.cutScene.timeline.toJsonObject());
+    const newData = deepClone(this.cutscene.director.toJsonObject());
     const resData = replaceEqualDeep(this.oldData, newData);
     this.oldData = this.data;
     this.data = resData;

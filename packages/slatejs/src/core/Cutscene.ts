@@ -1,10 +1,10 @@
-import { PlayState, CutSceneDirector } from './CutSceneDirector';
-import { ResoucesStore, SelectedResouceStore, createScaleStore } from '../store';
+import { PlayState, CutsceneDirector } from './CutsceneDirector';
+import { CutsceneDataStore as CutsceneDataStore, SelectedResouceStore, createScaleStore } from '../store';
 import { Signal } from '../signal';
 import { ActionClip } from './ActionClip';
 import { IDirectable } from './IDirectable';
 
-export class CutScene {
+export class Cutscene {
   // bridge between cutscene core and cutscene ui.
   // TODO: may replace with external store.
   readonly signals = {
@@ -23,7 +23,7 @@ export class CutScene {
     windowResized: new Signal(),
   };
 
-  readonly director = new CutSceneDirector();
+  readonly director = new CutsceneDirector();
 
   private prevTime = 0;
 
@@ -31,10 +31,10 @@ export class CutScene {
   selectedObject: IDirectable | undefined;
 
   // store used only by react, expose internal (= cutscene core) apis and datas (sync data from core to store itself)
-  readonly resourcesStore = new ResoucesStore(this);
+  readonly cutsceneDataStore = new CutsceneDataStore(this);
   readonly selectedResourceStore = new SelectedResouceStore(this);
 
-  // store to manage data not concerned by cutScene core and used only for cutScene ui
+  // store to manage data not concerned by cutscene core and used only for cutscene ui
   readonly useScaleStore = createScaleStore();
 
   public get viewTimeMax(): number {

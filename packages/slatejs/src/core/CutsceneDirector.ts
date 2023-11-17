@@ -1,10 +1,10 @@
 import { SLATEJS_VERSION } from '@/config';
 import { isNil } from '@/utils';
 import { ActionClip } from './ActionClip';
-import { CutSceneGroup } from './CutSceneGroup';
+import { CutsceneGroup } from './CutsceneGroup';
 import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
 import { ActorGroup } from './groups';
-import { CutSceneData, GroupData, TrackData, ActionClipData, GroupType } from './type';
+import { CutsceneData, GroupData, TrackData, ActionClipData, GroupType } from './type';
 
 /**
  * PlayState in editor mode has no state called 'paused' because
@@ -19,7 +19,7 @@ export enum PlayState {
 /**
  * Play timeline in edit mode.
  */
-export class CutSceneDirector {
+export class CutsceneDirector {
   private _playState: PlayState = PlayState.Stop;
 
   private _currentTime = 0;
@@ -84,13 +84,13 @@ export class CutSceneDirector {
   }
 
   private _viewTimeMax = 500; // max seconds could be displayed in timeline
-  private _groups: CutSceneGroup[] = [];
+  private _groups: CutsceneGroup[] = [];
 
   private _timePointers: IDirectableTimePointer[] = [];
   private _updateTimePointers: UpdateTimePointer[] = [];
 
   // Expose to ResoucesStore
-  public get groups(): CutSceneGroup[] {
+  public get groups(): CutsceneGroup[] {
     return this._groups;
   }
 
@@ -230,7 +230,7 @@ export class CutSceneDirector {
     }
   };
 
-  toJsonObject: () => CutSceneData = () => {
+  toJsonObject: () => CutsceneData = () => {
     // TODO: save and load json
     const groups: GroupData[] = [];
 
@@ -262,11 +262,11 @@ export class CutSceneDirector {
       groups.push(groupsData);
     }
 
-    const cutSceneData: CutSceneData = {
+    const cutsceneData: CutsceneData = {
       version: SLATEJS_VERSION,
       data: groups,
     };
-    return cutSceneData;
+    return cutsceneData;
   };
 
   toJson: () => string = () => {
@@ -274,7 +274,7 @@ export class CutSceneDirector {
   };
 
   parseJson = (data: string) => {
-    const d = JSON.parse(data) as CutSceneData;
+    const d = JSON.parse(data) as CutsceneData;
     // TODO: parse json
   };
 

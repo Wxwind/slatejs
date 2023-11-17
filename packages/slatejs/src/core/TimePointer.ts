@@ -41,13 +41,13 @@ export class StartTimePointer implements IDirectableTimePointer {
   };
 
   triggerBackward = (curTime: number, prevTime: number) => {
-    // curTime <= 0 means end play and exit cutScene controlled mode (will restore to its original state)
-    // for CutSceneGroup when clicking stop btn by user or playReverse() to end.
+    // curTime <= 0 means end play and exit cutscene controlled mode (will restore to its original state)
+    // for CutsceneGroup when clicking stop btn by user or playReverse() to end.
     // Q: why need 'curTime <= 0' ? Why not just 'curTime <= this.target.startTime' ?
     // A: curTime <= this.target.startTime will cause folling problems:
     // 1. will causes onReverseExit() in triggerBackward() will be called immediately
     // after onEnter() in triggerForward() if curTime === this.target.startTime.
-    // 2. will be trigged accidently. For example, clip's time is 5~8s, but we play the CutScene backward
+    // 2. will be trigged accidently. For example, clip's time is 5~8s, but we play the Cutscene backward
     // from 5s to 2s (means [5,2) exactly), onReverseExit() will be raised.
     // So we need <= 0 to make sure onReverseExit can be trigged for IDirectables whose start time = 0
     if (curTime < this.target.startTime || curTime <= 0) {

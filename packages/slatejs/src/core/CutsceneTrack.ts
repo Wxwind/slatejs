@@ -4,7 +4,7 @@ import { IDirectable } from './IDirectable';
 import { ClipType } from './type';
 import { AnimationClip } from './clips';
 
-export abstract class CutSceneTrack implements IDirectable {
+export abstract class CutsceneTrack implements IDirectable {
   private _clips: ActionClip[] = [];
   private _parent: IDirectable;
   private _id: string;

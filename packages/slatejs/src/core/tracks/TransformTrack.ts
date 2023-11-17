@@ -1,9 +1,9 @@
 import { ActionClip } from '../ActionClip';
-import { CutSceneDirector } from '../CutSceneDirector';
-import { CutSceneTrack } from '../CutSceneTrack';
+import { CutsceneDirector } from '../CutsceneDirector';
+import { CutsceneTrack } from '../CutsceneTrack';
 import { IDirectable } from '../IDirectable';
 
-export class TransformTrack extends CutSceneTrack {
+export class TransformTrack extends CutsceneTrack {
   get name(): string {
     return 'TransformTrack';
   }

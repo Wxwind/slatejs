@@ -14,10 +14,18 @@
   -webkit-appearance: none;
 }
 
-.timeline-editor {
+.cutscene-editor {
   position: relative;
   width: 100%;
   height: 100%;
+
+  .cutscene-editor-left-panel {
+    width: 25%;
+  }
+
+  .cutscene-editor-right-panel {
+    width: 75%;
+  }
 }
 
 .controls {
@@ -32,6 +40,16 @@
     > img {
       cursor: pointer;
     }
+  }
+}
+
+.cutscene-group-panel {
+  height: 32px;
+  background-color: #232630;
+
+  .cutscene-track-panel {
+    height: 32px;
+    background-color: #555861;
   }
 }
 
@@ -53,37 +71,41 @@
     width: 100%;
     overflow: auto;
 
-    .timeline-tracks-panel {
-      height: 100%;
-      background: linear-gradient(#555 1px, transparent 1px) 0% 0% / 32px 32px repeat;
+    .timeline-group-panel {
+      height: 32;
 
-      .track-block {
-        position: absolute;
-        height: 31px;
-        background-color: #88f;
-        border: 0px;
-        border-top: 1px solid #aaf;
-        border-left: 1px solid #aaf;
-        border-radius: 2px;
-        overflow: hidden;
-        user-select: none;
+      .timeline-track-panel {
+        height: 100%;
+        background: gray;
 
-        .resize-left {
+        .timeline-action-clip {
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 6px;
-          height: 30px;
-          cursor: w-resize;
-        }
+          height: 31px;
+          background-color: #88f;
+          border: 0px;
+          border-top: 1px solid #aaf;
+          border-left: 1px solid #aaf;
+          border-radius: 2px;
+          overflow: hidden;
+          user-select: none;
 
-        .resize-right {
-          position: absolute;
-          top: 0;
-          right: 0;
-          width: 6px;
-          height: 30px;
-          cursor: e-resize;
+          .resize-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 30px;
+            cursor: w-resize;
+          }
+
+          .resize-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 6px;
+            height: 30px;
+            cursor: e-resize;
+          }
         }
       }
     }

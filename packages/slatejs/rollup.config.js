@@ -5,12 +5,14 @@ import postcss from 'rollup-plugin-postcss';
 import svgr from '@svgr/rollup';
 import dts from 'rollup-plugin-dts';
 import alias from '@rollup/plugin-alias';
+import json from '@rollup/plugin-json';
 
 export default [
   {
     input: 'src/index.ts',
     plugins: [
       typescript(),
+      json(),
       url(),
       postcss({}),
       alias({
@@ -38,6 +40,7 @@ export default [
     plugins: [
       typescript(),
       url(),
+      json(),
       dts(),
       postcss({}),
       alias({
