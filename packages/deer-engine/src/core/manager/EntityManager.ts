@@ -3,11 +3,17 @@ import { DeerScene } from '../DeerScene';
 import { Entity } from '../entity';
 import { TransformComponent } from '../component';
 import { isNil } from '@/util';
+import { EntityForHierarchy } from '@/store/type';
 
 export class EntityManager {
   private readonly entityMap = new Map<string, Entity>();
   private readonly entityArray: Entity[] = [];
   private readonly scene: DeerScene;
+  private _selectedEntityId: string | undefined;
+
+  public get selectedEntityId(): string | undefined {
+    return this._selectedEntityId;
+  }
 
   constructor(scene: DeerScene) {
     this.scene = scene;
@@ -16,7 +22,7 @@ export class EntityManager {
   createEntity = (name: string, parent: TransformComponent | null | string) => {
     const p =
       typeof parent === 'string'
-        ? this.getEntityById(parent)?.getComponentByType<TransformComponent>('Transform') || this.scene
+        ? this.findEntityById(parent)?.getComponentByType<TransformComponent>('Transform') || this.scene
         : isNil(parent)
         ? this.scene
         : parent;
@@ -30,7 +36,7 @@ export class EntityManager {
     return e;
   };
 
-  getEntityById = (id: string) => {
+  findEntityById = (id: string) => {
     return this.entityMap.get(id);
   };
 
@@ -52,5 +58,26 @@ export class EntityManager {
     this.entityArray.forEach((a) => a.onDestory());
     this.entityMap.clear();
     this.entityArray.length = 0;
+  };
+
+  private mapEntityForHierarchy: (entity: Entity) => EntityForHierarchy = (entity: Entity) => {
+    return {
+      id: entity.id,
+      name: entity.name,
+      children: entity.rootComp.children.map((a) => {
+        return this.mapEntityForHierarchy(a.entity);
+      }),
+    };
+  };
+
+  toTree: () => EntityForHierarchy[] = () => {
+    const rootEntity = this.entityArray.filter((a) => a.rootComp.parent === this.scene);
+
+    const tree: EntityForHierarchy[] = rootEntity.map(this.mapEntityForHierarchy);
+    return tree;
+  };
+
+  select = (id: string | undefined) => {
+    this._selectedEntityId = id;
   };
 }

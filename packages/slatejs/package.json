@@ -15,7 +15,7 @@
   "type": "module",
   "scripts": {
     "build": "rollup --config",
-    "lint": "tsc -p ./tsconfig.json",
+    "lint:ts": "tsc -p ./tsconfig.json",
     "watch": "node scripts/watch.cjs"
   },
   "keywords": [

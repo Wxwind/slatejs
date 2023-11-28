@@ -28,7 +28,7 @@ export class CreateEntityCommand implements ICommand {
 
   private getParentName = () => {
     if (typeof this.parent === 'string') {
-      return this.scene.entityManager.getEntityById(this.parent);
+      return this.scene.entityManager.findEntityById(this.parent);
     }
     return this.parent?.entity.name;
   };

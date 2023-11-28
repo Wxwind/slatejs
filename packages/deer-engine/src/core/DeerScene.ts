@@ -2,8 +2,6 @@ import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { Loader } from './Loader';
 import * as THREE from 'three';
 import { Control } from './Control';
-import { CommandStack } from '@/packages/command';
-import { EntityStore } from '@/store/EntityStore';
 import { CommandManager } from './manager';
 import { EntityManager } from './manager/EntityManager';
 import { TransformComponent } from './component';
@@ -24,16 +22,6 @@ export class DeerScene {
 
   // Manager
   readonly entityManager = new EntityManager(this);
-
-  // Store
-  readonly entityStore = new EntityStore(this);
-
-  /**
-   * CommandManager is the only entry if want to exec recordable action.
-   * Used by both app and engine itself.
-   */
-  readonly commandStack = new CommandStack();
-  readonly commandManager = new CommandManager(this);
 
   constructor(containerId: string, defaulteHDRUrl: string) {
     const el = document.getElementById(containerId);
@@ -94,28 +82,7 @@ export class DeerScene {
   };
 
   dispose = () => {
-    const clearMatAndGeo = (obj: THREE.Mesh) => {
-      if (Array.isArray(obj.material)) {
-        obj.material.forEach((m) => m.dispose());
-      } else {
-        obj.material.dispose();
-      }
-      obj.geometry.dispose();
-    };
-
-    const removeObj = (obj: THREE.Object3D) => {
-      if (obj instanceof THREE.Mesh) {
-        clearMatAndGeo(obj);
-      }
-
-      for (const o of obj.children) {
-        removeObj(o);
-      }
-
-      obj.clear();
-    };
-
-    removeObj(this.scene);
+    this.entityManager.onDestory();
     this.renderer.dispose();
     this.renderer.forceContextLoss();
     this.parentEl.removeChild(this.renderer.domElement);

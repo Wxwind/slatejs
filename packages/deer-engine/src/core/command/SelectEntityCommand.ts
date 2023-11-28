@@ -2,17 +2,20 @@ import { ICommand } from '@/packages/command';
 import { DeerScene } from '../DeerScene';
 import { CommandId } from './type';
 
-export class DeleteEntityCommand implements ICommand {
-  id: CommandId = 'DeleteEntity';
+export class SelectEntityCommand implements ICommand {
+  id: CommandId = 'SelectEntity';
+
+  private oldSelectedId: string | undefined;
 
   constructor(private scene: DeerScene, private entityId: string) {}
 
   execute: () => void = () => {
-    this.scene.entityManager.removeEntityById(this.entityId);
+    this.oldSelectedId = this.scene.entityManager.selectedEntityId;
+    this.scene.entityManager.select(this.entityId);
   };
 
   undo: () => void = () => {
-    // TODO: undo delete entity
+    this.scene.entityManager.select(this.oldSelectedId);
   };
 
   toString: () => string = () => {

@@ -1,1 +1,1 @@
-export type CommandId = 'Empty' | 'CreateEntity' | 'DeleteEntity';
+export type CommandId = 'Empty' | 'CreateEntity' | 'DeleteEntity' | 'SelectEntity';

@@ -1,19 +1,22 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
-import { getActiveScene, getEngineApi } from '@/api';
 import { transformKeymap } from './keymap';
+import { deerEngine } from 'deer-engine';
+import { useEngineStore } from '@/hooks';
 
 export const Header: FC = () => {
+  const selectedEntityId = useEngineStore(deerEngine.deerStore.selectedEntityIdStore);
+
   const handleCreateEntity = () => {
-    getActiveScene()?.entityStore.createEntity();
+    deerEngine.apiCenter.createEntity(selectedEntityId);
   };
 
   const handleRedo = () => {
-    getEngineApi()?.redo();
+    deerEngine.commandManager.redo();
   };
 
   const handleUndo = () => {
-    getEngineApi()?.undo();
+    deerEngine.commandManager.undo();
   };
 
   return (

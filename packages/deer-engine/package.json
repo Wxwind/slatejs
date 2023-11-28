@@ -9,7 +9,7 @@
   "scripts": {
     "build": "rollup --config rollup.config.js",
     "watch": "node scripts/watch.cjs",
-    "lint": "tsc -p ./tsconfig.json",
+    "lint:ts": "tsc -p ./tsconfig.json",
     "test": "jest"
   },
   "files": [
