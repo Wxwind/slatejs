@@ -1,6 +1,5 @@
-import { DeerEngine, deerEngine } from 'deer-engine';
-import { Cutscene, CutsceneData, ClipType, ActionClip } from '../core';
-import { deepClone, isNil, replaceEqualDeep } from '../utils';
+import { Cutscene, CutsceneData } from '../core';
+import { deepClone, replaceEqualDeep } from '../util';
 import { StoreBase } from './StoreBase';
 
 export class CutsceneDataStore extends StoreBase<CutsceneData> {
@@ -10,43 +9,7 @@ export class CutsceneDataStore extends StoreBase<CutsceneData> {
 
   private oldData: CutsceneData | undefined;
 
-  addClip = (groupId: string, trackId: string, clipType: ClipType) => {
-    this.cutscene.director.findTrack(groupId, trackId)?.addClip(clipType);
-    this.refreshData();
-  };
-
-  updateClip = <T extends ActionClip = ActionClip>(
-    groupId: string,
-    trackId: string,
-    clipId: string,
-    updateDataDto: Partial<Omit<T['data'], 'id'>>
-  ) => {
-    const clip = this.cutscene.director.findClip(groupId, trackId, clipId);
-    if (isNil(clip)) return;
-
-    clip.data = { ...updateDataDto, ...clip.data };
-    this.refreshData();
-  };
-
-  removeClip = (groupId: string, trackId: string, clipId: string) => {
-    this.cutscene.director.findTrack(groupId, trackId)?.removeClip(clipId);
-    this.refreshData();
-  };
-
-  addGroup = (entityId: string) => {
-    const group = this.cutscene.director.addGroup('Actor');
-    if (isNil(group)) return;
-
-    group.actor = deerEngine.activeScene?.entityManager.findEntityById(entityId);
-    this.refreshData();
-  };
-
-  removeGroup = (entityId: string) => {
-    this.cutscene.director.removeGroup(entityId);
-    this.refreshData();
-  };
-
-  protected refreshData = () => {
+  refreshData = () => {
     const newData = deepClone(this.cutscene.director.toJsonObject());
     const resData = replaceEqualDeep(this.oldData, newData);
     this.oldData = this.data;

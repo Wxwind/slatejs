@@ -1,8 +1,8 @@
 import { Cutscene, IDirectable } from '@/core';
-import { deepClone } from '@/utils';
+import { deepClone } from '@/util';
 import { StoreBase } from './StoreBase';
 
-export class SelectedResouceStore extends StoreBase<IDirectable> {
+export class SelectedIDirectableStore extends StoreBase<IDirectable> {
   constructor(private cutscene: Cutscene) {
     super();
   }
@@ -12,7 +12,7 @@ export class SelectedResouceStore extends StoreBase<IDirectable> {
     this.refreshData();
   };
 
-  protected refreshData = () => {
+  refreshData = () => {
     this.data = this.cutscene.selectedObject ? deepClone(this.cutscene.selectedObject) : undefined;
     this.emit();
   };

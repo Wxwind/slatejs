@@ -1,5 +1,5 @@
 import { ActionClip, IDirectable } from '..';
-import { genUUID } from '@/utils';
+import { genUUID } from '@/util';
 import { ActionClipData, ClipType } from '../type';
 
 export class TransformClip extends ActionClip {

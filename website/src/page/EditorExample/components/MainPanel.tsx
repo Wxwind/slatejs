@@ -9,16 +9,16 @@ interface MainPanelProps {}
 export const MainPanel: FC<MainPanelProps> = (props) => {
   const {} = props;
 
-  const inspectorRef = useRef<HTMLDivElement>(null);
-  const [dragLineHeight, setDragLineHeight] = useState<number>(180);
+  const hierarchyRef = useRef<HTMLDivElement>(null);
+  const [dragLineHeight, setDragLineHeight] = useState<number>(280);
   const [, windowHeight] = useWindowSize();
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (isNil(inspectorRef.current)) return;
+      if (isNil(hierarchyRef.current)) return;
 
       const startY = e.clientY;
-      const initialHeight = inspectorRef.current.clientHeight;
+      const initialHeight = hierarchyRef.current.clientHeight;
       const handleMouseMove = (e: MouseEvent) => {
         const newHeight = initialHeight + (e.clientY - startY);
         const a = clamp(newHeight, windowHeight * 0.2, windowHeight * 0.8);
@@ -37,8 +37,8 @@ export const MainPanel: FC<MainPanelProps> = (props) => {
   );
 
   return (
-    <div className="flex flex-col bg-gray-400 h-full">
-      <div className="absolute" style={{ height: `${dragLineHeight}px` }}>
+    <div className="relative flex flex-col bg-gray-400 h-full">
+      <div ref={hierarchyRef} className="absolute w-full" style={{ height: `${dragLineHeight}px` }}>
         <Hierarchy />
       </div>
       <div
@@ -46,7 +46,7 @@ export const MainPanel: FC<MainPanelProps> = (props) => {
         style={{ top: dragLineHeight }}
         onMouseDown={handleMouseDown}
       />
-      <div ref={inspectorRef} className="absolute" style={{ top: `${dragLineHeight + 2}px` }}>
+      <div className="absolute w-full" style={{ top: `${dragLineHeight + 2}px` }}>
         <Inspector />
       </div>
     </div>

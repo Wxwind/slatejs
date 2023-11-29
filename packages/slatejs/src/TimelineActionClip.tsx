@@ -1,6 +1,6 @@
 import { FC, useCallback } from 'react';
 import { Cutscene, ActionClipData } from './core';
-import { clamp } from './utils';
+import { clamp } from './util';
 
 interface TimelineActionClipProps {
   cutscene: Cutscene;

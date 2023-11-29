@@ -1,8 +1,8 @@
 import { PlayState, CutsceneDirector } from './CutsceneDirector';
-import { CutsceneDataStore as CutsceneDataStore, SelectedResouceStore, createScaleStore } from '../store';
+import { CutsceneDataStore, SelectedIDirectableStore, createScaleStore } from '../store';
 import { Signal } from '../signal';
-import { ActionClip } from './ActionClip';
 import { IDirectable } from './IDirectable';
+import { ApiCenter } from './Apicenter';
 
 export class Cutscene {
   // bridge between cutscene core and cutscene ui.
@@ -32,7 +32,9 @@ export class Cutscene {
 
   // store used only by react, expose internal (= cutscene core) apis and datas (sync data from core to store itself)
   readonly cutsceneDataStore = new CutsceneDataStore(this);
-  readonly selectedResourceStore = new SelectedResouceStore(this);
+  readonly selectedIDirectableStore = new SelectedIDirectableStore(this);
+
+  readonly apiCenter = new ApiCenter(this);
 
   // store to manage data not concerned by cutscene core and used only for cutscene ui
   readonly useScaleStore = createScaleStore();

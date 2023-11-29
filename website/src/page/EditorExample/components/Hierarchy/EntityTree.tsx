@@ -13,7 +13,7 @@ export const EntityTree: FC<EntityTreeProps> = (props) => {
   const { data, selectedKey, depth, onTreeNodeSelected } = props;
 
   return (
-    <div className="pb-0.5">
+    <div className="pb-0.5 w-full">
       {data.map((a) => (
         <EntityTreeNode
           key={a.name}

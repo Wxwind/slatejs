@@ -9,6 +9,7 @@
     "lib": ["es2017", "dom", "ESNext"],
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
+    "experimentalDecorators": true,
     "jsx": "react",
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,

@@ -1,6 +1,6 @@
 import { isNil } from '@/util';
-import { CreateEntityCommand, DeerScene, DeleteEntityCommand, deerEngine } from '..';
-import { SelectEntityCommand } from './command/SelectEntityCommand';
+import { DeerScene, deerEngine } from '..';
+import { SelectEntityCommand, DeleteEntityCommand, CreateEntityCommand } from './command';
 
 export class ApiCenter {
   constructor(public scene: DeerScene | undefined) {}

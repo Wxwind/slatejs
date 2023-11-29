@@ -24,5 +24,5 @@ export abstract class StoreBase<T> {
     this.listeners.emit();
   };
 
-  protected abstract refreshData: () => void;
+  abstract refreshData: () => void;
 }

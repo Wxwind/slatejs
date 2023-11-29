@@ -1,4 +1,4 @@
-import { genUUID } from '@/utils';
+import { genUUID } from '@/util';
 import { IDirectable } from './IDirectable';
 import { ActionClipData, ClipType } from './type';
 

@@ -1,4 +1,3 @@
-import { Object3D } from 'three';
 import { DeerScene } from '../DeerScene';
 import { Entity } from '../entity';
 import { TransformComponent } from '../component';

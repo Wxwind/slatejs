@@ -9,11 +9,12 @@ interface CutsceneGroupPanelProps {
 
 export const CutsceneGroupPanel: FC<CutsceneGroupPanelProps> = (props) => {
   const { cutscene, data } = props;
+
   return (
     <div className="cutscene-group-panel">
-      <div>{data.name}</div>
+      <div className="cutscene-group-panel-item">{data.name}</div>
       {data.children.map((a) => (
-        <CutsceneTrackPanel cutscene={cutscene} data={a} />
+        <CutsceneTrackPanel key={a.id} cutscene={cutscene} data={a} />
       ))}
     </div>
   );

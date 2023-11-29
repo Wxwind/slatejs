@@ -26,7 +26,7 @@ const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
       // const anim = AnimationClip.construct('animation', start, end, layer, '123');
       // cutscene.cutsceneDataStore.addClip(anim);
     },
-    [cutscene.cutsceneDataStore, scale]
+    [scale]
   );
 
   return (

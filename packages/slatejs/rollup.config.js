@@ -1,13 +1,13 @@
 /* eslint-disable import/no-anonymous-default-export */
-import typescript from '@rollup/plugin-typescript';
-import url from '@rollup/plugin-url';
-import postcss from 'rollup-plugin-postcss';
-import svgr from '@svgr/rollup';
-import dts from 'rollup-plugin-dts';
-import alias from '@rollup/plugin-alias';
-import json from '@rollup/plugin-json';
+const typescript = require('@rollup/plugin-typescript');
+const url = require('@rollup/plugin-url');
+const postcss = require('rollup-plugin-postcss');
+const svgr = require('@svgr/rollup');
+const { dts } = require('rollup-plugin-dts');
+const alias = require('@rollup/plugin-alias');
+const json = require('@rollup/plugin-json');
 
-export default [
+module.exports = [
   {
     input: 'src/index.ts',
     output: [

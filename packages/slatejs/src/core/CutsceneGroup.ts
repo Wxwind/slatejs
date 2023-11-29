@@ -2,7 +2,7 @@ import { Entity } from 'deer-engine';
 import { CutsceneDirector } from './CutsceneDirector';
 import { CutsceneTrack } from './CutsceneTrack';
 import { IDirectable } from './IDirectable';
-import { genUUID, isNil } from '@/utils';
+import { genUUID, isNil } from '@/util';
 import { TransformTrack } from './tracks';
 import { TrackType } from './type';
 

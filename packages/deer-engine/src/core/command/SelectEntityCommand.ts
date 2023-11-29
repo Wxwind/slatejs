@@ -7,7 +7,7 @@ export class SelectEntityCommand implements ICommand {
 
   private oldSelectedId: string | undefined;
 
-  constructor(private scene: DeerScene, private entityId: string) {}
+  constructor(private scene: DeerScene, private entityId: string | undefined) {}
 
   execute: () => void = () => {
     this.oldSelectedId = this.scene.entityManager.selectedEntityId;

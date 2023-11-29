@@ -12,9 +12,9 @@
       "require": "./dist/cjs/index.js"
     }
   },
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "build": "rollup --config",
+    "build": "rimraf ./dist && rollup --config",
     "lint:ts": "tsc -p ./tsconfig.json",
     "watch": "node scripts/watch.cjs"
   },
@@ -34,9 +34,11 @@
     "@rollup/plugin-url": "^8.0.2",
     "@svgr/rollup": "^8.1.0",
     "@types/node": "^20.8.3",
+    "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
     "rollup-plugin-dts": "^5.3.1",
     "rollup-plugin-postcss": "^4.0.2",
+    "tailwindcss": "^3.3.3",
     "tslib": "^2.6.0",
     "typescript": "^5.0.2"
   },

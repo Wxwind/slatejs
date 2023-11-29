@@ -1,4 +1,4 @@
-import { clamp } from '@/utils';
+import { clamp } from '@/util';
 import { CutsceneDirector } from './CutsceneDirector';
 
 export interface IDirectable {

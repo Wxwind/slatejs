@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef } from 'react';
-import { isNil } from './utils';
+import { isNil } from './util';
 
 const TimeMarkIcon: FC = () => {
   const ref = useRef<HTMLCanvasElement>(null);

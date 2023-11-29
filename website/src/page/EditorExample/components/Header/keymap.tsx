@@ -6,7 +6,7 @@ export function transformKeymap(key: string): React.ReactNode {
     const reg = /^'(.*)'$/.exec(el);
     if (reg !== null) {
       return (
-        <div className="px-1 h-5 flex items-center justify-center">
+        <div key={el} className="px-1 h-5 flex items-center justify-center">
           <span className="leading-5">{reg[1]}</span>
         </div>
       );
