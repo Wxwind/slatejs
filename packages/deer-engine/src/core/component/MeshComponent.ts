@@ -1,13 +1,13 @@
 import * as THREE from 'three';
-import { Component } from './Component';
+import { ComponentBase } from './Component';
 import { isNil } from '@/util';
-import { ComponentType } from './type';
 import { Entity } from '../entity';
+import { MeshCompJson } from './type';
 
-export class MeshComponent extends Component {
-  type: ComponentType = 'Mesh';
+export class MeshComponent extends ComponentBase<'Mesh'> {
+  type = 'Mesh' as const;
 
-  private obj: THREE.Mesh | null = null;
+  private obj: THREE.Mesh;
 
   public get isCanBeRemoved(): boolean {
     return true;
@@ -36,5 +36,13 @@ export class MeshComponent extends Component {
       this.obj.material.dispose();
     }
     this.obj.geometry.dispose();
+  };
+
+  toJsonObject: () => MeshCompJson = () => {
+    const count = Array.isArray(this.obj.material) ? this.obj.material.length : 1;
+
+    return {
+      count,
+    };
   };
 }

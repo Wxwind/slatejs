@@ -44,7 +44,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutscene.cutsceneDataStore, data, scale]
+    [data, scale]
   );
 
   const handleDragLeft = useCallback(
@@ -67,7 +67,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutscene.cutsceneDataStore, data, scale]
+    [data, scale]
   );
 
   const handleDragRight = useCallback(
@@ -90,7 +90,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutscene.cutsceneDataStore, data, scale]
+    [data, scale]
   );
 
   return (

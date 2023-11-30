@@ -20,14 +20,6 @@ export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
 
   const sceneData = useStore(cutscene.cutsceneDataStore);
 
-  useEffect(() => {
-    window.addEventListener('resize', cutscene.signals.windowResized.emit);
-    cutscene.signals.windowResized.emit();
-    return () => {
-      window.removeEventListener('resize', cutscene.signals.windowResized.emit);
-    };
-  }, [cutscene.signals.windowResized]);
-
   const handleDropEntity = (entityId: string) => {
     cutscene.apiCenter.addGroup(entityId);
   };

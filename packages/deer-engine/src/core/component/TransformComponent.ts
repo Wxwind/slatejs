@@ -1,11 +1,12 @@
 import { Object3D } from 'three';
-import { Component } from './Component';
-import { ComponentType } from './type';
+import { ComponentBase } from './Component';
+import { TransformCompJson } from './type';
 import { Entity } from '../entity';
 import { DeerScene } from '../DeerScene';
 
-export class TransformComponent extends Component {
-  type: ComponentType = 'Transform';
+export class TransformComponent extends ComponentBase<'Transform'> {
+  type = 'Transform' as const;
+
   rootObj: Object3D;
   parent: TransformComponent | DeerScene;
 
@@ -48,5 +49,13 @@ export class TransformComponent extends Component {
       c.entity.onDestory();
     }
     this.rootObj.clear();
+  };
+
+  toJsonObject: () => TransformCompJson = () => {
+    return {
+      position: this.rootObj.position.clone(),
+      rotation: this.rootObj.rotation.clone(),
+      scale: this.rootObj.scale.clone(),
+    };
   };
 }

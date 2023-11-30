@@ -1,13 +1,12 @@
 import { UUID_PREFIX_COMP } from '@/config';
 import { genUUID } from '@/util/utils';
-import { ComponentType } from './type';
-import { Object3D } from 'three';
+import { ComponentType, ComponentTypeToJsonObjMap } from './type';
 import { Entity } from '../entity';
 
-export abstract class Component {
+export abstract class ComponentBase<T extends ComponentType = ComponentType> {
   public readonly id: string;
 
-  public abstract readonly type: ComponentType;
+  public abstract readonly type: T;
 
   protected _entity: Entity;
 
@@ -23,4 +22,6 @@ export abstract class Component {
   }
 
   abstract onDestory: () => void;
+
+  abstract toJsonObject: () => ComponentTypeToJsonObjMap[T];
 }

@@ -7,11 +7,6 @@ export class SelectedIDirectableStore extends StoreBase<IDirectable> {
     super();
   }
 
-  selectResourceClip = (id: string) => {
-    this.cutscene.selectObject(id);
-    this.refreshData();
-  };
-
   refreshData = () => {
     this.data = this.cutscene.selectedObject ? deepClone(this.cutscene.selectedObject) : undefined;
     this.emit();

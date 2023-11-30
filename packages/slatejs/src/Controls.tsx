@@ -1,10 +1,7 @@
 import { FC } from 'react';
-import PlaySVG from './assets/play.svg';
-import PauseSVG from './assets/pause.svg';
-import PrevSVG from './assets/prev.svg';
-import NextSVG from './assets/next.svg';
 import classnames from 'classnames';
 import { Cutscene } from './core';
+import { PlayIcon, StopIcon, TrackNextIcon, TrackPreviousIcon } from '@radix-ui/react-icons';
 
 export interface ControlsProps {
   className?: string;
@@ -15,28 +12,43 @@ export const Controls: FC<ControlsProps> = (props) => {
   const { className, cutscene } = props;
   return (
     <div className={classnames('controls', className)}>
-      <div className="controls-btn">
-        <img
-          alt=""
-          src={PrevSVG}
-          onClick={() => {
-            cutscene.setTime(cutscene.director.currentTime - 1);
-          }}
-        />
-        <img
-          alt=""
-          src={PlaySVG}
-          onClick={() => {
-            cutscene.isPlaying() ? cutscene.pause() : cutscene.play();
-          }}
-        />
-        <img
-          alt=""
-          src={NextSVG}
-          onClick={() => {
-            cutscene.setTime(cutscene.director.currentTime + 1);
-          }}
-        />
+      <div className="controls-btn-line">
+        <div className="controls-btn">
+          <TrackPreviousIcon
+            onClick={() => {
+              cutscene.setTime(cutscene.director.currentTime - 1);
+            }}
+          />
+        </div>
+        <div className="controls-btn">
+          <PlayIcon
+            className="rotate-180"
+            onClick={() => {
+              cutscene.playReverse();
+            }}
+          />
+        </div>
+        <div className="controls-btn">
+          <StopIcon
+            onClick={() => {
+              cutscene.stop();
+            }}
+          />
+        </div>
+        <div className="controls-btn">
+          <PlayIcon
+            onClick={() => {
+              cutscene.play();
+            }}
+          />
+        </div>
+        <div className="controls-btn">
+          <TrackNextIcon
+            onClick={() => {
+              cutscene.setTime(cutscene.director.currentTime + 1);
+            }}
+          />
+        </div>
       </div>
     </div>
   );

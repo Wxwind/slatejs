@@ -169,12 +169,12 @@ export const Timeline: FC<TimelineProps> = (props) => {
   }, [signals.timeChanged, updateTimeMark]);
 
   useEffect(() => {
-    signals.windowResized.on(updateMarks);
-
+    updateMarks();
+    window.addEventListener('resize', updateMarks);
     return () => {
-      signals.windowResized.off(updateMarks);
+      window.removeEventListener('resize', updateMarks);
     };
-  }, [signals.windowResized, updateMarks]);
+  }, [updateMarks]);
 
   useEffect(() => {
     const timelineDOM = timelineRef.current;

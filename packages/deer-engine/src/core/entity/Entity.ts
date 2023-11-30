@@ -1,8 +1,10 @@
 import { isNil } from '@/util';
-import { Component, TransformComponent } from '../component';
+import { TransformComponent } from '../component';
 import { genUUID } from '@/util/utils';
 import { UUID_PREFIX_ENTITY } from '@/config';
 import { DeerScene } from '../DeerScene';
+import { EntityInfo } from './type';
+import { Component, ComponentInfo } from '../component/type';
 
 export class Entity {
   id: string;
@@ -92,5 +94,21 @@ export class Entity {
 
     this.compMap.clear();
     this.compArray.length = 0;
+  };
+
+  toJsonObject: () => EntityInfo = () => {
+    const comps = this.compArray.map((a) => {
+      return {
+        type: a.type,
+        config: a.toJsonObject(),
+      } as ComponentInfo;
+    });
+
+    const info: EntityInfo = {
+      id: this.id,
+      name: this.name,
+      components: comps,
+    };
+    return info;
   };
 }

@@ -52,4 +52,11 @@ export class ApiCenter {
     this.cutscene.director.removeGroup(entityId);
     this.cutsceneDataStore.refreshData();
   };
+
+  selectIDirectable = (groupId: string | undefined, trackId?: string, clipId?: string) => {
+    this.cutscene.selectObject(groupId, trackId, clipId);
+    this.selectedIDirectableStore.refreshData();
+  };
+
+  // playsetteings
 }

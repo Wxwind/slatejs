@@ -5,11 +5,11 @@ import { StoreBase } from './StoreBase';
 export type HierarchyStoreData = EntityForHierarchy[];
 
 export class HierarchyStore extends StoreBase<HierarchyStoreData> {
+  private oldData: HierarchyStoreData | undefined;
+
   constructor(public scene: DeerScene | undefined) {
     super();
   }
-
-  private oldData: HierarchyStoreData | undefined;
 
   refreshData: () => void = () => {
     if (isNil(this.scene)) return;

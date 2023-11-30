@@ -110,7 +110,7 @@ export class CutsceneDirector {
     this._lastStartPlayTime = this.currentTime;
   };
 
-  reverse = () => {
+  playReverse = () => {
     this.playState = PlayState.PlayBackward;
 
     if (this.currentTime === 0) {

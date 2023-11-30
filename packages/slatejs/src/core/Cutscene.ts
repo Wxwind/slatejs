@@ -3,6 +3,7 @@ import { CutsceneDataStore, SelectedIDirectableStore, createScaleStore } from '.
 import { Signal } from '../signal';
 import { IDirectable } from './IDirectable';
 import { ApiCenter } from './Apicenter';
+import { isNil } from '@/util';
 
 export class Cutscene {
   // bridge between cutscene core and cutscene ui.
@@ -20,7 +21,6 @@ export class Cutscene {
 
     playingChanged: new Signal<[boolean]>(),
     timeChanged: new Signal<[number]>(),
-    windowResized: new Signal(),
   };
 
   readonly director = new CutsceneDirector();
@@ -72,8 +72,18 @@ export class Cutscene {
     this.signals.playingChanged.emit(true);
   };
 
+  playReverse = () => {
+    this.director.playReverse();
+    this.signals.playingChanged.emit(true);
+  };
+
   pause = () => {
     this.director.pause();
+    this.signals.playingChanged.emit(false);
+  };
+
+  stop = () => {
+    this.director.stop();
     this.signals.playingChanged.emit(false);
   };
 
@@ -82,11 +92,30 @@ export class Cutscene {
     this.signals.timeChanged.emit(this.director.currentTime);
   };
 
-  selectObject = (groupid: string) => {
+  selectObject = (groupId: string | undefined, trackId?: string, clipId?: string) => {
     // FIXME
-    const obj = this.director.findGroup(groupid);
-    if (obj === this.selectedObject) return;
-    this.selectedObject = obj;
+    if (isNil(groupId)) {
+      this.selectedObject = undefined;
+      return;
+    }
+
+    const group = this.director.findGroup(groupId);
+    if (group === this.selectedObject) return;
+    this.selectedObject = group;
+    if (isNil(trackId) || isNil(group)) {
+      return;
+    }
+
+    const track = group.findTrack(trackId);
+    if (track === this.selectedObject) return;
+    this.selectedObject = track;
+    if (isNil(clipId) || isNil(track)) {
+      return;
+    }
+
+    const clip = track.findClip(clipId);
+    if (clip === this.selectedObject) return;
+    this.selectedObject = clip;
   };
 
   toJson = () => {
