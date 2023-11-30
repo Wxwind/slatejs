@@ -26,7 +26,7 @@ export function transformKeymap(key: string): React.ReactNode {
     }
 
     return (
-      <div className="px-1 rounded-sm h-5 flex items-center justify-center min-w-[20px]">
+      <div key={a} className="px-1 rounded-sm h-5 flex items-center justify-center min-w-[20px]">
         <span className="leading-5">{a}</span>
       </div>
     );

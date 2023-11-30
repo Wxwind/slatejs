@@ -1,16 +1,9 @@
 import { isNil, replaceEqualDeep } from '@/util';
-import { DeerScene } from '..';
+import { DeerScene, EntityInfo } from '..';
 import { StoreBase } from './StoreBase';
-import { ComponentInfo } from '@/core/component/type';
 
-export type SelectedEntityInfoStoreData = {
-  id: string;
-  name: string;
-  components: ComponentInfo[];
-};
-
-export class SelectedEntityInfoStore extends StoreBase<SelectedEntityInfoStoreData> {
-  private oldData: SelectedEntityInfoStoreData | undefined;
+export class SelectedEntityInfoStore extends StoreBase<EntityInfo> {
+  private oldData: EntityInfo | undefined;
 
   constructor(public scene: DeerScene | undefined) {
     super();
@@ -19,7 +12,7 @@ export class SelectedEntityInfoStore extends StoreBase<SelectedEntityInfoStoreDa
   refreshData: () => void = () => {
     if (isNil(this.scene)) return;
     const eId = this.scene.entityManager.selectedEntityId;
-    let newData: SelectedEntityInfoStoreData | undefined;
+    let newData: EntityInfo | undefined;
 
     if (isNil(eId)) {
       newData = undefined;

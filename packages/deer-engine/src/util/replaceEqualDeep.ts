@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // copy from https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L218-L341
 export function replaceEqualDeep<T>(a: unknown, b: T): T;
 export function replaceEqualDeep(a: any, b: any): any {
@@ -69,6 +71,7 @@ export function isPlainObject(o: any): o is Object {
   }
 
   // If constructor does not have an Object-specific method
+  // eslint-disable-next-line no-prototype-builtins
   if (!prot.hasOwnProperty('isPrototypeOf')) {
     return false;
   }
