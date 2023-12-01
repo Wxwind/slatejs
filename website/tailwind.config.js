@@ -6,6 +6,7 @@ export default {
       colors: {
         primary: '#7262FD',
         hover: '#333641',
+        bgColorSecondary: '#2A2D37',
       },
     },
   },

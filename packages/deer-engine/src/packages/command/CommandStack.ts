@@ -9,7 +9,11 @@ export class CommandStack {
   }
 
   execute = (cmd: ICommand) => {
-    cmd.execute();
+    const isOk = cmd.execute();
+    if (!isOk) {
+      console.warn('execute failed: %s', cmd.toString());
+      return;
+    }
     this.nowIndex++;
 
     // clear if here were dirty cmds.
@@ -22,7 +26,10 @@ export class CommandStack {
   undo = () => {
     if (this.history.length === 0) return null;
     const cmd = this.history[this.history.length - 1];
-    cmd.undo();
+    const isOk = cmd.undo();
+    if (!isOk) {
+      console.warn('undo failed: %s', cmd.toString());
+    }
     this.nowIndex--;
     return cmd;
   };

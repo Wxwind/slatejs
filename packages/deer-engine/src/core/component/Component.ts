@@ -23,5 +23,7 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType> {
 
   abstract onDestory: () => void;
 
+  abstract updateByJson: (data: ComponentTypeToJsonObjMap[T]) => void;
+
   abstract toJsonObject: () => ComponentTypeToJsonObjMap[T];
 }

@@ -1,21 +1,23 @@
 import { ICommand } from '@/packages/command';
 import { DeerScene } from '../DeerScene';
-import { CommandId } from './type';
+import { CommandType } from './type';
 
 export class DeleteEntityCommand implements ICommand {
-  id: CommandId = 'DeleteEntity';
+  type: CommandType = 'DeleteEntity';
 
   constructor(private scene: DeerScene, private entityId: string) {}
 
-  execute: () => void = () => {
+  execute: () => boolean = () => {
     this.scene.entityManager.removeEntityById(this.entityId);
+    return true;
   };
 
-  undo: () => void = () => {
+  undo: () => boolean = () => {
     // TODO: undo delete entity
+    return true;
   };
 
   toString: () => string = () => {
-    return `DeleteEntityCommand: entityId = ${this.entityId}`;
+    return `${this.type}Command: entityId = ${this.entityId}`;
   };
 }

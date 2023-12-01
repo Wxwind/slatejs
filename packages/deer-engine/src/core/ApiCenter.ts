@@ -1,6 +1,6 @@
 import { isNil } from '@/util';
-import { DeerScene, deerEngine } from '..';
-import { SelectEntityCommand, DeleteEntityCommand, CreateEntityCommand } from './command';
+import { ComponentInfo, DeerScene, deerEngine } from '..';
+import { SelectEntityCommand, DeleteEntityCommand, CreateEntityCommand, UpdateComponentCommand } from './command';
 
 export class ApiCenter {
   constructor(public scene: DeerScene | undefined) {}
@@ -20,6 +20,12 @@ export class ApiCenter {
   selecteEntity = (entityId: string) => {
     if (isNil(this.scene)) return;
     const cmd = new SelectEntityCommand(this.scene, entityId);
+    deerEngine.commandManager.execute(cmd);
+  };
+
+  updateComponent = (entityId: string, compId: string, compInfo: ComponentInfo) => {
+    if (isNil(this.scene)) return;
+    const cmd = new UpdateComponentCommand(this.scene, entityId, compId, compInfo);
     deerEngine.commandManager.execute(cmd);
   };
 }

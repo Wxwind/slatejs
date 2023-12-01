@@ -1,12 +1,12 @@
 import { CommandStack, ICommand } from '@/packages/command';
 import { StoreBase } from '@/store';
 import { isNil } from '@/util';
-import { CommandId } from '../command';
+import { CommandType } from '../command';
 import { DeerEngine } from '../DeerEngine';
 
 export class CommandManager {
   private readonly commandStack: CommandStack;
-  private readonly cmdToStoreMap: Record<CommandId, StoreBase[]>;
+  private readonly cmdToStoreMap: Record<CommandType, StoreBase[]>;
 
   constructor(deerEngine: DeerEngine) {
     this.commandStack = new CommandStack();
@@ -16,30 +16,32 @@ export class CommandManager {
   private genCmdToStoreMap = (deerEngine: DeerEngine) => {
     const hierarchyStore = deerEngine.deerStore.hierarchyStore;
     const selectedEntityIdStore = deerEngine.deerStore.selectedEntityIdStore;
+    const selectedEntityInfoStore = deerEngine.deerStore.selectedEntityInfoStore;
 
-    const cmdToStore: Record<CommandId, StoreBase[]> = {
+    const cmdToStore: Record<CommandType, StoreBase[]> = {
       Empty: [],
       CreateEntity: [hierarchyStore],
       DeleteEntity: [hierarchyStore],
-      SelectEntity: [selectedEntityIdStore, hierarchyStore],
+      SelectEntity: [selectedEntityIdStore, hierarchyStore, selectedEntityInfoStore],
+      UpdateComponent: [selectedEntityInfoStore],
     };
     return cmdToStore;
   };
 
   execute = (cmd: ICommand) => {
     this.commandStack.execute(cmd);
-    this.cmdToStoreMap[cmd.id].forEach((s) => s.refreshData());
+    this.cmdToStoreMap[cmd.type].forEach((s) => s.refreshData());
   };
 
   undo = () => {
     const cmd = this.commandStack.undo();
     if (isNil(cmd)) return;
-    this.cmdToStoreMap[cmd.id].forEach((s) => s.refreshData());
+    this.cmdToStoreMap[cmd.type].forEach((s) => s.refreshData());
   };
 
   redo = () => {
     const cmd = this.commandStack.redo();
     if (isNil(cmd)) return;
-    this.cmdToStoreMap[cmd.id].forEach((s) => s.refreshData());
+    this.cmdToStoreMap[cmd.type].forEach((s) => s.refreshData());
   };
 }

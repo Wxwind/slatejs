@@ -51,6 +51,12 @@ export class TransformComponent extends ComponentBase<'Transform'> {
     this.rootObj.clear();
   };
 
+  updateByJson: (data: TransformCompJson) => void = (data) => {
+    this.rootObj.position.set(data.position.x, data.position.y, data.position.z);
+    this.rootObj.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
+    this.rootObj.scale.set(data.scale.x, data.scale.y, data.scale.z);
+  };
+
   toJsonObject: () => TransformCompJson = () => {
     return {
       position: this.rootObj.position.clone(),

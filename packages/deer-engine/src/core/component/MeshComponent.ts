@@ -38,6 +38,8 @@ export class MeshComponent extends ComponentBase<'Mesh'> {
     this.obj.geometry.dispose();
   };
 
+  updateByJson: (data: MeshCompJson) => void = (data) => {};
+
   toJsonObject: () => MeshCompJson = () => {
     const count = Array.isArray(this.obj.material) ? this.obj.material.length : 1;
 

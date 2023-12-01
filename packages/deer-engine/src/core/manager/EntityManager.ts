@@ -21,7 +21,7 @@ export class EntityManager {
   createEntity = (name: string, parent: TransformComponent | null | string) => {
     const p =
       typeof parent === 'string'
-        ? this.findEntityById(parent)?.getComponentByType<TransformComponent>('Transform') || this.scene
+        ? this.findEntityById(parent)?.findComponentByType<TransformComponent>('Transform') || this.scene
         : isNil(parent)
         ? this.scene
         : parent;

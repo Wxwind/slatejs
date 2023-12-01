@@ -26,6 +26,7 @@ export type ComponentTypeToJsonObjMap = {
 
 export type ComponentInfoMap = {
   [K in keyof ComponentTypeToJsonObjMap]: {
+    id: string;
     type: K;
     config: ComponentTypeToJsonObjMap[K];
   };
@@ -34,3 +35,4 @@ export type ComponentInfoMap = {
 export type ComponentInfo = ComponentInfoMap[keyof ComponentTypeToJsonObjMap];
 
 export type Component = MeshComponent | TransformComponent;
+export type ComponentJson = MeshCompJson | TransformCompJson;

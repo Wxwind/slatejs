@@ -1,4 +1,4 @@
-import { Timeline } from '@/components';
+import { Timeline } from './components';
 import { FC } from 'react';
 import { SceneCanvas, MainPanel, Header } from './components';
 

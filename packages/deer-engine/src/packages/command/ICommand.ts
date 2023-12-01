@@ -1,10 +1,10 @@
-import { CommandId } from '@/core';
+import { CommandType } from '@/core';
 
 export interface ICommand {
-  id: CommandId;
-  execute: () => void;
+  type: CommandType;
+  execute: () => boolean;
 
-  undo: () => void;
+  undo: () => boolean;
 
   toString: () => string;
 }

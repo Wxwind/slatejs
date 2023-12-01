@@ -8,12 +8,12 @@ interface EntityInspectorProps {}
 export const EntityInspector: FC<EntityInspectorProps> = (props) => {
   const entityInfo = useEngineStore(deerEngine.deerStore.selectedEntityInfoStore);
 
-  const TypeToComp: (comp: ComponentInfo) => ReactNode = (comp) => {
+  const TypeToComp: (comp: ComponentInfo, entityId: string) => ReactNode = (comp, entityId) => {
     switch (comp.type) {
       case 'Mesh':
-        return <MeshComp config={comp.config} />;
+        return <MeshComp entityId={entityId} compId={comp.id} config={comp.config} />;
       case 'Transform':
-        return <TransformComp config={comp.config} />;
+        return <TransformComp entityId={entityId} compId={comp.id} config={comp.config} />;
 
       default:
         return null;
@@ -23,10 +23,10 @@ export const EntityInspector: FC<EntityInspectorProps> = (props) => {
   return (
     entityInfo && (
       <div>
-        <div className="p-3">{entityInfo.name}</div>
-        <div className="flex flex-col gap-y-2">
+        <div className="p-3 bg-blue-200">{entityInfo.name}</div>
+        <div className="flex flex-col gap-y-2 py-2">
           {entityInfo.components.map((comp) => {
-            return TypeToComp(comp);
+            return <div key={comp.id}>{TypeToComp(comp, entityInfo.id)}</div>;
           })}
         </div>
       </div>

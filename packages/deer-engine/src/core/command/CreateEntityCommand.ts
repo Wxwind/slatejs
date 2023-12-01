@@ -1,29 +1,31 @@
 import { ICommand } from '@/packages/command';
 import { isNil } from '@/util';
 import { DeerScene } from '../DeerScene';
-import { CommandId } from './type';
+import { CommandType } from './type';
 import { Entity } from '../entity';
 import { MeshComponent, TransformComponent } from '../component';
 
 export class CreateEntityCommand implements ICommand {
-  id: CommandId = 'CreateEntity';
+  type: CommandType = 'CreateEntity';
 
   private obj: Entity | null = null;
 
   constructor(private scene: DeerScene, private parent: TransformComponent | string | null, private name: string) {}
 
-  execute: () => void = () => {
+  execute: () => boolean = () => {
     const cube = this.scene.entityManager.createEntity(this.name, this.parent);
     cube.addComponentByNew(MeshComponent);
     this.obj = cube;
+    return true;
   };
 
-  undo: () => void = () => {
+  undo: () => boolean = () => {
     if (isNil(this.obj)) {
       console.warn("obj doesn't exist");
-      return;
+      return false;
     }
     this.obj.onDestory();
+    return true;
   };
 
   private getParentName = () => {
@@ -34,7 +36,7 @@ export class CreateEntityCommand implements ICommand {
   };
 
   toString: () => string = () => {
-    return `CreateEntityCommand: obj = ${this.obj?.name || '<missing>'}, parent = ${
+    return `${this.type}Command: obj = ${this.obj?.name || '<missing>'}, parent = ${
       this.getParentName() || '<missing>'
     }`;
   };

@@ -1,15 +1,17 @@
 import { CommandStack, ICommand } from '../src/packages/command';
-import { CommandId } from '../src/core/command';
+import { CommandType } from '../src/core/command';
 
 export class EmptyCommand implements ICommand {
   constructor(private name: string) {}
-  id: CommandId = 'CreateEntity';
+  type: CommandType = 'CreateEntity';
 
   execute = () => {
     console.log(`command '${this.name}' execute`);
+    return true;
   };
   undo = () => {
     console.log(`command '${this.name}' undo`);
+    return true;
   };
   toString = () => {
     return `EmptyCommand: name = '${this.name}' `;

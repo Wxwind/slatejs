@@ -38,11 +38,11 @@ export class Entity {
     return !isNil(c);
   };
 
-  getComponentById = (compId: string) => {
+  findComponentById = (compId: string) => {
     return this.compMap.get(compId);
   };
 
-  getComponentByType = <T extends Component>(type: T['type']): T => {
+  findComponentByType = <T extends Component>(type: T['type']): T => {
     const c = this.compArray.find((a) => a.type === type);
     return c as T;
   };
@@ -99,6 +99,7 @@ export class Entity {
   toJsonObject: () => EntityInfo = () => {
     const comps = this.compArray.map((a) => {
       return {
+        id: a.id,
         type: a.type,
         config: a.toJsonObject(),
       } as ComponentInfo;
