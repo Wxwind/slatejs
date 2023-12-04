@@ -1,7 +1,7 @@
 import { isNil } from '@/util';
 import { Cutscene } from './Cutscene';
 import { CutsceneDataStore, SelectedIDirectableStore } from '@/store';
-import { ClipType } from './type';
+import { ClipType, TrackType } from './type';
 import { ActionClip } from './ActionClip';
 import { deerEngine } from 'deer-engine';
 
@@ -50,6 +50,14 @@ export class ApiCenter {
 
   removeGroup = (entityId: string) => {
     this.cutscene.director.removeGroup(entityId);
+    this.cutsceneDataStore.refreshData();
+  };
+
+  addTrack = (entityId: string, type: TrackType) => {
+    const group = this.cutscene.director.findGroup(entityId);
+    if (isNil(group)) return;
+
+    group.addTrack(type);
     this.cutsceneDataStore.refreshData();
   };
 

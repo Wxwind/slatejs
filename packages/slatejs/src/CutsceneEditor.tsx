@@ -54,7 +54,7 @@ export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
           }}
         >
           {sceneData?.data.map((a) => (
-            <CutsceneGroupPanel key={a.id} cutscene={cutscene} data={a} />
+            <CutsceneGroupPanel key={a.id} cutscene={cutscene} data={a} depth={0} paddingLeft={18} />
           ))}
         </div>
       </div>

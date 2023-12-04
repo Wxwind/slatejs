@@ -22,7 +22,6 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
   });
 
   useEffect(() => {
-    console.log('set new config');
     setData(config);
   }, [config, setData]);
 
@@ -40,13 +39,9 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     const value = Number(e.target.value) || 0;
-    console.log('changed', name, value);
-    // const newData = set(clone(data), name, value);
-    // setData(newData);
 
-    setData((draft) => {
-      set(draft, name, value);
-    });
+    const newData = set(clone(data), name, value);
+    setData(newData);
   };
 
   return (
