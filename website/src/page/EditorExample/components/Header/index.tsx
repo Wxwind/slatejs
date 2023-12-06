@@ -3,9 +3,22 @@ import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
 import { deerEngine } from 'deer-engine';
 import { useEngineStore } from '@/hooks';
+import { downLoad } from '@/util';
+import { cutscene } from 'slatejs';
 
 export const Header: FC = () => {
   const selectedEntityId = useEngineStore(deerEngine.deerStore.selectedEntityIdStore);
+
+  const handleSave = () => {
+    // TODO: call Native file system api
+  };
+
+  const handleSaveAs = () => {
+    // TODO: save engine datas
+    const json = cutscene.director.toJson();
+    const file = new File([json], 'cutScene.json', { type: 'text/plain' });
+    downLoad(file);
+  };
 
   const handleCreateEntity = () => {
     deerEngine.apiCenter.createEntity(selectedEntityId);
@@ -36,6 +49,22 @@ export const Header: FC = () => {
               New Project <div className="ml-auto pl-5">{transformKeymap('shift n')}</div>
             </Menubar.Item>
             <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
+            <Menubar.Item className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400">
+              Open... <div className="ml-auto pl-5">{transformKeymap('shift alt g')}</div>
+            </Menubar.Item>
+            <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
+            <Menubar.Item
+              className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
+              onSelect={handleSave}
+            >
+              Save <div className="ml-auto pl-5">{transformKeymap('ctrl s')}</div>
+            </Menubar.Item>
+            <Menubar.Item
+              className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
+              onSelect={handleSaveAs}
+            >
+              Save As... <div className="ml-auto pl-5">{transformKeymap('shift ctrl s')}</div>
+            </Menubar.Item>
           </Menubar.Content>
         </Menubar.Portal>
       </Menubar.Menu>

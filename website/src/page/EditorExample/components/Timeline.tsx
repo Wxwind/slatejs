@@ -24,7 +24,7 @@ export const Timeline: FC = () => {
   return (
     <Draggable nodeRef={nodeRef} handle=".controls" position={pos} onDrag={handleDrag}>
       <div ref={nodeRef} className="w-3/4 h-80 absolute bottom-20 left-0 right-0 m-auto">
-        <CutsceneEditor cutscene={scene} />
+        <CutsceneEditor />
       </div>
     </Draggable>
   );

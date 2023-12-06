@@ -1,5 +1,5 @@
 import { isNil } from '@/util';
-import { ComponentInfo, DeerScene, deerEngine } from '..';
+import { ComponentData, DeerScene, deerEngine } from '..';
 import { SelectEntityCommand, DeleteEntityCommand, CreateEntityCommand, UpdateComponentCommand } from './command';
 
 export class ApiCenter {
@@ -23,7 +23,7 @@ export class ApiCenter {
     deerEngine.commandManager.execute(cmd);
   };
 
-  updateComponent = (entityId: string, compId: string, compInfo: ComponentInfo) => {
+  updateComponent = (entityId: string, compId: string, compInfo: ComponentData) => {
     if (isNil(this.scene)) return;
     const cmd = new UpdateComponentCommand(this.scene, entityId, compId, compInfo);
     deerEngine.commandManager.execute(cmd);

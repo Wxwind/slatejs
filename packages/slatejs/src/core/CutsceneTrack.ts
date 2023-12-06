@@ -1,13 +1,14 @@
 import { genUUID, isNil } from '@/util';
 import { ActionClip } from './ActionClip';
 import { IDirectable } from './IDirectable';
-import { ClipType } from './type';
-import { AnimationClip } from './clips';
+import { ClipType, CreateActionClipDto, TrackType } from './type';
+import { AnimationClip, TransformClip } from './clips';
 
-export abstract class CutsceneTrack implements IDirectable {
+export abstract class CutsceneTrack<T extends TrackType = TrackType> implements IDirectable {
   private _clips: ActionClip[] = [];
   private _parent: IDirectable;
   private _id: string;
+  protected abstract readonly _type: T;
 
   abstract get name(): string;
 
@@ -39,6 +40,10 @@ export abstract class CutsceneTrack implements IDirectable {
     return this.parent?.endTime || 0;
   }
 
+  get type() {
+    return this._type;
+  }
+
   constructor(parent: IDirectable) {
     this._parent = parent;
     this._id = genUUID('cst');
@@ -57,12 +62,26 @@ export abstract class CutsceneTrack implements IDirectable {
     return this._clips.find((a) => a.id === clipId);
   };
 
-  addClip = (type: ClipType, start = 0, end = 20) => {
-    let newClip = null;
+  addClip = (type: ClipType, { start, end }: Omit<CreateActionClipDto, 'keys'>) => {
+    let newClip: ActionClip | null = null;
     switch (type) {
-      case 'Animation':
-        newClip = AnimationClip.construct(this, 'animation clip', start, end, this._id);
+      case 'Transform':
+        newClip = TransformClip.construct(this, {
+          name: 'transform clip',
+          start,
+          end,
+          keys: [],
+        });
         break;
+      case 'Animation':
+        newClip = AnimationClip.construct(this, {
+          name: 'animation clip',
+          start,
+          end,
+          keys: [],
+        });
+        break;
+
       default:
         break;
     }

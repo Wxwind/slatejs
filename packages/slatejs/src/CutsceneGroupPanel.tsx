@@ -1,13 +1,10 @@
 import { FC } from 'react';
-import { Cutscene, GroupData } from '.';
-import { CutsceneTrackPanel } from './CutsceneTrackPanel';
 import { PlusIcon } from '@radix-ui/react-icons';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { deerEngine } from 'deer-engine';
 import { CutsceneTrackTree } from './CutsceneTrackTree';
+import { GroupData, cutscene } from './core';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 interface CutsceneGroupPanelProps {
-  cutscene: Cutscene;
   data: GroupData;
   // style
   depth: number;
@@ -15,7 +12,7 @@ interface CutsceneGroupPanelProps {
 }
 
 export const CutsceneGroupPanel: FC<CutsceneGroupPanelProps> = (props) => {
-  const { cutscene, data, depth, paddingLeft } = props;
+  const { data, depth, paddingLeft } = props;
 
   return (
     <div className="cutscene-group-panel">
@@ -26,7 +23,7 @@ export const CutsceneGroupPanel: FC<CutsceneGroupPanelProps> = (props) => {
             <PlusIcon />
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
-            <DropdownMenu.Content>
+            <DropdownMenu.Content className="bg-white rounded">
               <DropdownMenu.Item
                 className="group text-[13px] leading-none text-violet-400 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-gray-300 data-[disabled]:pointer-events-none data-[highlighted]:bg-primary data-[highlighted]:text-violet-100"
                 onSelect={(e) => {
@@ -39,7 +36,7 @@ export const CutsceneGroupPanel: FC<CutsceneGroupPanelProps> = (props) => {
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
       </div>
-      <CutsceneTrackTree cutscene={cutscene} data={data.children} depth={depth + 1} paddingLeft={paddingLeft} />
+      <CutsceneTrackTree data={data.children} depth={depth + 1} paddingLeft={paddingLeft} />
     </div>
   );
 };

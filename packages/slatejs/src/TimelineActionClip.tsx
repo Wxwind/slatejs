@@ -1,16 +1,18 @@
 import { FC, useCallback } from 'react';
-import { Cutscene, ActionClipData } from './core';
+import { ActionClipData, cutscene } from './core';
 import { clamp } from './util';
+import { useScaleStore } from './store';
 
 interface TimelineActionClipProps {
-  cutscene: Cutscene;
+  groupId: string;
+  trackId: string;
   data: ActionClipData;
 }
 
 export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
-  const { data, cutscene } = props;
+  const { groupId, trackId, data } = props;
 
-  const { scale } = cutscene.useScaleStore();
+  const { scale } = useScaleStore();
 
   const handleClickBlock = () => {
     cutscene.selectObject(data.id);
@@ -32,8 +34,8 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
           data.start += offset;
           data.end += offset;
         }
-        // FIXME
-        // cutscene.cutsceneDataStore.updateClip(data.id, data);
+
+        cutscene.apiCenter.updateClip(groupId, trackId, data.id, data.type, data);
       };
 
       const onMouseUp = (e: MouseEvent) => {

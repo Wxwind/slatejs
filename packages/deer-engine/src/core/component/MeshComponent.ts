@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ComponentBase } from './Component';
+import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
 import { Entity } from '../entity';
 import { MeshCompJson } from './type';

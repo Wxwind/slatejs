@@ -3,7 +3,7 @@ import { CutsceneDirector } from './CutsceneDirector';
 import { CutsceneTrack } from './CutsceneTrack';
 import { IDirectable } from './IDirectable';
 import { genUUID, isNil } from '@/util';
-import { TransformTrack } from './tracks';
+import { PropertyTrack } from './tracks';
 import { TrackType } from './type';
 
 export abstract class CutsceneGroup implements IDirectable {
@@ -71,8 +71,8 @@ export abstract class CutsceneGroup implements IDirectable {
   addTrack = (type: TrackType) => {
     let newTrack = null;
     switch (type) {
-      case 'Transform':
-        newTrack = new TransformTrack(this);
+      case 'Property':
+        newTrack = new PropertyTrack(this);
         break;
 
       default:

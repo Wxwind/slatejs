@@ -1,11 +1,11 @@
 import { CutsceneTrack } from '../CutsceneTrack';
 import { IDirectable } from '../IDirectable';
 
-export class TransformTrack extends CutsceneTrack<'Transform'> {
-  protected _type = 'Transform' as const;
+export class PropertyTrack extends CutsceneTrack<'Property'> {
+  protected _type = 'Property' as const;
 
   get name(): string {
-    return 'Transform';
+    return 'Property';
   }
 
   constructor(parent: IDirectable) {

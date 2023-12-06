@@ -1,8 +1,6 @@
 import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { Loader } from './Loader';
-import * as THREE from 'three';
 import { Control } from './Control';
-import { CommandManager } from './manager';
 import { EntityManager } from './manager/EntityManager';
 import { TransformComponent } from './component';
 
@@ -70,7 +68,7 @@ export class DeerScene {
     this.renderer.render(this.scene, this.camera);
   };
 
-  // load new scene from .egAsset file
+  // load new scene from .egasset file
   loadSceneAsync = async () => {
     this.dispose();
   };

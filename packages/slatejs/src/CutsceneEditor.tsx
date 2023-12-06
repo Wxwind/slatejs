@@ -1,21 +1,15 @@
 import { FC, useEffect, useState } from 'react';
 import { Controls } from './Controls';
 import { Timeline } from './Timeline';
-import { Cutscene } from './core';
+import { cutscene } from './core';
 import { CutsceneGroupPanel } from './CutsceneGroupPanel';
 import { useStore } from './hooks';
 import classNames from 'classnames';
 import { UUID_PREFIX_ENTITY } from 'deer-engine';
 
-export interface CutsceneEditorProps {
-  /**
-   * cutscene can be used only for fetch store or add/remove event listerner.
-   */
-  cutscene: Cutscene;
-}
+export interface CutsceneEditorProps {}
 
 export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
-  const { cutscene } = props;
   const [isSthDraggedHover, setIsSthDraggedHover] = useState(false);
 
   const sceneData = useStore(cutscene.cutsceneDataStore);
@@ -27,7 +21,7 @@ export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
   return (
     <div className="cutscene-editor">
       <div className="cutscene-editor-left-panel flex flex-col h-full">
-        <Controls cutscene={cutscene} />
+        <Controls />
         <div
           className={classNames(
             'flex-1',
@@ -54,12 +48,12 @@ export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
           }}
         >
           {sceneData?.data.map((a) => (
-            <CutsceneGroupPanel key={a.id} cutscene={cutscene} data={a} depth={0} paddingLeft={18} />
+            <CutsceneGroupPanel key={a.id} data={a} depth={0} paddingLeft={18} />
           ))}
         </div>
       </div>
       <div className="cutscene-editor-right-panel">
-        <Timeline cutscene={cutscene} />
+        <Timeline />
       </div>
     </div>
   );

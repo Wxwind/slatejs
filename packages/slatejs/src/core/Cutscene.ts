@@ -1,5 +1,5 @@
 import { PlayState, CutsceneDirector } from './CutsceneDirector';
-import { CutsceneDataStore, SelectedIDirectableStore, createScaleStore } from '../store';
+import { CutsceneDataStore, SelectedIDirectableStore } from '../store';
 import { Signal } from '../signal';
 import { IDirectable } from './IDirectable';
 import { ApiCenter } from './Apicenter';
@@ -11,14 +11,7 @@ export class Cutscene {
   readonly signals = {
     editorCleared: new Signal(),
 
-    //animations
-
-    // animationRenamed: new Signal(),
-    // animationModified: new Signal<[AnimationClip]>(),
-    // animationSelected: new Signal(),
-
     // events
-
     playingChanged: new Signal<[boolean]>(),
     timeChanged: new Signal<[number]>(),
   };
@@ -35,9 +28,6 @@ export class Cutscene {
   readonly selectedIDirectableStore = new SelectedIDirectableStore(this);
 
   readonly apiCenter = new ApiCenter(this);
-
-  // store to manage data not concerned by cutscene core and used only for cutscene ui
-  readonly useScaleStore = createScaleStore();
 
   public get viewTimeMax(): number {
     return this.director.viewTimeMax;
@@ -126,3 +116,5 @@ export class Cutscene {
     this.director.parseJson(json);
   };
 }
+
+export const cutscene = new Cutscene();

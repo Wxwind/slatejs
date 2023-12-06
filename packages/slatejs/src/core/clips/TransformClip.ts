@@ -1,25 +1,47 @@
-import { ActionClip, IDirectable } from '..';
 import { genUUID } from '@/util';
-import { ActionClipData, ClipType } from '../type';
+import { ActionClipData, ActionClipTypeToKeyMap, CreateActionClipDto, UpdateActionClipDto } from '../type';
+import { ActionClip } from '../ActionClip';
+import { IDirectable } from '../IDirectable';
+import { CutsceneTrack } from '../CutsceneTrack';
 
-export class TransformClip extends ActionClip {
-  data: TransformClipData;
+export class TransformClip extends ActionClip<'Transform'> {
+  protected _type = 'Transform' as const;
 
-  get type(): ClipType {
-    return 'Animation';
-  }
+  data: ActionClipData<'Transform'>;
 
-  constructor(parent: IDirectable, data: TransformClipData) {
+  private constructor(parent: IDirectable, data: ActionClipData<'Transform'>) {
     super(parent);
     this.data = data;
   }
 
-  static construct(parent: IDirectable, name: string, start: number, end: number, layerId: string) {
+  static construct(parent: CutsceneTrack, { name, start, end, keys }: CreateActionClipDto<'Transform'>) {
     const id = genUUID();
-    return new TransformClip(parent, { id, name, start, end, layerId });
+    return new TransformClip(parent, { id, type: 'Transform', name, start, end, keys });
   }
+
+  updateData: (data: UpdateActionClipDto<'Transform'>) => void = (data) => {
+    this.data = { ...this.data, ...data };
+  };
+
+  addKey: (key: ActionClipTypeToKeyMap['Transform']) => void = (key) => {
+    this.data.keys.push(key);
+  };
+
+  updateKeys: (keyId: string, keyData: ActionClipTypeToKeyMap['Transform']) => void = (keyId, keyData) => {
+    const keyIndex = this.data.keys.findIndex((a) => a.id === keyId);
+    if (keyIndex === -1) {
+      console.error(`key(id = ${keyId}) not exists`);
+      return;
+    }
+    this.data.keys[keyIndex] = { ...this.data.keys[keyIndex], ...keyData };
+  };
+
+  removeKey: (keyId: string) => void = (keyId) => {
+    const keyIndex = this.data.keys.findIndex((a) => a.id === keyId);
+    if (keyIndex === -1) {
+      console.error(`key(id = ${keyId}) not exists`);
+      return;
+    }
+    this.data.keys.splice(keyIndex, 1);
+  };
 }
-
-export interface TransformClipData extends ActionClipData {}
-
-export type UpdateTransformClipDataDto = Partial<Omit<TransformClipData, 'id'>>;

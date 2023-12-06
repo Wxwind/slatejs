@@ -1,7 +1,7 @@
-import { ComponentInfo } from '../component/type';
+import { ComponentData } from '../component/type';
 
 export type EntityInfo = {
   id: string;
   name: string;
-  components: ComponentInfo[];
+  components: ComponentData[];
 };

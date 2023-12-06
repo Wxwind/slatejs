@@ -1,5 +1,5 @@
 import { Object3D } from 'three';
-import { ComponentBase } from './Component';
+import { ComponentBase } from './ComponentBase';
 import { TransformCompJson } from './type';
 import { Entity } from '../entity';
 import { DeerScene } from '../DeerScene';

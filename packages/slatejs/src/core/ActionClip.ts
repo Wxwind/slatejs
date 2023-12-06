@@ -1,15 +1,18 @@
 import { genUUID } from '@/util';
 import { IDirectable } from './IDirectable';
-import { ActionClipData, ClipType } from './type';
+import { ActionClipData, ActionClipTypeToKeyMap, ClipType, UpdateActionClipDto } from './type';
 
-export abstract class ActionClip implements IDirectable {
-  abstract data: ActionClipData;
+export abstract class ActionClip<T extends ClipType = ClipType> implements IDirectable {
+  abstract data: ActionClipData<T>;
   private _startTime = 0;
   private _endTime = 0;
   private _parent: IDirectable;
   private _id: string;
+  protected abstract readonly _type: T;
 
-  abstract get type(): ClipType;
+  get type(): T {
+    return this._type;
+  }
 
   get name(): string {
     return this.data.name;
@@ -47,6 +50,11 @@ export abstract class ActionClip implements IDirectable {
     this._parent = parent;
     this._id = genUUID('csc');
   }
+
+  abstract updateData: (data: UpdateActionClipDto<T>) => void;
+  abstract addKey: (key: ActionClipTypeToKeyMap[T]) => void;
+  abstract updateKeys: (keyId: string, keyData: ActionClipTypeToKeyMap[T]) => void;
+  abstract removeKey: (keyId: string) => void;
 
   onInitialize: () => boolean = () => {
     return false;

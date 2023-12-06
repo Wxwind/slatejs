@@ -1,8 +1,7 @@
 import { FC } from 'react';
-import { Cutscene, TrackData } from '.';
+import { TrackData } from './core';
 
 interface CutsceneTrackPanelProps {
-  cutscene: Cutscene;
   data: TrackData;
   // style
   depth: number;
@@ -10,7 +9,7 @@ interface CutsceneTrackPanelProps {
 }
 
 export const CutsceneTrackPanel: FC<CutsceneTrackPanelProps> = (props) => {
-  const { cutscene, data, depth, paddingLeft } = props;
+  const { data, depth, paddingLeft } = props;
   return (
     <div className="cutscene-track-panel" style={{ paddingLeft: `${paddingLeft * depth}px` }}>
       {data.name}

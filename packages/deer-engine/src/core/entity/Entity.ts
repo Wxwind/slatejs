@@ -4,7 +4,7 @@ import { genUUID } from '@/util/utils';
 import { UUID_PREFIX_ENTITY } from '@/config';
 import { DeerScene } from '../DeerScene';
 import { EntityInfo } from './type';
-import { Component, ComponentInfo } from '../component/type';
+import { Component, ComponentData } from '../component/type';
 
 export class Entity {
   id: string;
@@ -102,7 +102,7 @@ export class Entity {
         id: a.id,
         type: a.type,
         config: a.toJsonObject(),
-      } as ComponentInfo;
+      } as ComponentData;
     });
 
     const info: EntityInfo = {

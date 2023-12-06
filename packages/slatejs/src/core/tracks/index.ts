@@ -1,1 +1,2 @@
-export * from './TransformTrack';
+export * from './PropertyTrack';
+export * from './NumberTrack';

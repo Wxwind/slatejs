@@ -1,7 +1,7 @@
 import { isNil } from '@/util';
 import { Cutscene } from './Cutscene';
 import { CutsceneDataStore, SelectedIDirectableStore } from '@/store';
-import { ClipType, TrackType } from './type';
+import { ClipType, CreateActionClipDto, TrackType, UpdateActionClipDto } from './type';
 import { ActionClip } from './ActionClip';
 import { deerEngine } from 'deer-engine';
 
@@ -14,21 +14,25 @@ export class ApiCenter {
     this.selectedIDirectableStore = cutscene.selectedIDirectableStore;
   }
 
-  addClip = (groupId: string, trackId: string, clipType: ClipType) => {
-    this.cutscene.director.findTrack(groupId, trackId)?.addClip(clipType);
+  // IDirectable
+  addClip = (groupId: string, trackId: string, clipType: ClipType, clipOptions: Omit<CreateActionClipDto, 'keys'>) => {
+    this.cutscene.director.findTrack(groupId, trackId)?.addClip(clipType, clipOptions);
     this.cutsceneDataStore.refreshData();
   };
 
-  updateClip = <T extends ActionClip = ActionClip>(
+  updateClip = <T extends ClipType = ClipType>(
     groupId: string,
     trackId: string,
     clipId: string,
-    updateDataDto: Partial<Omit<T['data'], 'id'>>
+    type: T, // used to validate clip type
+    updateDataDto: UpdateActionClipDto<T>
   ) => {
     const clip = this.cutscene.director.findClip(groupId, trackId, clipId);
     if (isNil(clip)) return;
 
-    clip.data = { ...updateDataDto, ...clip.data };
+    if (clip.type === type) {
+      clip.updateData(updateDataDto);
+    }
     this.cutsceneDataStore.refreshData();
   };
 
@@ -67,4 +71,13 @@ export class ApiCenter {
   };
 
   // playsetteings
+
+  // save and load
+  export = () => {
+    this.cutscene.director.toJson();
+  };
+
+  import = (json: string) => {
+    this.cutscene.director.parseJson(json);
+  };
 }

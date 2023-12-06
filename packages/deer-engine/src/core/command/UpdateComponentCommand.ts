@@ -1,7 +1,7 @@
 import { ICommand } from '@/packages/command';
 import { DeerScene } from '../DeerScene';
 import { CommandType } from './type';
-import { ComponentBase, ComponentInfo, ComponentJson } from '../component';
+import { ComponentBase, ComponentData, ComponentJson } from '../component';
 import { isNil } from '@/util';
 
 export class UpdateComponentCommand implements ICommand {
@@ -12,7 +12,7 @@ export class UpdateComponentCommand implements ICommand {
     private scene: DeerScene,
     private entityId: string,
     private compId: string,
-    private compInfo: ComponentInfo
+    private compInfo: ComponentData
   ) {}
 
   execute: () => boolean = () => {

@@ -1,24 +1,22 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Cutscene } from './core';
+import { cutscene } from './core';
 import { isNil } from './util';
 import TimeMarkIcon from './TimeMarkIcon';
-import TimelineTracksPanel from './TimelineTrackPanel';
 import { useStore } from './hooks';
 import { TimelineGroupPanel } from './TimelineGroupPanel';
+import { useScaleStore } from './store';
 
-export interface TimelineProps {
-  cutscene: Cutscene;
-}
+export interface TimelineProps {}
 
 export const Timeline: FC<TimelineProps> = (props) => {
-  const { cutscene } = props;
+  const {} = props;
   const signals = cutscene.signals;
   const player = cutscene.director;
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const timeCanvasRef = useRef<HTMLCanvasElement>(null);
-  const { scale, setScale } = cutscene.useScaleStore(); // scale == pixels per seconds
+  const { scale, setScale } = useScaleStore();
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
 
@@ -26,7 +24,7 @@ export const Timeline: FC<TimelineProps> = (props) => {
   is external variable. It's better to draw timeline with canvas. */
   const timelineTrackWidth = useMemo(() => {
     return cutscene.viewTimeMax * scale;
-  }, [cutscene.viewTimeMax, scale]);
+  }, [scale]);
 
   console.log('timelineTrackWidth', scale, cutscene.viewTimeMax);
 
@@ -192,7 +190,7 @@ export const Timeline: FC<TimelineProps> = (props) => {
       <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
         <div style={{ width: `${timelineTrackWidth}px` }}>
           {cutsceneData?.data.map((a) => {
-            return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} cutscene={cutscene} data={a} />;
+            return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} data={a} />;
           })}
         </div>
       </div>
