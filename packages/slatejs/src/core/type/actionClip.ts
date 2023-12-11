@@ -1,4 +1,5 @@
 import { Vector3 } from 'deer-engine';
+import { AnimationClip, TransformClip } from '../clips';
 
 export type ClipType = 'Transform' | 'Animation';
 
@@ -11,6 +12,7 @@ export type TransformKeys = {
 export type AnimationKeys = {
   id: string;
   time: number;
+  referenceAnimId: string;
 };
 
 export type ActionClipTypeToKeyMap = {
@@ -35,3 +37,5 @@ export type CreateActionClipDto<T extends ClipType = ClipType> = Omit<ActionClip
 export type UpdateActionClipDto<T extends ClipType = ClipType> = Partial<
   Omit<ActionClipTypeToDataMap[T], 'id' | 'type'>
 >;
+
+export type ActionClip = AnimationClip | TransformClip;

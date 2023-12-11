@@ -1,7 +1,6 @@
 import { genUUID, isNil } from '@/util';
-import { ActionClip } from './ActionClip';
 import { IDirectable } from './IDirectable';
-import { ClipType, CreateActionClipDto, TrackType } from './type';
+import { ClipType, CreateActionClipDto, TrackType, ActionClip } from './type';
 import { AnimationClip, TransformClip } from './clips';
 
 export abstract class CutsceneTrack<T extends TrackType = TrackType> implements IDirectable {
@@ -42,6 +41,10 @@ export abstract class CutsceneTrack<T extends TrackType = TrackType> implements 
 
   get type() {
     return this._type;
+  }
+
+  get actor() {
+    return this.parent?.actor;
   }
 
   constructor(parent: IDirectable) {

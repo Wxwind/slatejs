@@ -2,8 +2,8 @@ import { isNil } from '@/util';
 import { Cutscene } from './Cutscene';
 import { CutsceneDataStore, SelectedIDirectableStore } from '@/store';
 import { ClipType, CreateActionClipDto, TrackType, UpdateActionClipDto } from './type';
-import { ActionClip } from './ActionClip';
 import { deerEngine } from 'deer-engine';
+import { ActionClipBase } from './ActionClip';
 
 export class ApiCenter {
   private cutsceneDataStore: CutsceneDataStore;
@@ -31,7 +31,7 @@ export class ApiCenter {
     if (isNil(clip)) return;
 
     if (clip.type === type) {
-      clip.updateData(updateDataDto);
+      (clip as ActionClipBase).updateData(updateDataDto);
     }
     this.cutsceneDataStore.refreshData();
   };

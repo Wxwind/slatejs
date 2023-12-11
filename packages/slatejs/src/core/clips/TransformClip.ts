@@ -1,10 +1,10 @@
 import { genUUID } from '@/util';
 import { ActionClipData, ActionClipTypeToKeyMap, CreateActionClipDto, UpdateActionClipDto } from '../type';
-import { ActionClip } from '../ActionClip';
+import { ActionClipBase } from '../ActionClip';
 import { IDirectable } from '../IDirectable';
 import { CutsceneTrack } from '../CutsceneTrack';
 
-export class TransformClip extends ActionClip<'Transform'> {
+export class TransformClip extends ActionClipBase<'Transform'> {
   protected _type = 'Transform' as const;
 
   data: ActionClipData<'Transform'>;

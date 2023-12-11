@@ -2,6 +2,7 @@ import { FC, useCallback } from 'react';
 import { ActionClipData, cutscene } from './core';
 import { clamp } from './util';
 import { useScaleStore } from './store';
+import { ComponentInstanceIcon } from '@radix-ui/react-icons';
 
 interface TimelineActionClipProps {
   groupId: string;
@@ -46,7 +47,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [data, scale]
+    [data, groupId, scale, trackId]
   );
 
   const handleDragLeft = useCallback(
@@ -57,8 +58,8 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
 
         const offset = mx / scale;
         data.start = clamp(data.start + offset, 0, data.end);
-        // FIXME
-        //cutscene.cutsceneDataStore.updateClip(data.id, data);
+
+        cutscene.apiCenter.updateClip(groupId, trackId, data.id, data.type, data);
       };
 
       const onMouseUp = (e: MouseEvent) => {
@@ -69,7 +70,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [data, scale]
+    [data, groupId, scale, trackId]
   );
 
   const handleDragRight = useCallback(
@@ -81,7 +82,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
         const offset = mx / scale;
         data.end = Math.max(data.start, data.end + offset);
         // FIXME
-        //cutscene.cutsceneDataStore.updateClip(data.id, data);
+        cutscene.apiCenter.updateClip(groupId, trackId, data.id, data.type, data);
       };
 
       const onMouseUp = (e: MouseEvent) => {
@@ -92,7 +93,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [data, scale]
+    [data, groupId, scale, trackId]
   );
 
   return (
@@ -109,6 +110,16 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       <div className="resize-left" onMouseDown={handleDragLeft} />
       <div className="resize-right" onMouseDown={handleDragRight} />
       <div>{data.name}</div>
+      {data.keys.map((key) => (
+        <div
+          style={{
+            position: 'absolute',
+            left: key.time * scale,
+          }}
+        >
+          <ComponentInstanceIcon />
+        </div>
+      ))}
     </div>
   );
 };

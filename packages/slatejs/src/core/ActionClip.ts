@@ -2,7 +2,7 @@ import { genUUID } from '@/util';
 import { IDirectable } from './IDirectable';
 import { ActionClipData, ActionClipTypeToKeyMap, ClipType, UpdateActionClipDto } from './type';
 
-export abstract class ActionClip<T extends ClipType = ClipType> implements IDirectable {
+export abstract class ActionClipBase<T extends ClipType = ClipType> implements IDirectable {
   abstract data: ActionClipData<T>;
   private _startTime = 0;
   private _endTime = 0;
@@ -44,6 +44,10 @@ export abstract class ActionClip<T extends ClipType = ClipType> implements IDire
 
   get endTime(): number {
     return this._endTime;
+  }
+
+  get actor() {
+    return this.parent?.actor;
   }
 
   constructor(parent: IDirectable) {

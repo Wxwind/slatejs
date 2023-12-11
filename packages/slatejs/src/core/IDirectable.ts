@@ -1,5 +1,6 @@
 import { clamp } from '@/util';
 import { CutsceneDirector } from './CutsceneDirector';
+import { Entity } from 'deer-engine';
 
 export interface IDirectable {
   get root(): CutsceneDirector | null;
@@ -12,6 +13,7 @@ export interface IDirectable {
   get isActive(): boolean;
   get id(): string;
   get name(): string;
+  get actor(): Entity | undefined;
 
   onInitialize: () => boolean;
 

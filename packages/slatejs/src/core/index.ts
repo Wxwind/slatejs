@@ -4,6 +4,5 @@ export * from './CutsceneGroup';
 export * from './CutsceneTrack';
 export * from './ActionClip';
 export * from './IDirectable';
-export * from './ISerializable';
 export * from './clips';
 export * from './type';

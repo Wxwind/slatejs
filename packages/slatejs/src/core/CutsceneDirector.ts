@@ -1,10 +1,9 @@
 import { SLATEJS_VERSION } from '@/config';
 import { isNil } from '@/util';
-import { ActionClip } from './ActionClip';
 import { CutsceneGroup } from './CutsceneGroup';
 import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
 import { ActorGroup } from './groups';
-import { CutsceneData, GroupData, TrackData, ActionClipData, GroupType } from './type';
+import { CutsceneData, GroupData, TrackData, ActionClipData, GroupType, ActionClip } from './type';
 
 /**
  * PlayState in editor mode has no state called 'paused' because
