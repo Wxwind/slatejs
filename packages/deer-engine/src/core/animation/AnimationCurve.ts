@@ -256,18 +256,34 @@ export class AnimationCurve {
     const ty2 = key2.value - Math.sin(angle2) * nextWeight;
 
     const dx = dt;
-    // Hermit to Bezier
+
+    // Calculator Bezier
+    // Reference: https://github.com/cocos/cocos-engine/blob/v3.8.2/cocos/core/curves/curve.ts
+
+    // Normalize values
     const u1x = (tx1 - t1) / dx;
     const u2x = (tx2 - t1) / dx;
     const u1y = ty1;
     const u2y = ty2;
 
+    // Convert Bernstein to Power bias.
+    // Beizer represented by matrix:
+    // [1, t, t^2, t^3] * [1, 0, 0, 0; -3, 3, 0, 0; 3, -6, 3, 0; -1, 3, -3, 1] * Transpose( [p_0，p_1，p_2，p_3] )
+    // --------------------------------------
+    // | Basis | Coeff
+    // | t^3   | -   p_0 + 3 * p_1 - 3 * p_2 + p_3
+    // | t^2   | 3 * p_0 - 6 * p_1 + 3 * p_2
+    // | t^1   | -3* p_0 + 3 * p_1
+    // | t^0   | p_0
+    // --------------------------------------
+    // where: p_0 = 0, p_1 = u1x, p_2 = u2x, p_3 = 1
     const coeff0 = 0;
     const coeff1 = 3 * u1x;
     const coeff2 = 3 * u2x - 6 * u1x;
     const coeff3 = 3 * (u2x - u1x) + 1;
 
     const solutions: [number, number, number] = [0, 0, 0];
+    // get the x of besizer value which cubic(x) = alpha
     const NumRes = solveCubic(coeff0 - alpha, coeff1, coeff2, coeff3, solutions);
     let param = alpha;
     if (NumRes === 1) {
