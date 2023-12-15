@@ -13,6 +13,14 @@ export enum InterpMode {
   Cubic = 'Cubic',
 }
 
+/** How tangentLine behaves when dragged, works only when InterpMode == 'Cubic' */
+export enum TangentMode {
+  Auto = 'Auto',
+  User = 'User', // inTangent == outTangent
+  Break = 'Break', // allow inTangent != outTangent
+  None = 'None',
+}
+
 export class Keyframe {
   time: number;
   value: number;
@@ -20,6 +28,7 @@ export class Keyframe {
   outTangent: number;
   inWeight: number;
   outWeight: number;
+  tangentMode: TangentMode;
   weightMode: WeightMode;
   interpMode: InterpMode;
 
@@ -36,6 +45,7 @@ export class Keyframe {
   ) {
     this.weightMode = WeightMode.None;
     this.interpMode = InterpMode.Linaer;
+    this.tangentMode = TangentMode.Auto;
     this.time = time;
     this.value = value;
     this.inTangent = inTangent || 0;

@@ -6,3 +6,7 @@ export const clamp = (v: number, min: number, max: number) => {
   }
   return Math.min(max, Math.max(min, v));
 };
+
+export const isNearly = (value: number, other: number, tolerance: number = 10e-4) => {
+  return Math.abs(value - other) <= tolerance;
+};

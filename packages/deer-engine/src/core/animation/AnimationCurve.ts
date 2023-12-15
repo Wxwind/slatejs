@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { isNearlyZero, lerp } from '@/util';
-import { InterpMode, Keyframe, WeightMode } from './Keyframe';
+import { InterpMode, Keyframe, TangentMode, WeightMode } from './Keyframe';
 import { solveCubic } from './soleveCubic';
 
 export enum AnimationCurveExtrapolation {
@@ -36,6 +36,7 @@ export class AnimationCurve {
     let index: number = 0;
     for (; index < this.keys.length && time > this.keys[index].time; index++);
     this.keys.splice(index, 0, new Keyframe(time, value));
+    return index;
   };
 
   getKey = (index: number) => {
@@ -48,6 +49,10 @@ export class AnimationCurve {
 
   removeKey = (index: number) => {
     this.keys.splice(index, 1);
+  };
+
+  setKeyTangentMode = (index: number, mode: TangentMode) => {
+    this.keys[index].tangentMode === mode;
   };
 
   evaluate: (time: number) => number = (time) => {
@@ -195,7 +200,15 @@ export class AnimationCurve {
         const p3 = key2.value;
 
         if (this.isNotWeighted(key1, key2)) {
-          // Hermite
+          // Hermite to Beizer
+          // p0 = q0
+          // p1 = q0 + u0 / 3
+          // p2 = q1 - u1 / 3
+          // p3 = q1
+          // where: u0 = f(q0)', u1 = f(q1)'
+          // assume u = dt * tangent
+          // ps: But why can we (unreal / cocos) use alpha directly as x of value?
+          // Apparentely alpha != t where beizer(t).x = alpha.
           const oneThird = 1 / 3;
           const p1 = p0 + key1.outTangent * dt * oneThird;
           const p2 = p3 - key2.inTangent * dt * oneThird;
@@ -271,10 +284,10 @@ export class AnimationCurve {
     // [1, t, t^2, t^3] * [1, 0, 0, 0; -3, 3, 0, 0; 3, -6, 3, 0; -1, 3, -3, 1] * Transpose( [p_0，p_1，p_2，p_3] )
     // --------------------------------------
     // | Basis | Coeff
-    // | t^3   | -   p_0 + 3 * p_1 - 3 * p_2 + p_3
-    // | t^2   | 3 * p_0 - 6 * p_1 + 3 * p_2
+    // | t^0   |     p_0
     // | t^1   | -3* p_0 + 3 * p_1
-    // | t^0   | p_0
+    // | t^2   | 3 * p_0 - 6 * p_1 + 3 * p_2
+    // | t^3   | -   p_0 + 3 * p_1 - 3 * p_2 + p_3
     // --------------------------------------
     // where: p_0 = 0, p_1 = u1x, p_2 = u2x, p_3 = 1
     const coeff0 = 0;
@@ -283,7 +296,7 @@ export class AnimationCurve {
     const coeff3 = 3 * (u2x - u1x) + 1;
 
     const solutions: [number, number, number] = [0, 0, 0];
-    // get the x of besizer value which cubic(x) = alpha
+    // get the t of besizer value which cubic(t).x = alpha
     const NumRes = solveCubic(coeff0 - alpha, coeff1, coeff2, coeff3, solutions);
     let param = alpha;
     if (NumRes === 1) {
@@ -340,10 +353,9 @@ export const repeatTime: (minTime: number, maxTime: number, time: number) => [ne
     time = time + repeatCount * duration;
   }
 
-  // FIXME: Do we really need this?
-  if (time < minTime && originalTime == maxTime) {
+  if (originalTime < minTime && time == maxTime) {
     time = minTime;
-  } else if (time > maxTime && originalTime == minTime) {
+  } else if (originalTime > maxTime && time == minTime) {
     time = maxTime;
   }
 
