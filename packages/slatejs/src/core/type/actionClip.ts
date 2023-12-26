@@ -1,23 +1,23 @@
 import { Vector3 } from 'deer-engine';
 import { AnimationClip, TransformClip } from '../clips';
+import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
+import { AnimatedParameter } from '../AnimatedParameter';
 
 export type ClipType = 'Transform' | 'Animation';
 
 export type TransformKeys = {
-  id: string;
   time: number; // local time
   position: Vector3;
 };
 
 export type AnimationKeys = {
-  id: string;
   time: number;
   referenceAnimId: string;
 };
 
 export type ActionClipTypeToKeyMap = {
-  Animation: AnimationKeys;
-  Transform: TransformKeys;
+  Animation: AnimatedParameterCollection;
+  Transform: AnimatedParameter;
 };
 
 type ActionClipTypeToDataMap = {

@@ -1,6 +1,7 @@
 import { isNil, replaceEqualDeep } from '@/util';
-import { DeerScene, EntityForHierarchy } from '..';
+import { DeerScene } from '../core';
 import { StoreBase } from './StoreBase';
+import { EntityForHierarchy } from './type';
 
 export type HierarchyStoreData = EntityForHierarchy[];
 

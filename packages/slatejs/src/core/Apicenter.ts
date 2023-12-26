@@ -4,6 +4,7 @@ import { CutsceneDataStore, SelectedIDirectableStore } from '@/store';
 import { ClipType, CreateActionClipDto, TrackType, UpdateActionClipDto } from './type';
 import { deerEngine } from 'deer-engine';
 import { ActionClipBase } from './ActionClip';
+import { AnimationClip } from './clips';
 
 export class ApiCenter {
   private cutsceneDataStore: CutsceneDataStore;
@@ -16,7 +17,14 @@ export class ApiCenter {
 
   // IDirectable
   addClip = (groupId: string, trackId: string, clipType: ClipType, clipOptions: Omit<CreateActionClipDto, 'keys'>) => {
-    this.cutscene.director.findTrack(groupId, trackId)?.addClip(clipType, clipOptions);
+    const clip = this.cutscene.director.findTrack(groupId, trackId)?.addClip(clipType, clipOptions);
+    switch (clip?.type) {
+      case 'Transform':
+        clip.break;
+
+      default:
+        break;
+    }
     this.cutsceneDataStore.refreshData();
   };
 

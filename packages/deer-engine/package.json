@@ -10,6 +10,8 @@
     "build": "rollup --config rollup.config.js",
     "watch": "node scripts/watch.cjs",
     "lint:ts": "tsc -p ./tsconfig.json",
+    "babel-run": "babel-node src/index -x .ts --config-file ./babel.config.json",
+    "babel-build": "babel src/index.ts -o src/index.cjs",
     "test": "jest"
   },
   "files": [
@@ -21,7 +23,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.23.6",
+    "@babel/node": "^7.22.19",
+    "@babel/plugin-proposal-decorators": "^7.23.6",
+    "@babel/preset-env": "^7.23.6",
+    "@babel/preset-typescript": "^7.23.3",
     "@rollup/plugin-alias": "^5.0.1",
+    "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-typescript": "^11.1.1",
     "@types/jest": "^29.5.6",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
@@ -31,9 +39,10 @@
     "rollup": "^3.25.3",
     "rollup-plugin-dts": "^5.3.1",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@babel/cli": "^7.23.4",
     "@types/three": "^0.157.2",
     "@types/uuid": "^9.0.6",
     "three": "^0.157.0",

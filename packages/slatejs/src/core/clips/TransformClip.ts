@@ -3,15 +3,19 @@ import { ActionClipData, ActionClipTypeToKeyMap, CreateActionClipDto, UpdateActi
 import { ActionClipBase } from '../ActionClip';
 import { IDirectable } from '../IDirectable';
 import { CutsceneTrack } from '../CutsceneTrack';
+import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
 
 export class TransformClip extends ActionClipBase<'Transform'> {
   protected _type = 'Transform' as const;
 
   data: ActionClipData<'Transform'>;
 
+  private _animatedParams: AnimatedParameterCollection;
+
   private constructor(parent: IDirectable, data: ActionClipData<'Transform'>) {
     super(parent);
     this.data = data;
+    this._animatedParams = new AnimatedParameterCollection();
   }
 
   static construct(parent: CutsceneTrack, { name, start, end, keys }: CreateActionClipDto<'Transform'>) {

@@ -1,5 +1,5 @@
 import { isNil } from '@/util';
-import { DeerScene } from '..';
+import { DeerScene } from '../core';
 import { StoreBase } from './StoreBase';
 
 export type SelectedEntityStoreData = string | undefined;

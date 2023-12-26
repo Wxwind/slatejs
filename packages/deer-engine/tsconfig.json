@@ -1,12 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ESNext",
     "outDir": "dist",
     "lib": ["ESNext", "DOM"],
     "noEmit": true,
     "declaration": false,
     "declarationMap": false,
-    "target": "es6",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",

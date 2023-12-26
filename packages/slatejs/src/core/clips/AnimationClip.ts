@@ -27,7 +27,7 @@ export class AnimationClip extends ActionClipBase<'Animation'> {
     this.data.keys.push(key);
   };
 
-  updateKeys: (keyId: string, keyData: ActionClipTypeToKeyMap['Animation']) => void = (keyId, keyData) => {
+  updateKeys: (time: number, keyData: ActionClipTypeToKeyMap['Animation']) => void = (keyId, keyData) => {
     const keyIndex = this.data.keys.findIndex((a) => a.id === keyId);
     if (keyIndex === -1) {
       console.error(`key(id = ${keyId}) not exists`);

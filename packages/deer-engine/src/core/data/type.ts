@@ -1,4 +1,4 @@
-type GroupOptions = { name: string } & Partial<{
+export type GroupOptions = { name: string } & Partial<{
   id: string;
   name: string;
   displayOrder: number;
@@ -7,7 +7,9 @@ type GroupOptions = { name: string } & Partial<{
 
 export type IPropertyOptions = {
   type?: string;
+  group?: string | GroupOptions;
   displayName?: string;
   tooltip?: string;
-  group?: string | GroupOptions;
+  min?: number;
+  max?: number;
 };

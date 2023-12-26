@@ -1,5 +1,5 @@
 import { isNil, replaceEqualDeep } from '@/util';
-import { DeerScene, EntityInfo } from '..';
+import { DeerScene, EntityInfo } from '../core';
 import { StoreBase } from './StoreBase';
 
 export class SelectedEntityInfoStore extends StoreBase<EntityInfo> {
