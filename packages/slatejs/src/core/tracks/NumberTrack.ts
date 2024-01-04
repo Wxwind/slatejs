@@ -7,8 +7,4 @@ export class NumberTrack extends PropertyTrack {
   get name(): string {
     return 'Property';
   }
-
-  constructor(parent: IDirectable) {
-    super(parent);
-  }
 }

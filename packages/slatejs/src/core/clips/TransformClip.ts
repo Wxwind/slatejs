@@ -1,51 +1,43 @@
 import { genUUID } from '@/util';
-import { ActionClipData, ActionClipTypeToKeyMap, CreateActionClipDto, UpdateActionClipDto } from '../type';
-import { ActionClipBase } from '../ActionClip';
-import { IDirectable } from '../IDirectable';
+import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } from '../type';
+import { ActionClip } from '../ActionClip';
 import { CutsceneTrack } from '../CutsceneTrack';
 import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
 
-export class TransformClip extends ActionClipBase<'Transform'> {
+export class TransformClip extends ActionClip {
   protected _type = 'Transform' as const;
 
-  data: ActionClipData<'Transform'>;
+  private _animatedParams: AnimatedParameterCollection | undefined;
 
-  private _animatedParams: AnimatedParameterCollection;
-
-  private constructor(parent: IDirectable, data: ActionClipData<'Transform'>) {
-    super(parent);
-    this.data = data;
-    this._animatedParams = new AnimatedParameterCollection();
+  get animatedData(): AnimatedParameterCollection | undefined {
+    return this._animatedParams;
   }
 
-  static construct(parent: CutsceneTrack, { name, start, end, keys }: CreateActionClipDto<'Transform'>) {
-    const id = genUUID();
-    return new TransformClip(parent, { id, type: 'Transform', name, start, end, keys });
+  get animatedParameterTarget(): any {
+    throw new Error('Method not implemented.');
   }
 
-  updateData: (data: UpdateActionClipDto<'Transform'>) => void = (data) => {
-    this.data = { ...this.data, ...data };
-  };
+  private constructor(parent: CutsceneTrack, id: string, name: string, start: number, end: number) {
+    super(parent, id, name, start, end);
+  }
 
-  addKey: (key: ActionClipTypeToKeyMap['Transform']) => void = (key) => {
-    this.data.keys.push(key);
-  };
+  static constructFromJson(parent: CutsceneTrack, data: CreateActionClipByJsonDto) {
+    const clip = new TransformClip(parent, data.id, data.name, data.startTime, data.endTime);
+    const animatedParams = AnimatedParameterCollection.constructFromJson(clip, data.animatedParams);
+    clip._animatedParams = animatedParams;
+    return clip;
+  }
 
-  updateKeys: (keyId: string, keyData: ActionClipTypeToKeyMap['Transform']) => void = (keyId, keyData) => {
-    const keyIndex = this.data.keys.findIndex((a) => a.id === keyId);
-    if (keyIndex === -1) {
-      console.error(`key(id = ${keyId}) not exists`);
-      return;
-    }
-    this.data.keys[keyIndex] = { ...this.data.keys[keyIndex], ...keyData };
-  };
+  static construct(parent: CutsceneTrack, data: CreateActionClipDto) {
+    const clip = new TransformClip(parent, genUUID('csc'), data.name || 'transform clip', data.startTime, data.endTime);
+    clip._animatedParams = AnimatedParameterCollection.construct();
+    return clip;
+  }
 
-  removeKey: (keyId: string) => void = (keyId) => {
-    const keyIndex = this.data.keys.findIndex((a) => a.id === keyId);
-    if (keyIndex === -1) {
-      console.error(`key(id = ${keyId}) not exists`);
-      return;
-    }
-    this.data.keys.splice(keyIndex, 1);
+  updateData: (data: UpdateActionClipDto) => void = (data) => {
+    data.startTime && (this._startTime = data.startTime);
+    data.endTime && (this._endTime = data.endTime);
+    data.name && (this._name = data.name);
+    this.signals.clipUpdated.emit();
   };
 }

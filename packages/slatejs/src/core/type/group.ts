@@ -1,10 +1,10 @@
-import { TrackData } from './track';
+import { CutsceneTrackData } from './track';
 
-export type GroupType = 'Actor' | 'Director';
+export type CutsceneGroupType = 'Actor' | 'Director';
 
-export type GroupData = {
+export type CutsceneGroupData = {
   id: string;
   name: string;
   entityId: string | undefined;
-  children: TrackData[];
+  children: CutsceneTrackData[];
 };

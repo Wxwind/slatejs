@@ -2,7 +2,6 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cutscene } from './core';
 import { isNil } from './util';
 import TimeMarkIcon from './TimeMarkIcon';
-import { useStore } from './hooks';
 import { TimelineGroupPanel } from './TimelineGroupPanel';
 import { useScaleStore } from './store';
 
@@ -11,7 +10,6 @@ export interface TimelineProps {}
 export const Timeline: FC<TimelineProps> = (props) => {
   const {} = props;
   const signals = cutscene.signals;
-  const player = cutscene.director;
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -27,8 +25,6 @@ export const Timeline: FC<TimelineProps> = (props) => {
   }, [scale]);
 
   console.log('timelineTrackWidth', scale, cutscene.viewTimeMax);
-
-  const cutsceneData = useStore(cutscene.cutsceneDataStore);
 
   const handleClickTimeCanvas = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
@@ -54,10 +50,9 @@ export const Timeline: FC<TimelineProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [cutscene, scale]
+    [scale]
   );
 
-  /* FIXME: may not update cus currentTime is also an external variable */
   const updateMarks = useCallback(() => {
     const canvas = timeCanvasRef.current;
     const scroller = scrollerRef.current;
@@ -111,18 +106,18 @@ export const Timeline: FC<TimelineProps> = (props) => {
 
       ctx.fillText(text, i * scale, 13);
     }
-  }, [cutscene.viewTimeMax, scale]);
+  }, [scale]);
 
   /* FIXME: may not update cus currentTime is also an external variable */
   const updateTimeMark = useCallback(() => {
     const scroller = scrollerRef.current;
     if (isNil(scroller)) return;
     // 8 = scrollmark.width / 2
-    const offsetLeft = player.currentTime * scale - scroller.scrollLeft - 8;
+    const offsetLeft = cutscene.director.currentTime * scale - scroller.scrollLeft - 8;
 
     const timeMarkLeft = offsetLeft + 'px';
     setTimeMarkLeft(timeMarkLeft);
-  }, [player.currentTime, scale]);
+  }, [scale]);
 
   const handleScrollerScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -189,8 +184,8 @@ export const Timeline: FC<TimelineProps> = (props) => {
       <canvas height={32} className="timeline-time-canvas" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
       <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
         <div style={{ width: `${timelineTrackWidth}px` }}>
-          {cutsceneData?.data.map((a) => {
-            return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} data={a} />;
+          {cutscene.director.groups.map((a) => {
+            return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} object={a} />;
           })}
         </div>
       </div>

@@ -1,8 +1,8 @@
-// rollup.watch.js
 const rollup = require('rollup');
 const typescript = require('@rollup/plugin-typescript');
 const alias = require('@rollup/plugin-alias');
 const { dts } = require('rollup-plugin-dts');
+const babel = require('@rollup/plugin-babel');
 
 const watchOptions = [
   {
@@ -18,6 +18,12 @@ const watchOptions = [
       },
     ],
     plugins: [
+      babel({
+        exclude: ['node_modules/**'],
+        extensions: ['ts', 'tsx', 'mjs', 'js', 'jsx'],
+        presets: ['@babel/preset-env', '@babel/preset-typescript'],
+        plugins: [['@babel/plugin-proposal-decorators', { version: '2023-05' }]],
+      }),
       typescript(),
       alias({
         entries: [
@@ -32,6 +38,12 @@ const watchOptions = [
   {
     input: 'src/index.ts',
     plugins: [
+      babel({
+        exclude: ['node_modules/**'],
+        extensions: ['ts', 'tsx', 'mjs', 'js', 'jsx'],
+        presets: ['@babel/preset-env', '@babel/preset-typescript'],
+        plugins: [['@babel/plugin-proposal-decorators', { version: '2023-05' }]],
+      }),
       typescript(),
       dts(),
       alias({

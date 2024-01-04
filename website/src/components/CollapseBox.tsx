@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, ReactNode, useState } from 'react';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { ChevronDownIcon, ChevronRightIcon } from '@radix-ui/react-icons';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 import classNames from 'classnames';
 
 interface CollapseBoxProps {

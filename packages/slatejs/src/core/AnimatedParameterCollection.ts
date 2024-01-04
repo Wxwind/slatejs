@@ -1,8 +1,25 @@
-import { AnimatedParameter } from './AnimatedParameter';
+import { ActionClip } from './ActionClip';
+import { AnimatedParameter, AnimatedParameterJson } from './AnimatedParameter';
 import { IAnimatable } from './IAnimatable';
 
+export type AnimatedParameterCollectionJson = {
+  animatedParamArray: AnimatedParameterJson[];
+};
 export class AnimatedParameterCollection implements IAnimatable {
-  private animatedParamArray: AnimatedParameter[] = [];
+  animatedParamArray: AnimatedParameter[];
+
+  private constructor(animatedParamArray: AnimatedParameter[]) {
+    this.animatedParamArray = animatedParamArray;
+  }
+
+  static constructFromJson = (clip: ActionClip, data: AnimatedParameterCollectionJson) => {
+    const array = data.animatedParamArray.map((a) => AnimatedParameter.constructFromJson(clip, a));
+    return new AnimatedParameterCollection(array);
+  };
+
+  static construct = () => {
+    return new AnimatedParameterCollection([]);
+  };
 
   hasAnyKey: () => boolean = () => {
     for (const a of this.animatedParamArray) {

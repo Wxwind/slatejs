@@ -1,19 +1,25 @@
 import { FC } from 'react';
-import { GroupData } from './core';
+import { CutsceneGroup } from './core';
 import TimelineTracksPanel from './TimelineTrackPanel';
+import { useDumbState, useBindSignal } from './hooks';
 
 interface TimelineGroupPanelProps {
   width: number;
-  data: GroupData;
+  object: CutsceneGroup;
 }
 
 export const TimelineGroupPanel: FC<TimelineGroupPanelProps> = (props) => {
-  const { width, data } = props;
+  const { width, object } = props;
+
+  const [refresh] = useDumbState();
+  useBindSignal(object.signals.trackCountChanged, refresh);
+  useBindSignal(object.signals.groupUpdated, refresh);
+
   return (
     <div style={{ width: `${width}px` }}>
-      <div className="timeline-group-panel">{data.name}</div>
-      {data.children.map((a) => (
-        <TimelineTracksPanel key={a.id} width={width} groupId={a.id} data={a} />
+      <div className="timeline-group-panel">{object.name}</div>
+      {object.children.map((a) => (
+        <TimelineTracksPanel key={a.id} width={width} groupId={a.id} object={a} />
       ))}
     </div>
   );

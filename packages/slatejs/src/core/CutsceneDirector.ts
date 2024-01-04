@@ -3,7 +3,11 @@ import { isNil } from '@/util';
 import { CutsceneGroup } from './CutsceneGroup';
 import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
 import { ActorGroup } from './groups';
-import { CutsceneData, GroupData, TrackData, ActionClipData, GroupType, ActionClip } from './type';
+import { CutsceneData, CutsceneGroupData, CutsceneTrackData, ActionClipData, CutsceneGroupType } from './type';
+import { ActionClip } from './ActionClip';
+import { DirectorGroup } from './groups/DirectorGroup';
+import { deerEngine } from 'deer-engine';
+import { Signal } from '@/signal';
 
 /**
  * PlayState in editor mode has no state called 'paused' because
@@ -103,6 +107,10 @@ export class CutsceneDirector {
   public get curTime(): number {
     return this._currentTime;
   }
+
+  readonly signals = {
+    groupCountChanged: new Signal(),
+  };
 
   play = () => {
     this.playState = PlayState.PlayForward;
@@ -231,28 +239,39 @@ export class CutsceneDirector {
 
   toJsonObject: () => CutsceneData = () => {
     // TODO: save and load json
-    const groups: GroupData[] = [];
+    const groups: CutsceneGroupData[] = [];
 
     for (const group of this._groups) {
-      const tracks: TrackData[] = [];
+      const tracks: CutsceneTrackData[] = [];
 
       for (const track of group.children) {
         const clips: ActionClipData[] = [];
 
         for (const clip of track.children) {
-          const actionClip = clip as ActionClip;
-          clips.push(actionClip.data);
+          const clipData: ActionClipData = {
+            id: clip.id,
+            type: clip.type,
+            name: clip.name,
+            startTime: clip.startTime,
+            endTime: clip.endTime,
+            animatedParams: {
+              animatedParamArray: [],
+            },
+          };
+
+          clips.push(clipData);
         }
 
-        const trackData: TrackData = {
+        const trackData: CutsceneTrackData = {
           id: track.id,
+          type: track.type,
           name: track.name,
           children: clips,
         };
         tracks.push(trackData);
       }
 
-      const groupsData: GroupData = {
+      const groupsData: CutsceneGroupData = {
         id: group.id,
         name: group.name,
         entityId: group.actor?.id,
@@ -272,7 +291,7 @@ export class CutsceneDirector {
     return JSON.stringify(this.toJsonObject());
   };
 
-  parseJson = (data: string) => {
+  loadFromJson = (data: string) => {
     const d = JSON.parse(data) as CutsceneData;
     // TODO: parse json
   };
@@ -281,13 +300,20 @@ export class CutsceneDirector {
     return this._groups.find((a) => a.id === groupId);
   };
 
-  addGroup = (type: GroupType) => {
+  addGroup = (entityId: string, type: CutsceneGroupType) => {
+    const entity = deerEngine.activeScene?.entityManager.findEntityById(entityId);
+    if (isNil(entity)) {
+      throw new Error(`AddGroup: counldn't find entity (id= ${entityId})`);
+    }
+
     let newGroup = null;
     switch (type) {
       case 'Actor':
-        newGroup = new ActorGroup(this);
+        newGroup = ActorGroup.construct(this);
         break;
-
+      case 'Director':
+        newGroup = DirectorGroup.construct(this);
+        break;
       default:
         break;
     }
@@ -296,8 +322,10 @@ export class CutsceneDirector {
       console.error(`can not add group of type ${type}`);
       return;
     }
+    newGroup.actor = entity;
 
     this._groups.push(newGroup);
+
     return newGroup;
   };
 

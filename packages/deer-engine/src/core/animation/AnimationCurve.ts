@@ -11,6 +11,22 @@ export enum AnimationCurveExtrapolation {
   PingPong = 'PingPong',
 }
 
+export type AnimationCurveJson = {
+  keys: {
+    time: number;
+    value: number;
+    inTangent: number;
+    outTangent: number;
+    inWeight: number;
+    outWeight: number;
+    tangentMode: TangentMode;
+    weightMode: WeightMode;
+    interpMode: InterpMode;
+  }[];
+  preExtrapolation: AnimationCurveExtrapolation;
+  postExtrapolation: AnimationCurveExtrapolation;
+};
+
 export class AnimationCurve {
   keys: Keyframe[];
 
@@ -27,9 +43,10 @@ export class AnimationCurve {
     this.postExtrapolation = AnimationCurveExtrapolation.Constant;
   }
 
-  static from = (...keys: Keyframe[]) => {
+  static from = (keys: Keyframe[]) => {
     const curves = new AnimationCurve();
     curves.keys.push(...keys);
+    return curves;
   };
 
   addKey = (time: number, value: number) => {

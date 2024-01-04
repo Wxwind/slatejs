@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import classnames from 'classnames';
-import { Cutscene, cutscene } from './core';
+import { cutscene } from './core';
 import { PlayIcon, StopIcon, TrackNextIcon, TrackPreviousIcon } from '@radix-ui/react-icons';
 
 export interface ControlsProps {

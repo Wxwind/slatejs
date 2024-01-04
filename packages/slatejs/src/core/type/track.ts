@@ -1,9 +1,10 @@
 import { ActionClipData } from './actionClip';
 
-export type TrackType = 'Property' | 'Transform' | 'Camera';
+export type CutsceneTrackType = 'Property' | 'Transform' | 'Camera';
 
-export type TrackData = {
+export type CutsceneTrackData = {
   id: string;
   name: string;
+  type: string;
   children: ActionClipData[];
 };

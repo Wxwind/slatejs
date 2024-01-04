@@ -3,3 +3,4 @@ export * from './utils';
 export * from './replaceEqualDeep';
 export * from './math';
 export * from './ReflectTool';
+export * from './type';

@@ -2,19 +2,27 @@ import { Entity } from 'deer-engine';
 import { CutsceneDirector } from './CutsceneDirector';
 import { CutsceneTrack } from './CutsceneTrack';
 import { IDirectable } from './IDirectable';
-import { genUUID, isNil } from '@/util';
+import { isNil } from '@/util';
 import { PropertyTrack } from './tracks';
-import { TrackType } from './type';
+import { CutsceneTrackType } from './type';
+import { Signal } from '@/signal';
+import { TransformTrack } from './tracks/TransformTrack';
 
 export abstract class CutsceneGroup implements IDirectable {
-  private _tracks: CutsceneTrack[] = [];
-  private _root: CutsceneDirector;
-  private _id: string;
+  protected _tracks: CutsceneTrack[] = [];
+  protected _root: CutsceneDirector;
+  protected _id: string;
   protected abstract _actor: Entity | undefined;
 
-  constructor(director: CutsceneDirector) {
+  readonly signals = {
+    groupUpdated: new Signal(),
+    trackCountChanged: new Signal(),
+  };
+
+  protected constructor(director: CutsceneDirector, id: string, tracks: CutsceneTrack[]) {
     this._root = director;
-    this._id = genUUID('csg');
+    this._id = id;
+    this._tracks = tracks;
   }
 
   abstract get name(): string;
@@ -23,7 +31,7 @@ export abstract class CutsceneGroup implements IDirectable {
     return this._id;
   }
 
-  get children(): IDirectable[] {
+  get children(): CutsceneTrack[] {
     return this._tracks;
   }
 
@@ -68,23 +76,25 @@ export abstract class CutsceneGroup implements IDirectable {
     return this._tracks.find((a) => a.id === trackId);
   };
 
-  addTrack = (type: TrackType) => {
+  addTrack = (type: CutsceneTrackType) => {
     let newTrack = null;
     switch (type) {
       case 'Property':
-        newTrack = new PropertyTrack(this);
+        newTrack = PropertyTrack.construct(this, 'Property Track');
         break;
-
+      case 'Transform':
+        newTrack = TransformTrack.construct(this, 'Transform Track');
+        break;
       default:
         break;
     }
 
     if (isNil(newTrack)) {
-      console.error(`can not add track of type ${type}`);
-      return;
+      throw new Error(`add track: track of type '${type}' is not suppored`);
     }
 
     this._tracks.push(newTrack);
+    this.signals.trackCountChanged.emit();
     return newTrack;
   };
 
@@ -96,5 +106,6 @@ export abstract class CutsceneGroup implements IDirectable {
     }
 
     this._tracks.splice(index, 1);
+    this.signals.trackCountChanged.emit();
   };
 }

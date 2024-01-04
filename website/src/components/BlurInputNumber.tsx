@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { InputNumber } from '.';
+import { InputNumber } from './InputNumber';
 
 interface BlurInputNumberProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onValueFinish?: () => void;

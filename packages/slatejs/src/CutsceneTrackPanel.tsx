@@ -1,18 +1,24 @@
 import { FC } from 'react';
-import { TrackData } from './core';
+import { CutsceneTrack } from './core';
+import { useBindSignal, useDumbState } from './hooks';
 
 interface CutsceneTrackPanelProps {
-  data: TrackData;
+  object: CutsceneTrack;
   // style
   depth: number;
   paddingLeft: number;
 }
 
 export const CutsceneTrackPanel: FC<CutsceneTrackPanelProps> = (props) => {
-  const { data, depth, paddingLeft } = props;
+  const { object, depth, paddingLeft } = props;
+
+  const [refresh] = useDumbState();
+  useBindSignal(object.signals.clipCountChanged, refresh);
+  useBindSignal(object.signals.trackUpdated, refresh);
+
   return (
     <div className="cutscene-track-panel" style={{ paddingLeft: `${paddingLeft * depth}px` }}>
-      {data.name}
+      {object.name}
     </div>
   );
 };

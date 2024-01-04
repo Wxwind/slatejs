@@ -1,21 +1,28 @@
-import { genUUID } from '@/util';
 import { IDirectable } from './IDirectable';
-import { ActionClipData, ActionClipTypeToKeyMap, ClipType, UpdateActionClipDto } from './type';
+import { ClipType, UpdateActionClipDto } from './type';
+import { IKeyable } from './IKeyable';
+import { AnimatedParameterCollection } from './AnimatedParameterCollection';
+import { Signal } from '@/signal';
 
-export abstract class ActionClipBase<T extends ClipType = ClipType> implements IDirectable {
-  abstract data: ActionClipData<T>;
-  private _startTime = 0;
-  private _endTime = 0;
-  private _parent: IDirectable;
-  private _id: string;
-  protected abstract readonly _type: T;
+export type ActionClipBaseInitParam = {
+  start: number;
+  end: number;
+  name: string;
+};
+export abstract class ActionClip implements IDirectable, IKeyable {
+  protected _startTime;
+  protected _endTime;
+  protected _parent: IDirectable;
+  protected _id: string;
+  protected _name: string;
+  protected abstract readonly _type: ClipType;
 
-  get type(): T {
+  get type(): ClipType {
     return this._type;
   }
 
   get name(): string {
-    return this.data.name;
+    return this._name;
   }
 
   get id(): string {
@@ -50,15 +57,24 @@ export abstract class ActionClipBase<T extends ClipType = ClipType> implements I
     return this.parent?.actor;
   }
 
-  constructor(parent: IDirectable) {
+  abstract get animatedData(): AnimatedParameterCollection | undefined;
+
+  abstract get animatedParameterTarget(): any;
+
+  readonly signals = {
+    clipUpdated: new Signal(),
+    keysChanged: new Signal(),
+  };
+
+  protected constructor(parent: IDirectable, id: string, name: string, start: number, end: number) {
     this._parent = parent;
-    this._id = genUUID('csc');
+    this._id = id;
+    this._startTime = start;
+    this._endTime = end;
+    this._name = name;
   }
 
-  abstract updateData: (data: UpdateActionClipDto<T>) => void;
-  abstract addKey: (key: ActionClipTypeToKeyMap[T]) => void;
-  abstract updateKeys: (keyId: string, keyData: ActionClipTypeToKeyMap[T]) => void;
-  abstract removeKey: (keyId: string) => void;
+  abstract updateData: (data: UpdateActionClipDto) => void;
 
   onInitialize: () => boolean = () => {
     return false;

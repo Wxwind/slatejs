@@ -1,6 +1,6 @@
-import { GroupData } from './group';
+import { CutsceneGroupData } from './group';
 
 export type CutsceneData = {
   version: string;
-  data: GroupData[];
+  data: CutsceneGroupData[];
 };

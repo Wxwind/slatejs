@@ -2,29 +2,31 @@
 import { isNil } from '@/util';
 import { GroupOptions } from '../type';
 
-export const CACHE_KEY = Symbol('__egclassCache__');
+export const CACHE_KEY = Symbol('__propertyCache__');
+export const CLASS_CACHE_KEY = Symbol('__egclassCache__');
 export const CLASS_NAME_KEY = Symbol('__classname__');
 
-export type DecoratorMetadataObjectForRF = {
-  CACHE_KEY: MetadataClass | undefined;
-  CLASS_NAME_KEY: string | undefined;
-};
+export type DecoratorMetadataObjectForRF = Partial<{
+  CACHE_KEY: MetadataClass;
+  CLASS_NAME_KEY: string;
+}>;
 
 export type MetadataClass = Record<string | symbol, MetadataProp | undefined>;
 
-export type MetadataProp = {
-  type: string | undefined;
-  set: ((object: any, value: any) => void) | undefined;
-  get: ((object: any) => unknown) | undefined;
-  uiOptions: {
-    group?: string | GroupOptions;
-    displayName?: string;
-    tooltip?: string;
-    min?: number;
-    max?: number;
-  };
-};
-export type AnyCtor = new (...args: any[]) => unknown;
+export type MetadataProp = Partial<{
+  type: (new () => unknown) | Array<new () => unknown>;
+  typeName: string | undefined;
+  set: (object: any, value: any) => void;
+  get: (object: any) => unknown;
+  uiOptions: Partial<{
+    group: string | GroupOptions;
+    displayName: string;
+    tooltip: string;
+    min: number;
+    max: number;
+  }>;
+}>;
+export type AnyCtor = abstract new (...args: any[]) => unknown;
 
 export function getMetadataFromCtor(ctor: AnyCtor) {
   return ctor[Symbol.metadata] as DecoratorMetadataObjectForRF;
@@ -45,18 +47,9 @@ export function getClassStathFromMetadata(metadata: DecoratorMetadataObject): Me
 }
 
 /**
- * @reference
- * Cocos/core/utils/js-typed.ts
- * @en
- * Gets class name of the object, if object is just a {} (and which class named 'Object'), it will return "".
- * (modified from <a href="http://stackoverflow.com/questions/1249531/how-to-get-a-javascript-objects-class">the code of stackoverflow post</a>)
- * @zh
- * 获取对象的类型名称，如果对象是 {} 字面量，将会返回 ""。参考了 stackoverflow 的代码实现：
- * <a href="http://stackoverflow.com/questions/1249531/how-to-get-a-javascript-objects-class">stackoverflow 的实现</a>
- * @param objOrCtor @en An object instance or constructor. @zh 类实例或者构造函数。
- * @returns @en The class name. @zh 类名。
+ * reference from Cocos/core/utils/js-typed.ts
  */
-export function getClassName(objOrCtor: AnyCtor | Record<string, unknown>): string {
+export function getClassName(objOrCtor: AnyCtor | AnyCtor[] | Record<string, unknown>): string {
   if (typeof objOrCtor === 'function') {
     // is ctor
     const metadata = getMetadataFromCtor(objOrCtor);
@@ -86,6 +79,19 @@ export function getClassName(objOrCtor: AnyCtor | Record<string, unknown>): stri
       }
     }
     return ret !== 'Object' ? ret : '';
+  } else if (Array.isArray(objOrCtor)) {
+    if (objOrCtor.length === 0) {
+      return '[]';
+    }
+    let name = '[';
+    for (let i = 0; i < objOrCtor.length; i++) {
+      if (i !== 0) {
+        name += ',';
+      }
+      const ctor = objOrCtor[i];
+      name += getClassName(ctor);
+    }
+    return name + ']';
   } else if (objOrCtor && objOrCtor.constructor) {
     // is obj instance
     return getClassName(objOrCtor.constructor as AnyCtor);

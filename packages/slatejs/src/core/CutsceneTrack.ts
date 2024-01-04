@@ -1,21 +1,31 @@
-import { genUUID, isNil } from '@/util';
+import { isNil } from '@/util';
 import { IDirectable } from './IDirectable';
-import { ClipType, CreateActionClipDto, TrackType, ActionClip } from './type';
+import { ClipType, CreateActionClipDto, CutsceneTrackType } from './type';
 import { AnimationClip, TransformClip } from './clips';
+import { ActionClip } from './ActionClip';
+import { Signal } from '@/signal';
 
-export abstract class CutsceneTrack<T extends TrackType = TrackType> implements IDirectable {
-  private _clips: ActionClip[] = [];
+export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackType> implements IDirectable {
+  protected _clips: ActionClip[];
   private _parent: IDirectable;
   private _id: string;
+  private _name: string;
   protected abstract readonly _type: T;
 
-  abstract get name(): string;
+  readonly signals = {
+    trackUpdated: new Signal(),
+    clipCountChanged: new Signal(),
+  };
+
+  get name(): string {
+    return this._name;
+  }
 
   get id(): string {
     return this._id;
   }
 
-  get children(): IDirectable[] {
+  get children(): ActionClip[] {
     return this._clips;
   }
 
@@ -47,9 +57,11 @@ export abstract class CutsceneTrack<T extends TrackType = TrackType> implements 
     return this.parent?.actor;
   }
 
-  constructor(parent: IDirectable) {
+  constructor(parent: IDirectable, id: string, name: string, clips: ActionClip[]) {
     this._parent = parent;
-    this._id = genUUID('cst');
+    this._id = id;
+    this._name = name;
+    this._clips = clips;
   }
 
   onInitialize: () => boolean = () => {
@@ -65,23 +77,21 @@ export abstract class CutsceneTrack<T extends TrackType = TrackType> implements 
     return this._clips.find((a) => a.id === clipId);
   };
 
-  addClip = (type: ClipType, { start, end }: Omit<CreateActionClipDto, 'keys'>) => {
+  addClip = (type: ClipType, { name, startTime, endTime }: CreateActionClipDto) => {
     let newClip: ActionClip | null = null;
     switch (type) {
       case 'Transform':
         newClip = TransformClip.construct(this, {
-          name: 'transform clip',
-          start,
-          end,
-          keys: [],
+          name: name,
+          startTime: startTime,
+          endTime: endTime,
         });
         break;
       case 'Animation':
         newClip = AnimationClip.construct(this, {
-          name: 'animation clip',
-          start,
-          end,
-          keys: [],
+          name: name,
+          startTime: startTime,
+          endTime: endTime,
         });
         break;
 
@@ -90,21 +100,23 @@ export abstract class CutsceneTrack<T extends TrackType = TrackType> implements 
     }
 
     if (isNil(newClip)) {
-      console.error(`can not add clip of type ${type}`);
+      console.error(`can't add clip of type ${type}`);
       return;
     }
 
     this._clips.push(newClip);
+    this.signals.clipCountChanged.emit();
     return newClip;
   };
 
   removeClip = (ClipId: string) => {
     const index = this._clips.findIndex((a) => a.id === ClipId);
     if (isNil(index)) {
-      console.log(`can not remove Clip(id = '${ClipId}') in ${this.name}(id = '${this.id}')`);
+      console.log(`can't remove Clip(id = '${ClipId}') in ${this.name}(id = '${this.id}')`);
       return;
     }
 
     this._clips.splice(index, 1);
+    this.signals.clipCountChanged.emit();
   };
 }

@@ -3,7 +3,9 @@ import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
 import { Entity } from '../entity';
 import { MeshCompJson } from './type';
+import { egclass } from '../data';
 
+@egclass()
 export class MeshComponent extends ComponentBase<'Mesh'> {
   type = 'Mesh' as const;
 

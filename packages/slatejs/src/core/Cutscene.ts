@@ -2,7 +2,6 @@ import { PlayState, CutsceneDirector } from './CutsceneDirector';
 import { CutsceneDataStore, SelectedIDirectableStore } from '../store';
 import { Signal } from '../signal';
 import { IDirectable } from './IDirectable';
-import { ApiCenter } from './Apicenter';
 import { isNil } from '@/util';
 
 export class Cutscene {
@@ -14,6 +13,7 @@ export class Cutscene {
     // events
     playingChanged: new Signal<[boolean]>(),
     timeChanged: new Signal<[number]>(),
+    groupChanged: new Signal(),
   };
 
   readonly director = new CutsceneDirector();
@@ -26,8 +26,6 @@ export class Cutscene {
   // store used only by react, expose internal (= cutscene core) apis and datas (sync data from core to store itself)
   readonly cutsceneDataStore = new CutsceneDataStore(this);
   readonly selectedIDirectableStore = new SelectedIDirectableStore(this);
-
-  readonly apiCenter = new ApiCenter(this);
 
   public get viewTimeMax(): number {
     return this.director.viewTimeMax;
@@ -113,7 +111,7 @@ export class Cutscene {
   };
 
   parseJson = (json: string) => {
-    this.director.parseJson(json);
+    this.director.loadFromJson(json);
   };
 }
 

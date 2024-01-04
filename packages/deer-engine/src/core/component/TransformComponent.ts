@@ -1,10 +1,11 @@
-import { Object3D } from 'three';
+import { Object3D, Vector3 } from 'three';
 import { ComponentBase } from './ComponentBase';
 import { TransformCompJson } from './type';
 import { Entity } from '../entity';
 import { DeerScene } from '../DeerScene';
-import { property } from '../data';
+import { accessor, egclass, property } from '../data';
 
+@egclass()
 export class TransformComponent extends ComponentBase<'Transform'> {
   type = 'Transform' as const;
 
@@ -15,6 +16,36 @@ export class TransformComponent extends ComponentBase<'Transform'> {
 
   public get isCanBeRemoved(): boolean {
     return false;
+  }
+
+  @accessor({ type: Vector3 })
+  public get position(): Vector3 {
+    return this.rootObj.position;
+  }
+
+  @accessor({ type: Vector3 })
+  public set position(v: Vector3) {
+    this.rootObj.position.copy(v);
+  }
+
+  @accessor({ type: Vector3 })
+  public get rotation(): Vector3 {
+    return new Vector3(this.rootObj.rotation.x, this.rootObj.rotation.y, this.rootObj.rotation.z);
+  }
+
+  @accessor({ type: Vector3 })
+  public set rotation(v: Vector3) {
+    this.rootObj.rotation.setFromVector3(v);
+  }
+
+  @accessor({ type: Vector3 })
+  public get scale(): Vector3 {
+    return this.rootObj.scale;
+  }
+
+  @accessor({ type: Vector3 })
+  public set scale(v: Vector3) {
+    this.rootObj.scale.copy(v);
   }
 
   constructor(entity: Entity, parent: TransformComponent | DeerScene) {

@@ -1,41 +1,17 @@
-import { Vector3 } from 'deer-engine';
-import { AnimationClip, TransformClip } from '../clips';
-import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
-import { AnimatedParameter } from '../AnimatedParameter';
+import { PartialSome } from '@/util';
+import { AnimatedParameterCollectionJson } from '../AnimatedParameterCollection';
 
 export type ClipType = 'Transform' | 'Animation';
 
-export type TransformKeys = {
-  time: number; // local time
-  position: Vector3;
+export type ActionClipData = {
+  id: string;
+  name: string;
+  startTime: number;
+  endTime: number;
+  type: ClipType;
+  animatedParams: AnimatedParameterCollectionJson;
 };
 
-export type AnimationKeys = {
-  time: number;
-  referenceAnimId: string;
-};
-
-export type ActionClipTypeToKeyMap = {
-  Animation: AnimatedParameterCollection;
-  Transform: AnimatedParameter;
-};
-
-type ActionClipTypeToDataMap = {
-  [K in ClipType]: {
-    start: number;
-    end: number;
-    id: string;
-    name: string;
-    type: K;
-    keys: ActionClipTypeToKeyMap[K][];
-  };
-};
-
-export type ActionClipData<T extends ClipType = ClipType> = ActionClipTypeToDataMap[T];
-
-export type CreateActionClipDto<T extends ClipType = ClipType> = Omit<ActionClipTypeToDataMap[T], 'id' | 'type'>;
-export type UpdateActionClipDto<T extends ClipType = ClipType> = Partial<
-  Omit<ActionClipTypeToDataMap[T], 'id' | 'type'>
->;
-
-export type ActionClip = AnimationClip | TransformClip;
+export type CreateActionClipByJsonDto = Omit<ActionClipData, 'type'>;
+export type CreateActionClipDto = PartialSome<Omit<ActionClipData, 'type' | 'id' | 'animatedParams'>, 'name'>;
+export type UpdateActionClipDto = Partial<{ name: string; startTime: number; endTime: number }>;

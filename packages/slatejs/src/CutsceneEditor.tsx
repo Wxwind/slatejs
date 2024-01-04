@@ -1,21 +1,23 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { Controls } from './Controls';
 import { Timeline } from './Timeline';
 import { cutscene } from './core';
 import { CutsceneGroupPanel } from './CutsceneGroupPanel';
-import { useStore } from './hooks';
+
 import classNames from 'classnames';
 import { UUID_PREFIX_ENTITY } from 'deer-engine';
+import { useDumbState } from './hooks/useDumbState';
 
 export interface CutsceneEditorProps {}
 
 export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
   const [isSthDraggedHover, setIsSthDraggedHover] = useState(false);
 
-  const sceneData = useStore(cutscene.cutsceneDataStore);
+  const [refresh] = useDumbState();
 
   const handleDropEntity = (entityId: string) => {
-    cutscene.apiCenter.addGroup(entityId);
+    cutscene.director.addGroup(entityId, 'Actor');
+    refresh();
   };
 
   return (
@@ -47,8 +49,8 @@ export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
             setIsSthDraggedHover(false);
           }}
         >
-          {sceneData?.data.map((a) => (
-            <CutsceneGroupPanel key={a.id} data={a} depth={0} paddingLeft={18} />
+          {cutscene.director.groups.map((a) => (
+            <CutsceneGroupPanel key={a.id} object={a} depth={0} paddingLeft={18} />
           ))}
         </div>
       </div>

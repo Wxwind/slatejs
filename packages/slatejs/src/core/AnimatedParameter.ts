@@ -1,18 +1,28 @@
-import { AnimationCurve, InterpMode, TangentMode } from 'deer-engine';
+import { AnimationCurve, AnimationCurveJson, InterpMode } from 'deer-engine';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';
-import { AnimationParameterData } from './AnimationParameterData';
 import { isNearly, isNil } from '@/util';
 import {
   IAnimatedParameterModel,
   TypeToAnimParamModelMapInstance,
   AnimatedParameterType,
 } from './AnimatedParameterModel';
+import { ActionClip } from './ActionClip';
+
+export type AnimatedParameterJson = {
+  keyableId: string;
+  rootType: string;
+  propType: string;
+  propPath: string;
+  curves: AnimationCurveJson[];
+};
 
 export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParameterType> implements IAnimatable {
-  private curves: AnimationCurve[];
+  curves: AnimationCurve[];
 
-  private data: AnimationParameterData;
+  rootType: string;
+  parameterType: string;
+  parameterPath: string;
 
   private keyable: IKeyable;
 
@@ -24,25 +34,43 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
 
   disabled = false;
 
-  constructor(keyable: IKeyable, rootType: string, propType: string, propPath: string) {
+  private constructor(
+    keyable: IKeyable,
+    rootType: string,
+    propPath: string,
+    propType: string,
+    curves: AnimationCurve[] | undefined
+  ) {
     this.keyable = keyable;
-    this.data = {
-      rootType,
-      parameterType: propType,
-      parameterPath: propPath,
-    };
+    this.rootType = rootType;
+    this.parameterType = propType;
+    this.parameterPath = propPath;
+
     if (propType in TypeToAnimParamModelMapInstance) {
       this.parameterModel = TypeToAnimParamModelMapInstance[propType];
-      const curves = [];
-      const n = this.parameterModel.requiredCurveCount;
-      for (let i = 0; i <= n; i++) {
-        curves.push(new AnimationCurve());
+      if (isNil(curves)) {
+        const c = [];
+        const n = this.parameterModel.requiredCurveCount;
+        for (let i = 0; i <= n; i++) {
+          c.push(new AnimationCurve());
+        }
+        this.curves = c;
+      } else {
+        this.curves = curves;
       }
-      this.curves = [];
     } else {
       throw new Error(`type ${propType} is not surpported in animatedParameter.`);
     }
   }
+
+  static constructFromJson = (clip: ActionClip, data: AnimatedParameterJson) => {
+    const curves: AnimationCurve[] = data.curves.map((curve) => AnimationCurve.from(curve.keys));
+    return new AnimatedParameter(clip, data.rootType, data.propPath, data.propType, curves);
+  };
+
+  static construct = (keyable: IKeyable, rootType: string, propPath: string, propType: string) => {
+    return new AnimatedParameter(keyable, rootType, propPath, propType, undefined);
+  };
 
   hasAnyKey: () => boolean = () => {
     for (const curve of this.curves) {
@@ -100,13 +128,13 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   };
 
   getValue: () => number[] = () => {
-    const propPath = this.data.parameterPath;
+    const propPath = this.parameterPath;
     const target = this.target;
     return this.parameterModel.getDirect(target, propPath);
   };
 
   setValue = (numbers: number[]) => {
-    const propPath = this.data.parameterPath;
+    const propPath = this.parameterPath;
     const target = this.target;
     this.parameterModel.setDirect(target, propPath, numbers);
   };
@@ -140,6 +168,6 @@ function addKeyInCurve(curve: AnimationCurve, time: number, value: number, mode:
       return false;
     }
   }
-
+  // TODO
   const index = curve.addKey(time, value);
 }

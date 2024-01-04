@@ -1,22 +1,28 @@
 import { FC, useCallback } from 'react';
-import { ActionClipData, cutscene } from './core';
+import { ActionClip, cutscene } from './core';
 import { clamp } from './util';
 import { useScaleStore } from './store';
 import { ComponentInstanceIcon } from '@radix-ui/react-icons';
+import { Keyframe } from 'deer-engine';
+import { useDumbState, useBindSignal } from './hooks';
 
 interface TimelineActionClipProps {
   groupId: string;
   trackId: string;
-  data: ActionClipData;
+  object: ActionClip;
 }
 
 export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
-  const { groupId, trackId, data } = props;
+  const { groupId, trackId, object } = props;
 
   const { scale } = useScaleStore();
 
+  const [refresh] = useDumbState();
+  useBindSignal(object.signals.clipUpdated, refresh);
+  useBindSignal(object.signals.keysChanged, refresh);
+
   const handleClickBlock = () => {
-    cutscene.selectObject(data.id);
+    cutscene.selectObject(object.id);
   };
 
   // drag block
@@ -27,16 +33,19 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       const onMouseMove = (e: MouseEvent) => {
         mx = e.movementX;
 
-        data.start += mx / scale;
-        data.end += mx / scale;
+        let startTime = object.startTime + mx / scale;
+        let endTime = object.endTime + mx / scale;
 
-        if (data.start < 0) {
-          const offset = -data.start;
-          data.start += offset;
-          data.end += offset;
+        if (object.startTime < 0) {
+          const offset = -object.startTime;
+          startTime = object.startTime + offset;
+          endTime = object.endTime + offset;
         }
 
-        cutscene.apiCenter.updateClip(groupId, trackId, data.id, data.type, data);
+        object.updateData({
+          startTime,
+          endTime,
+        });
       };
 
       const onMouseUp = (e: MouseEvent) => {
@@ -47,7 +56,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [data, groupId, scale, trackId]
+    [object, scale]
   );
 
   const handleDragLeft = useCallback(
@@ -57,9 +66,11 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
         const mx = e.movementX;
 
         const offset = mx / scale;
-        data.start = clamp(data.start + offset, 0, data.end);
+        let startTime = clamp(object.startTime + offset, 0, object.endTime);
 
-        cutscene.apiCenter.updateClip(groupId, trackId, data.id, data.type, data);
+        object.updateData({
+          startTime,
+        });
       };
 
       const onMouseUp = (e: MouseEvent) => {
@@ -70,7 +81,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [data, groupId, scale, trackId]
+    [object, scale]
   );
 
   const handleDragRight = useCallback(
@@ -80,9 +91,10 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
         const mx = e.movementX;
 
         const offset = mx / scale;
-        data.end = Math.max(data.start, data.end + offset);
-        // FIXME
-        cutscene.apiCenter.updateClip(groupId, trackId, data.id, data.type, data);
+        let endTime = Math.max(object.startTime, object.endTime + offset);
+        object.updateData({
+          endTime,
+        });
       };
 
       const onMouseUp = (e: MouseEvent) => {
@@ -93,8 +105,15 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       document.addEventListener('mousemove', onMouseMove, false);
       document.addEventListener('mouseup', onMouseUp, false);
     },
-    [data, groupId, scale, trackId]
+    [object, scale]
   );
+
+  let keys: Keyframe[] = [];
+  for (const animatedParam of object.animatedData?.animatedParamArray || []) {
+    for (const curve of animatedParam.curves) {
+      keys.push(...curve.keys);
+    }
+  }
 
   return (
     <div
@@ -103,14 +122,14 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
       onMouseDown={handleMouseDown}
       style={{
         position: 'absolute',
-        left: data.start * scale,
-        width: (data.end - data.start) * scale,
+        left: object.startTime * scale,
+        width: (object.endTime - object.startTime) * scale,
       }}
     >
       <div className="resize-left" onMouseDown={handleDragLeft} />
       <div className="resize-right" onMouseDown={handleDragRight} />
-      <div>{data.name}</div>
-      {data.keys.map((key) => (
+      <div>{object.name}</div>
+      {keys.map((key) => (
         <div
           style={{
             position: 'absolute',
