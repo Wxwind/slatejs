@@ -96,23 +96,18 @@ export class AnimationCurve {
       }
     } else if (inTime <= this.keys[keyLength - 1].time) {
       // find a lower bound key
-      let begin = 1;
-      const end = this.keys.length - 1;
-      let count = end - begin;
-
-      while (count > 0) {
-        const step = count / 2;
-        const middle = (end + begin) / 2;
-
-        if (inTime >= this.keys[middle].time) {
-          begin = middle + 1;
-          count -= step + 1;
+      let left = 1; // in case time == keys[0].time which will return 0.
+      let right = this.keys.length - 1;
+      while (left <= right) {
+        const middle = (right - left) >> 1;
+        if (this.keys[middle].time >= inTime) {
+          right = middle - 1;
         } else {
-          count = step;
+          left = middle + 1;
         }
       }
 
-      val = this.evalTwoKeys(this.keys[begin - 1], this.keys[begin], inTime);
+      val = this.evalTwoKeys(this.keys[left - 1], this.keys[left], inTime);
     } else {
       // PostExtrap
       if (this.postExtrapolation === AnimationCurveExtrapolation.Linaer) {
