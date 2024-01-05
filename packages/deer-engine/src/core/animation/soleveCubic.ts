@@ -15,7 +15,7 @@ export function solveCubic(
   const c = coeff0 / coeff3;
 
   // substitute x = y - A/3 to eliminate quadric term:
-  // x^3 +px + q = 0
+  // x^3 + px + q = 0
   const sqrA = a * a;
   const p = (1.0 / 3.0) * ((-1.0 / 3) * sqrA + b);
   const q = (1.0 / 2.0) * ((2.0 / 27.0) * a * sqrA - (1.0 / 3) * a * b + c);

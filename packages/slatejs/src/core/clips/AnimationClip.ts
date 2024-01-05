@@ -12,9 +12,6 @@ export class AnimationClip extends ActionClip {
   get animatedData(): AnimatedParameterCollection | undefined {
     return this._animatedParams;
   }
-  get animatedParameterTarget(): any {
-    throw new Error('Method not implemented.');
-  }
 
   private constructor(parent: CutsceneTrack, id: string, name: string, start: number, end: number) {
     super(parent, id, name, start, end);

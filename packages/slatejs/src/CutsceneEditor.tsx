@@ -3,10 +3,10 @@ import { Controls } from './Controls';
 import { Timeline } from './Timeline';
 import { cutscene } from './core';
 import { CutsceneGroupPanel } from './CutsceneGroupPanel';
-
 import classNames from 'classnames';
 import { UUID_PREFIX_ENTITY } from 'deer-engine';
 import { useDumbState } from './hooks/useDumbState';
+import { useBindSignal } from './hooks';
 
 export interface CutsceneEditorProps {}
 
@@ -14,16 +14,17 @@ export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
   const [isSthDraggedHover, setIsSthDraggedHover] = useState(false);
 
   const [refresh] = useDumbState();
+  useBindSignal(cutscene.director.signals.groupCountChanged, refresh);
+  useBindSignal(cutscene.director.signals.playStateChanged, refresh);
 
   const handleDropEntity = (entityId: string) => {
     cutscene.director.addGroup(entityId, 'Actor');
-    refresh();
   };
 
   return (
     <div className="cutscene-editor">
       <div className="cutscene-editor-left-panel flex flex-col h-full">
-        <Controls />
+        <Controls cutscene={cutscene} />
         <div
           className={classNames(
             'flex-1',
@@ -55,7 +56,7 @@ export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
         </div>
       </div>
       <div className="cutscene-editor-right-panel">
-        <Timeline />
+        <Timeline cutscene={cutscene} />
       </div>
     </div>
   );

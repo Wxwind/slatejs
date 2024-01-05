@@ -1,14 +1,15 @@
 import { FC } from 'react';
 import classnames from 'classnames';
-import { cutscene } from './core';
+import { Cutscene } from './core';
 import { PlayIcon, StopIcon, TrackNextIcon, TrackPreviousIcon } from '@radix-ui/react-icons';
 
 export interface ControlsProps {
   className?: string;
+  cutscene: Cutscene;
 }
 
 export const Controls: FC<ControlsProps> = (props) => {
-  const { className } = props;
+  const { className, cutscene } = props;
   return (
     <div className={classnames('controls', className)}>
       <div className="controls-btn-line">

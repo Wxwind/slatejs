@@ -66,6 +66,8 @@
 
   .cutscene-track-panel {
     height: 32px;
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -89,40 +91,46 @@
 
     .timeline-group-panel {
       height: 32px;
+      display: flex;
+      align-items: center;
+    }
 
-      .timeline-track-panel {
-        height: 100%;
-        background: gray;
+    .timeline-track-panel {
+      height: 32px;
+      background: gray;
+    }
 
-        .timeline-action-clip {
-          position: absolute;
-          height: 31px;
-          background-color: #88f;
-          border: 0px;
-          border-top: 1px solid #aaf;
-          border-left: 1px solid #aaf;
-          border-radius: 2px;
-          overflow: hidden;
-          user-select: none;
+    .timeline-action-clip {
+      position: absolute;
+      top: 0px;
+      height: 31px;
+      background-color: #88f;
+      border: 0px;
+      border-top: 1px solid #aaf;
+      border-left: 1px solid #aaf;
+      border-radius: 2px;
+      overflow: hidden;
+      user-select: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
 
-          .resize-left {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 6px;
-            height: 30px;
-            cursor: w-resize;
-          }
+      .resize-left {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 30px;
+        cursor: w-resize;
+      }
 
-          .resize-right {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 6px;
-            height: 30px;
-            cursor: e-resize;
-          }
-        }
+      .resize-right {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 6px;
+        height: 30px;
+        cursor: e-resize;
       }
     }
   }

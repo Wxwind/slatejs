@@ -40,6 +40,7 @@ export class CutsceneDirector {
 
   public set playState(v: PlayState) {
     this._playState = v;
+    this.signals.playStateChanged.emit();
   }
 
   public get currentTime(): number {
@@ -110,6 +111,7 @@ export class CutsceneDirector {
 
   readonly signals = {
     groupCountChanged: new Signal(),
+    playStateChanged: new Signal(),
   };
 
   play = () => {
@@ -325,6 +327,7 @@ export class CutsceneDirector {
     newGroup.actor = entity;
 
     this._groups.push(newGroup);
+    this.signals.groupCountChanged.emit();
 
     return newGroup;
   };
@@ -337,6 +340,7 @@ export class CutsceneDirector {
     }
 
     this._groups.splice(index, 1);
+    this.signals.groupCountChanged.emit();
   };
 
   findTrack = (groupId: string, trackId: string) => {

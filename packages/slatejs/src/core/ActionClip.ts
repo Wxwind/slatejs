@@ -59,7 +59,9 @@ export abstract class ActionClip implements IDirectable, IKeyable {
 
   abstract get animatedData(): AnimatedParameterCollection | undefined;
 
-  abstract get animatedParameterTarget(): any;
+  get animatedParameterTarget(): any {
+    return this;
+  }
 
   readonly signals = {
     clipUpdated: new Signal(),

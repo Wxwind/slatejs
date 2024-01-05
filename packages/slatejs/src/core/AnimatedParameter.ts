@@ -1,4 +1,4 @@
-import { AnimationCurve, AnimationCurveJson, InterpMode } from 'deer-engine';
+import { AnimationCurve, AnimationCurveJson, InterpMode, getRelativeProp } from 'deer-engine';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';
 import { isNearly, isNil } from '@/util';
@@ -37,17 +37,17 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   private constructor(
     keyable: IKeyable,
     rootType: string,
-    propPath: string,
-    propType: string,
+    paramType: string,
+    paramPath: string,
     curves: AnimationCurve[] | undefined
   ) {
     this.keyable = keyable;
     this.rootType = rootType;
-    this.parameterType = propType;
-    this.parameterPath = propPath;
+    this.parameterType = paramType;
+    this.parameterPath = paramPath;
 
-    if (propType in TypeToAnimParamModelMapInstance) {
-      this.parameterModel = TypeToAnimParamModelMapInstance[propType];
+    if (paramType in TypeToAnimParamModelMapInstance) {
+      this.parameterModel = new TypeToAnimParamModelMapInstance[paramType]();
       if (isNil(curves)) {
         const c = [];
         const n = this.parameterModel.requiredCurveCount;
@@ -59,7 +59,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
         this.curves = curves;
       }
     } else {
-      throw new Error(`type ${propType} is not surpported in animatedParameter.`);
+      throw new Error(`type ${paramType} is not surpported in animatedParameter.`);
     }
   }
 
@@ -68,8 +68,13 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     return new AnimatedParameter(clip, data.rootType, data.propPath, data.propType, curves);
   };
 
-  static construct = (keyable: IKeyable, rootType: string, propPath: string, propType: string) => {
-    return new AnimatedParameter(keyable, rootType, propPath, propType, undefined);
+  static construct = (keyable: IKeyable, rootType: string, paramPath: string) => {
+    const metadataProp = getRelativeProp(rootType, paramPath);
+    const paramType = metadataProp.typeName;
+    if (isNil(paramType)) {
+      throw new Error(`cannot not read name of '${paramPath} in '${rootType}''`);
+    }
+    return new AnimatedParameter(keyable, rootType, paramPath, paramType, undefined);
   };
 
   hasAnyKey: () => boolean = () => {
@@ -156,6 +161,9 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
 
     this.setValue(evals);
   };
+
+  saveSnapshot: () => void = () => {};
+  restoreSnapshot: () => void = () => {};
 }
 
 function addKeyInCurve(curve: AnimationCurve, time: number, value: number, mode: InterpMode) {

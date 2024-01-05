@@ -13,10 +13,6 @@ export class TransformClip extends ActionClip {
     return this._animatedParams;
   }
 
-  get animatedParameterTarget(): any {
-    throw new Error('Method not implemented.');
-  }
-
   private constructor(parent: CutsceneTrack, id: string, name: string, start: number, end: number) {
     super(parent, id, name, start, end);
   }
@@ -30,7 +26,9 @@ export class TransformClip extends ActionClip {
 
   static construct(parent: CutsceneTrack, data: CreateActionClipDto) {
     const clip = new TransformClip(parent, genUUID('csc'), data.name || 'transform clip', data.startTime, data.endTime);
-    clip._animatedParams = AnimatedParameterCollection.construct();
+    const animatedParams = AnimatedParameterCollection.construct();
+    animatedParams.addParameter(clip, '', 'position');
+    clip._animatedParams = animatedParams;
     return clip;
   }
 

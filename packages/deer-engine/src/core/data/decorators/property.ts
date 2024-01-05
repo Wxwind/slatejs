@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassFieldDecorator, IPropertyOptions } from '../type';
-import { DecoratorMetadataObjectForRF, MetadataProp, getClassName, getClassStathFromMetadata } from './util';
+import {
+  CLASS_NAME_KEY,
+  DecoratorMetadataObjectForRF,
+  MetadataProp,
+  getClassName,
+  getClassStathFromMetadata,
+} from './util';
 import { merge } from 'lodash';
 
 // @property({})
@@ -10,8 +16,9 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
     const stash = getClassStathFromMetadata(metadata);
     const { type, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
-    const originStash = stash[context.name];
+    context.metadata[CLASS_NAME_KEY] = typeName;
 
+    const originStash = stash[context.name];
     const newStash = {
       type,
       typeName,
@@ -58,6 +65,7 @@ export function accessor<This, Value>(
     const originStash = stash[context.name];
     const { type, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
+    context.metadata[CLASS_NAME_KEY] = typeName;
 
     let newStash: MetadataProp;
     switch (context.kind) {

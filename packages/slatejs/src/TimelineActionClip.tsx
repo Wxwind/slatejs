@@ -128,7 +128,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
     >
       <div className="resize-left" onMouseDown={handleDragLeft} />
       <div className="resize-right" onMouseDown={handleDragRight} />
-      <div>{object.name}</div>
+      <div className="flex items-center h-full">{object.name}</div>
       {keys.map((key) => (
         <div
           style={{

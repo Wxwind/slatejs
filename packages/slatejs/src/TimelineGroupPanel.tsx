@@ -15,6 +15,8 @@ export const TimelineGroupPanel: FC<TimelineGroupPanelProps> = (props) => {
   useBindSignal(object.signals.trackCountChanged, refresh);
   useBindSignal(object.signals.groupUpdated, refresh);
 
+  console.log('timeline group refresh', object.children);
+
   return (
     <div style={{ width: `${width}px` }}>
       <div className="timeline-group-panel">{object.name}</div>

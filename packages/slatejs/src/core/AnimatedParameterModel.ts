@@ -1,6 +1,5 @@
 import { ReflectionTool, isNearly } from '@/util';
 import { Vector3 } from 'deer-engine';
-import { AnimatedParameter } from './AnimatedParameter';
 
 export type AnimatedParameterType = number | boolean | Vector3;
 
@@ -93,8 +92,8 @@ export class AnimatedVector3Model implements IAnimatedParameterModel<Vector3> {
   };
 }
 
-export const TypeToAnimParamModelMapInstance: Record<string, IAnimatedParameterModel<any>> = {
-  number: new AnimatedNumberModel(),
-  bool: new AnimatedBoolModel(),
-  Vector3: new AnimatedVector3Model(),
+export const TypeToAnimParamModelMapInstance: Record<string, new () => any> = {
+  number: AnimatedNumberModel,
+  bool: AnimatedBoolModel,
+  Vector3: AnimatedVector3Model,
 };

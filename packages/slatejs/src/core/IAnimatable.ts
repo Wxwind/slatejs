@@ -4,4 +4,7 @@ export interface IAnimatable {
   removeKey: (time: number) => void;
 
   evaluate: (curTime: number, prevTime: number) => void;
+
+  saveSnapshot: () => void;
+  restoreSnapshot: () => void;
 }

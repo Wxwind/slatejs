@@ -32,7 +32,7 @@ export function getMetadataFromCtor(ctor: AnyCtor) {
   return ctor[Symbol.metadata] as DecoratorMetadataObjectForRF;
 }
 
-export function getClassStath(ctor: new (...args: any[]) => any): MetadataClass {
+export function getClassStath(ctor: abstract new (...args: any[]) => any): MetadataClass {
   const metadata = ctor[Symbol.metadata];
   if (isNil(metadata)) {
     ctor[Symbol.metadata] = {};

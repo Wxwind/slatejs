@@ -1,14 +1,16 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { cutscene } from './core';
+import { Cutscene } from './core';
 import { isNil } from './util';
 import TimeMarkIcon from './TimeMarkIcon';
 import { TimelineGroupPanel } from './TimelineGroupPanel';
 import { useScaleStore } from './store';
 
-export interface TimelineProps {}
+export interface TimelineProps {
+  cutscene: Cutscene;
+}
 
 export const Timeline: FC<TimelineProps> = (props) => {
-  const {} = props;
+  const { cutscene } = props;
   const signals = cutscene.signals;
 
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -23,8 +25,6 @@ export const Timeline: FC<TimelineProps> = (props) => {
   const timelineTrackWidth = useMemo(() => {
     return cutscene.viewTimeMax * scale;
   }, [scale]);
-
-  console.log('timelineTrackWidth', scale, cutscene.viewTimeMax);
 
   const handleClickTimeCanvas = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {

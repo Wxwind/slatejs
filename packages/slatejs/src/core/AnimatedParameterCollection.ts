@@ -1,6 +1,7 @@
 import { ActionClip } from './ActionClip';
 import { AnimatedParameter, AnimatedParameterJson } from './AnimatedParameter';
 import { IAnimatable } from './IAnimatable';
+import { IKeyable } from './IKeyable';
 
 export type AnimatedParameterCollectionJson = {
   animatedParamArray: AnimatedParameterJson[];
@@ -19,6 +20,11 @@ export class AnimatedParameterCollection implements IAnimatable {
 
   static construct = () => {
     return new AnimatedParameterCollection([]);
+  };
+
+  addParameter = (keyable: IKeyable, rootTypeName: string, paramPath: string) => {
+    const animatedParam = AnimatedParameter.construct(keyable, rootTypeName, paramPath);
+    this.animatedParamArray.push(animatedParam);
   };
 
   hasAnyKey: () => boolean = () => {
@@ -52,4 +58,7 @@ export class AnimatedParameterCollection implements IAnimatable {
       animatedParam.evaluate(curTime, prevTime);
     }
   };
+
+  saveSnapshot: () => void = () => {};
+  restoreSnapshot: () => void = () => {};
 }
