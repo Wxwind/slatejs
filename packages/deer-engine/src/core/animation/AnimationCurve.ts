@@ -200,14 +200,14 @@ export class AnimationCurve {
       }
 
       case InterpMode.Linaer: {
-        const alpha = (time - key1.time) / dt;
+        const t = (time - key1.time) / dt;
         const p0 = key1.value;
         const p3 = key2.value;
-        return lerp(p0, p3, alpha);
+        return lerp(p0, p3, t);
       }
 
       case InterpMode.Cubic: {
-        const alpha = (time - key1.time) / dt;
+        const t = (time - key1.time) / dt;
         const p0 = key1.value;
         const p3 = key2.value;
 
@@ -219,13 +219,13 @@ export class AnimationCurve {
           // p3 = q1
           // where: u0 = f(q0)', u1 = f(q1)'
           // assume u = dt * tangent
-          // ps: But why can we (unreal / cocos) use alpha directly as x of value?
-          // Apparentely alpha != t where beizer(t).x = alpha.
+          // ps: But why can we (unreal / cocos) use t directly as x which hermite(t) = (x,y)?
+          // Apparentely t != t where beizer(t).x = t.
           const oneThird = 1 / 3;
           const p1 = p0 + key1.outTangent * dt * oneThird;
           const p2 = p3 - key2.inTangent * dt * oneThird;
 
-          return bezierInterp(p0, p1, p2, p3, alpha);
+          return bezierInterp(p0, p1, p2, p3, t);
         }
 
         // Bezier
@@ -253,7 +253,7 @@ export class AnimationCurve {
     const t1 = key1.time;
     const t2 = key2.time;
     const dt = t2 - t1;
-    const alpha = (time - t1) / dt;
+    const t = (time - t1) / dt;
     const oneThird = 1 / 3;
 
     let prevWeight = 0;
@@ -308,9 +308,9 @@ export class AnimationCurve {
     const coeff3 = 3 * (u2x - u1x) + 1;
 
     const solutions: [number, number, number] = [0, 0, 0];
-    // get the t of besizer value which cubic(t).x = alpha
-    const NumRes = solveCubic(coeff0 - alpha, coeff1, coeff2, coeff3, solutions);
-    let param = alpha;
+    // get the t of besizer value which cubic(t).x = t
+    const NumRes = solveCubic(coeff0 - t, coeff1, coeff2, coeff3, solutions);
+    let param = t;
     if (NumRes === 1) {
       param = solutions[0];
     } else {
@@ -337,13 +337,13 @@ export const bezierInterp: (p0: number, p1: number, p2: number, p3: number, t: n
   p1,
   p2,
   p3,
-  alpha
+  t
 ) => {
-  const u = 1 - alpha;
+  const u = 1 - t;
   const coeff0 = u * u * u;
-  const coeff1 = 3 * u * u * alpha;
-  const coeff2 = 3 * u * alpha * alpha;
-  const coeff3 = alpha * alpha * alpha;
+  const coeff1 = 3 * u * u * t;
+  const coeff2 = 3 * u * t * t;
+  const coeff3 = t * t * t;
   return coeff0 * p0 + coeff1 * p1 + coeff2 * p2 + coeff3 * p3;
 };
 
