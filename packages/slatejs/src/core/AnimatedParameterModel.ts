@@ -1,5 +1,5 @@
-import { ReflectionTool, isNearly } from '@/util';
-import { Vector3 } from 'deer-engine';
+import { ReflectionTool } from '@/util';
+import { Vector3, isNearly } from 'deer-engine';
 
 export type AnimatedParameterType = number | boolean | Vector3;
 

@@ -1,6 +1,5 @@
-import { clamp } from '@/util';
 import { CutsceneDirector } from './CutsceneDirector';
-import { Entity } from 'deer-engine';
+import { Entity, clamp } from 'deer-engine';
 
 export interface IDirectable {
   get root(): CutsceneDirector | null;

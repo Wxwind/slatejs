@@ -1,9 +1,8 @@
 import { FC, useCallback } from 'react';
 import { ActionClip, cutscene } from './core';
-import { clamp } from './util';
 import { useScaleStore } from './store';
 import { ComponentInstanceIcon } from '@radix-ui/react-icons';
-import { Keyframe } from 'deer-engine';
+import { Keyframe, clamp } from 'deer-engine';
 import { useDumbState, useBindSignal } from './hooks';
 
 interface TimelineActionClipProps {

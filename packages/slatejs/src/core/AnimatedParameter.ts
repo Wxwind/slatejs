@@ -1,7 +1,7 @@
-import { AnimationCurve, AnimationCurveJson, InterpMode, getRelativeProp } from 'deer-engine';
+import { AnimationCurve, AnimationCurveJson, InterpMode, getRelativeProp, isNearly } from 'deer-engine';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';
-import { isNearly, isNil } from '@/util';
+import { isNil } from '@/util';
 import {
   IAnimatedParameterModel,
   TypeToAnimParamModelMapInstance,

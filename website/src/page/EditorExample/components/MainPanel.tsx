@@ -1,8 +1,9 @@
 import { FC, useCallback, useRef, useState } from 'react';
 import { Hierarchy } from './Hierarchy';
 import { Inspector } from './Inspector';
-import { clamp, isNil } from '@/util';
+import { isNil } from '@/util';
 import { useWindowSize } from '@/hooks/useWindowSize';
+import { clamp } from 'deer-engine';
 
 interface MainPanelProps {}
 
