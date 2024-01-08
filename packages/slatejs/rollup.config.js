@@ -6,6 +6,8 @@ const svgr = require('@svgr/rollup');
 const { dts } = require('rollup-plugin-dts');
 const alias = require('@rollup/plugin-alias');
 const json = require('@rollup/plugin-json');
+const resolve = require('@rollup/plugin-node-resolve');
+const commonjs = require('@rollup/plugin-commonjs');
 
 module.exports = [
   {
@@ -21,6 +23,8 @@ module.exports = [
       },
     ],
     plugins: [
+      resolve(),
+      commonjs(),
       typescript(),
       json(),
       url(),
@@ -64,5 +68,6 @@ module.exports = [
         ],
       }),
     ],
+    external: ['react'],
   },
 ];

@@ -7,9 +7,9 @@ import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
 export class TransformClip extends ActionClip {
   protected _type = 'Transform' as const;
 
-  private _animatedParams: AnimatedParameterCollection | undefined;
+  private _animatedParams!: AnimatedParameterCollection;
 
-  get animatedData(): AnimatedParameterCollection | undefined {
+  get animatedData(): AnimatedParameterCollection {
     return this._animatedParams;
   }
 
@@ -27,7 +27,15 @@ export class TransformClip extends ActionClip {
   static construct(parent: CutsceneTrack, data: CreateActionClipDto) {
     const clip = new TransformClip(parent, genUUID('csc'), data.name || 'transform clip', data.startTime, data.endTime);
     const animatedParams = AnimatedParameterCollection.construct();
-    animatedParams.addParameter(clip, '', 'position');
+
+    const posParam = animatedParams.addParameter(clip, 'TransformComponent', 'position');
+    animatedParams.addParameter(clip, 'TransformComponent', 'rotation');
+    animatedParams.addParameter(clip, 'TransformComponent', 'scale');
+
+    posParam.tryAddKey(1);
+    posParam.tryAddKey(3);
+    posParam.curves[0].keys[1].value = 5;
+
     clip._animatedParams = animatedParams;
     return clip;
   }

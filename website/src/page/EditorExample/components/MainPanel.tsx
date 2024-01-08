@@ -3,12 +3,14 @@ import { Hierarchy } from './Hierarchy';
 import { Inspector } from './Inspector';
 import { isNil } from '@/util';
 import { useWindowSize } from '@/hooks/useWindowSize';
-import { clamp } from 'deer-engine';
+import { DeerScene, clamp } from 'deer-engine';
 
-interface MainPanelProps {}
+interface MainPanelProps {
+  scene: DeerScene | undefined;
+}
 
 export const MainPanel: FC<MainPanelProps> = (props) => {
-  const {} = props;
+  const { scene } = props;
 
   const hierarchyRef = useRef<HTMLDivElement>(null);
   const [dragLineHeight, setDragLineHeight] = useState<number>(280);
@@ -40,7 +42,7 @@ export const MainPanel: FC<MainPanelProps> = (props) => {
   return (
     <div className="relative flex flex-col bg-gray-400 h-full">
       <div ref={hierarchyRef} className="absolute w-full" style={{ height: `${dragLineHeight}px` }}>
-        <Hierarchy />
+        <Hierarchy scene={scene} />
       </div>
       <div
         className="absolute w-full h-[2px] bg-black cursor-row-resize"
@@ -48,7 +50,7 @@ export const MainPanel: FC<MainPanelProps> = (props) => {
         onMouseDown={handleMouseDown}
       />
       <div className="absolute w-full" style={{ top: `${dragLineHeight + 2}px` }}>
-        <Inspector />
+        <Inspector scene={scene} />
       </div>
     </div>
   );

@@ -1,19 +1,20 @@
-import { useEngineStore } from '@/hooks';
-import { ComponentData, deerEngine } from 'deer-engine';
+import { Component, DeerScene, MeshComponent, TransformComponent } from 'deer-engine';
 import { FC, ReactNode } from 'react';
 import { MeshComp, TransformComp } from './comps';
 
-interface EntityInspectorProps {}
+interface EntityInspectorProps {
+  scene: DeerScene | undefined;
+}
 
 export const EntityInspector: FC<EntityInspectorProps> = (props) => {
-  const entityInfo = useEngineStore(deerEngine.deerStore.selectedEntityInfoStore);
-
-  const TypeToComp: (comp: ComponentData, entityId: string) => ReactNode = (comp, entityId) => {
+  const { scene } = props;
+  const selectedEntity = scene?.entityManager.selectedEntity;
+  const TypeToComp: (comp: Component, entityId: string) => ReactNode = (comp, entityId) => {
     switch (comp.type) {
       case 'Mesh':
-        return <MeshComp entityId={entityId} compId={comp.id} config={comp.config} />;
+        return <MeshComp comp={comp as MeshComponent} />;
       case 'Transform':
-        return <TransformComp entityId={entityId} compId={comp.id} config={comp.config} />;
+        return <TransformComp comp={comp as TransformComponent} />;
 
       default:
         return null;
@@ -21,12 +22,12 @@ export const EntityInspector: FC<EntityInspectorProps> = (props) => {
   };
 
   return (
-    entityInfo && (
+    selectedEntity && (
       <div>
-        <div className="p-3 bg-blue-200">{entityInfo.name}</div>
+        <div className="p-3 bg-blue-200">{selectedEntity.name}</div>
         <div className="flex flex-col gap-y-2 py-2">
-          {entityInfo.components.map((comp) => {
-            return <div key={comp.id}>{TypeToComp(comp, entityInfo.id)}</div>;
+          {selectedEntity.getCompArray().map((comp) => {
+            return <div key={comp.id}>{TypeToComp(comp, selectedEntity.id)}</div>;
           })}
         </div>
       </div>

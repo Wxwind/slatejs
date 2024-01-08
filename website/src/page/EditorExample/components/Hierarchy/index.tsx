@@ -1,17 +1,18 @@
 import { useEngineStore } from '@/hooks';
-import { deerEngine } from 'deer-engine';
+import { DeerScene, deerEngine } from 'deer-engine';
 import { FC } from 'react';
 import { EntityTree } from './EntityTree';
 import classNames from 'classnames';
 
 interface HierarchyProps {
   className?: string;
+  scene: DeerScene | undefined;
 }
 
 export const Hierarchy: FC<HierarchyProps> = (props) => {
-  const { className } = props;
+  const { className, scene } = props;
 
-  const selectedEntityId = useEngineStore(deerEngine.deerStore.selectedEntityIdStore);
+  const selectedEntity = scene?.entityManager.selectedEntity;
   const hierarchyData = useEngineStore(deerEngine.deerStore.hierarchyStore);
 
   return (
@@ -19,9 +20,9 @@ export const Hierarchy: FC<HierarchyProps> = (props) => {
       <EntityTree
         data={hierarchyData || []}
         depth={1}
-        selectedKey={selectedEntityId}
+        selectedEntity={selectedEntity}
         onTreeNodeSelected={(entityId) => {
-          deerEngine.apiCenter.selecteEntity(entityId);
+          scene?.entityManager.select(entityId);
         }}
       />
     </div>

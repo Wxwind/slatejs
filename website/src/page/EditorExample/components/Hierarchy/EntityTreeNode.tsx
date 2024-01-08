@@ -1,20 +1,20 @@
-import { EntityForHierarchy, deerEngine } from 'deer-engine';
+import { Entity, EntityForHierarchy, deerEngine } from 'deer-engine';
 import { FC, useState } from 'react';
 import { EntityTree } from './EntityTree';
 import classNames from 'classnames';
 
 interface EntityProps {
   data: EntityForHierarchy;
-  selectedKey: string | undefined;
+  selectedEntity: Entity | undefined;
   depth: number;
   onTreeNodeSelected: (id: string) => void;
 }
 
 export const EntityTreeNode: FC<EntityProps> = (props) => {
-  const { data, selectedKey, depth, onTreeNodeSelected } = props;
+  const { data, selectedEntity, depth, onTreeNodeSelected } = props;
   const [isDragging, setIsDragging] = useState(false);
 
-  const isSelected = selectedKey === data.id;
+  const isSelected = selectedEntity?.id === data.id;
 
   return (
     <div
@@ -42,7 +42,7 @@ export const EntityTreeNode: FC<EntityProps> = (props) => {
       </div>
       <EntityTree
         data={data.children}
-        selectedKey={selectedKey}
+        selectedEntity={selectedEntity}
         depth={depth + 1}
         onTreeNodeSelected={onTreeNodeSelected}
       />

@@ -1,14 +1,12 @@
-import { MeshCompJson } from 'deer-engine';
+import { MeshComponent } from 'deer-engine';
 import { FC } from 'react';
 
 interface MeshCompProps {
-  entityId: string;
-  compId: string;
-  config: MeshCompJson;
+  comp: MeshComponent;
 }
 
 export const MeshComp: FC<MeshCompProps> = (props) => {
-  const { config } = props;
+  const { comp } = props;
 
   return <div>MeshComp</div>;
 };

@@ -57,7 +57,7 @@ export abstract class ActionClip implements IDirectable, IKeyable {
     return this.parent?.actor;
   }
 
-  abstract get animatedData(): AnimatedParameterCollection | undefined;
+  abstract get animatedData(): AnimatedParameterCollection;
 
   get animatedParameterTarget(): any {
     return this;

@@ -2,7 +2,6 @@ import { isNil } from '@/util';
 import { DeerScene } from './DeerScene';
 import { DeerStore } from './DeerStore';
 import { CommandManager } from './manager';
-import { ApiCenter } from './ApiCenter';
 
 export class DeerEngine {
   private _sceneMap = new Map<string, DeerScene>();
@@ -16,7 +15,6 @@ export class DeerEngine {
   public set activeScene(v: DeerScene | undefined) {
     this._activeScene = v;
     this._deerStore.setScene(v);
-    this._apiCenter.scene = v;
   }
 
   private _deerStore = new DeerStore(undefined);
@@ -25,11 +23,6 @@ export class DeerEngine {
     return this._deerStore;
   }
 
-  private _apiCenter = new ApiCenter(undefined);
-
-  public get apiCenter(): ApiCenter {
-    return this._apiCenter;
-  }
   /**
    * CommandManager is the only entry if want to exec recordable action.
    * Used by both app and engine itself.

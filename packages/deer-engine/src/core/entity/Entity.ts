@@ -22,6 +22,8 @@ export class Entity {
     this.name = name;
   }
 
+  getCompArray = () => this.compArray;
+
   addComponentByNew = <T extends Component>(compCtor: new (entity: Entity) => T) => {
     const comp = new compCtor(this);
     this.compMap.set(comp.id, comp);

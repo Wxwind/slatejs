@@ -1,8 +1,10 @@
 import { Timeline } from './components';
 import { FC } from 'react';
 import { SceneCanvas, MainPanel, Header } from './components';
+import { getActiveScene } from 'deer-engine';
 
 export const EditorExample: FC = () => {
+  const scene = getActiveScene();
   return (
     <div className="w-screen h-screen relative flex flex-col">
       <div className="grow-0">
@@ -14,7 +16,7 @@ export const EditorExample: FC = () => {
           <Timeline />
         </div>
         <div className="w-1/4 h-full">
-          <MainPanel />
+          <MainPanel scene={scene} />
         </div>
       </div>
     </div>

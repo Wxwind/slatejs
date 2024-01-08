@@ -7,9 +7,9 @@ import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
 export class AnimationClip extends ActionClip {
   protected _type = 'Animation' as const;
 
-  protected _animatedParams: AnimatedParameterCollection | undefined;
+  protected _animatedParams!: AnimatedParameterCollection;
 
-  get animatedData(): AnimatedParameterCollection | undefined {
+  get animatedData(): AnimatedParameterCollection {
     return this._animatedParams;
   }
 

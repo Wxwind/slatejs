@@ -1,19 +1,22 @@
 import typescript from '@rollup/plugin-typescript';
 import alias from '@rollup/plugin-alias';
 import dts from 'rollup-plugin-dts';
-import babel, { getBabelOutputPlugin } from '@rollup/plugin-babel';
-import url from 'node:url';
-import path from 'node:path';
+import babel from '@rollup/plugin-babel';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default [
   {
     input: 'src/index.ts',
     plugins: [
+      resolve(),
+      commonjs(),
       babel({
         exclude: ['node_modules/**'],
         extensions: ['ts', 'tsx', 'mjs', 'js', 'jsx'],
         presets: ['@babel/preset-env', '@babel/preset-typescript'],
         plugins: [['@babel/plugin-proposal-decorators', { version: '2023-05' }]],
+        babelHelpers: 'bundled',
       }),
       typescript(),
       alias({
@@ -41,6 +44,8 @@ export default [
   {
     input: 'src/index.ts',
     plugins: [
+      resolve(),
+      commonjs(),
       babel({
         exclude: ['node_modules/**'],
         extensions: ['ts', 'tsx', 'mjs', 'js', 'jsx'],

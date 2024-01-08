@@ -1,1 +1,3 @@
 **/scripts/**/*.cjs
+node_modules
+dist

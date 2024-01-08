@@ -1,5 +1,5 @@
 import { FileLoader, EquirectangularReflectionMapping } from 'three';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 export class Loader {
   private readonly rgbeLoader: RGBELoader = new RGBELoader();

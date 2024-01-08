@@ -1,14 +1,12 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
-import { deerEngine } from 'deer-engine';
-import { useEngineStore } from '@/hooks';
+import { TransformComponent, deerEngine } from 'deer-engine';
 import { downLoad } from '@/util';
 import { cutscene } from 'slatejs';
+import { isNil } from 'lodash';
 
 export const Header: FC = () => {
-  const selectedEntityId = useEngineStore(deerEngine.deerStore.selectedEntityIdStore);
-
   const handleSave = () => {
     // TODO: call Native file system api
   };
@@ -21,7 +19,13 @@ export const Header: FC = () => {
   };
 
   const handleCreateEntity = () => {
-    deerEngine.apiCenter.createEntity(selectedEntityId);
+    if (isNil(deerEngine.activeScene)) {
+      return;
+    }
+    deerEngine.activeScene.entityManager.createEntity(
+      'Cube',
+      deerEngine.activeScene.entityManager.selectedEntity?.findComponentByType<TransformComponent>('Transform')
+    );
   };
 
   const handleRedo = () => {

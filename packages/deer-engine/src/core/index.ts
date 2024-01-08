@@ -7,6 +7,5 @@ export * from './command';
 export * from './manager';
 export * from './Control';
 export * from './Loader';
-export * from './ApiCenter';
 export * from './animation';
 export * from './data';

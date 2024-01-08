@@ -1,5 +1,5 @@
 import { CollapseBox } from '@/components';
-import { TransformCompJson, deerEngine } from 'deer-engine';
+import { TransformCompJson, TransformComponent } from 'deer-engine';
 import { ChangeEvent, FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import set from 'lodash/set';
@@ -7,13 +7,11 @@ import { clone } from 'lodash';
 import { BlurInputNumber } from '@/components/BlurInputNumber';
 
 interface TransformCompProps {
-  entityId: string;
-  compId: string;
-  config: TransformCompJson;
+  comp: TransformComponent;
 }
 
 export const TransformComp: FC<TransformCompProps> = (props) => {
-  const { entityId, compId, config } = props;
+  const { comp } = props;
 
   const [data, setData] = useImmer<TransformCompJson>({
     position: { x: 0, y: 0, z: 0 },
@@ -22,18 +20,14 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
   });
 
   useEffect(() => {
-    setData(config);
-  }, [config, setData]);
+    setData(comp.toJsonObject());
+  }, [comp, setData]);
 
   const handleValueFinish = (e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     const value = Number(e.target.value) || 0;
     set(data, name, value);
-    deerEngine.apiCenter.updateComponent(entityId, compId, {
-      id: '',
-      type: 'Transform',
-      config: data,
-    });
+    comp.updateByJson(data);
   };
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {

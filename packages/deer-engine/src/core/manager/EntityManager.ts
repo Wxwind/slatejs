@@ -8,17 +8,17 @@ export class EntityManager {
   private readonly entityMap = new Map<string, Entity>();
   private readonly entityArray: Entity[] = [];
   private readonly scene: DeerScene;
-  private _selectedEntityId: string | undefined;
+  private _selectedEntity: Entity | undefined;
 
-  public get selectedEntityId(): string | undefined {
-    return this._selectedEntityId;
+  public get selectedEntity(): Entity | undefined {
+    return this._selectedEntity;
   }
 
   constructor(scene: DeerScene) {
     this.scene = scene;
   }
 
-  createEntity = (name: string, parent: TransformComponent | null | string) => {
+  createEntity = (name: string, parent: TransformComponent | string | null | undefined) => {
     const p =
       typeof parent === 'string'
         ? this.findEntityById(parent)?.findComponentByType<TransformComponent>('Transform') || this.scene
@@ -77,6 +77,11 @@ export class EntityManager {
   };
 
   select = (id: string | undefined) => {
-    this._selectedEntityId = id;
+    if (isNil(id)) {
+      this._selectedEntity = undefined;
+      return;
+    }
+    const selectEntity = this.findEntityById(id);
+    this._selectedEntity = selectEntity;
   };
 }

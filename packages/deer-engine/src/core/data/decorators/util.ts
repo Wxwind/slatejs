@@ -37,7 +37,7 @@ export function getClassStath(ctor: abstract new (...args: any[]) => any): Metad
   if (isNil(metadata)) {
     ctor[Symbol.metadata] = {};
   }
-  return getClassStathFromMetadata(metadata!);
+  return getClassStathFromMetadata(ctor[Symbol.metadata]!);
 }
 
 export function getClassStathFromMetadata(metadata: DecoratorMetadataObject): MetadataClass {
