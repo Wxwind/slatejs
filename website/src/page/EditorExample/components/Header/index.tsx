@@ -1,12 +1,17 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
-import { TransformComponent, deerEngine } from 'deer-engine';
-import { downLoad } from '@/util';
+import { DeerScene, MeshComponent, TransformComponent, deerEngine } from 'deer-engine';
+import { downLoad, isNil } from '@/util';
 import { cutscene } from 'slatejs';
-import { isNil } from 'lodash';
 
-export const Header: FC = () => {
+interface HeaderProps {
+  scene: DeerScene | undefined;
+}
+
+export const Header: FC<HeaderProps> = (props) => {
+  const { scene } = props;
+
   const handleSave = () => {
     // TODO: call Native file system api
   };
@@ -19,13 +24,15 @@ export const Header: FC = () => {
   };
 
   const handleCreateEntity = () => {
-    if (isNil(deerEngine.activeScene)) {
+    if (isNil(scene)) {
+      console.error('create entity failed: no activated scene');
       return;
     }
-    deerEngine.activeScene.entityManager.createEntity(
+    const e = scene.entityManager.createEntity(
       'Cube',
-      deerEngine.activeScene.entityManager.selectedEntity?.findComponentByType<TransformComponent>('Transform')
+      scene.entityManager.selectedEntity?.findComponentByType<TransformComponent>('Transform')
     );
+    e.addComponentByNew(MeshComponent);
   };
 
   const handleRedo = () => {

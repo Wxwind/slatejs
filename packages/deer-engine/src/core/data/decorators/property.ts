@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { isNil } from 'lodash';
 import { ClassFieldDecorator, IPropertyOptions } from '../type';
 import {
+  CACHE_KEY,
   CLASS_NAME_KEY,
   DecoratorMetadataObjectForRF,
   MetadataProp,
   getClassName,
   getClassStathFromMetadata,
 } from './util';
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 
 // @property({})
 export function property<This, Value>(options: IPropertyOptions): ClassFieldDecorator<This, Value> {
   const decorator = (target: undefined, context: ClassFieldDecoratorContext<This, Value>) => {
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
-    const stash = getClassStathFromMetadata(metadata);
+    const classStash = getClassStathFromMetadata(metadata);
     const { type, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
-    context.metadata[CLASS_NAME_KEY] = typeName;
+    metadata.CLASS_NAME_KEY = typeName;
 
-    const originStash = stash[context.name];
+    const originStash = classStash[context.name] ?? (classStash[context.name] = {});
     const newStash = {
       type,
       typeName,
@@ -29,7 +31,7 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
       },
     };
 
-    merge(originStash, newStash);
+    classStash[context.name] = merge(originStash, newStash);
     return;
   };
 
@@ -60,12 +62,14 @@ export function accessor<This, Value>(
       | ClassSetterDecoratorContext<This, Value>
       | ClassAccessorDecoratorContext<This, Value>
   ) => {
+    console.log('register accessor');
+
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
-    const stash = getClassStathFromMetadata(metadata);
-    const originStash = stash[context.name];
+    const classStash = getClassStathFromMetadata(metadata);
+    const originStash = classStash[context.name] ?? (classStash[context.name] = {});
     const { type, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
-    context.metadata[CLASS_NAME_KEY] = typeName;
+    metadata.CLASS_NAME_KEY = typeName;
 
     let newStash: MetadataProp;
     switch (context.kind) {
@@ -106,7 +110,7 @@ export function accessor<This, Value>(
         return;
     }
 
-    merge(originStash, newStash);
+    classStash[context.name] = merge(originStash, newStash);
     return;
   };
 

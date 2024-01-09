@@ -3,7 +3,7 @@ import { IDirectable } from './IDirectable';
 import { ClipType, CreateActionClipDto, CutsceneTrackType } from './type';
 import { AnimationClip, TransformClip } from './clips';
 import { ActionClip } from './ActionClip';
-import { Signal } from '@/signal';
+import { Signal } from 'deer-engine';
 
 export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackType> implements IDirectable {
   protected _clips: ActionClip[];

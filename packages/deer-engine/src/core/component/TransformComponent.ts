@@ -3,7 +3,7 @@ import { ComponentBase } from './ComponentBase';
 import { TransformCompJson } from './type';
 import { Entity } from '../entity';
 import { DeerScene } from '../DeerScene';
-import { accessor, egclass, property } from '../data';
+import { accessor, egclass } from '../data';
 
 @egclass()
 export class TransformComponent extends ComponentBase<'Transform'> {

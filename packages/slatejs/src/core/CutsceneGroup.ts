@@ -5,7 +5,7 @@ import { IDirectable } from './IDirectable';
 import { isNil } from '@/util';
 import { PropertyTrack } from './tracks';
 import { CutsceneTrackType } from './type';
-import { Signal } from '@/signal';
+import { Signal } from 'deer-engine';
 import { TransformTrack } from './tracks/TransformTrack';
 
 export abstract class CutsceneGroup implements IDirectable {

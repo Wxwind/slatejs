@@ -1,4 +1,4 @@
-import { Signal } from '../signal';
+import { Signal } from 'deer-engine';
 
 export abstract class StoreBase<T> {
   private listeners = new Signal<[]>();

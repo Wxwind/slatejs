@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { globalTypeMap } from '../GlobalTypeMap';
 import { ClassClassDecorator } from '../type';
-import { getClassName, getClassStath } from './util';
+import { getClassName } from './util';
 
 export function egclass<Class extends abstract new (...args: any[]) => any>(name?: string): ClassClassDecorator<Class> {
   return (target: Class, context: ClassDecoratorContext<Class>) => {
-    const metadata = getClassStath(target);
-    globalTypeMap.set(name || getClassName(target), metadata);
+    console.log('register egclass');
+
+    globalTypeMap.set(name || getClassName(target), target);
   };
 }

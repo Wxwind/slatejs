@@ -12,7 +12,7 @@ interface CutsceneTrackPanelProps {
 export const CutsceneTrackPanel: FC<CutsceneTrackPanelProps> = (props) => {
   const { object, depth, paddingLeft } = props;
 
-  const [refresh] = useDumbState();
+  const refresh = useDumbState();
   useBindSignal(object.signals.clipCountChanged, refresh);
   useBindSignal(object.signals.trackUpdated, refresh);
 

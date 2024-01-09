@@ -3,7 +3,7 @@ import { TransformCompJson, TransformComponent } from 'deer-engine';
 import { ChangeEvent, FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import set from 'lodash/set';
-import { clone } from 'lodash';
+import clone from 'lodash/clone';
 import { BlurInputNumber } from '@/components/BlurInputNumber';
 
 interface TransformCompProps {

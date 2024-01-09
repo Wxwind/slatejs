@@ -23,8 +23,8 @@ module.exports = [
       },
     ],
     plugins: [
-      resolve(),
-      commonjs(),
+      // resolve({ resolveOnly: (module) => !module.includes('react') }),
+      // commonjs(),
       typescript(),
       json(),
       url(),
@@ -68,6 +68,6 @@ module.exports = [
         ],
       }),
     ],
-    external: ['react'],
+    external: ['react', 'react-dom'],
   },
 ];

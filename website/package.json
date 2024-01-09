@@ -23,6 +23,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
+    "rollup-plugin-visualizer": "^5.12.0",
     "slatejs": "workspace:*",
     "use-immer": "^0.9.0"
   },

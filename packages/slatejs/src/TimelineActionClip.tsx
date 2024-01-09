@@ -16,7 +16,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
 
   const { scale } = useScaleStore();
 
-  const [refresh] = useDumbState();
+  const refresh = useDumbState();
   useBindSignal(object.signals.clipUpdated, refresh);
   useBindSignal(object.signals.keysChanged, refresh);
 

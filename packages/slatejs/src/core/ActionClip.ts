@@ -2,7 +2,7 @@ import { IDirectable } from './IDirectable';
 import { ClipType, UpdateActionClipDto } from './type';
 import { IKeyable } from './IKeyable';
 import { AnimatedParameterCollection } from './AnimatedParameterCollection';
-import { Signal } from '@/signal';
+import { Signal } from 'deer-engine';
 
 export type ActionClipBaseInitParam = {
   start: number;
@@ -16,7 +16,7 @@ export abstract class ActionClip implements IDirectable, IKeyable {
   protected _id: string;
   protected _name: string;
   protected abstract readonly _type: ClipType;
-
+  nfa = '1';
   get type(): ClipType {
     return this._type;
   }

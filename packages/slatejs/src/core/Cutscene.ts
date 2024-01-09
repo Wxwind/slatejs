@@ -1,6 +1,6 @@
 import { PlayState, CutsceneDirector } from './CutsceneDirector';
 import { CutsceneDataStore, SelectedIDirectableStore } from '../store';
-import { Signal } from '../signal';
+import { Signal } from 'deer-engine';
 import { IDirectable } from './IDirectable';
 import { isNil } from '@/util';
 

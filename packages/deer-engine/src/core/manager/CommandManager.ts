@@ -14,12 +14,10 @@ export class CommandManager {
   }
 
   private genCmdToStoreMap = (deerEngine: DeerEngine) => {
-    const hierarchyStore = deerEngine.deerStore.hierarchyStore;
-
     const cmdToStore: Partial<Record<CommandType, StoreBase[]>> = {
       Empty: [],
-      CreateEntity: [hierarchyStore],
-      DeleteEntity: [hierarchyStore],
+      CreateEntity: [],
+      DeleteEntity: [],
     };
     return cmdToStore;
   };

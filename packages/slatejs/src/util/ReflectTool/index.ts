@@ -1,15 +1,13 @@
-export namespace ReflectionTool {
-  export const getValue = (object: Record<string, unknown>, propertyPath: string) => {
-    if (propertyPath in object) {
-      return object[propertyPath];
-    }
-  };
+import { isValidKey } from '../typeGuard';
 
-  export function setValue<T extends Record<string, unknown>, K extends keyof T>(
-    object: T,
-    propertyPath: K,
-    value: T[K]
-  ) {
-    object[propertyPath] = value;
+export const getValue = (object: object, propertyPath: string) => {
+  if (isValidKey(propertyPath, object)) {
+    return object[propertyPath] as unknown;
+  }
+};
+
+export function setValue(object: object, propertyPath: string, value: unknown) {
+  if (isValidKey(propertyPath, object)) {
+    (object[propertyPath] as unknown) = value;
   }
 }

@@ -1,12 +1,12 @@
 import { Signal } from 'deer-engine';
 import { useEffect } from 'react';
 
-export const useBindSignal = (signal: Signal, callback: () => void) => {
+export const useBindSignal = (signal: Signal | undefined, callback: () => void) => {
   useEffect(() => {
-    signal.on(callback);
+    signal?.on(callback);
 
     return () => {
-      signal.off(callback);
+      signal?.off(callback);
     };
   }, [callback, signal]);
 };

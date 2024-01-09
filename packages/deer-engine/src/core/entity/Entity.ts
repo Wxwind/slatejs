@@ -44,9 +44,9 @@ export class Entity {
     return this.compMap.get(compId);
   };
 
-  findComponentByType = <T extends Component>(type: T['type']): T => {
+  findComponentByType = <T extends Component>(type: T['type']): T | undefined => {
     const c = this.compArray.find((a) => a.type === type);
-    return c as T;
+    return c as T | undefined;
   };
 
   removeComponentById = (id: string) => {

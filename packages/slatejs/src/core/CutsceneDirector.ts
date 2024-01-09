@@ -4,10 +4,9 @@ import { CutsceneGroup } from './CutsceneGroup';
 import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
 import { ActorGroup } from './groups';
 import { CutsceneData, CutsceneGroupData, CutsceneTrackData, ActionClipData, CutsceneGroupType } from './type';
-import { ActionClip } from './ActionClip';
 import { DirectorGroup } from './groups/DirectorGroup';
 import { deerEngine } from 'deer-engine';
-import { Signal } from '@/signal';
+import { Signal } from 'deer-engine';
 
 /**
  * PlayState in editor mode has no state called 'paused' because
@@ -303,7 +302,11 @@ export class CutsceneDirector {
   };
 
   addGroup = (entityId: string, type: CutsceneGroupType) => {
-    const entity = deerEngine.activeScene?.entityManager.findEntityById(entityId);
+    // FIXME: slatejs's deerEngine !== website's deerEngine if use resolve() plugin to resolve external dependencies in deer-engine
+    if (isNil(deerEngine.activeScene)) {
+      throw new Error("couldn't find activeScene");
+    }
+    const entity = deerEngine.activeScene.entityManager.findEntityById(entityId);
     if (isNil(entity)) {
       throw new Error(`AddGroup: counldn't find entity (id= ${entityId})`);
     }

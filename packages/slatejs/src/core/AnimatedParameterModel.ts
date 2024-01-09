@@ -1,4 +1,4 @@
-import { ReflectionTool } from '@/util';
+import { ReflectionTool, isValidKey } from '@/util';
 import { Vector3, isNearly } from 'deer-engine';
 
 export type AnimatedParameterType = number | boolean | Vector3;
@@ -8,8 +8,8 @@ export interface IAnimatedParameterModel<T extends AnimatedParameterType = Anima
   readonly isBool: boolean;
   convertToNumbers: (value: T) => number[];
   convertToObject: (numbers: number[]) => T;
-  setDirect: (target: Record<string, unknown>, propPath: string, numbers: number[]) => void;
-  getDirect: (target: Record<string, unknown>, propPath: string) => number[];
+  setDirect: (target: object, propPath: string, numbers: number[]) => void;
+  getDirect: (target: object, propPath: string) => number[];
 }
 
 export class AnimatedNumberModel implements IAnimatedParameterModel<number> {
@@ -24,16 +24,12 @@ export class AnimatedNumberModel implements IAnimatedParameterModel<number> {
     return numbers[0];
   };
 
-  setDirect: (target: Record<string, unknown>, propPath: string, numbers: number[]) => void = (
-    target,
-    propPath,
-    numbers
-  ) => {
+  setDirect: (target: object, propPath: string, numbers: number[]) => void = (target, propPath, numbers) => {
     const v = this.convertToObject(numbers);
     ReflectionTool.setValue(target, propPath, v);
   };
 
-  getDirect: (target: Record<string, unknown>, propPath: string) => number[] = (target, propPath) => {
+  getDirect: (target: object, propPath: string) => number[] = (target, propPath) => {
     const v = ReflectionTool.getValue(target, propPath) as number;
     return this.convertToNumbers(v);
   };
@@ -52,15 +48,11 @@ export class AnimatedBoolModel implements IAnimatedParameterModel<boolean> {
     return isNearly(numbers[0], 0) ? false : true;
   };
 
-  setDirect: (target: Record<string, unknown>, propPath: string, numbers: number[]) => void = (
-    target,
-    propPath,
-    numbers
-  ) => {
+  setDirect: (target: object, propPath: string, numbers: number[]) => void = (target, propPath, numbers) => {
     ReflectionTool.setValue(target, propPath, numbers[0]);
   };
 
-  getDirect: (target: Record<string, unknown>, propPath: string) => number[] = (target, propPath) => {
+  getDirect: (target: object, propPath: string) => number[] = (target, propPath) => {
     const v = ReflectionTool.getValue(target, propPath) as boolean;
     return this.convertToNumbers(v);
   };
@@ -78,15 +70,11 @@ export class AnimatedVector3Model implements IAnimatedParameterModel<Vector3> {
     return { x: numbers[0], y: numbers[1], z: numbers[2] };
   };
 
-  setDirect: (target: Record<string, unknown>, propPath: string, numbers: number[]) => void = (
-    target,
-    propPath,
-    numbers
-  ) => {
+  setDirect: (target: object, propPath: string, numbers: number[]) => void = (target, propPath, numbers) => {
     ReflectionTool.setValue(target, propPath, numbers[0]);
   };
 
-  getDirect: (target: Record<string, unknown>, propPath: string) => number[] = (target, propPath) => {
+  getDirect: (target: object, propPath: string) => number[] = (target, propPath) => {
     const v = ReflectionTool.getValue(target, propPath) as Vector3;
     return this.convertToNumbers(v);
   };

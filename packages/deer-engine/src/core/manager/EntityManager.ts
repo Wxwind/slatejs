@@ -3,12 +3,18 @@ import { Entity } from '../entity';
 import { TransformComponent } from '../component';
 import { isNil } from '@/util';
 import { EntityForHierarchy } from '@/store/type';
+import { Signal } from '@/packages/signal';
 
 export class EntityManager {
   private readonly entityMap = new Map<string, Entity>();
   private readonly entityArray: Entity[] = [];
   private readonly scene: DeerScene;
   private _selectedEntity: Entity | undefined;
+
+  signals = {
+    entityTreeViewUpdated: new Signal(),
+    entitySelected: new Signal(),
+  };
 
   public get selectedEntity(): Entity | undefined {
     return this._selectedEntity;
@@ -32,6 +38,9 @@ export class EntityManager {
     }
     this.entityMap.set(e.id, e);
     this.entityArray.push(e);
+    console.log('enity created');
+
+    this.signals.entityTreeViewUpdated.emit();
     return e;
   };
 
@@ -51,6 +60,7 @@ export class EntityManager {
     this.entityMap.delete(id);
     this.entityArray.splice(index, 1);
     entity.onDestory();
+    this.signals.entityTreeViewUpdated.emit();
   };
 
   onDestory = () => {
@@ -83,5 +93,6 @@ export class EntityManager {
     }
     const selectEntity = this.findEntityById(id);
     this._selectedEntity = selectEntity;
+    this.signals.entitySelected.emit();
   };
 }

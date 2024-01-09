@@ -22,8 +22,8 @@ export class AnimatedParameterCollection implements IAnimatable {
     return new AnimatedParameterCollection([]);
   };
 
-  addParameter = (keyable: IKeyable, rootTypeName: string, paramPath: string) => {
-    const animatedParam = AnimatedParameter.construct(keyable, rootTypeName, paramPath);
+  addParameter = (keyable: IKeyable, compTypeName: string, paramPath: string) => {
+    const animatedParam = AnimatedParameter.construct(keyable, compTypeName, paramPath);
     this.animatedParamArray.push(animatedParam);
     return animatedParam;
   };

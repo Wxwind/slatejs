@@ -1,7 +1,7 @@
 import { isNil } from '@/util';
 import { DeerScene } from './DeerScene';
-import { DeerStore } from './DeerStore';
 import { CommandManager } from './manager';
+import { Signal } from '@/packages/signal';
 
 export class DeerEngine {
   private _sceneMap = new Map<string, DeerScene>();
@@ -14,14 +14,12 @@ export class DeerEngine {
 
   public set activeScene(v: DeerScene | undefined) {
     this._activeScene = v;
-    this._deerStore.setScene(v);
+    this.signals.activeSceneUpdated.emit();
   }
 
-  private _deerStore = new DeerStore(undefined);
-
-  public get deerStore(): DeerStore {
-    return this._deerStore;
-  }
+  signals = {
+    activeSceneUpdated: new Signal(),
+  };
 
   /**
    * CommandManager is the only entry if want to exec recordable action.
@@ -36,7 +34,6 @@ export class DeerEngine {
   createScene = (containerId: string, defaulteHDRUrl: string) => {
     const scene = new DeerScene(containerId, defaulteHDRUrl);
     this._sceneMap.set(containerId, scene);
-    this.activeScene = scene;
     return scene;
   };
 

@@ -11,7 +11,7 @@ interface TimelineGroupPanelProps {
 export const TimelineGroupPanel: FC<TimelineGroupPanelProps> = (props) => {
   const { width, object } = props;
 
-  const [refresh] = useDumbState();
+  const refresh = useDumbState();
   useBindSignal(object.signals.trackCountChanged, refresh);
   useBindSignal(object.signals.groupUpdated, refresh);
 

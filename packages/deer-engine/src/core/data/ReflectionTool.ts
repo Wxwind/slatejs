@@ -1,17 +1,17 @@
 import { isNil } from '@/util';
 import { globalTypeMap } from './GlobalTypeMap';
-import { getClassStathFromMetadata } from './decorators/util';
+import { getClassStath, getClassStathFromMetadata, getMetadataFromCtor } from './decorators/util';
 
-export const getRelativeProp = (rootType: string, propPath: string) => {
-  const metadata = globalTypeMap.get(rootType);
-  if (isNil(metadata)) {
-    throw new Error(`cannot find metadata of class '${rootType}', must add @egclass for class`);
+export const getRelativeProp = (compType: string, propPath: string) => {
+  const classCtor = globalTypeMap.get(compType);
+  if (isNil(classCtor)) {
+    throw new Error(`cannot find metadata of class '${compType}', must add @egclass for class to register class type`);
   }
-  const stash = getClassStathFromMetadata(metadata);
+  const stash = getClassStath(classCtor);
   const metadataProp = stash[propPath];
   if (isNil(metadataProp)) {
     throw new Error(
-      `cannot find metadata of propPath '${propPath}' in class '${rootType}', must add @property or @accessor for prop`
+      `cannot find metadata of propPath '${propPath}' in class '${compType}', must add @property or @accessor for prop`
     );
   }
   return metadataProp;

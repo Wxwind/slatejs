@@ -16,7 +16,7 @@ interface CutsceneGroupPanelProps {
 export const CutsceneGroupPanel: FC<CutsceneGroupPanelProps> = (props) => {
   const { object, depth, paddingLeft } = props;
 
-  const [refresh] = useDumbState();
+  const refresh = useDumbState();
   useBindSignal(object.signals.trackCountChanged, refresh);
   useBindSignal(object.signals.groupUpdated, refresh);
 

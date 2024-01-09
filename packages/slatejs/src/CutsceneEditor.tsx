@@ -13,7 +13,7 @@ export interface CutsceneEditorProps {}
 export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
   const [isSthDraggedHover, setIsSthDraggedHover] = useState(false);
 
-  const [refresh] = useDumbState();
+  const refresh = useDumbState();
   useBindSignal(cutscene.director.signals.groupCountChanged, refresh);
   useBindSignal(cutscene.director.signals.playStateChanged, refresh);
 

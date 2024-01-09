@@ -1,6 +1,5 @@
 export * from './DeerEngine';
 export * from './DeerScene';
-export * from './DeerStore';
 export * from './entity';
 export * from './component';
 export * from './command';

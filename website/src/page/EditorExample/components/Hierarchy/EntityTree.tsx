@@ -16,7 +16,7 @@ export const EntityTree: FC<EntityTreeProps> = (props) => {
     <div className="pb-0.5 w-full">
       {data.map((a) => (
         <EntityTreeNode
-          key={a.name}
+          key={a.id}
           selectedEntity={selectedEntity}
           data={a}
           depth={depth}

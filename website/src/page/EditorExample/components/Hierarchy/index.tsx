@@ -1,5 +1,5 @@
-import { useEngineStore } from '@/hooks';
-import { DeerScene, deerEngine } from 'deer-engine';
+import { useBindSignal, useDumbState } from '@/hooks';
+import { DeerScene } from 'deer-engine';
 import { FC } from 'react';
 import { EntityTree } from './EntityTree';
 import classNames from 'classnames';
@@ -13,7 +13,11 @@ export const Hierarchy: FC<HierarchyProps> = (props) => {
   const { className, scene } = props;
 
   const selectedEntity = scene?.entityManager.selectedEntity;
-  const hierarchyData = useEngineStore(deerEngine.deerStore.hierarchyStore);
+  const hierarchyData = scene?.entityManager.toTree();
+
+  const refresh = useDumbState();
+  useBindSignal(scene?.entityManager.signals.entityTreeViewUpdated, refresh);
+  useBindSignal(scene?.entityManager.signals.entitySelected, refresh);
 
   return (
     <div className={classNames(className, 'relative w-full')}>

@@ -1,3 +1,1 @@
-import { deerEngine } from './core';
-
-export const getActiveScene = () => deerEngine.activeScene;
+export const aaa = () => {};

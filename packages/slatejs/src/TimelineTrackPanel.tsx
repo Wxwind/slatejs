@@ -18,7 +18,7 @@ const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
   const { scale } = useScaleStore();
   const [offsetX, setOffsetX] = useState(0);
 
-  const [refresh] = useDumbState();
+  const refresh = useDumbState();
   useBindSignal(object.signals.clipCountChanged, refresh);
   useBindSignal(object.signals.trackUpdated, refresh);
 
