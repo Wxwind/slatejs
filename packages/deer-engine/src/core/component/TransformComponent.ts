@@ -95,9 +95,21 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
 
   toJsonObject: () => TransformCompJson = () => {
     return {
-      position: this.rootObj.position.clone(),
-      rotation: this.rootObj.rotation.clone(),
-      scale: this.rootObj.scale.clone(),
+      position: {
+        x: this.rootObj.position.x,
+        y: this.rootObj.position.y,
+        z: this.rootObj.position.z,
+      },
+      rotation: {
+        x: this.rootObj.rotation.x,
+        y: this.rootObj.rotation.y,
+        z: this.rootObj.rotation.z,
+      },
+      scale: {
+        x: this.rootObj.scale.x,
+        y: this.rootObj.scale.y,
+        z: this.rootObj.scale.z,
+      },
     };
   };
 }

@@ -8,17 +8,7 @@ interface InputNumberProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const InputNumber: FC<InputNumberProps> = (props) => {
-  const { className, precision = 2, value, onPressEnter, onKeyDown, ...otherProps } = props;
-
-  let num: number | undefined = Number(value);
-
-  if (isNaN(num)) num = undefined;
-  if (!isNil(num)) {
-    if (precision > 0) {
-      const h = 10 ** precision;
-      num = Math.round(num * h) / h;
-    }
-  }
+  const { className, precision, value, onPressEnter, onKeyDown, ...otherProps } = props;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -27,5 +17,5 @@ export const InputNumber: FC<InputNumberProps> = (props) => {
     onKeyDown?.(e);
   };
 
-  return <input className={classNames(className, 'w-full')} value={num} onKeyDown={handleKeyDown} {...otherProps} />;
+  return <input className={classNames(className, 'w-full')} value={value} onKeyDown={handleKeyDown} {...otherProps} />;
 };

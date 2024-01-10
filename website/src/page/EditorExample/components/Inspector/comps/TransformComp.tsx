@@ -1,4 +1,4 @@
-import { CollapseBox } from '@/components';
+import { CollapseBox, InputNumber } from '@/components';
 import { TransformCompJson, TransformComponent } from 'deer-engine';
 import { ChangeEvent, FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
@@ -6,6 +6,7 @@ import set from 'lodash/set';
 import clone from 'lodash/clone';
 import { BlurInputNumber } from '@/components/BlurInputNumber';
 import { useBindSignal, useDumbState } from '@/hooks';
+import { get } from 'lodash';
 
 interface TransformCompProps {
   comp: TransformComponent;
@@ -20,14 +21,19 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
     scale: { x: 0, y: 0, z: 0 },
   });
 
+  console.log('renderer', data.position);
   const refresh = useDumbState();
   useBindSignal(comp.signals.componentUpdated, refresh);
 
   useEffect(() => {
-    setData(comp.toJsonObject());
-  }, [comp, setData]);
+    //  setData(comp.toJsonObject());
+    const obj = comp.toJsonObject();
+    console.log('reset data from go', obj);
+    setData(obj);
+  }, [comp]);
 
   const handleValueFinish = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log('value finish');
     const name = e.target.name;
     const value = Number(e.target.value) || 0;
     set(data, name, value);
@@ -35,12 +41,11 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
   };
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log('value changed');
     const name = e.target.name;
     const value = Number(e.target.value) || 0;
-
-    //  const newData = set(clone(data), name, value);
     setData((draft) => {
-      return set(draft, name, value);
+      set(draft, name, value);
     });
   };
 
@@ -53,15 +58,15 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="position.x"
-                value={comp.position.x}
-                onBlur={handleValueFinish}
+                value={data.position.x}
+                onValueFinish={handleValueFinish}
                 onChange={handleValueChange}
               />
             </div>
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="position.y"
-                value={comp.position.y}
+                value={data.position.y}
                 onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
@@ -69,7 +74,7 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="position.z"
-                value={comp.position.z}
+                value={data.position.z}
                 onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
@@ -82,7 +87,7 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="rotation.x"
-                value={comp.rotation.x}
+                value={data.rotation.x}
                 onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
@@ -90,7 +95,7 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="rotation.y"
-                value={comp.rotation.y}
+                value={data.rotation.y}
                 onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
@@ -98,7 +103,7 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="rotation.z"
-                value={comp.rotation.z}
+                value={data.rotation.z}
                 onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
@@ -111,7 +116,7 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="scale.x"
-                value={comp.scale.x}
+                value={data.scale.x}
                 onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
@@ -119,7 +124,7 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="scale.y"
-                value={comp.scale.y}
+                value={data.scale.y}
                 onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
@@ -127,7 +132,7 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
             <div className="max-w-1/3">
               <BlurInputNumber
                 name="scale.z"
-                value={comp.scale.z}
+                value={data.scale.z}
                 onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
