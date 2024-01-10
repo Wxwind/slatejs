@@ -1,7 +1,7 @@
 import { MeshComponent } from './MeshComponent';
 import { TransformComponent } from './TransformComponent';
 
-export type ComponentType = 'Mesh' | 'Transform';
+export type ComponentType = 'MeshComponent' | 'TransformComponent';
 
 export type IVector2 = {
   x: number;
@@ -32,8 +32,8 @@ export type TransformCompJson = {
 };
 
 export type ComponentTypeToJsonObjMap = {
-  Mesh: MeshCompJson;
-  Transform: TransformCompJson;
+  MeshComponent: MeshCompJson;
+  TransformComponent: TransformCompJson;
 };
 
 type ComponentDataMap = {

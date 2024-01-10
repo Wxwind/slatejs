@@ -99,7 +99,7 @@ export class AnimationCurve {
       let left = 1; // in case time == keys[0].time which will return 0.
       let right = this.keys.length - 1;
       while (left <= right) {
-        const middle = (right - left) >> 1;
+        const middle = (right + left) >> 1;
         if (this.keys[middle].time >= inTime) {
           right = middle - 1;
         } else {

@@ -1,4 +1,15 @@
-import { AnimationCurve, AnimationCurveJson, Component, Entity, InterpMode, getRelativeProp } from '@/core';
+import {
+  AnimationCurve,
+  AnimationCurveJson,
+  AnyCtor,
+  Component,
+  Entity,
+  InterpMode,
+  MetadataProp,
+  getClassStath,
+  getRelativeProp,
+  globalTypeMap,
+} from '@/core';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';
 import { isNearly, isNil, isValidKey } from '@/util';
@@ -21,7 +32,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   curves: AnimationCurve[];
 
   compType: string;
-  parameterPath: string; // key of compType
+  parameterName: string; // key of compType
   parameterType: string;
 
   private keyable: IKeyable;
@@ -34,24 +45,28 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
 
   disabled = false;
 
+  metadataProp: MetadataProp;
+
   private constructor(
     keyable: IKeyable,
     compType: string,
     paramType: string,
-    paramPath: string,
+    paramName: string,
     curves: AnimationCurve[] | undefined
   ) {
     this.keyable = keyable;
     this.compType = compType;
     this.parameterType = paramType;
-    this.parameterPath = paramPath;
+    this.parameterName = paramName;
+
+    this.metadataProp = getRelativeProp(compType, paramName);
 
     if (paramType in TypeToAnimParamModelMapInstance) {
       this.parameterModel = new TypeToAnimParamModelMapInstance[paramType]();
       if (isNil(curves)) {
         const c = [];
         const n = this.parameterModel.requiredCurveCount;
-        for (let i = 0; i <= n; i++) {
+        for (let i = 0; i < n; i++) {
           c.push(new AnimationCurve());
         }
         this.curves = c;
@@ -152,18 +167,23 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     }
     if (this.target instanceof Entity) {
       const o = this.target.findComponentByType(this.compType as Component['type']);
+      if (isNil(o)) {
+        throw new Error(
+          `couldn't find component in target. (target= ${this.target.constructor.name}, compType= ${this.compType})`
+        );
+      }
       this._cachedAnimatedObject = o;
       return o;
     }
 
-    if (isValidKey(this.parameterPath, this.target)) {
-      const o = this.target[this.parameterPath];
+    if (isValidKey(this.parameterName, this.target)) {
+      const o = this.target[this.parameterName];
       this._cachedAnimatedObject = o;
       return o;
     }
 
     throw new Error(
-      `couldn't find cachedAnimatedObject. (target= ${this.target.constructor.name}, compType= ${this.compType}, parameterPath=${this.parameterPath})`
+      `couldn't find cachedAnimatedObject. (target= ${this.target.constructor.name}, compType= ${this.compType}, parameterPath=${this.parameterName})`
     );
   };
 
@@ -172,7 +192,8 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     if (isNil(obj)) {
       return [];
     }
-    return this.parameterModel.getDirect(obj, this.parameterPath);
+
+    return this.parameterModel.getDirect(obj as ActionClip, this.metadataProp);
   };
 
   setValue = (numbers: number[]) => {
@@ -180,11 +201,13 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     if (isNil(obj)) {
       return;
     }
-    const propPath = this.parameterPath;
-    this.parameterModel.setDirect(obj, propPath, numbers);
+
+    this.parameterModel.setDirect(obj, this.metadataProp, numbers);
   };
 
   evaluate: (curTime: number, prevTime: number) => void = (curTime, prevTime) => {
+    console.log('evaluate');
+
     if (this.disabled || isNil(this.target)) {
       return;
     }

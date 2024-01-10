@@ -6,8 +6,8 @@ import { DeerScene } from '../DeerScene';
 import { accessor, egclass } from '../data';
 
 @egclass()
-export class TransformComponent extends ComponentBase<'Transform'> {
-  type = 'Transform' as const;
+export class TransformComponent extends ComponentBase<'TransformComponent'> {
+  type = 'TransformComponent' as const;
 
   rootObj: Object3D;
   parent: TransformComponent | DeerScene;
@@ -19,33 +19,44 @@ export class TransformComponent extends ComponentBase<'Transform'> {
   }
 
   @accessor({ type: IVector3 })
-  public get position(): Vector3 {
+  public get position(): IVector3 {
     return this.rootObj.position;
   }
 
   @accessor({ type: IVector3 })
-  public set position(v: Vector3) {
-    this.rootObj.position.copy(v);
+  public set position(v: IVector3) {
+    console.log(
+      '设置位置%o给%s,%s,%s',
+      JSON.stringify(v),
+      this.rootObj.position.x,
+      this.rootObj.position.y,
+      this.rootObj.position.z
+    );
+
+    this.rootObj.position.set(v.x, v.y, v.z);
+    this.signals.componentUpdated.emit();
   }
 
   @accessor({ type: IVector3 })
-  public get rotation(): Vector3 {
+  public get rotation(): IVector3 {
     return new Vector3(this.rootObj.rotation.x, this.rootObj.rotation.y, this.rootObj.rotation.z);
   }
 
   @accessor({ type: IVector3 })
-  public set rotation(v: Vector3) {
-    this.rootObj.rotation.setFromVector3(v);
+  public set rotation(v: IVector3) {
+    this.rootObj.rotation.set(v.x, v.y, v.z);
+    this.signals.componentUpdated.emit();
   }
 
   @accessor({ type: IVector3 })
-  public get scale(): Vector3 {
+  public get scale(): IVector3 {
     return this.rootObj.scale;
   }
 
   @accessor({ type: IVector3 })
-  public set scale(v: Vector3) {
-    this.rootObj.scale.copy(v);
+  public set scale(v: IVector3) {
+    this.rootObj.scale.set(v.x, v.y, v.z);
+    this.signals.componentUpdated.emit();
   }
 
   constructor(entity: Entity, parent: TransformComponent | DeerScene) {
@@ -87,6 +98,7 @@ export class TransformComponent extends ComponentBase<'Transform'> {
     this.rootObj.position.set(data.position.x, data.position.y, data.position.z);
     this.rootObj.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
     this.rootObj.scale.set(data.scale.x, data.scale.y, data.scale.z);
+    this.signals.componentUpdated.emit();
   };
 
   toJsonObject: () => TransformCompJson = () => {

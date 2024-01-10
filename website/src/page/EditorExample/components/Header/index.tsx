@@ -30,7 +30,7 @@ export const Header: FC<HeaderProps> = (props) => {
     }
     const e = scene.entityManager.createEntity(
       'Cube',
-      scene.entityManager.selectedEntity?.findComponentByType<TransformComponent>('Transform')
+      scene.entityManager.selectedEntity?.findComponentByType<TransformComponent>('TransformComponent')
     );
     e.addComponentByNew(MeshComponent);
   };

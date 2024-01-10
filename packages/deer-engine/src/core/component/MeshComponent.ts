@@ -6,8 +6,8 @@ import { MeshCompJson } from './type';
 import { egclass } from '../data';
 
 @egclass()
-export class MeshComponent extends ComponentBase<'Mesh'> {
-  type = 'Mesh' as const;
+export class MeshComponent extends ComponentBase<'MeshComponent'> {
+  type = 'MeshComponent' as const;
 
   private obj: THREE.Mesh;
 

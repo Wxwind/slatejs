@@ -2,6 +2,7 @@ import { UUID_PREFIX_COMP } from '@/config';
 import { genUUID } from '@/util/utils';
 import { ComponentType, ComponentTypeToJsonObjMap } from './type';
 import { Entity } from '../entity';
+import { Signal } from '@/packages/signal';
 
 export abstract class ComponentBase<T extends ComponentType = ComponentType> {
   public readonly id: string;
@@ -15,6 +16,10 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType> {
   }
 
   public abstract get isCanBeRemoved(): boolean;
+
+  signals = {
+    componentUpdated: new Signal(),
+  };
 
   constructor(entity: Entity) {
     this._entity = entity;

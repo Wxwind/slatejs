@@ -14,7 +14,7 @@ export type MetadataClass = Record<string | symbol, MetadataProp | undefined>;
 
 export type MetadataProp = Partial<{
   type: (new () => unknown) | Array<new () => unknown>;
-  typeName: string | undefined;
+  typeName: string;
   set: (object: any, value: any) => void;
   get: (object: any) => unknown;
   uiOptions: Partial<{

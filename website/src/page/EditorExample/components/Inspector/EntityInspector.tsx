@@ -16,9 +16,9 @@ export const EntityInspector: FC<EntityInspectorProps> = (props) => {
 
   const TypeToComp: (comp: Component) => ReactNode = (comp) => {
     switch (comp.type) {
-      case 'Mesh':
+      case 'MeshComponent':
         return <MeshComp comp={comp as MeshComponent} />;
-      case 'Transform':
+      case 'TransformComponent':
         return <TransformComp comp={comp as TransformComponent} />;
 
       default:
