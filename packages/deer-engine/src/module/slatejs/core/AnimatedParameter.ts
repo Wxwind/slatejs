@@ -1,14 +1,11 @@
 import {
   AnimationCurve,
   AnimationCurveJson,
-  AnyCtor,
   Component,
   Entity,
   InterpMode,
   MetadataProp,
-  getClassStath,
   getRelativeProp,
-  globalTypeMap,
 } from '@/core';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';

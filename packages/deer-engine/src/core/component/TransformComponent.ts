@@ -25,14 +25,6 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
 
   @accessor({ type: IVector3 })
   public set position(v: IVector3) {
-    console.log(
-      '设置位置%o给%s,%s,%s',
-      JSON.stringify(v),
-      this.rootObj.position.x,
-      this.rootObj.position.y,
-      this.rootObj.position.z
-    );
-
     this.rootObj.position.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
   }
