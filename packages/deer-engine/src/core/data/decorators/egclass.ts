@@ -6,8 +6,6 @@ import { getClassName } from './util';
 
 export function egclass<Class extends abstract new (...args: any[]) => any>(name?: string): ClassClassDecorator<Class> {
   return (target: Class, context: ClassDecoratorContext<Class>) => {
-    console.log('register egclass');
-
     globalTypeMap.set(name || getClassName(target), target);
   };
 }

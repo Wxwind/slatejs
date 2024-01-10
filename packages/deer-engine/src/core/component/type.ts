@@ -3,18 +3,18 @@ import { TransformComponent } from './TransformComponent';
 
 export type ComponentType = 'Mesh' | 'Transform';
 
-export type Vector2 = {
+export type IVector2 = {
   x: number;
   y: number;
 };
 
-export type Vector3 = {
-  x: number;
-  y: number;
-  z: number;
-};
+export class IVector3 {
+  x: number = 0;
+  y: number = 0;
+  z: number = 0;
+}
 
-export type Vector4 = {
+export type IVector4 = {
   x: number;
   y: number;
   z: number;
@@ -26,9 +26,9 @@ export type MeshCompJson = {
 };
 
 export type TransformCompJson = {
-  position: Vector3;
-  rotation: Vector3;
-  scale: Vector3;
+  position: IVector3;
+  rotation: IVector3;
+  scale: IVector3;
 };
 
 export type ComponentTypeToJsonObjMap = {

@@ -6,13 +6,10 @@
   "scripts": {
     "dev": "pnpm --filter website dev",
     "dev:eg": "pnpm --filter deer-engine watch",
-    "dev:slatejs": "pnpm --filter slatejs watch",
-    "build": "pnpm run build:eg && pnpm run build:slatejs && pnpm run build:website",
+    "build": "pnpm run build:eg && pnpm run build:website",
     "build:website": "pnpm --filter website build",
-    "build:slatejs": "pnpm --filter slatejs build",
     "build:eg": "pnpm --filter deer-engine build",
     "lint:website": "pnpm --filter website lint:ts",
-    "lint:slatejs": "pnpm --filter slatejs lint:ts",
     "lint:eg": "pnpm --filter deer-engine lint:ts",
     "preview": "pnpm --filter website preview"
   },

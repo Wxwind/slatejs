@@ -38,7 +38,6 @@ export class EntityManager {
     }
     this.entityMap.set(e.id, e);
     this.entityArray.push(e);
-    console.log('enity created');
 
     this.signals.entityTreeViewUpdated.emit();
     return e;

@@ -3,7 +3,6 @@ import { isNil } from '@/util';
 import { GroupOptions } from '../type';
 
 export const CACHE_KEY = Symbol('__propertyCache__');
-export const CLASS_CACHE_KEY = Symbol('__egclassCache__');
 export const CLASS_NAME_KEY = Symbol('__classname__');
 
 export type DecoratorMetadataObjectForRF = Partial<{

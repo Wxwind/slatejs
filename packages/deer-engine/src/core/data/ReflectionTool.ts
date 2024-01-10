@@ -1,6 +1,6 @@
 import { isNil } from '@/util';
 import { globalTypeMap } from './GlobalTypeMap';
-import { getClassStath, getClassStathFromMetadata, getMetadataFromCtor } from './decorators/util';
+import { getClassStath } from './decorators/util';
 
 export const getRelativeProp = (compType: string, propPath: string) => {
   const classCtor = globalTypeMap.get(compType);

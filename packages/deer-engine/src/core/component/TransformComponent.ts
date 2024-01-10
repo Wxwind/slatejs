@@ -1,6 +1,6 @@
 import { Object3D, Vector3 } from 'three';
 import { ComponentBase } from './ComponentBase';
-import { TransformCompJson } from './type';
+import { TransformCompJson, IVector3 } from './type';
 import { Entity } from '../entity';
 import { DeerScene } from '../DeerScene';
 import { accessor, egclass } from '../data';
@@ -18,32 +18,32 @@ export class TransformComponent extends ComponentBase<'Transform'> {
     return false;
   }
 
-  @accessor({ type: Vector3 })
+  @accessor({ type: IVector3 })
   public get position(): Vector3 {
     return this.rootObj.position;
   }
 
-  @accessor({ type: Vector3 })
+  @accessor({ type: IVector3 })
   public set position(v: Vector3) {
     this.rootObj.position.copy(v);
   }
 
-  @accessor({ type: Vector3 })
+  @accessor({ type: IVector3 })
   public get rotation(): Vector3 {
     return new Vector3(this.rootObj.rotation.x, this.rootObj.rotation.y, this.rootObj.rotation.z);
   }
 
-  @accessor({ type: Vector3 })
+  @accessor({ type: IVector3 })
   public set rotation(v: Vector3) {
     this.rootObj.rotation.setFromVector3(v);
   }
 
-  @accessor({ type: Vector3 })
+  @accessor({ type: IVector3 })
   public get scale(): Vector3 {
     return this.rootObj.scale;
   }
 
-  @accessor({ type: Vector3 })
+  @accessor({ type: IVector3 })
   public set scale(v: Vector3) {
     this.rootObj.scale.copy(v);
   }

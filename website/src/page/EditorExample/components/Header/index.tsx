@@ -3,7 +3,7 @@ import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
 import { DeerScene, MeshComponent, TransformComponent, deerEngine } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
-import { cutscene } from 'slatejs';
+import { cutscene } from 'deer-engine';
 
 interface HeaderProps {
   scene: DeerScene | undefined;

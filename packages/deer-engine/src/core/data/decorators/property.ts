@@ -62,8 +62,6 @@ export function accessor<This, Value>(
       | ClassSetterDecoratorContext<This, Value>
       | ClassAccessorDecoratorContext<This, Value>
   ) => {
-    console.log('register accessor');
-
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
     const classStash = getClassStathFromMetadata(metadata);
     const originStash = classStash[context.name] ?? (classStash[context.name] = {});

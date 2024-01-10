@@ -1,0 +1,30 @@
+import { Entity } from '@/core';
+import { CutsceneGroup } from '../CutsceneGroup';
+import { CutsceneDirector } from '../CutsceneDirector';
+import { TransformTrack } from '../tracks/TransformTrack';
+import { genUUID } from '@/util';
+import { CutsceneGroupData } from '../type';
+
+export class DirectorGroup extends CutsceneGroup {
+  protected _actor: Entity | undefined;
+
+  get name(): string {
+    return 'DirectorGroup';
+  }
+
+  static constructFromJson(director: CutsceneDirector, data: CutsceneGroupData) {
+    const group = new DirectorGroup(director, data.id, []);
+    data.children.forEach((t) => {
+      const track = TransformTrack.constructFromJson(group, t);
+      group._tracks.push(track);
+    });
+    return group;
+  }
+
+  static construct(parent: CutsceneDirector) {
+    const group = new DirectorGroup(parent, genUUID('csg'), []);
+    return group;
+  }
+
+  onEnter: () => void = () => {};
+}

@@ -1,6 +1,7 @@
 import { FC, useRef, useState } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
-import { Cutscene, CutsceneEditor } from 'slatejs';
+import { Cutscene } from 'deer-engine';
+import { CutsceneEditor } from '@/module/slatejs';
 
 export const Timeline: FC = () => {
   const [scene, setScene] = useState(new Cutscene());

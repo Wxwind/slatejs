@@ -4,3 +4,4 @@ export * from './config';
 export * from './util';
 export * from './exportApi';
 export * from './packages/signal';
+export * from './module';
