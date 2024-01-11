@@ -1,12 +1,10 @@
-import { CollapseBox, InputNumber } from '@/components';
+import { CollapseBox } from '@/components';
 import { TransformCompJson, TransformComponent } from 'deer-engine';
 import { ChangeEvent, FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import set from 'lodash/set';
-import clone from 'lodash/clone';
 import { BlurInputNumber } from '@/components/BlurInputNumber';
 import { useBindSignal, useDumbState } from '@/hooks';
-import { get } from 'lodash';
 
 interface TransformCompProps {
   comp: TransformComponent;
@@ -26,11 +24,9 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
   useBindSignal(comp.signals.componentUpdated, refresh);
 
   useEffect(() => {
-    //  setData(comp.toJsonObject());
     const obj = comp.toJsonObject();
-    console.log('reset data from go', obj);
     setData(obj);
-  }, [comp]);
+  }, [comp, setData]);
 
   const handleValueFinish = (e: ChangeEvent<HTMLInputElement>) => {
     console.log('value finish');
@@ -41,7 +37,6 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
   };
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log('value changed');
     const name = e.target.name;
     const value = Number(e.target.value) || 0;
     setData((draft) => {
@@ -59,7 +54,7 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
               <BlurInputNumber
                 name="position.x"
                 value={data.position.x}
-                onValueFinish={handleValueFinish}
+                onBlur={handleValueFinish}
                 onChange={handleValueChange}
               />
             </div>

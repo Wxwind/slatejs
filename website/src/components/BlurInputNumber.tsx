@@ -4,12 +4,12 @@ import { isNil } from '@/util';
 
 interface BlurInputNumberProps extends React.InputHTMLAttributes<HTMLInputElement> {
   precision?: number;
-  onValueFinish?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: ChangeEvent<HTMLInputElement>) => void;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
-  const { precision = 2, value, onValueFinish, onChange, ...rest } = props;
+  const { precision = 2, value, onBlur, onChange, ...rest } = props;
 
   let num: number | undefined = Number(value);
 
@@ -29,7 +29,7 @@ export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
       onPressEnter={(e) => {
         e.currentTarget.blur();
       }}
-      onBlur={onValueFinish}
+      onBlur={onBlur}
       onChange={onChange}
       {...rest}
     />
