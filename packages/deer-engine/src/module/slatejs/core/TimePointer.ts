@@ -5,7 +5,6 @@ export interface IDirectableTimePointer {
   get time(): number;
 
   triggerForward: (curTime: number, prevTime: number) => void;
-
   triggerBackward: (curTime: number, prevTime: number) => void;
 }
 

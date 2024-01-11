@@ -10,7 +10,7 @@ interface CollapseBoxProps {
 export const CollapseBox: FC<PropsWithChildren<CollapseBoxProps>> = (props) => {
   const { title, children } = props;
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <Collapsible.Root className="w-full" open={open} onOpenChange={setOpen}>

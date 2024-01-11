@@ -3,7 +3,7 @@ import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
 import { DeerScene, MeshComponent, TransformComponent, deerEngine } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
-import { cutscene } from 'deer-engine';
+import { cutsceneEditor } from 'deer-engine';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -18,7 +18,7 @@ export const Header: FC<HeaderProps> = (props) => {
 
   const handleSaveAs = () => {
     // TODO: save engine datas
-    const json = cutscene.director.toJson();
+    const json = cutsceneEditor.director.toJson();
     const file = new File([json], 'cutScene.json', { type: 'text/plain' });
     downLoad(file);
   };

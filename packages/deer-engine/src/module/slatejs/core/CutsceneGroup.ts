@@ -1,5 +1,5 @@
 import { Entity } from '@/core';
-import { CutsceneDirector } from './CutsceneDirector';
+import { Cutscene } from './Cutscene';
 import { CutsceneTrack } from './CutsceneTrack';
 import { IDirectable } from './IDirectable';
 import { isNil } from '@/util';
@@ -10,7 +10,7 @@ import { TransformTrack } from './tracks/TransformTrack';
 
 export abstract class CutsceneGroup implements IDirectable {
   protected _tracks: CutsceneTrack[] = [];
-  protected _root: CutsceneDirector;
+  protected _root: Cutscene;
   protected _id: string;
   protected abstract _actor: Entity | undefined;
 
@@ -19,7 +19,7 @@ export abstract class CutsceneGroup implements IDirectable {
     trackCountChanged: new Signal(),
   };
 
-  protected constructor(director: CutsceneDirector, id: string, tracks: CutsceneTrack[]) {
+  protected constructor(director: Cutscene, id: string, tracks: CutsceneTrack[]) {
     this._root = director;
     this._id = id;
     this._tracks = tracks;
@@ -43,7 +43,7 @@ export abstract class CutsceneGroup implements IDirectable {
     return null;
   }
 
-  get root(): CutsceneDirector {
+  get root(): Cutscene {
     return this._root;
   }
 

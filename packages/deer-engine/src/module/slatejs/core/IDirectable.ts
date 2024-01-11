@@ -1,9 +1,9 @@
 import { clamp } from '@/util';
-import { CutsceneDirector } from './CutsceneDirector';
+import { Cutscene } from './Cutscene';
 import { Entity } from '@/core';
 
 export interface IDirectable {
-  get root(): CutsceneDirector | null;
+  get root(): Cutscene | null;
   get parent(): IDirectable | null;
   get children(): IDirectable[];
 

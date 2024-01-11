@@ -30,11 +30,12 @@ export const EntityTreeNode: FC<EntityProps> = (props) => {
     >
       <div
         className={classNames(
-          `group pr-2 h-6 mt-[1px] flex gap-x-1 items-center justify-center w-full`,
+          `group pr-2 h-6 mt-[1px] flex gap-x-1 items-center w-full`,
           isSelected ? 'text-white bg-primary cursor-default' : 'cursor-pointer hover:bg-hover hover:text-white'
         )}
         style={{ paddingLeft: `${18 * depth}px` }}
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           onTreeNodeSelected(data.id);
         }}
       >

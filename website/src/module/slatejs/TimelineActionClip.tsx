@@ -1,5 +1,5 @@
 import { FC, useCallback } from 'react';
-import { ActionClip, cutscene } from 'deer-engine';
+import { ActionClip, cutsceneEditor } from 'deer-engine';
 import { useScaleStore } from './store';
 import { ComponentInstanceIcon } from '@radix-ui/react-icons';
 import { clamp } from 'deer-engine';
@@ -19,7 +19,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
   useBindSignal(object.signals.keysChanged, refresh);
 
   const handleClickBlock = () => {
-    cutscene.selectObject(object.id);
+    cutsceneEditor.selectObject(object.id);
   };
 
   // drag block

@@ -20,6 +20,11 @@ export class EntityManager {
     return this._selectedEntity;
   }
 
+  private set selectedEntity(entity) {
+    this._selectedEntity = entity;
+    this.signals.entitySelected.emit();
+  }
+
   constructor(scene: DeerScene) {
     this.scene = scene;
   }
@@ -87,11 +92,10 @@ export class EntityManager {
 
   select = (id: string | undefined) => {
     if (isNil(id)) {
-      this._selectedEntity = undefined;
+      this.selectedEntity = undefined;
       return;
     }
     const selectEntity = this.findEntityById(id);
-    this._selectedEntity = selectEntity;
-    this.signals.entitySelected.emit();
+    this.selectedEntity = selectEntity;
   };
 }

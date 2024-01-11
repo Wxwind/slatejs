@@ -19,7 +19,6 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
     scale: { x: 0, y: 0, z: 0 },
   });
 
-  console.log('renderer', data.position);
   const refresh = useDumbState();
   useBindSignal(comp.signals.componentUpdated, refresh);
 

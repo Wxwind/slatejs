@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { Controls } from './Controls';
 import { Timeline } from './Timeline';
-import { cutscene } from 'deer-engine';
+import { cutsceneEditor } from 'deer-engine';
 import { CutsceneGroupPanel } from './CutsceneGroupPanel';
 import classNames from 'classnames';
 import { UUID_PREFIX_ENTITY } from 'deer-engine';
@@ -9,21 +9,21 @@ import { useBindSignal, useDumbState } from '@/hooks';
 
 export interface CutsceneEditorProps {}
 
-export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
+export const CutsceneEditorPanel: FC<CutsceneEditorProps> = (props) => {
   const [isSthDraggedHover, setIsSthDraggedHover] = useState(false);
 
   const refresh = useDumbState();
-  useBindSignal(cutscene.director.signals.groupCountChanged, refresh);
-  useBindSignal(cutscene.director.signals.playStateChanged, refresh);
+  useBindSignal(cutsceneEditor.director.signals.groupCountChanged, refresh);
+  useBindSignal(cutsceneEditor.director.signals.playStateChanged, refresh);
 
   const handleDropEntity = (entityId: string) => {
-    cutscene.director.addGroup(entityId, 'Actor');
+    cutsceneEditor.director.addGroup(entityId, 'Actor');
   };
 
   return (
     <div className="cutscene-editor">
       <div className="cutscene-editor-left-panel flex flex-col h-full">
-        <Controls cutscene={cutscene} />
+        <Controls cutsceneEditor={cutsceneEditor} />
         <div
           className={classNames(
             'flex-1',
@@ -49,13 +49,13 @@ export const CutsceneEditor: FC<CutsceneEditorProps> = (props) => {
             setIsSthDraggedHover(false);
           }}
         >
-          {cutscene.director.groups.map((a) => (
+          {cutsceneEditor.director.groups.map((a) => (
             <CutsceneGroupPanel key={a.id} object={a} depth={0} paddingLeft={18} />
           ))}
         </div>
       </div>
       <div className="cutscene-editor-right-panel">
-        <Timeline cutscene={cutscene} />
+        <Timeline cutsceneEditor={cutsceneEditor} />
       </div>
     </div>
   );

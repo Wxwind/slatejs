@@ -20,7 +20,12 @@ export const Hierarchy: FC<HierarchyProps> = (props) => {
   useBindSignal(scene?.entityManager.signals.entitySelected, refresh);
 
   return (
-    <div className={classNames(className, 'relative w-full')}>
+    <div
+      className={classNames(className, 'relative w-full h-full')}
+      onClick={(e) => {
+        scene?.entityManager.select(undefined);
+      }}
+    >
       <EntityTree
         data={hierarchyData || []}
         depth={1}

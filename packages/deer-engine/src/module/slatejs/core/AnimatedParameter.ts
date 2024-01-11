@@ -203,8 +203,6 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   };
 
   evaluate: (curTime: number, prevTime: number) => void = (curTime, prevTime) => {
-    console.log('evaluate');
-
     if (this.disabled || isNil(this.target)) {
       return;
     }

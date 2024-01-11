@@ -1,5 +1,5 @@
+export * from './CutsceneEditor';
 export * from './Cutscene';
-export * from './CutsceneDirector';
 export * from './CutsceneGroup';
 export * from './CutsceneTrack';
 export * from './ActionClip';

@@ -1,10 +1,8 @@
 import { FC, useRef, useState } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
-import { Cutscene } from 'deer-engine';
-import { CutsceneEditor } from '@/module/slatejs';
+import { CutsceneEditorPanel } from '@/module/slatejs';
 
 export const Timeline: FC = () => {
-  const [scene, setScene] = useState(new Cutscene());
   const [pos, setPos] = useState<{ x: number; y: number }>();
 
   const nodeRef = useRef(null);
@@ -25,7 +23,7 @@ export const Timeline: FC = () => {
   return (
     <Draggable nodeRef={nodeRef} handle=".controls" position={pos} onDrag={handleDrag}>
       <div ref={nodeRef} className="w-3/4 h-80 absolute bottom-20 left-0 right-0 m-auto">
-        <CutsceneEditor />
+        <CutsceneEditorPanel />
       </div>
     </Draggable>
   );
