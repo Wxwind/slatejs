@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@8.8.0",
   "scripts": {
     "dev": "concurrently -n engine,website \"pnpm --filter deer-engine watch\" \"pnpm --filter website dev\"",
     "dev:eg": "pnpm --filter deer-engine watch",
@@ -18,12 +19,8 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.1",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
-    "@vitejs/plugin-react": "^4.0.0",
     "concurrently": "^8.2.2",
     "eslint": "^8.38.0",
     "eslint-config-react-app": "^7.0.1",
