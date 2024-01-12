@@ -11,7 +11,7 @@ export interface TimelineProps {
 
 export const Timeline: FC<TimelineProps> = (props) => {
   const { cutsceneEditor } = props;
-  const signals = cutsceneEditor.director.signals;
+  const signals = cutsceneEditor.cutscene.signals;
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -113,11 +113,11 @@ export const Timeline: FC<TimelineProps> = (props) => {
     const scroller = scrollerRef.current;
     if (isNil(scroller)) return;
     // 8 = scrollmark.width / 2
-    const offsetLeft = cutsceneEditor.director.currentTime * scale - scroller.scrollLeft - 8;
+    const offsetLeft = cutsceneEditor.cutscene.currentTime * scale - scroller.scrollLeft - 8;
 
     const timeMarkLeft = offsetLeft + 'px';
     setTimeMarkLeft(timeMarkLeft);
-  }, [cutsceneEditor.director.currentTime, scale]);
+  }, [cutsceneEditor.cutscene.currentTime, scale]);
 
   const handleScrollerScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -154,12 +154,12 @@ export const Timeline: FC<TimelineProps> = (props) => {
   );
 
   useEffect(() => {
-    signals.timeChanged.on(updateTimeMark);
+    signals.timeUpdated.on(updateTimeMark);
 
     return () => {
-      signals.timeChanged.off(updateTimeMark);
+      signals.timeUpdated.off(updateTimeMark);
     };
-  }, [signals.timeChanged, updateTimeMark]);
+  }, [signals.timeUpdated, updateTimeMark]);
 
   useEffect(() => {
     updateMarks();
@@ -184,7 +184,7 @@ export const Timeline: FC<TimelineProps> = (props) => {
       <canvas height={32} className="timeline-time-canvas" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
       <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
         <div style={{ width: `${timelineTrackWidth}px` }}>
-          {cutsceneEditor.director.groups.map((a) => {
+          {cutsceneEditor.cutscene.groups.map((a) => {
             return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} object={a} />;
           })}
         </div>

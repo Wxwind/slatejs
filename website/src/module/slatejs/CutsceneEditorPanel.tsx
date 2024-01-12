@@ -7,17 +7,18 @@ import classNames from 'classnames';
 import { UUID_PREFIX_ENTITY } from 'deer-engine';
 import { useBindSignal, useDumbState } from '@/hooks';
 
-export interface CutsceneEditorProps {}
+export interface CutsceneEditorPanelProps {}
 
-export const CutsceneEditorPanel: FC<CutsceneEditorProps> = (props) => {
+export const CutsceneEditorPanel: FC<CutsceneEditorPanelProps> = (props) => {
   const [isSthDraggedHover, setIsSthDraggedHover] = useState(false);
 
   const refresh = useDumbState();
-  useBindSignal(cutsceneEditor.director.signals.groupCountChanged, refresh);
-  useBindSignal(cutsceneEditor.director.signals.playStateChanged, refresh);
+  useBindSignal(cutsceneEditor.cutscene.signals.groupCountUpdated, refresh);
+  useBindSignal(cutsceneEditor.signals.cutSceneEditorSettingsUpdated, refresh);
+  useBindSignal(cutsceneEditor.signals.playStateUpdated, refresh);
 
   const handleDropEntity = (entityId: string) => {
-    cutsceneEditor.director.addGroup(entityId, 'Actor');
+    cutsceneEditor.cutscene.addGroup(entityId, 'Actor');
   };
 
   return (
@@ -49,7 +50,7 @@ export const CutsceneEditorPanel: FC<CutsceneEditorProps> = (props) => {
             setIsSthDraggedHover(false);
           }}
         >
-          {cutsceneEditor.director.groups.map((a) => (
+          {cutsceneEditor.cutscene.groups.map((a) => (
             <CutsceneGroupPanel key={a.id} object={a} depth={0} paddingLeft={18} />
           ))}
         </div>

@@ -18,7 +18,7 @@ export const Header: FC<HeaderProps> = (props) => {
 
   const handleSaveAs = () => {
     // TODO: save engine datas
-    const json = cutsceneEditor.director.toJson();
+    const json = cutsceneEditor.cutscene.toJson();
     const file = new File([json], 'cutScene.json', { type: 'text/plain' });
     downLoad(file);
   };

@@ -22,25 +22,16 @@ export enum PlayState {
  * Play timeline in edit mode.
  */
 export class Cutscene {
-  private _playState: PlayState = PlayState.Stop;
-
   private _currentTime = 0;
   private _previousTime = 0;
-  private _lastStartPlayTime = 0;
 
   private _playRate = 1;
 
   private _playTimeMin = 0;
   private _playTimeMax = 32;
 
-  public get playState(): PlayState {
-    return this._playState;
-  }
-
-  public set playState(v: PlayState) {
-    this._playState = v;
-    this.signals.playStateChanged.emit();
-  }
+  // FIXME
+  private length = 0;
 
   public get currentTime(): number {
     return this._currentTime;
@@ -48,7 +39,7 @@ export class Cutscene {
 
   public set currentTime(v: number) {
     this._currentTime = v;
-    this.signals.timeChanged.emit();
+    this.signals.timeUpdated.emit();
   }
 
   public get previousTime(): number {
@@ -65,7 +56,7 @@ export class Cutscene {
 
   public set playRate(v: number) {
     this._playRate = v;
-    this.signals.playSettingsChanged.emit();
+    this.signals.cutsceneUpdated.emit();
   }
 
   public get playTimeMin(): number {
@@ -74,7 +65,7 @@ export class Cutscene {
 
   public set playTimeMin(v: number) {
     this._playTimeMin = v;
-    this.signals.playSettingsChanged.emit();
+    this.signals.cutsceneUpdated.emit();
   }
 
   public get playTimeMax(): number {
@@ -83,14 +74,13 @@ export class Cutscene {
 
   public set playTimeMax(v: number) {
     this._playTimeMax = v;
-    this.signals.playSettingsChanged.emit();
+    this.signals.cutsceneUpdated.emit();
   }
 
   public get playTimeLength() {
     return this.playTimeMax - this.playTimeMin;
   }
 
-  private _viewTimeMax = 500; // max seconds could be displayed in timeline
   private _groups: CutsceneGroup[] = [];
 
   private _timePointers: IDirectableTimePointer[] = [];
@@ -101,75 +91,25 @@ export class Cutscene {
     return this._groups;
   }
 
-  public get viewTimeMax(): number {
-    return this._viewTimeMax;
-  }
-  public set viewTimeMax(v: number) {
-    this._viewTimeMax = v;
-    this.signals.playSettingsChanged.emit();
-  }
-
-  public get curTime(): number {
-    return this._currentTime;
-  }
-
   readonly signals = {
-    groupCountChanged: new Signal(),
-    playStateChanged: new Signal(),
-    timeChanged: new Signal(),
-    playSettingsChanged: new Signal(),
+    groupCountUpdated: new Signal(),
+    timeUpdated: new Signal(),
+    cutsceneUpdated: new Signal(),
   };
 
-  play = () => {
-    this.playState = PlayState.PlayForward;
-    this._lastStartPlayTime = this.currentTime;
-  };
+  play = () => {};
 
-  playReverse = () => {
-    this.playState = PlayState.PlayBackward;
+  playReverse = () => {};
 
-    if (this.currentTime === 0) {
-      this.currentTime = this.playTimeMax;
-      this._lastStartPlayTime = 0;
-    } else {
-      this._lastStartPlayTime = this.currentTime;
-    }
-  };
+  pause = () => {};
 
-  pause = () => {
-    this.playState = PlayState.Stop;
-  };
+  stop = () => {};
 
-  stop = () => {
-    const t = this.playState !== PlayState.Stop ? this._lastStartPlayTime : 0;
-    this.sample(t);
-    this.playState = PlayState.Stop;
-  };
+  sample = (time: number = this.currentTime) => {
+    this.currentTime = time;
 
-  tick = (deltaTime: number) => {
-    if (this.playState === PlayState.Stop) return;
-
-    if (this.playState === PlayState.PlayForward && this.currentTime >= this.playTimeMax) {
-      this.stop();
-      return;
-    }
-
-    if (this.playState === PlayState.PlayBackward && this.currentTime <= 0) {
-      this.stop();
-      return;
-    }
-
-    const delta = (deltaTime / 1000) * this.playRate;
-
-    this.currentTime += this.playState === PlayState.PlayForward ? delta : -delta;
-    this.sample(this.currentTime);
-    this.previousTime = this.currentTime;
-  };
-
-  private sample = (curTime: number) => {
-    this.currentTime = curTime;
-
-    if (this._previousTime === this._currentTime) {
+    // ignore same minmax times. If you are in min or max time, it allows you to change prop in comp panel. And avoid to change props if not, because cutscene is in contolled mode in editor.
+    if (this._previousTime === this._currentTime && (time === 0 || time === this.length)) {
       return;
     }
 
@@ -337,7 +277,7 @@ export class Cutscene {
     newGroup.actor = entity;
 
     this._groups.push(newGroup);
-    this.signals.groupCountChanged.emit();
+    this.signals.groupCountUpdated.emit();
 
     return newGroup;
   };
@@ -350,7 +290,7 @@ export class Cutscene {
     }
 
     this._groups.splice(index, 1);
-    this.signals.groupCountChanged.emit();
+    this.signals.groupCountUpdated.emit();
   };
 
   findTrack = (groupId: string, trackId: string) => {

@@ -15,10 +15,10 @@ export enum InterpMode {
 
 /** How tangentLine behaves when dragged, works only when InterpMode == 'Cubic' */
 export enum TangentMode {
-  Auto = 'Auto',
+  Auto = 'Auto', // Automatically calculates tangents
   User = 'User', // inTangent == outTangent
   Break = 'Break', // allow inTangent != outTangent
-  None = 'None',
+  None = 'None', // No tangents
 }
 
 export class Keyframe {

@@ -1,2 +1,2 @@
 export * from './store';
-export * from './CutsceneEditor';
+export * from './CutsceneEditorPanel';

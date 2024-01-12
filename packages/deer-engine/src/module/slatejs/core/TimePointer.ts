@@ -107,7 +107,7 @@ export class EndTimePointer implements IDirectableTimePointer {
 export class UpdateTimePointer {
   private _target: IDirectable;
 
-  private _lastStartTime: number;
+  private _lastTargetStartTime: number;
 
   get target(): IDirectable {
     return this._target;
@@ -119,7 +119,7 @@ export class UpdateTimePointer {
 
   constructor(target: IDirectable) {
     this._target = target;
-    this._lastStartTime = target.startTime;
+    this._lastTargetStartTime = target.startTime;
   }
 
   update = (curTime: number, prevTime: number) => {
@@ -129,12 +129,13 @@ export class UpdateTimePointer {
       curTime > 0 &&
       curTime < (this.target.root?.playTimeLength || Number.MAX_SAFE_INTEGER)
     ) {
-      const delta = this.target.startTime - this._lastStartTime;
+      const delta = this.target.startTime - this._lastTargetStartTime;
       const localCurTime = IDirectableToLocalTime(this.target, curTime);
       const localPrevTime = IDirectableToLocalTime(this.target, prevTime + delta);
 
       this.target.onUpdate(localCurTime, localPrevTime);
-      this._lastStartTime = this.target.startTime;
+      // target.startTime may update when playing
+      this._lastTargetStartTime = this.target.startTime;
     }
   };
 }

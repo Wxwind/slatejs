@@ -16,7 +16,7 @@ export const Controls: FC<ControlsProps> = (props) => {
         <div className="controls-btn">
           <TrackPreviousIcon
             onClick={() => {
-              cutsceneEditor.setTime(cutsceneEditor.director.currentTime - 1);
+              cutsceneEditor.setTime(cutsceneEditor.cutscene.currentTime - 1);
             }}
           />
         </div>
@@ -45,7 +45,7 @@ export const Controls: FC<ControlsProps> = (props) => {
         <div className="controls-btn">
           <TrackNextIcon
             onClick={() => {
-              cutsceneEditor.setTime(cutsceneEditor.director.currentTime + 1);
+              cutsceneEditor.setTime(cutsceneEditor.cutscene.currentTime + 1);
             }}
           />
         </div>

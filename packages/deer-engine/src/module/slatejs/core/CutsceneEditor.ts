@@ -1,27 +1,40 @@
 import { PlayState, Cutscene } from './Cutscene';
 import { Signal } from '@/packages/signal';
 import { IDirectable } from './IDirectable';
-import { isNil } from '@/util';
 
 export class CutsceneEditor {
-  // bridge between cutscene core and cutscene ui.
-  // TODO: may replace with external store.
-  readonly signals = {
-    editorCleared: new Signal(),
+  private _lastStartPlayTime = 0;
 
-    // events
-    groupChanged: new Signal(),
+  readonly signals = {
+    playStateUpdated: new Signal(),
+    cutSceneEditorSettingsUpdated: new Signal(),
   };
 
-  readonly director = new Cutscene();
+  readonly cutscene = new Cutscene();
 
-  private prevTime = 0;
+  private previousTime = 0;
 
-  // export to SelectedResouceStore
+  private _viewTimeMax = 500; // max seconds could be displayed in timeline
+
   selectedObject: IDirectable | undefined;
 
+  private _playState: PlayState = PlayState.Stop;
+
+  public get playState(): PlayState {
+    return this._playState;
+  }
+
+  public set playState(v: PlayState) {
+    this._playState = v;
+    this.signals.playStateUpdated.emit();
+  }
+
   public get viewTimeMax(): number {
-    return this.director.viewTimeMax;
+    return this._viewTimeMax;
+  }
+  public set viewTimeMax(v: number) {
+    this._viewTimeMax = v;
+    this.signals.cutSceneEditorSettingsUpdated.emit();
   }
 
   constructor() {
@@ -30,72 +43,78 @@ export class CutsceneEditor {
 
   private init = () => {
     const time = performance.now();
-    this.prevTime = time;
+    this.previousTime = time;
     this.animate(time);
   };
 
   private animate = (time: number) => {
-    this.director.tick(time - this.prevTime);
-    this.prevTime = time;
+    const delta = ((time - this.previousTime) / 1000) * this.cutscene.playRate;
+    this.tick(delta);
+    this.previousTime = time;
     requestAnimationFrame(this.animate);
   };
 
-  isPlaying = () => {
-    return this.director.playState;
-  };
-
   play = () => {
-    this.director.play();
+    this.playState = PlayState.PlayForward;
+    this._lastStartPlayTime = this.cutscene.currentTime;
   };
 
   playReverse = () => {
-    this.director.playReverse();
+    this.playState = PlayState.PlayBackward;
+
+    if (this.cutscene.currentTime === 0) {
+      this.cutscene.currentTime = this.cutscene.playTimeMax;
+      this._lastStartPlayTime = 0;
+    } else {
+      this._lastStartPlayTime = this.cutscene.currentTime;
+    }
   };
 
   pause = () => {
-    this.director.pause();
+    this.playState = PlayState.Stop;
   };
 
   stop = () => {
-    this.director.stop();
+    const t = this.playState !== PlayState.Stop ? this._lastStartPlayTime : 0;
+    this.cutscene.sample(t);
+    this.playState = PlayState.Stop;
+  };
+
+  tick = (delta: number) => {
+    // support to preview when change time by editor panel if cutsceneEditor is stopped
+    this.cutscene.sample();
+
+    if (this.playState === PlayState.Stop) return;
+
+    if (this.playState === PlayState.PlayForward && this.cutscene.currentTime >= this.cutscene.playTimeMax) {
+      this.stop();
+      return;
+    }
+
+    if (this.playState === PlayState.PlayBackward && this.cutscene.currentTime <= 0) {
+      this.stop();
+      return;
+    }
+
+    this.cutscene.currentTime += this.playState === PlayState.PlayForward ? delta : -delta;
+    this.cutscene.sample(this.cutscene.currentTime);
+    this.previousTime = this.cutscene.currentTime;
   };
 
   setTime = (time: number) => {
-    this.director.currentTime = time;
+    this.cutscene.currentTime = time;
   };
 
-  selectObject = (groupId: string | undefined, trackId?: string, clipId?: string) => {
-    // FIXME
-    if (isNil(groupId)) {
-      this.selectedObject = undefined;
-      return;
-    }
-
-    const group = this.director.findGroup(groupId);
-    if (group === this.selectedObject) return;
-    this.selectedObject = group;
-    if (isNil(trackId) || isNil(group)) {
-      return;
-    }
-
-    const track = group.findTrack(trackId);
-    if (track === this.selectedObject) return;
-    this.selectedObject = track;
-    if (isNil(clipId) || isNil(track)) {
-      return;
-    }
-
-    const clip = track.findClip(clipId);
-    if (clip === this.selectedObject) return;
-    this.selectedObject = clip;
+  selectObject = (directable: IDirectable) => {
+    this.selectedObject = directable;
   };
 
   toJson = () => {
-    return this.director.toJson();
+    return this.cutscene.toJson();
   };
 
   parseJson = (json: string) => {
-    this.director.loadFromJson(json);
+    this.cutscene.loadFromJson(json);
   };
 }
 
