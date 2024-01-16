@@ -2,15 +2,16 @@ import { FC } from 'react';
 import { TimelineInspector } from './TimelineInspector';
 import * as Tabs from '@radix-ui/react-tabs';
 import { EntityInspector } from './EntityInspector';
-import { DeerScene } from 'deer-engine';
+import { CutsceneEditor, DeerScene } from 'deer-engine';
 
 interface InspectorProps {
   className?: string;
   scene: DeerScene | undefined;
+  cutsceneEditor: CutsceneEditor;
 }
 
 export const Inspector: FC<InspectorProps> = (props) => {
-  const { className, scene } = props;
+  const { className, cutsceneEditor, scene } = props;
 
   return (
     <Tabs.Root className="flex flex-col" defaultValue="entity">
@@ -32,7 +33,7 @@ export const Inspector: FC<InspectorProps> = (props) => {
         <EntityInspector scene={scene} />
       </Tabs.Content>
       <Tabs.Content value="timeline">
-        <TimelineInspector />
+        <TimelineInspector cutsceneEditor={cutsceneEditor} />
       </Tabs.Content>
     </Tabs.Root>
   );

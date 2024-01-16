@@ -14,6 +14,7 @@ export class DeerScene {
   animateID: number = -1;
 
   parentEl: HTMLElement;
+  resizeObserver: ResizeObserver;
 
   loader: Loader = new Loader();
 
@@ -55,14 +56,21 @@ export class DeerScene {
     this.controls = new Control(camera, renderer.domElement);
     this.update();
 
-    window.addEventListener('resize', this.onWindowResize);
+    // observe resize
+    const resizeObserver = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      this.resize(width, height);
+    });
+
+    resizeObserver.observe(this.parentEl);
+    this.resizeObserver = resizeObserver;
   }
 
-  private onWindowResize = () => {
-    this.camera.aspect = this.parentEl.clientWidth / this.parentEl.clientHeight;
+  private resize = (width: number, height: number) => {
+    this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
 
-    this.renderer.setSize(this.parentEl.clientWidth, this.parentEl.clientHeight);
+    this.renderer.setSize(width, height);
   };
 
   private update = () => {
@@ -91,10 +99,9 @@ export class DeerScene {
     this.renderer.dispose();
     this.renderer.forceContextLoss();
     this.viewHelper.dispose();
+    this.resizeObserver.unobserve(this.parentEl);
     this.parentEl.removeChild(this.renderer.domElement);
 
     cancelAnimationFrame(this.animateID);
-
-    window.removeEventListener('resize', this.onWindowResize);
   };
 }

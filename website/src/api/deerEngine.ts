@@ -1,6 +1,5 @@
 import { DEER_ENGINE_SCENE } from '@/config';
 import { useBindSignal, useDumbState } from '@/hooks';
-import { isNil } from '@/util';
 import { deerEngine } from 'deer-engine';
 
 export const getScene = (sceneId: string = DEER_ENGINE_SCENE) => {

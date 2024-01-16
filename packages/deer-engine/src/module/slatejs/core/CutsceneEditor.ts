@@ -1,6 +1,7 @@
 import { PlayState, Cutscene } from './Cutscene';
 import { Signal } from '@/packages/signal';
 import { IDirectable } from './IDirectable';
+import { ActionClip } from './ActionClip';
 
 export class CutsceneEditor {
   private _lastStartPlayTime = 0;
@@ -8,6 +9,7 @@ export class CutsceneEditor {
   readonly signals = {
     playStateUpdated: new Signal(),
     cutSceneEditorSettingsUpdated: new Signal(),
+    selectedClipUpdated: new Signal(),
   };
 
   readonly cutscene = new Cutscene();
@@ -16,7 +18,16 @@ export class CutsceneEditor {
 
   private _viewTimeMax = 500; // max seconds could be displayed in timeline
 
-  selectedObject: IDirectable | undefined;
+  private _selectedClip: ActionClip | undefined;
+
+  public get selectedClip(): ActionClip | undefined {
+    return this._selectedClip;
+  }
+
+  public set selectedClip(v: ActionClip | undefined) {
+    this._selectedClip = v;
+    this.signals.selectedClipUpdated.emit();
+  }
 
   private _playState: PlayState = PlayState.Stop;
 
@@ -103,10 +114,6 @@ export class CutsceneEditor {
 
   setTime = (time: number) => {
     this.cutscene.currentTime = time;
-  };
-
-  selectObject = (directable: IDirectable) => {
-    this.selectedObject = directable;
   };
 
   toJson = () => {

@@ -19,7 +19,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
   useBindSignal(object.signals.keysChanged, refresh);
 
   const handleClickBlock = () => {
-    cutsceneEditor.selectObject(object.id);
+    cutsceneEditor.selectedClip = object;
   };
 
   // drag block

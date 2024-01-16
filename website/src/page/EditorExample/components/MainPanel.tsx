@@ -3,7 +3,7 @@ import { Hierarchy } from './Hierarchy';
 import { Inspector } from './Inspector';
 import { isNil } from '@/util';
 import { useWindowSize } from '@/hooks/useWindowSize';
-import { DeerScene, clamp } from 'deer-engine';
+import { DeerScene, clamp, cutsceneEditor } from 'deer-engine';
 
 interface MainPanelProps {
   scene: DeerScene | undefined;
@@ -50,7 +50,7 @@ export const MainPanel: FC<MainPanelProps> = (props) => {
         onMouseDown={handleMouseDown}
       />
       <div className="absolute w-full" style={{ top: `${dragLineHeight + 2}px` }}>
-        <Inspector scene={scene} />
+        <Inspector scene={scene} cutsceneEditor={cutsceneEditor} />
       </div>
     </div>
   );
