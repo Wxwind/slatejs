@@ -4,6 +4,7 @@ import { Control } from './Control';
 import { EntityManager } from './manager/EntityManager';
 import { TransformComponent } from './component';
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
+import { debounce } from '..';
 
 export class DeerScene {
   scene: Scene;
@@ -56,10 +57,12 @@ export class DeerScene {
     this.controls = new Control(camera, renderer.domElement);
     this.update();
 
+    const debouncedResize = debounce(this.resize);
+
     // observe resize
     const resizeObserver = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
-      this.resize(width, height);
+      debouncedResize(width, height);
     });
 
     resizeObserver.observe(this.parentEl);

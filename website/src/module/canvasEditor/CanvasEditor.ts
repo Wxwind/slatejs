@@ -1,5 +1,6 @@
 import { Canvas, CanvasKit, GrDirectContext, Surface } from 'canvaskit-wasm';
 import { IDrawable } from './IDrawable';
+import { debounce } from '@/util';
 
 export interface CavansEditorOptions {
   containerId: string;
@@ -45,10 +46,12 @@ export class CavansEditor {
     }
     this.context = context;
 
+    const debouncedResize = debounce(this.resize);
+
     // observe resize
     const resizeObserver = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
-      this.resize(width, height);
+      debouncedResize(width, height);
     });
 
     resizeObserver.observe(this.parentEl);
