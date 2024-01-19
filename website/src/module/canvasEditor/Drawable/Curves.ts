@@ -1,56 +1,56 @@
 import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
-import { AnimationCurve } from 'deer-engine';
-import { IDrawable } from '../IDrawable';
+import { AnimationCurve, Keyframe } from 'deer-engine';
+import { DrawableObject } from '../DrawableObject';
+import { Vector2 } from '../types';
+import { CoordinateSystem } from './CoordinateSystem';
+import { Circle } from './Circle';
 
-export class Curves implements IDrawable {
-  curves: AnimationCurve[] = [];
-  unitWidth = 16; // pixels per unit
+export class Curves extends DrawableObject {
+  curves: AnimationCurve[];
+  unitWidth = 32; // pixels per unit
 
-  coordPaint: Paint;
+  curvePaint: Paint;
 
-  constructor(private canvaskit: CanvasKit) {
+  coord: CoordinateSystem;
+
+  constructor(private canvaskit: CanvasKit, curves: AnimationCurve[]) {
+    super();
     const paint = new canvaskit.Paint();
-    const color = canvaskit.Color(255, 0, 0, 1);
+    const color = canvaskit.Color(80, 80, 80, 1);
 
     paint.setColor(color);
     paint.setStyle(canvaskit.PaintStyle.Stroke);
-    this.coordPaint = paint;
+    this.curvePaint = paint;
+    this.coord = new CoordinateSystem(canvaskit);
+    this.curves = curves;
   }
 
+  isPointIn: (point: Vector2) => boolean = () => false;
+
   draw: (canvas: Canvas) => void = (canvas) => {
-    this.drawCoordinateSystem(canvas);
+    this.coord.draw(canvas);
     this.drawBezierCurve(canvas);
   };
 
-  drawCoordinateSystem = (canvas: Canvas) => {
-    const Path = this.canvaskit.Path;
-    const XYWHRect = this.canvaskit.XYWHRect;
-
-    const lineNum = 10;
-    const yLineNum = 10;
-    const rectSize = 10;
-
-    const rectsPath = new Path();
-    for (let i = 0; i < lineNum + 1; i++) {
-      // 循环遍历绘制方格
-      for (let j = 0; j < yLineNum + 1; j++) {
-        if (i % 2 === 0 && j % 2 === 0) {
-          const rect = XYWHRect(rectSize * i, rectSize * j, rectSize, rectSize);
-          rectsPath.addRect(rect);
-        }
-
-        if (i % 2 === 1 && j % 2 === 1) {
-          const rect = XYWHRect(rectSize * i, rectSize * j, rectSize, rectSize);
-          rectsPath.addRect(rect);
-        }
+  private drawBezierCurve = (canvas: Canvas) => {
+    const curves = this.curves;
+    for (let i = 0; i < curves.length; i++) {
+      const curve = curves[i];
+      for (let j = 0; j < curve.keys.length; j++) {
+        const key = curve.keys[j];
+        this.drawHandle(canvas, key);
       }
     }
-
-    canvas.drawPath(rectsPath, this.coordPaint);
+    canvas.drawLine(10, 20, 200, 230, this.curvePaint);
   };
 
-  drawBezierCurve = (canvas: Canvas) => {
-    canvas.drawLine(10, 20, 200, 230, this.coordPaint);
-    canvas.drawCircle(100, 100, 50, this.coordPaint);
+  private drawHandle = (canvas: Canvas, key: Keyframe) => {
+    const handle = new Circle(this.canvaskit, {
+      center: {
+        x: key.time,
+        y: key.value,
+      },
+      radius: 10,
+    });
   };
 }

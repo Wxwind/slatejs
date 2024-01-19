@@ -1,7 +1,8 @@
 import { useBindSignal, useDumbState } from '@/hooks';
 import { useGetCanvasKit } from '@/hooks/useGetCanvasKit';
-import { CavansEditor, Curves } from '@/module/canvasEditor';
-import { CutsceneEditor } from 'deer-engine';
+import { CanvasEditor, Curves } from '@/module/canvasEditor';
+import { Circle } from '@/module/canvasEditor/Drawable/Circle';
+import { AnimationCurve, CutsceneEditor } from 'deer-engine';
 import { isNil } from 'lodash';
 import { FC, useEffect, useState } from 'react';
 
@@ -12,7 +13,7 @@ interface TimelineInspectorProps {
 export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   const { cutsceneEditor } = props;
   const canvasKit = useGetCanvasKit();
-  const [curvesEditor, setCurvesEditor] = useState<CavansEditor>();
+  const [curvesEditor, setCurvesEditor] = useState<CanvasEditor>();
 
   const selectedClip = cutsceneEditor.selectedClip;
   const refresh = useDumbState();
@@ -20,9 +21,26 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
 
   useEffect(() => {
     if (isNil(canvasKit)) return;
-    const curvesEditor = new CavansEditor(canvasKit, { containerId: 'curve-editor' });
+    const curvesEditor = new CanvasEditor(canvasKit, { containerId: 'curve-editor' });
     setCurvesEditor(curvesEditor);
-    curvesEditor.addDrawables(new Curves(canvasKit));
+    const curves: AnimationCurve[] = [];
+    const c = new AnimationCurve();
+    c.addKey(1, 2);
+    c.addKey(3, 4);
+    c.addKey(8, 20);
+    curves.push(c);
+
+    const c2 = new AnimationCurve();
+    c2.addKey(2, 2);
+    c2.addKey(8, 8);
+    c2.addKey(14, 14);
+    curves.push(c2);
+    curvesEditor.addChild(new Curves(canvasKit, curves));
+    const circle = new Circle(canvasKit, { center: { x: 150, y: 80 }, radius: 20 });
+    circle.addListener('click', () => {
+      console.log('click circle');
+    });
+    curvesEditor.addChild(circle);
 
     return () => {
       curvesEditor.dispose();

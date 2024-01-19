@@ -14,7 +14,7 @@ const getCanvasKit = async () => {
   return ck;
 };
 
-export const getContext = async (ck: CanvasKit, canvasEl: HTMLCanvasElement) => {
+const getContext = async (ck: CanvasKit, canvasEl: HTMLCanvasElement) => {
   //   if (navigator.gpu && ck.webgpu) {
   //     const adapter = await navigator.gpu.requestAdapter();
   //     if (!adapter) {

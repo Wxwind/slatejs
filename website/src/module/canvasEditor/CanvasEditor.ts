@@ -1,12 +1,14 @@
 import { Canvas, CanvasKit, GrDirectContext, Surface } from 'canvaskit-wasm';
 import { IDrawable } from './IDrawable';
 import { debounce } from '@/util';
+import { EventName, UIEvent } from './types';
+import { DrawableObject } from './DrawableObject';
 
-export interface CavansEditorOptions {
+export interface CanvasEditorOptions {
   containerId: string;
 }
 
-export class CavansEditor {
+export class CanvasEditor {
   parentEl: HTMLElement;
   canvasEl: HTMLCanvasElement;
 
@@ -19,9 +21,9 @@ export class CavansEditor {
   private isDirty = false;
   private animateID = -1;
 
-  private drawables: IDrawable[] = [];
+  private children: DrawableObject[] = [];
 
-  constructor(canvaskit: CanvasKit, options: CavansEditorOptions) {
+  constructor(canvaskit: CanvasKit, options: CanvasEditorOptions) {
     this.canvaskit = canvaskit;
     const { containerId } = options;
     const container = document.getElementById(containerId);
@@ -59,41 +61,47 @@ export class CavansEditor {
 
     this.resize(this.parentEl.clientWidth, this.parentEl.clientHeight);
 
+    // register ui events
+    this.canvasEl.addEventListener('click', this.handleEvent('click'));
+    this.canvasEl.addEventListener('pointerdown', this.handleEvent('pointerdown'));
+    this.canvasEl.addEventListener('pointermove', this.handleEvent('pointermove'));
+    this.canvasEl.addEventListener('pointerover', this.handleEvent('pointerover'));
+    this.canvasEl.addEventListener('pointerup', this.handleEvent('pointerup'));
+
     this.drawFrame();
   }
 
-  addDrawables = (drawable: IDrawable) => {
-    this.drawables.push(drawable);
+  addChild = (drawable: DrawableObject) => {
+    this.children.push(drawable);
   };
 
-  removeDrawables = (drawable: IDrawable) => {
-    const index = this.drawables.findIndex((a) => a === drawable);
+  removeChild = (drawable: DrawableObject) => {
+    const index = this.children.findIndex((a) => a === drawable);
     if (index === -1) {
       console.warn('drawable is not exit');
       return;
     }
 
-    this.drawables.splice(index, 1);
+    this.children.splice(index, 1);
   };
 
-  draw: (canvas: Canvas) => void = (canvas) => {
-    this.drawables.forEach((a) => a.draw(canvas));
+  private draw: (canvas: Canvas) => void = (canvas) => {
+    this.children.forEach((a) => a.draw(canvas));
   };
 
   private drawFrame = () => {
-    if (this.isDirty) {
-      const canvas = this.surface.getCanvas();
-      // reset matrix
-      canvas.concat(this.canvaskit.Matrix.invert(canvas.getTotalMatrix())!);
-
-      canvas.scale(devicePixelRatio, devicePixelRatio); // physical pixels to CSS pixels
-
-      this.draw(canvas);
-      // ??
-      this.surface.flush();
-      this.isDirty = false;
-    }
     this.animateID = requestAnimationFrame(() => this.drawFrame());
+    // if (!this.isDirty) return;
+    const canvas = this.surface.getCanvas();
+    // reset matrix
+    canvas.concat(this.canvaskit.Matrix.invert(canvas.getTotalMatrix())!);
+
+    canvas.scale(devicePixelRatio, devicePixelRatio); // physical pixels to CSS pixels
+
+    this.draw(canvas);
+    // ??
+    this.surface.flush();
+    this.isDirty = false;
   };
 
   private resize = (width: number, height: number) => {
@@ -116,6 +124,24 @@ export class CavansEditor {
 
   protected setDirty = () => {
     this.isDirty = true;
+  };
+
+  // ui event
+  handleEvent = (name: EventName) => (event: MouseEvent) => {
+    const offsetX = event.offsetX;
+    const offsetY = event.offsetY;
+    const e: UIEvent = {
+      pos: {
+        x: offsetX,
+        y: offsetY,
+      },
+      isStopCapturing: false,
+    };
+    for (const c of this.children) {
+      if (c.isPointIn(e.pos) && !e.isStopCapturing) {
+        c.emit(name, e);
+      }
+    }
   };
 
   dispose = () => {
