@@ -1,7 +1,7 @@
 import { useBindSignal, useDumbState } from '@/hooks';
-import { useGetCanvasKit } from '@/hooks/useGetCanvasKit';
 import { CanvasEditor, Curves } from '@/module/canvasEditor';
 import { Circle } from '@/module/canvasEditor/Drawable/Circle';
+import { useCanvaskitStore } from '@/store';
 import { AnimationCurve, CutsceneEditor } from 'deer-engine';
 import { isNil } from 'lodash';
 import { FC, useEffect, useState } from 'react';
@@ -12,7 +12,8 @@ interface TimelineInspectorProps {
 
 export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   const { cutsceneEditor } = props;
-  const canvasKit = useGetCanvasKit();
+  const { getCanvaskit } = useCanvaskitStore();
+  const canvasKit = getCanvaskit();
   const [curvesEditor, setCurvesEditor] = useState<CanvasEditor>();
 
   const selectedClip = cutsceneEditor.selectedClip;

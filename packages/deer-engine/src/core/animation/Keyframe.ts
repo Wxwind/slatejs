@@ -54,3 +54,18 @@ export class Keyframe {
     this.outWeight = outWeight || 0;
   }
 }
+
+export const isNotWeighted = (key1: Keyframe, key2: Keyframe) => {
+  return (
+    (key1.weightMode === WeightMode.None || key1.weightMode === WeightMode.In) &&
+    (key2.weightMode === WeightMode.None || key2.weightMode === WeightMode.Out)
+  );
+};
+
+export const isInWeightEnabled = (key: Keyframe) => {
+  return key.weightMode == WeightMode.In || key.weightMode == WeightMode.Both;
+};
+
+export const isOutWeightEnabled = (key: Keyframe) => {
+  return key.weightMode == WeightMode.Out || key.weightMode == WeightMode.Both;
+};

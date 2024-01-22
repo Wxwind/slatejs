@@ -1,6 +1,14 @@
 /* eslint-disable prefer-const */
 import { isNearlyZero, lerp } from '@/util';
-import { InterpMode, Keyframe, TangentMode, WeightMode } from './Keyframe';
+import {
+  InterpMode,
+  Keyframe,
+  TangentMode,
+  WeightMode,
+  isInWeightEnabled,
+  isNotWeighted,
+  isOutWeightEnabled,
+} from './Keyframe';
 import { solveCubic } from './soleveCubic';
 
 export enum AnimationCurveExtrapolation {
@@ -211,7 +219,7 @@ export class AnimationCurve {
         const p0 = key1.value;
         const p3 = key2.value;
 
-        if (this.isNotWeighted(key1, key2)) {
+        if (isNotWeighted(key1, key2)) {
           // Hermite to Beizer
           // p0 = q0
           // p1 = q0 + u0 / 3
@@ -234,21 +242,6 @@ export class AnimationCurve {
     }
   };
 
-  private isNotWeighted = (key1: Keyframe, key2: Keyframe) => {
-    return (
-      (key1.weightMode === WeightMode.None || key1.weightMode === WeightMode.In) &&
-      (key2.weightMode === WeightMode.None || key2.weightMode === WeightMode.Out)
-    );
-  };
-
-  private isInWeightEnabled = (key: Keyframe) => {
-    return key.weightMode == WeightMode.In || key.weightMode == WeightMode.Both;
-  };
-
-  private isOutWeightEnabled = (key: Keyframe) => {
-    return key.weightMode == WeightMode.Out || key.weightMode == WeightMode.Both;
-  };
-
   private weightedEvalForTwoKeys: (key1: Keyframe, key2: Keyframe, time: number) => number = (key1, key2, time) => {
     const t1 = key1.time;
     const t2 = key2.time;
@@ -257,7 +250,7 @@ export class AnimationCurve {
     const oneThird = 1 / 3;
 
     let prevWeight = 0;
-    if (this.isOutWeightEnabled(key1)) {
+    if (isOutWeightEnabled(key1)) {
       prevWeight = key1.outWeight;
     } else {
       const x = dt;
@@ -269,7 +262,7 @@ export class AnimationCurve {
     const ty1 = Math.sin(angle1) * prevWeight + key1.value;
 
     let nextWeight = 0;
-    if (this.isInWeightEnabled(key2)) {
+    if (isInWeightEnabled(key2)) {
       nextWeight = key2.inWeight;
     } else {
       const x = dt;
