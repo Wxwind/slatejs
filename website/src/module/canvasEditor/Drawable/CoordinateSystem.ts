@@ -1,29 +1,13 @@
 import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
 import { AnimationCurve } from 'deer-engine';
 import { DrawableObject } from '../DrawableObject';
-import { Vector2 } from '../types';
+import { Vector2 } from '../util';
 
 export class CoordinateSystem extends DrawableObject {
   curves: AnimationCurve[] = [];
   unitWidth = 32; // pixels per unit
 
   coordPaint: Paint;
-
-  protected children: DrawableObject[] = [];
-
-  addChild = (drawable: DrawableObject) => {
-    this.children.push(drawable);
-  };
-
-  removeChild = (drawable: DrawableObject) => {
-    const index = this.children.findIndex((a) => a === drawable);
-    if (index === -1) {
-      console.warn('drawable is not exit');
-      return;
-    }
-
-    this.children.splice(index, 1);
-  };
 
   constructor(private canvaskit: CanvasKit) {
     super();
@@ -35,13 +19,13 @@ export class CoordinateSystem extends DrawableObject {
     this.coordPaint = paint;
   }
 
-  isPointIn: (point: Vector2) => boolean = () => true;
+  isPointHit: (point: Vector2) => boolean = () => true;
 
-  draw: (canvas: Canvas) => void = (canvas) => {
+  drawFrame: (canvas: Canvas) => void = (canvas) => {
     this.drawCoordinateSystem(canvas);
 
     this.children.forEach((c) => {
-      c.draw(canvas);
+      c.drawFrame(canvas);
     });
   };
 

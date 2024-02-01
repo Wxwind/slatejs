@@ -1,8 +1,9 @@
 import { Canvas, CanvasKit, GrDirectContext, Surface } from 'canvaskit-wasm';
-import { IDrawable } from './IDrawable';
-import { debounce } from '@/util';
-import { EventName, UIEvent } from './types';
+import { debounce, throttle } from '@/util';
+import { EventName } from './types';
 import { DrawableObject } from './DrawableObject';
+import { Group } from './Drawable/Group';
+import { FederatedEvent } from './events';
 
 export interface CanvasEditorOptions {
   containerId: string;
@@ -18,13 +19,16 @@ export class CanvasEditor {
   context: GrDirectContext;
   surface!: Surface;
 
+  private pixelRatio: number;
+
   private isDirty = false;
   private animateID = -1;
 
-  private children: DrawableObject[] = [];
+  private root: Group = new Group();
 
   constructor(canvaskit: CanvasKit, options: CanvasEditorOptions) {
     this.canvaskit = canvaskit;
+    this.pixelRatio = window.devicePixelRatio;
     const { containerId } = options;
     const container = document.getElementById(containerId);
     if (container) {
@@ -64,54 +68,49 @@ export class CanvasEditor {
     // register ui events
     this.canvasEl.addEventListener('click', this.handleEvent('click'));
     this.canvasEl.addEventListener('pointerdown', this.handleEvent('pointerdown'));
-    this.canvasEl.addEventListener('pointermove', this.handleEvent('pointermove'));
+    this.canvasEl.addEventListener('pointermove', throttle(this.handleEvent('pointermove')));
     this.canvasEl.addEventListener('pointerover', this.handleEvent('pointerover'));
-    this.canvasEl.addEventListener('pointerup', this.handleEvent('pointerup'));
-
+    window.addEventListener('pointerup', this.handleEvent('pointerup'));
+    this.canvasEl.addEventListener('pointerout', this.handleEvent('pointerout'));
+    this.canvasEl.addEventListener('wheel', throttle(this.handleEvent('wheel')));
     this.drawFrame();
   }
 
   addChild = (drawable: DrawableObject) => {
-    this.children.push(drawable);
+    this.root.addChild(drawable);
   };
 
   removeChild = (drawable: DrawableObject) => {
-    const index = this.children.findIndex((a) => a === drawable);
-    if (index === -1) {
-      console.warn('drawable is not exit');
-      return;
-    }
-
-    this.children.splice(index, 1);
+    this.root.removeChild(drawable);
   };
 
-  private draw: (canvas: Canvas) => void = (canvas) => {
-    this.children.forEach((a) => a.draw(canvas));
+  private render: (canvas: Canvas) => void = (canvas) => {
+    this.root.render(canvas);
   };
 
   private drawFrame = () => {
-    this.animateID = requestAnimationFrame(() => this.drawFrame());
+    this.animateID = this.surface.requestAnimationFrame(() => this.drawFrame());
     // if (!this.isDirty) return;
     const canvas = this.surface.getCanvas();
     // reset matrix
     canvas.concat(this.canvaskit.Matrix.invert(canvas.getTotalMatrix())!);
 
-    canvas.scale(devicePixelRatio, devicePixelRatio); // physical pixels to CSS pixels
+    canvas.scale(this.pixelRatio, this.pixelRatio); // physical pixels to CSS pixels
 
-    this.draw(canvas);
+    this.render(canvas);
     // ??
     this.surface.flush();
     this.isDirty = false;
   };
 
   private resize = (width: number, height: number) => {
-    this.canvasEl.width = width * devicePixelRatio; // CSS pixels to physical pixels
-    this.canvasEl.height = height * devicePixelRatio;
+    this.canvasEl.width = width * this.pixelRatio; // CSS pixels to physical pixels
+    this.canvasEl.height = height * this.pixelRatio;
 
     const surface = this.canvaskit.MakeOnScreenGLSurface(
       this.context,
-      width * devicePixelRatio,
-      height * devicePixelRatio,
+      width * this.pixelRatio,
+      height * this.pixelRatio,
       this.canvaskit.ColorSpace.SRGB
     );
     if (!surface) {
@@ -130,15 +129,15 @@ export class CanvasEditor {
   handleEvent = (name: EventName) => (event: MouseEvent) => {
     const offsetX = event.offsetX;
     const offsetY = event.offsetY;
-    const e: UIEvent = {
-      pos: {
-        x: offsetX,
-        y: offsetY,
-      },
-      isStopCapturing: false,
+    const e = new FederatedEvent();
+
+    e.pos = {
+      x: offsetX,
+      y: offsetY,
     };
-    for (const c of this.children) {
-      if (c.isPointIn(e.pos) && !e.isStopCapturing) {
+
+    for (const c of this.root.children) {
+      if (c.isPointHit(e.pos) && !e.isStopBubble) {
         c.emit(name, e);
       }
     }

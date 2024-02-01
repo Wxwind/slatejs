@@ -1,4 +1,4 @@
-import { DEER_ENGINE_SCENE } from '@/config';
+import { DEER_ENGINE_SCENE } from '@/hooks/config';
 import { useBindSignal, useDumbState } from '@/hooks';
 import { deerEngine } from 'deer-engine';
 

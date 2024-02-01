@@ -1,4 +1,7 @@
-import { Vector2 } from '../types';
+export type Vector2 = {
+  x: number;
+  y: number;
+};
 
 export function isPointInShape(shape: Vector2[], point: Vector2): boolean {
   const x = point.x;

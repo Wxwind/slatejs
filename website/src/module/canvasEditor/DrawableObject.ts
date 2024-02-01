@@ -1,9 +1,32 @@
 import { Canvas } from 'canvaskit-wasm';
 import { IDrawable } from './IDrawable';
-import { EventName, Vector2, UIEvent } from './types';
-import { EventEmitter } from '@/packages/eventEmitter';
+import { FederatedEventTarget, IFederatedEventTarget } from './events/FederatedEventTarget';
+import { Vector2 } from './util/math';
 
-export abstract class DrawableObject extends EventEmitter<EventName, [UIEvent]> implements IDrawable {
-  abstract draw: (canvas: Canvas) => void;
-  abstract isPointIn: (point: Vector2) => boolean;
+export abstract class DrawableObject extends FederatedEventTarget implements IDrawable, IFederatedEventTarget {
+  abstract drawFrame: (canvas: Canvas) => void;
+  abstract isPointHit: (point: Vector2) => boolean;
+
+  render = (canvas: Canvas) => {
+    this.drawFrame(canvas);
+    for (const child of this.children) {
+      child.drawFrame(canvas);
+    }
+  };
+
+  children: DrawableObject[] = [];
+
+  addChild = (drawable: DrawableObject) => {
+    this.children.push(drawable);
+  };
+
+  removeChild = (drawable: DrawableObject) => {
+    const index = this.children.findIndex((a) => a === drawable);
+    if (index === -1) {
+      console.warn('drawable is not exit');
+      return;
+    }
+
+    this.children.splice(index, 1);
+  };
 }

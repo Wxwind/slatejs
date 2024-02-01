@@ -2,8 +2,9 @@ import { useBindSignal, useDumbState } from '@/hooks';
 import { CanvasEditor, Curves } from '@/module/canvasEditor';
 import { Circle } from '@/module/canvasEditor/Drawable/Circle';
 import { useCanvaskitStore } from '@/store';
+import { isNil } from '@/util';
 import { AnimationCurve, CutsceneEditor } from 'deer-engine';
-import { isNil } from 'lodash';
+
 import { FC, useEffect, useState } from 'react';
 
 interface TimelineInspectorProps {

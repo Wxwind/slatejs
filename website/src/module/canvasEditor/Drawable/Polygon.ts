@@ -1,7 +1,6 @@
 import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
 import { DrawableObject } from '../DrawableObject';
-import { Vector2 } from '../types';
-import { isPointInShape } from '../util/math';
+import { Vector2, isPointInShape } from '../util/math';
 
 export class Polygon extends DrawableObject {
   points: Vector2[];
@@ -18,7 +17,7 @@ export class Polygon extends DrawableObject {
     this.paint = paint;
   }
 
-  draw: (canvas: Canvas) => void = (canvas) => {
+  drawFrame: (canvas: Canvas) => void = (canvas) => {
     const array = [];
     for (const p of this.points) {
       array.push(p.x);
@@ -27,7 +26,7 @@ export class Polygon extends DrawableObject {
     canvas.drawPoints(this.canvaskit.PointMode.Polygon, array, this.paint);
   };
 
-  isPointIn: (point: Vector2) => boolean = (point) => {
+  isPointHit: (point: Vector2) => boolean = (point) => {
     return isPointInShape(this.points, point);
   };
 }

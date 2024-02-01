@@ -1,4 +1,4 @@
-import { DEER_ENGINE_SCENE } from '@/config';
+import { DEER_ENGINE_SCENE } from '@/hooks/config';
 import { deerEngine } from 'deer-engine';
 import { FC, useEffect } from 'react';
 

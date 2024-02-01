@@ -1,7 +1,7 @@
 import { Canvas } from 'canvaskit-wasm';
-import { Vector2 } from './types';
+import { Vector2 } from './util';
 
 export interface IDrawable {
-  draw: (canvas: Canvas) => void;
-  isPointIn: (point: Vector2) => boolean;
+  isPointHit: (point: Vector2) => boolean;
+  render: (canvas: Canvas) => void;
 }

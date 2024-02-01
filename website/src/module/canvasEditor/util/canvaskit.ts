@@ -15,21 +15,21 @@ const getCanvasKit = async () => {
 };
 
 const getContext = async (ck: CanvasKit, canvasEl: HTMLCanvasElement) => {
-  //   if (navigator.gpu && ck.webgpu) {
-  //     const adapter = await navigator.gpu.requestAdapter();
-  //     if (!adapter) {
-  //       console.error('Failed in gpu.requestAdapter()');
-  //       return;
-  //     }
-  //     const gpuDevice = await adapter.requestDevice();
-
-  //     const ctx = ck.MakeGPUDeviceContext(gpuDevice);
-  //     if (!ctx) {
-  //       console.error('Failed to initialize WebGPU device context');
-  //       return;
-  //     }
-  //     return ctx;
+  // if (navigator.gpu && ck.webgpu) {
+  //   const adapter = await navigator.gpu.requestAdapter();
+  //   if (!adapter) {
+  //     console.error('Failed in gpu.requestAdapter()');
+  //     return;
   //   }
+  //   const gpuDevice = await adapter.requestDevice();
+
+  //   const ctx = ck.MakeGPUDeviceContext(gpuDevice);
+  //   if (!ctx) {
+  //     console.error('Failed to initialize WebGPU device context');
+  //     return;
+  //   }
+  //   return ctx;
+  // }
 
   const context = ck.MakeWebGLContext(ck.GetWebGLContext(canvasEl));
   if (!context) {

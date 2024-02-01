@@ -1,19 +1,35 @@
-export class EventEmitter<
-  E extends string = string,
-  T extends unknown[] = unknown[],
-  F extends (...args: T) => void = () => void
-> {
+import { EventArgs, EventListener, EventNames, ValidEventTypes } from './type';
+
+/**
+ * @example
+ * const a1 = new EventEmitter<'a' | 'b', [number]>();
+ * a1.on('a', (num) => {});
+ * const a2 = new EventEmitter<{ a: (age: string) => void; b: (name: number) => number }>();
+ * a2.on('a', (age) => {});
+ */
+export class EventEmitter<E extends ValidEventTypes = string | symbol, ARGS extends unknown[] = unknown[]> {
   listeners: {
-    [P in E]?: F[];
+    [P in EventNames<E>]?: EventListener<E, P, ARGS>[];
   } = {};
 
-  on = (event: E, fn: F) => {
+  once: <T extends EventNames<E>>(event: T, fn: EventListener<E, T, ARGS>) => this = (event, fn) => {
+    const wrapFn: (...args: Parameters<typeof fn>) => void = (...args) => {
+      fn(...args);
+      this.off(event, wrapFn as typeof fn);
+    };
+
+    this.on(event, wrapFn as typeof fn);
+    return this;
+  };
+
+  on: <T extends EventNames<E>>(event: T, fn: EventListener<E, T, ARGS>) => this = (event, fn) => {
     (this.listeners[event] || (this.listeners[event] = [])).push(fn);
+    return this;
   };
 
   addListener = this.on;
 
-  off = (event: E, fn: F) => {
+  off = <T extends EventNames<E>>(event: T, fn: EventListener<E, T, ARGS>) => {
     const arr = this.listeners[event];
     if (!arr) return;
     for (let i = 0; i < arr.length; i++) {
@@ -21,11 +37,12 @@ export class EventEmitter<
         arr.splice(i, 1);
       }
     }
+    return this;
   };
 
   removeListener = this.off;
 
-  emit: (event: E, ...args: T) => void = (event, ...args) => {
+  emit: <T extends EventNames<E>>(event: T, ...args: EventArgs<E, T, ARGS>) => void = (event, ...args) => {
     this.listeners[event]?.forEach((fn) => {
       fn(...args);
     });

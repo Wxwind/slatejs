@@ -1,9 +1,9 @@
 import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
 import { AnimationCurve, Keyframe, isInWeightEnabled, isNotWeighted, isOutWeightEnabled } from 'deer-engine';
-import { DrawableObject } from '../DrawableObject';
-import { Vector2 } from '../types';
-import { CoordinateSystem } from './CoordinateSystem';
-import { Circle } from './Circle';
+import { DrawableObject } from '../../DrawableObject';
+import { Vector2 } from '../../util';
+import { CoordinateSystem } from '../CoordinateSystem';
+import { Circle } from '../Circle';
 
 export class Curves extends DrawableObject {
   curves: AnimationCurve[];
@@ -25,10 +25,10 @@ export class Curves extends DrawableObject {
     this.curves = curves;
   }
 
-  isPointIn: (point: Vector2) => boolean = () => false;
+  isPointHit: (point: Vector2) => boolean = () => false;
 
-  draw: (canvas: Canvas) => void = (canvas) => {
-    this.coord.draw(canvas);
+  drawFrame: (canvas: Canvas) => void = (canvas) => {
+    this.coord.drawFrame(canvas);
     this.drawBezierCurve(canvas);
   };
 
@@ -97,8 +97,6 @@ export class Curves extends DrawableObject {
 
           path.cubicTo(p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
         }
-
-        // this.drawHandle(canvas, key);
       }
 
       for (let j = 0; j < curve.keys.length; j += 1) {
@@ -117,6 +115,8 @@ export class Curves extends DrawableObject {
       radius: 10,
     });
 
-    handle.draw(canvas);
+    handle.addEventListener('po', (e) => {});
+
+    handle.drawFrame(canvas);
   };
 }

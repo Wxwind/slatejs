@@ -1,10 +1,16 @@
-export type EventName = 'click' | 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerover';
-export type Vector2 = {
-  x: number;
-  y: number;
-};
-
-export interface UIEvent {
-  pos: Vector2;
-  isStopCapturing: boolean;
-}
+export type EventName =
+  // down
+  | 'pointerdown'
+  // up
+  | 'pointerup'
+  | 'pointerupoutside'
+  | 'pointertap'
+  | 'click'
+  // over/move
+  | 'pointermove'
+  | 'pointerover'
+  | 'pointerenter'
+  | 'pointerleave'
+  | 'pointerout'
+  // wheel
+  | 'wheel';
