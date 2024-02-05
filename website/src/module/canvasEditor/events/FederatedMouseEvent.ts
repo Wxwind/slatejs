@@ -20,8 +20,7 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
   metaKey = false;
 
   /** This is currently not implemented in the Federated Events API. */
-  // @ts-ignore
-  relatedTarget: DrawableObject | null;
+  relatedTarget: DrawableObject | null = null;
 
   /** Whether the "shift" key was pressed when this mouse event occurred. */
   shiftKey = false;
@@ -60,7 +59,7 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
   }
 
   /**
-   * The pointer coordinates in sceen space.
+   * The pointer coordinates in sceen space, from native event.
    */
   screen: Point = new Point();
   get screenX(): number {
@@ -71,9 +70,7 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
   }
 
   getModifierState(key: string): boolean {
+    if (!this.nativeEvent) return false;
     return 'getModifierState' in this.nativeEvent && this.nativeEvent.getModifierState(key);
-  }
-  initMouseEvent(): void {
-    throw new Error('');
   }
 }

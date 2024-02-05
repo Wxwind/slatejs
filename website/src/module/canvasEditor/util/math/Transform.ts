@@ -3,8 +3,8 @@ import { getRotation } from './util';
 
 export class Transform {
   /**
-   * [ m[0], m[1], m[4] ]
-   * [ m[2], m[3], m[5] ]
+   * [ m[0], m[2], m[4] ]
+   * [ m[1], m[3], m[5] ]
    * [ 0   , 0   , 1    ]
    */
   m: [number, number, number, number, number, number];
@@ -42,7 +42,7 @@ export class Transform {
    * Transform point
    */
   point(point: Vector2) {
-    var m = this.m;
+    const m = this.m;
     return {
       x: m[0] * point.x + m[2] * point.y + m[4],
       y: m[1] * point.x + m[3] * point.y + m[5],
@@ -73,12 +73,12 @@ export class Transform {
    * Apply rotation
    */
   rotate(rad: number) {
-    var c = Math.cos(rad);
-    var s = Math.sin(rad);
-    var m11 = this.m[0] * c + this.m[2] * s;
-    var m12 = this.m[1] * c + this.m[3] * s;
-    var m21 = this.m[0] * -s + this.m[2] * c;
-    var m22 = this.m[1] * -s + this.m[3] * c;
+    const c = Math.cos(rad);
+    const s = Math.sin(rad);
+    const m11 = this.m[0] * c + this.m[2] * s;
+    const m12 = this.m[1] * c + this.m[3] * s;
+    const m21 = this.m[0] * -s + this.m[2] * c;
+    const m22 = this.m[1] * -s + this.m[3] * c;
     this.m[0] = m11;
     this.m[1] = m12;
     this.m[2] = m21;
@@ -100,10 +100,10 @@ export class Transform {
    * Apply skew
    */
   skew(sx: number, sy: number) {
-    var m11 = this.m[0] + this.m[2] * sy;
-    var m12 = this.m[1] + this.m[3] * sy;
-    var m21 = this.m[2] + this.m[0] * sx;
-    var m22 = this.m[3] + this.m[1] * sx;
+    const m11 = this.m[0] + this.m[2] * sy;
+    const m12 = this.m[1] + this.m[3] * sy;
+    const m21 = this.m[2] + this.m[0] * sx;
+    const m22 = this.m[3] + this.m[1] * sx;
     this.m[0] = m11;
     this.m[1] = m12;
     this.m[2] = m21;
@@ -115,14 +115,14 @@ export class Transform {
    * Transform multiplication
    */
   multiply(matrix: Transform) {
-    var m11 = this.m[0] * matrix.m[0] + this.m[2] * matrix.m[1];
-    var m12 = this.m[1] * matrix.m[0] + this.m[3] * matrix.m[1];
+    const m11 = this.m[0] * matrix.m[0] + this.m[2] * matrix.m[1];
+    const m12 = this.m[1] * matrix.m[0] + this.m[3] * matrix.m[1];
 
-    var m21 = this.m[0] * matrix.m[2] + this.m[2] * matrix.m[3];
-    var m22 = this.m[1] * matrix.m[2] + this.m[3] * matrix.m[3];
+    const m21 = this.m[0] * matrix.m[2] + this.m[2] * matrix.m[3];
+    const m22 = this.m[1] * matrix.m[2] + this.m[3] * matrix.m[3];
 
-    var dx = this.m[0] * matrix.m[4] + this.m[2] * matrix.m[5] + this.m[4];
-    var dy = this.m[1] * matrix.m[4] + this.m[3] * matrix.m[5] + this.m[5];
+    const dx = this.m[0] * matrix.m[4] + this.m[2] * matrix.m[5] + this.m[4];
+    const dy = this.m[1] * matrix.m[4] + this.m[3] * matrix.m[5] + this.m[5];
 
     this.m[0] = m11;
     this.m[1] = m12;
@@ -137,13 +137,13 @@ export class Transform {
    * Invert the matrix
    */
   invert() {
-    var d = 1 / (this.m[0] * this.m[3] - this.m[1] * this.m[2]);
-    var m0 = this.m[3] * d;
-    var m1 = -this.m[1] * d;
-    var m2 = -this.m[2] * d;
-    var m3 = this.m[0] * d;
-    var m4 = d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]);
-    var m5 = d * (this.m[1] * this.m[4] - this.m[0] * this.m[5]);
+    const d = 1 / (this.m[0] * this.m[3] - this.m[1] * this.m[2]);
+    const m0 = this.m[3] * d;
+    const m1 = -this.m[1] * d;
+    const m2 = -this.m[2] * d;
+    const m3 = this.m[0] * d;
+    const m4 = d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]);
+    const m5 = d * (this.m[1] * this.m[4] - this.m[0] * this.m[5]);
     this.m[0] = m0;
     this.m[1] = m1;
     this.m[2] = m2;
@@ -164,16 +164,16 @@ export class Transform {
    * convert transformation matrix back into node's attributes
    */
   decompose() {
-    var a = this.m[0];
-    var b = this.m[1];
-    var c = this.m[2];
-    var d = this.m[3];
-    var e = this.m[4];
-    var f = this.m[5];
+    const a = this.m[0];
+    const b = this.m[1];
+    const c = this.m[2];
+    const d = this.m[3];
+    const e = this.m[4];
+    const f = this.m[5];
 
-    var delta = a * d - b * c;
+    const delta = a * d - b * c;
 
-    let result = {
+    const result = {
       x: e,
       y: f,
       rotation: 0,
@@ -184,15 +184,15 @@ export class Transform {
     };
 
     // Apply the QR-like decomposition.
-    if (a != 0 || b != 0) {
-      var r = Math.sqrt(a * a + b * b);
+    if (a !== 0 || b !== 0) {
+      const r = Math.sqrt(a * a + b * b);
       result.rotation = b > 0 ? Math.acos(a / r) : -Math.acos(a / r);
       result.scaleX = r;
       result.scaleY = delta / r;
       result.skewX = (a * c + b * d) / delta;
       result.skewY = 0;
-    } else if (c != 0 || d != 0) {
-      var s = Math.sqrt(c * c + d * d);
+    } else if (c !== 0 || d !== 0) {
+      const s = Math.sqrt(c * c + d * d);
       result.rotation = Math.PI / 2 - (d > 0 ? Math.acos(-c / s) : -Math.acos(c / s));
       result.scaleX = delta / s;
       result.scaleY = s;
@@ -207,3 +207,9 @@ export class Transform {
     return result;
   }
 }
+
+const a: Transform = new Transform();
+a.translate(1, 0);
+a.scale(2, 2);
+const p = a.point({ x: 1, y: 1 });
+console.log(p.x, p.y);

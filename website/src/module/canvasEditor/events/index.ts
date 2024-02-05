@@ -1,5 +1,5 @@
 export * from './FederatedEvent';
-export * from './EventSystem';
+export * from './EventPlugin';
 export * from './EventBoundary';
 export * from './FederatedEventTarget';
 export * from './FederatedMouseEvent';

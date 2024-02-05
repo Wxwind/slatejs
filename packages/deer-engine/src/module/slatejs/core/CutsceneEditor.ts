@@ -16,7 +16,9 @@ export class CutsceneEditor {
 
   private previousTime = 0;
 
-  private _viewTimeMax = 500; // max seconds could be displayed in timeline
+  // max seconds could be displayed in timeline
+  // will be replaced by viewTimeMin and Max if drawn by canvas in future
+  private _viewTimeMax = 500;
 
   private _selectedClip: ActionClip | undefined;
 
@@ -48,6 +50,15 @@ export class CutsceneEditor {
     this.signals.cutSceneEditorSettingsUpdated.emit();
   }
 
+  // refer to cutscene.length
+  public set length(v: number) {
+    this.cutscene.length = v;
+  }
+
+  public get length(): number {
+    return this.cutscene.length;
+  }
+
   constructor() {
     this.init();
   }
@@ -74,7 +85,7 @@ export class CutsceneEditor {
     this.playState = PlayState.PlayBackward;
 
     if (this.cutscene.currentTime === 0) {
-      this.cutscene.currentTime = this.cutscene.playTimeMax;
+      this.cutscene.currentTime = this.length;
       this._lastStartPlayTime = 0;
     } else {
       this._lastStartPlayTime = this.cutscene.currentTime;
@@ -97,7 +108,7 @@ export class CutsceneEditor {
 
     if (this.playState === PlayState.Stop) return;
 
-    if (this.playState === PlayState.PlayForward && this.cutscene.currentTime >= this.cutscene.playTimeMax) {
+    if (this.playState === PlayState.PlayForward && this.cutscene.currentTime >= this.length) {
       this.stop();
       return;
     }

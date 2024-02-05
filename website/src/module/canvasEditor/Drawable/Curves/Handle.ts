@@ -6,13 +6,13 @@ export class Handle extends Circle {
   constructor(protected canvaskit: CanvasKit, options: CircleOptions, private keyframe: Keyframe) {
     super(canvaskit, options);
 
-    this.on('pointerdown', this.onDragStart);
-    this.on('pointerout', this.onDragEnd);
-    this.on('pointerupoutside', this.onDragEnd);
+    this.addEventListener('pointerdown', this.onDragStart);
+    this.addEventListener('pointerout', this.onDragEnd);
+    this.addEventListener('pointerupoutside', this.onDragEnd);
   }
 
   onDragStart = () => {
-    this.on('pointermove', this.onDragMove);
+    this.addEventListener('pointermove', this.onDragMove);
   };
 
   onDragMove = () => {
@@ -20,6 +20,6 @@ export class Handle extends Circle {
   };
 
   onDragEnd = () => {
-    this.off('pointermove', this.onDragMove);
+    this.removeEventListener('pointermove', this.onDragMove);
   };
 }

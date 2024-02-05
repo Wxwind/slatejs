@@ -1,5 +1,5 @@
 import { SLATEJS_VERSION } from '@/config';
-import { isNil } from '@/util';
+import { clamp, isNil } from '@/util';
 import { CutsceneGroup } from './CutsceneGroup';
 import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
 import { ActorGroup } from './groups';
@@ -27,11 +27,11 @@ export class Cutscene {
 
   private _playRate = 1;
 
-  private _playTimeMin = 0;
-  private _playTimeMax = 32;
+  private _playTimeMin = 0; // used when playing, shouldn't be serialized.
+  private _playTimeMax = 20; // used when playing, shouldn't be serialized.
 
   // FIXME
-  private length = 0;
+  private _length = 15; // total length, means endtime in runtime & editor
 
   public get currentTime(): number {
     return this._currentTime;
@@ -64,7 +64,7 @@ export class Cutscene {
   }
 
   public set playTimeMin(v: number) {
-    this._playTimeMin = v;
+    this._playTimeMin = clamp(v, 0, this.playTimeMax);
     this.signals.cutsceneUpdated.emit();
   }
 
@@ -73,12 +73,21 @@ export class Cutscene {
   }
 
   public set playTimeMax(v: number) {
-    this._playTimeMax = v;
+    this._playTimeMax = clamp(v, this.playTimeMin, this.length);
     this.signals.cutsceneUpdated.emit();
   }
 
   public get playTimeLength() {
     return this.playTimeMax - this.playTimeMin;
+  }
+
+  public set length(v: number) {
+    this._length = v;
+    this.signals.lengthChanged.emit();
+  }
+
+  public get length(): number {
+    return this._length;
   }
 
   private _groups: CutsceneGroup[] = [];
@@ -94,10 +103,11 @@ export class Cutscene {
   readonly signals = {
     groupCountUpdated: new Signal(),
     timeUpdated: new Signal(),
+    lengthChanged: new Signal(),
     cutsceneUpdated: new Signal(),
   };
 
-  play = () => {};
+  play = (startTime = 0, endTime = this.length) => {};
 
   playReverse = () => {};
 

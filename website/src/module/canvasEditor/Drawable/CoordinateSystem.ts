@@ -21,11 +21,11 @@ export class CoordinateSystem extends DrawableObject {
 
   isPointHit: (point: Vector2) => boolean = () => true;
 
-  drawFrame: (canvas: Canvas) => void = (canvas) => {
+  _render: (canvas: Canvas) => void = (canvas) => {
     this.drawCoordinateSystem(canvas);
 
     this.children.forEach((c) => {
-      c.drawFrame(canvas);
+      c._render(canvas);
     });
   };
 

@@ -8,7 +8,7 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
   readonly AT_TARGET = 2;
   readonly BUBBLING_PHASE = 3;
 
-  readonly manager: EventBoundary;
+  readonly manager: EventBoundary | null;
 
   eventPhase = 0;
 
@@ -17,12 +17,15 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
 
   path: IFederatedEventTarget[] = [];
 
+  /** Event-specific detail */
+  detail = 0;
+
   /**
    * the original event.
    */
-  nativeEvent!: N;
+  nativeEvent: N | null = null;
 
-  originalEvent!: FederatedEvent<N>;
+  originalEvent: FederatedEvent<N> | null = null;
 
   /** Flags whether propagation was stopped. */
   propagationStopped = false;
@@ -33,12 +36,12 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
   /** Flags whether propagation was immediately stopped. */
   propagationImmediatelyStopped = false;
 
-  type: string = '';
+  type = '';
 
   /**
    * timestamp when the event created
    */
-  timeStamp: number = 0;
+  timeStamp = 0;
 
   /**
    * The coordinates of the event relative to the DOM document.
@@ -58,12 +61,6 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
    * relative to Canvas, origin is left-top
    */
   canvas: Point = new Point();
-  get x(): number {
-    return this.canvas.x;
-  }
-  get y(): number {
-    return this.canvas.y;
-  }
   get canvasX(): number {
     return this.canvas.x;
   }
@@ -71,7 +68,18 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
     return this.canvas.y;
   }
 
-  constructor(manager: EventBoundary) {
+  /**
+   * relative to Viewport, account for Camera
+   */
+  viewport: Point = new Point();
+  get viewportX(): number {
+    return this.viewport.x;
+  }
+  get viewportY(): number {
+    return this.viewport.y;
+  }
+
+  constructor(manager: EventBoundary | null) {
     this.manager = manager;
   }
 

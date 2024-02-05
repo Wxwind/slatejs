@@ -35,7 +35,7 @@ export class Circle extends DrawableObject {
     return distance2(point, this.center) <= this.radius * this.radius;
   };
 
-  drawFrame: (canvas: Canvas) => void = (canvas) => {
+  _render: (canvas: Canvas) => void = (canvas) => {
     canvas.drawCircle(this.center.x, this.center.y, this.radius, this.paint);
   };
 }

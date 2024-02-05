@@ -39,7 +39,7 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     curves.push(c2);
     curvesEditor.addChild(new Curves(canvasKit, curves));
     const circle = new Circle(canvasKit, { center: { x: 150, y: 80 }, radius: 20 });
-    circle.addListener('click', () => {
+    circle.addEventListener('click', () => {
       console.log('click circle');
     });
     curvesEditor.addChild(circle);

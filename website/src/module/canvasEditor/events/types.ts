@@ -52,3 +52,40 @@ export type TrackingData = {
   };
   overTargets: IFederatedEventTarget[];
 };
+
+export type InteractivePointerEvent = PointerEvent | TouchEvent | MouseEvent | WheelEvent;
+
+export interface FormattedPointerEvent extends PointerEvent {
+  isPrimary: boolean;
+  width: number;
+  height: number;
+  tiltX: number;
+  tiltY: number;
+  pointerType: string;
+  pointerId: number;
+  pressure: number;
+  twist: number;
+  tangentialPressure: number;
+  isNormalized: boolean;
+  type: string;
+}
+
+export interface FormattedTouch extends Touch {
+  button: number;
+  buttons: number;
+  isPrimary: boolean;
+  width: number;
+  height: number;
+  tiltX: number;
+  tiltY: number;
+  pointerType: string;
+  pointerId: number;
+  pressure: number;
+  twist: number;
+  tangentialPressure: number;
+  layerY: number;
+  offsetX: number;
+  offsetY: number;
+  isNormalized: boolean;
+  type: string;
+}

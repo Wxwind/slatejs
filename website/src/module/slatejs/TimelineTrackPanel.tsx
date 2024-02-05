@@ -3,7 +3,7 @@ import { CutsceneTrack } from 'deer-engine';
 import { TimelineActionClip } from './TimelineActionClip';
 import { useScaleStore } from './store';
 import { useBindSignal, useDumbState } from '@/hooks';
-import { ContextListItem, ProContextMenu } from '@/components';
+import { ContextListItem, ProContextMenu } from '@/assets/components';
 
 interface TimelineTracksProps {
   width: number;

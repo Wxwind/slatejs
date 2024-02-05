@@ -37,5 +37,6 @@ export type FederatedEventMap = {
 export type FederatedEventEmitterTypes = {
   [K in keyof FederatedEventMap as K | `${K}capture`]: [event: FederatedEventMap[K]];
 } & {
+  // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
   [K: ({} & string) | ({} & symbol)]: [event: any];
 };

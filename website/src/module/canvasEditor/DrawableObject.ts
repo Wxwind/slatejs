@@ -1,16 +1,18 @@
 import { Canvas } from 'canvaskit-wasm';
 import { IDrawable } from './IDrawable';
-import { FederatedEventTarget, IFederatedEventTarget } from './events/FederatedEventTarget';
-import { Vector2 } from './util/math';
+import { FederatedEventTarget } from './events/FederatedEventTarget';
+import { Transform, Vector2 } from './util/math';
 
-export abstract class DrawableObject extends FederatedEventTarget implements IDrawable, IFederatedEventTarget {
-  abstract drawFrame: (canvas: Canvas) => void;
+export abstract class DrawableObject extends FederatedEventTarget implements IDrawable {
+  abstract _render: (canvas: Canvas) => void;
   abstract isPointHit: (point: Vector2) => boolean;
 
+  protected transform = new Transform();
+
   render = (canvas: Canvas) => {
-    this.drawFrame(canvas);
+    this._render(canvas);
     for (const child of this.children) {
-      child.drawFrame(canvas);
+      child._render(canvas);
     }
   };
 

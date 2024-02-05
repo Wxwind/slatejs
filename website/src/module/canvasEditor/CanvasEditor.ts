@@ -1,35 +1,58 @@
 import { Canvas, CanvasKit, GrDirectContext, Surface } from 'canvaskit-wasm';
-import { debounce, throttle } from '@/util';
-import { EventName } from './types';
+import { debounce } from '@/util';
+import { CanvasConfig, CanvasContext, ICanvas } from './types';
 import { DrawableObject } from './DrawableObject';
 import { Group } from './Drawable/Group';
-import { FederatedEvent } from './events';
+import { IPlugin } from './Plugin';
+import { EventPlugin } from './events';
+import { Vector2 } from './util';
 
-export interface CanvasEditorOptions {
-  containerId: string;
-}
-
-export class CanvasEditor {
+export class CanvasEditor implements ICanvas {
   parentEl: HTMLElement;
   canvasEl: HTMLCanvasElement;
 
   private resizeObserver: ResizeObserver;
 
   canvaskit: CanvasKit;
-  context: GrDirectContext;
+  grContext: GrDirectContext;
   surface!: Surface;
 
-  private pixelRatio: number;
+  supportsTouchEvents = false;
+  supportsPointerEvents = true;
+
+  devicePixelRatio: number;
 
   private isDirty = false;
   private animateID = -1;
 
-  private root: Group = new Group();
+  root: Group = new Group();
 
-  constructor(canvaskit: CanvasKit, options: CanvasEditorOptions) {
+  context: CanvasContext;
+
+  plugins: IPlugin[] = [];
+
+  constructor(canvaskit: CanvasKit, options: CanvasConfig) {
     this.canvaskit = canvaskit;
-    this.pixelRatio = window.devicePixelRatio;
-    const { containerId } = options;
+    const {
+      containerId,
+      devicePixelRatio = window.devicePixelRatio,
+      supportsCSSTransform = false,
+      supportsPointerEvents = true,
+      supportsTouchEvents = false,
+    } = options;
+
+    this.devicePixelRatio = devicePixelRatio;
+    this.supportsPointerEvents = supportsPointerEvents;
+    this.supportsTouchEvents = supportsTouchEvents;
+
+    this.context = {
+      canvas: this,
+      config: { containerId, devicePixelRatio, supportsCSSTransform, supportsPointerEvents, supportsTouchEvents },
+    };
+
+    this.plugins.push(new EventPlugin());
+    this.plugins.forEach((p) => p.init(this.context));
+
     const container = document.getElementById(containerId);
     if (container) {
       this.parentEl = container;
@@ -50,7 +73,7 @@ export class CanvasEditor {
     if (!context) {
       throw new Error('Failed to configure WebGl canvas context');
     }
-    this.context = context;
+    this.grContext = context;
 
     const debouncedResize = debounce(this.resize);
 
@@ -65,14 +88,6 @@ export class CanvasEditor {
 
     this.resize(this.parentEl.clientWidth, this.parentEl.clientHeight);
 
-    // register ui events
-    this.canvasEl.addEventListener('click', this.handleEvent('click'));
-    this.canvasEl.addEventListener('pointerdown', this.handleEvent('pointerdown'));
-    this.canvasEl.addEventListener('pointermove', throttle(this.handleEvent('pointermove')));
-    this.canvasEl.addEventListener('pointerover', this.handleEvent('pointerover'));
-    window.addEventListener('pointerup', this.handleEvent('pointerup'));
-    this.canvasEl.addEventListener('pointerout', this.handleEvent('pointerout'));
-    this.canvasEl.addEventListener('wheel', throttle(this.handleEvent('wheel')));
     this.drawFrame();
   }
 
@@ -82,6 +97,14 @@ export class CanvasEditor {
 
   removeChild = (drawable: DrawableObject) => {
     this.root.removeChild(drawable);
+  };
+
+  // TODO
+  viewport2Canvas: (point: Vector2) => Vector2 = (point) => {
+    return {
+      x: 0,
+      y: 0,
+    };
   };
 
   private render: (canvas: Canvas) => void = (canvas) => {
@@ -95,7 +118,7 @@ export class CanvasEditor {
     // reset matrix
     canvas.concat(this.canvaskit.Matrix.invert(canvas.getTotalMatrix())!);
 
-    canvas.scale(this.pixelRatio, this.pixelRatio); // physical pixels to CSS pixels
+    canvas.scale(this.devicePixelRatio, this.devicePixelRatio); // physical pixels to CSS pixels
 
     this.render(canvas);
     // ??
@@ -104,13 +127,13 @@ export class CanvasEditor {
   };
 
   private resize = (width: number, height: number) => {
-    this.canvasEl.width = width * this.pixelRatio; // CSS pixels to physical pixels
-    this.canvasEl.height = height * this.pixelRatio;
+    this.canvasEl.width = width * this.devicePixelRatio; // CSS pixels to physical pixels
+    this.canvasEl.height = height * this.devicePixelRatio;
 
     const surface = this.canvaskit.MakeOnScreenGLSurface(
-      this.context,
-      width * this.pixelRatio,
-      height * this.pixelRatio,
+      this.grContext,
+      width * this.devicePixelRatio,
+      height * this.devicePixelRatio,
       this.canvaskit.ColorSpace.SRGB
     );
     if (!surface) {
@@ -123,24 +146,6 @@ export class CanvasEditor {
 
   protected setDirty = () => {
     this.isDirty = true;
-  };
-
-  // ui event
-  handleEvent = (name: EventName) => (event: MouseEvent) => {
-    const offsetX = event.offsetX;
-    const offsetY = event.offsetY;
-    const e = new FederatedEvent();
-
-    e.pos = {
-      x: offsetX,
-      y: offsetY,
-    };
-
-    for (const c of this.root.children) {
-      if (c.isPointHit(e.pos) && !e.isStopBubble) {
-        c.emit(name, e);
-      }
-    }
   };
 
   dispose = () => {

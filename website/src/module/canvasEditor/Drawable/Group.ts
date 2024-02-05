@@ -3,6 +3,8 @@ import { DrawableObject } from '../DrawableObject';
 import { Vector2 } from '../util';
 
 export class Group extends DrawableObject {
-  drawFrame: (canvas: Canvas) => void = () => {};
+  _render: (canvas: Canvas) => void = () => {
+    return;
+  };
   isPointHit = (point: Vector2) => false;
 }

@@ -27,8 +27,8 @@ export class Curves extends DrawableObject {
 
   isPointHit: (point: Vector2) => boolean = () => false;
 
-  drawFrame: (canvas: Canvas) => void = (canvas) => {
-    this.coord.drawFrame(canvas);
+  _render: (canvas: Canvas) => void = (canvas) => {
+    this.coord._render(canvas);
     this.drawBezierCurve(canvas);
   };
 
@@ -117,6 +117,6 @@ export class Curves extends DrawableObject {
 
     handle.addEventListener('po', (e) => {});
 
-    handle.drawFrame(canvas);
+    handle._render(canvas);
   };
 }

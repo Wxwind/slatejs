@@ -1,7 +1,8 @@
-export type ValidEventTypes = string | symbol | object;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type ValidEventTypes = string | symbol | Record<string, any>;
 export type EventNames<T extends ValidEventTypes> = T extends string | symbol ? T : keyof T;
 
-export type ArgumentMap<T extends object> = {
+export type ArgumentMap<T extends Record<string, any>> = {
   [K in keyof T]: T[K] extends (...args: any[]) => void ? Parameters<T[K]> : T[K] extends any[] ? T[K] : any[];
 };
 

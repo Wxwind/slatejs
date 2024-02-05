@@ -4,6 +4,7 @@ import { isNil } from '@/util';
 import TimeMarkIcon from './TimeMarkIcon';
 import { TimelineGroupPanel } from './TimelineGroupPanel';
 import { useScaleStore } from './store';
+import { useBindSignal, useDumbState } from '@/hooks';
 
 export interface TimelineProps {
   cutsceneEditor: CutsceneEditor;
@@ -20,11 +21,11 @@ export const Timeline: FC<TimelineProps> = (props) => {
   const [prevScale, setPrevScale] = useState(32);
   const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
 
-  /* FIXME: may not update while cutsceneEditor.viewTimeMax update cuz cutsceneEditor.viewTimeMax
-  is external variable. It's better to draw timeline with canvas. */
-  const timelineTrackWidth = useMemo(() => {
-    return cutsceneEditor.viewTimeMax * scale;
-  }, [cutsceneEditor.viewTimeMax, scale]);
+  const refresh = useDumbState();
+  useBindSignal(cutsceneEditor.signals.cutSceneEditorSettingsUpdated, refresh);
+  useBindSignal(signals.lengthChanged, refresh);
+
+  const timelineTrackWidth = cutsceneEditor.viewTimeMax * scale;
 
   const handleClickTimeCanvas = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {

@@ -1,5 +1,4 @@
 import { EventEmitter } from '@/packages/eventEmitter';
-import { EventName } from '../types';
 import { FederatedEvent } from '.';
 import { Cursor } from './types';
 import { FederatedEventEmitterTypes, FederatedEventMap } from './FederatedEventMap';
@@ -18,7 +17,7 @@ export type EventListenerOrEventListenerObject = EventListener | EventListenerOb
 
 export interface IFederatedEventTarget {
   readonly emitter: EventEmitter<FederatedEventEmitterTypes, [FederatedEvent]>;
-  readonly parent?: IFederatedEventTarget;
+  readonly parent: IFederatedEventTarget | undefined;
   cursor: Cursor;
 
   addEventListener<K extends keyof FederatedEventMap>(
@@ -41,7 +40,7 @@ export interface IFederatedEventTarget {
 }
 
 export class FederatedEventTarget implements IFederatedEventTarget {
-  parent?: IFederatedEventTarget | undefined;
+  parent: IFederatedEventTarget | undefined;
   cursor: Cursor = 'default';
 
   emitter = new EventEmitter<FederatedEventEmitterTypes, [FederatedEvent]>();

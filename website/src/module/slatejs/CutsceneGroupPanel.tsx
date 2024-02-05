@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { CutsceneTrackTree } from './CutsceneTrackTree';
 import { CutsceneGroup } from 'deer-engine';
 import { useDumbState, useBindSignal } from '@/hooks';
-import { ProDropdownMenu, DroplistItem } from '@/components';
+import { ProDropdownMenu, DroplistItem } from '@/assets/components';
 import { PlusIcon } from '@radix-ui/react-icons';
 
 interface CutsceneGroupPanelProps {

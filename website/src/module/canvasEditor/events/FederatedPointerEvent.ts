@@ -1,6 +1,5 @@
 import { FederatedMouseEvent } from './FederatedMouseEvent';
 
-// @ts-ignore
 export class FederatedPointerEvent extends FederatedMouseEvent {
   /**
    * The unique identifier of the pointer.
@@ -75,15 +74,4 @@ export class FederatedPointerEvent extends FederatedMouseEvent {
    * @see https://w3c.github.io/pointerevents/#pointerevent-interface
    */
   twist = 0;
-
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/getCoalescedEvents
-   */
-  getCoalescedEvents(): PointerEvent[] {
-    if (this.type === 'pointermove' || this.type === 'mousemove' || this.type === 'touchmove') {
-      // @ts-ignore
-      return [this];
-    }
-    return [];
-  }
 }

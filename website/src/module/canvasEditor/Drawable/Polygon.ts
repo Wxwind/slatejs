@@ -17,7 +17,7 @@ export class Polygon extends DrawableObject {
     this.paint = paint;
   }
 
-  drawFrame: (canvas: Canvas) => void = (canvas) => {
+  _render: (canvas: Canvas) => void = (canvas) => {
     const array = [];
     for (const p of this.points) {
       array.push(p.x);
