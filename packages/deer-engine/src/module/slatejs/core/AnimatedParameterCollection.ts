@@ -60,6 +60,15 @@ export class AnimatedParameterCollection implements IAnimatable {
     }
   };
 
-  saveSnapshot: () => void = () => {};
-  restoreSnapshot: () => void = () => {};
+  saveSnapshot: () => void = () => {
+    for (const a of this.animatedParamArray) {
+      a.saveSnapshot();
+    }
+  };
+
+  restoreSnapshot: () => void = () => {
+    for (const a of this.animatedParamArray) {
+      a.restoreSnapshot();
+    }
+  };
 }

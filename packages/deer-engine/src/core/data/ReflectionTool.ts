@@ -16,11 +16,3 @@ export const getRelativeProp = (compType: string, propPath: string) => {
   }
   return metadataProp;
 };
-
-export function setValue<T extends Record<string, unknown>, K extends keyof T>(
-  object: T,
-  propertyPath: K,
-  value: T[K]
-) {
-  object[propertyPath] = value;
-}

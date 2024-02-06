@@ -5,6 +5,7 @@ import {
   Entity,
   InterpMode,
   MetadataProp,
+  TangentMode,
   getRelativeProp,
 } from '@/core';
 import { IAnimatable } from './IAnimatable';
@@ -37,7 +38,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   private parameterModel: IAnimatedParameterModel<T>;
 
   private get target() {
-    return this.keyable.animatedParameterTarget;
+    return this.keyable.animatedParametersTarget;
   }
 
   disabled = false;
@@ -187,7 +188,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   getValue: () => number[] = () => {
     const obj = this.getAnimatedObject();
     if (isNil(obj)) {
-      return [];
+      throw new Error('getValue() failed: AnimatedObject is null.');
     }
 
     return this.parameterModel.getDirect(obj as ActionClip, this.metadataProp);
@@ -202,6 +203,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     this.parameterModel.setDirect(obj, this.metadataProp, numbers);
   };
 
+  // TODO: support weight from IDirectable.blenin / IDirectable.blendout
   evaluate: (curTime: number, prevTime: number) => void = (curTime, prevTime) => {
     if (this.disabled || isNil(this.target)) {
       return;
@@ -220,6 +222,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     this.setValue(evals);
   };
 
+  // TODO
   saveSnapshot: () => void = () => {};
   restoreSnapshot: () => void = () => {};
 }
@@ -234,6 +237,17 @@ function addKeyInCurve(curve: AnimationCurve, time: number, value: number, mode:
       return false;
     }
   }
-  // TODO
+
   const index = curve.addKey(time, value);
+  const newKey = curve.getKey(index);
+  newKey.interpMode = mode;
+  // try set tangentMode from neighbors
+  const nextIndex = index + 1;
+  const previousIndex = index - 1;
+  if (nextIndex < curve.length) {
+    newKey.tangentMode = curve.getKey(nextIndex).tangentMode;
+  } else if (previousIndex >= 0) {
+    newKey.tangentMode = curve.getKey(previousIndex).tangentMode;
+  }
+  return true;
 }

@@ -3,20 +3,20 @@ import { clamp, isNil } from '@/util';
 import { CutsceneGroup } from './CutsceneGroup';
 import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
 import { ActorGroup } from './groups';
-import { CutsceneData, CutsceneGroupData, CutsceneTrackData, ActionClipData, CutsceneGroupType } from './type';
+import {
+  CutsceneData,
+  CutsceneGroupData,
+  CutsceneTrackData,
+  ActionClipData,
+  CutsceneGroupType,
+  PlayOptions,
+  PlayDirection,
+  PlayStopMode,
+  PlayWrapMode,
+} from './type';
 import { DirectorGroup } from './groups/DirectorGroup';
 import { deerEngine } from '@/core';
 import { Signal } from '@/packages/signal';
-
-/**
- * PlayState in editor mode has no state called 'paused' because
- * 'paused' is the same as 'stopped'
- */
-export enum PlayState {
-  Stop = 'Stop',
-  PlayForward = 'PlayForward',
-  PlayBackward = 'PlayBackward',
-}
 
 /**
  * Play timeline in edit mode.
@@ -25,13 +25,20 @@ export class Cutscene {
   private _currentTime = 0;
   private _previousTime = 0;
 
+  // used when playing, shouldn't be serialized.
+  private _playTimeMin = 0;
+  private _playTimeMax = 20;
+  private _playDirection: PlayDirection = 'forwards';
+  private _playWrapMode: PlayWrapMode = 'once';
+  /** callback when cutscene stopped, whether playing to end or interrupt by others. Will be cleared once raised
+   */
+  private _playOnFinished: (() => void) | undefined;
+
+  // settings
   private _playRate = 1;
-
-  private _playTimeMin = 0; // used when playing, shouldn't be serialized.
-  private _playTimeMax = 20; // used when playing, shouldn't be serialized.
-
-  // FIXME
   private _length = 15; // total length, means endtime in runtime & editor
+  private _stopMode: PlayStopMode = 'skip';
+  private _wrapMode: PlayWrapMode = 'once';
 
   public get currentTime(): number {
     return this._currentTime;
@@ -42,21 +49,13 @@ export class Cutscene {
     this.signals.timeUpdated.emit();
   }
 
-  public get previousTime(): number {
-    return this._previousTime;
-  }
-
-  public set previousTime(v: number) {
-    this._previousTime = v;
-  }
-
   public get playRate(): number {
     return this._playRate;
   }
 
   public set playRate(v: number) {
     this._playRate = v;
-    this.signals.cutsceneUpdated.emit();
+    this.signals.settingsUpdated.emit();
   }
 
   public get playTimeMin(): number {
@@ -65,7 +64,7 @@ export class Cutscene {
 
   public set playTimeMin(v: number) {
     this._playTimeMin = clamp(v, 0, this.playTimeMax);
-    this.signals.cutsceneUpdated.emit();
+    this.signals.settingsUpdated.emit();
   }
 
   public get playTimeMax(): number {
@@ -74,7 +73,7 @@ export class Cutscene {
 
   public set playTimeMax(v: number) {
     this._playTimeMax = clamp(v, this.playTimeMin, this.length);
-    this.signals.cutsceneUpdated.emit();
+    this.signals.settingsUpdated.emit();
   }
 
   public get playTimeLength() {
@@ -90,30 +89,209 @@ export class Cutscene {
     return this._length;
   }
 
-  private _groups: CutsceneGroup[] = [];
+  public set stopMode(v: PlayStopMode) {
+    this._stopMode = v;
+    this.signals.settingsUpdated.emit();
+  }
 
-  private _timePointers: IDirectableTimePointer[] = [];
-  private _updateTimePointers: UpdateTimePointer[] = [];
+  public get stopMode(): PlayStopMode {
+    return this._stopMode;
+  }
+
+  public set wrapMode(v: PlayWrapMode) {
+    this._wrapMode = v;
+    this.signals.settingsUpdated.emit();
+  }
+
+  public get wrapMode(): PlayWrapMode {
+    return this._wrapMode;
+  }
+
+  private _groups: CutsceneGroup[] = [];
 
   // Expose to ResoucesStore
   public get groups(): CutsceneGroup[] {
     return this._groups;
   }
 
+  private _timePointers: IDirectableTimePointer[] = [];
+  private _updateTimePointers: UpdateTimePointer[] = [];
+
+  private _isActive = false;
+  private _isPaused = false;
+
   readonly signals = {
     groupCountUpdated: new Signal(),
     timeUpdated: new Signal(),
     lengthChanged: new Signal(),
-    cutsceneUpdated: new Signal(),
+    settingsUpdated: new Signal(),
   };
 
-  play = (startTime = 0, endTime = this.length) => {};
+  /** must call this if want to play cutscene by itself */
+  update = (dt: number) => {
+    if (this._isActive) {
+      if (this._isPaused) {
+        this.sample();
+        return;
+      }
 
-  playReverse = () => {};
+      this._update(dt);
+    }
+  };
 
-  pause = () => {};
+  private _update = (dt: number) => {
+    dt *= this.playRate;
+    this.currentTime += this._playDirection === 'forwards' ? dt : -dt;
 
-  stop = () => {};
+    switch (this._playWrapMode) {
+      case 'once':
+        if (this._playDirection === 'forwards' && this.currentTime >= this.playTimeMax) {
+          this.stop();
+          return;
+        } else if (this._playDirection === 'backwards' && this.currentTime <= this.playTimeMin) {
+          this.stop();
+          return;
+        }
+        break;
+
+      case 'loop':
+        if (this.currentTime >= this.playTimeMax) {
+          this.sample(this.playTimeMin);
+          // TODO: may the following code is better?
+          // this.currentTime = this.playTimeMin + (this.currentTime - this.playTimeMax);
+          this.currentTime = this.playTimeMin + dt;
+        } else {
+          if (this.currentTime <= this.playTimeMin) {
+            this.sample(this.playTimeMax);
+            // this.currentTime = this.playTimeMin - (this.playTimeMin - this.currentTime);
+            this.currentTime = this.playTimeMax - dt;
+          }
+        }
+        break;
+
+      case 'pingPong':
+        if (this.currentTime >= this.playTimeMax) {
+          this.sample(this.playTimeMax);
+          // TODO: may the following code is better?
+          // this.currentTime = this.playTimeMax - (this.currentTime - this.playTimeMax);
+          this.currentTime = this.playTimeMax - dt;
+          this._playDirection = this.playRate >= 0 ? 'backwards' : 'forwards';
+        } else {
+          if (this.currentTime <= this.playTimeMin) {
+            this.sample(this.playTimeMin);
+            // this.currentTime = this.playTimeMin + (this.playTimeMin - this.currentTime);
+            this.currentTime = this.playTimeMin + dt;
+            this._playDirection = this.playRate >= 0 ? 'forwards' : 'backwards';
+          }
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    this.sample();
+  };
+
+  play = ({
+    startTime = 0,
+    endTime = this.length,
+    wrapMode = 'once',
+    playDirection = 'forwards',
+    onFinished,
+  }: PlayOptions) => {
+    if (startTime > endTime && playDirection == 'forwards') {
+      throw new Error('End time must be greater than start time');
+    }
+
+    if (this._isPaused) {
+      console.warn('Playing on paused cutscene will resume to play');
+      this._playDirection = playDirection;
+      this.resume();
+      return;
+    }
+
+    if (this._isActive) {
+      console.warn('Cutscene is still running, Play() will be ignored');
+      return;
+    }
+
+    this._playTimeMin = 0; // reset in case playTimeMax failed to be set by setter.
+
+    this.playTimeMax = endTime;
+    this.playTimeMin = startTime;
+    this._playWrapMode = wrapMode;
+    this._playDirection = playDirection;
+    this._playOnFinished = onFinished;
+
+    if (playDirection === 'forwards' && this.currentTime >= this.playTimeMax) {
+      console.log(
+        `error when in play(): currentTime=${this.currentTime} playTimeMax=${this.playTimeMax}. Will reset currentTime to playTimemin='${this.playTimeMin}'s`
+      );
+      this.currentTime = this.playTimeMin;
+    } else if (playDirection === 'backwards' && this.currentTime <= this.playTimeMin) {
+      console.log(
+        `error when in play(): currentTime=${this.currentTime} playTimeMin=${this.playTimeMin}. Will reset currentTime to playTimeMax='${this.playTimeMax}'s`
+      );
+      this.currentTime = this.playTimeMax;
+    }
+
+    this._isActive = true;
+    this._isPaused = false;
+
+    this.sample();
+  };
+
+  playReverse = (startTime: number, endTime: number) => {
+    this.play({ startTime, endTime, playDirection: 'backwards' });
+  };
+
+  pause = () => {
+    this._isPaused = true;
+  };
+
+  resume = () => {
+    this._isPaused = false;
+  };
+
+  stop = (stopmode = this._stopMode) => {
+    if (!this._isActive) {
+      return;
+    }
+
+    this._isActive = false;
+    this._isPaused = false;
+
+    switch (stopmode) {
+      case 'skip':
+        this.sample(this.playTimeMax);
+        break;
+      case 'rewind':
+        this.sample(this.playTimeMin);
+        break;
+      case 'hold':
+        this.sample();
+        break;
+      case 'skipRewindNoUndo':
+        this.sample(this.playTimeMax);
+        this.rewindNoUndo();
+        break;
+      default:
+        break;
+    }
+
+    this._playOnFinished?.();
+    this._playOnFinished = undefined;
+  };
+
+  private rewindNoUndo() {
+    if (this._isActive) {
+      this.stop('hold');
+    }
+    this.currentTime = 0;
+    this._previousTime = this.currentTime; // allot no undop
+    this.sample();
+  }
 
   sample = (time: number = this.currentTime) => {
     this.currentTime = time;
@@ -259,7 +437,6 @@ export class Cutscene {
   };
 
   addGroup = (entityId: string, type: CutsceneGroupType) => {
-    // FIXME: slatejs's deerEngine !== website's deerEngine if use resolve() plugin to resolve external dependencies in deer-engine
     if (isNil(deerEngine.activeScene)) {
       throw new Error("couldn't find activeScene");
     }
@@ -301,13 +478,5 @@ export class Cutscene {
 
     this._groups.splice(index, 1);
     this.signals.groupCountUpdated.emit();
-  };
-
-  findTrack = (groupId: string, trackId: string) => {
-    return this.findGroup(groupId)?.findTrack(trackId);
-  };
-
-  findClip = (groupId: string, trackId: string, clipId: string) => {
-    return this.findGroup(groupId)?.findTrack(trackId)?.findClip(clipId);
   };
 }

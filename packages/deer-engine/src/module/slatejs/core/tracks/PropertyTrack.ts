@@ -5,9 +5,12 @@ import { CutsceneTrack } from '../CutsceneTrack';
 import { IDirectable } from '../IDirectable';
 import { CutsceneTrackData } from '../type';
 import { constructClipFrom } from '../clips';
+import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
 
 export class PropertyTrack extends CutsceneTrack<'Property'> {
   protected _type = 'Property' as const;
+
+  private _animationData = AnimatedParameterCollection.construct();
 
   get name(): string {
     return 'Property';
@@ -16,6 +19,18 @@ export class PropertyTrack extends CutsceneTrack<'Property'> {
   constructor(parent: IDirectable, id: string, name: string, clips: ActionClip[]) {
     super(parent, id, name, clips);
   }
+
+  onEnter: () => void = () => {
+    this._animationData.saveSnapshot();
+  };
+
+  onUpdate: (curTime: number, prevTime: number) => void = (curTime, prevTime) => {
+    this._animationData.evaluate(curTime, prevTime);
+  };
+
+  onReverseEnter: () => void = () => {
+    this._animationData.restoreSnapshot();
+  };
 
   static constructFromJson(parent: CutsceneGroup, data: CutsceneTrackData) {
     const track = new PropertyTrack(parent, data.id, data.name, []);

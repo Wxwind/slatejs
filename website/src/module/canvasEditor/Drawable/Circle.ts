@@ -13,7 +13,10 @@ export class Circle extends DrawableObject {
   center: Vector2;
   radius: number;
 
-  constructor(protected canvaskit: CanvasKit, options: CircleOptions) {
+  constructor(
+    protected canvaskit: CanvasKit,
+    options: CircleOptions
+  ) {
     super();
     const paint = new canvaskit.Paint();
     const color = canvaskit.Color(255, 0, 0, 1);

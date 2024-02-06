@@ -68,7 +68,7 @@ export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackT
     return true;
   };
   onEnter: () => void = () => {};
-  onUpdate: (time: number) => void = () => {};
+  onUpdate: (curTime: number, prevtime: number) => void = () => {};
   onExit: () => void = () => {};
   onReverseEnter: () => void = () => {};
   onReverseExit: () => void = () => {};

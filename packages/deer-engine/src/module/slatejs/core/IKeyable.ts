@@ -5,5 +5,5 @@ import { ActionClip } from './ActionClip';
 
 export interface IKeyable extends IDirectable {
   get animatedData(): AnimatedParameterCollection | undefined;
-  get animatedParameterTarget(): Entity | Component | ActionClip | undefined;
+  get animatedParametersTarget(): Entity | Component | ActionClip | undefined;
 }

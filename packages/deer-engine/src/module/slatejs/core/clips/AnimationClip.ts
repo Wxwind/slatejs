@@ -14,7 +14,7 @@ export class AnimationClip extends ActionClip {
     return this._animatedParams;
   }
 
-  get animatedParameterTarget(): ActionClip | Component | undefined {
+  get animatedParametersTarget(): ActionClip | Component | undefined {
     return this;
   }
 

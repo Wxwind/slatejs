@@ -16,7 +16,7 @@ export class TransformClip extends ActionClip {
 
   private _actorComponent: TransformComponent | undefined;
 
-  get animatedParameterTarget(): Entity | undefined {
+  get animatedParametersTarget(): Entity | undefined {
     // if (!isNil(this._actorComponent) && this._actorComponent.entity === this.actor) {
     //   return this._actorComponent;
     // }

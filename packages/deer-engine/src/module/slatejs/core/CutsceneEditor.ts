@@ -1,7 +1,8 @@
-import { PlayState, Cutscene } from './Cutscene';
+import { Cutscene } from './Cutscene';
 import { Signal } from '@/packages/signal';
 import { IDirectable } from './IDirectable';
 import { ActionClip } from './ActionClip';
+import { PlayState } from './type';
 
 export class CutsceneEditor {
   private _lastStartPlayTime = 0;
