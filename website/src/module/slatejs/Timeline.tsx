@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CutsceneEditor } from 'deer-engine';
 import { isNil } from '@/util';
 import TimeMarkIcon from './TimeMarkIcon';
@@ -14,16 +14,29 @@ export const Timeline: FC<TimelineProps> = (props) => {
   const { cutsceneEditor } = props;
   const signals = cutsceneEditor.cutscene.signals;
 
-  const timelineRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const timeCanvasRef = useRef<HTMLCanvasElement>(null);
   const { scale, setScale } = useScaleStore();
   const [prevScale, setPrevScale] = useState(32);
-  const [timeMarkLeft, setTimeMarkLeft] = useState('-8px');
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const [currentTime, setCurrentTime] = useState(0);
+  const [length, setLength] = useState(0);
 
   const refresh = useDumbState();
   useBindSignal(cutsceneEditor.signals.cutSceneEditorSettingsUpdated, refresh);
-  useBindSignal(signals.lengthChanged, refresh);
+  useBindSignal(signals.lengthChanged, (length) => {
+    setLength(length);
+  });
+  useBindSignal(signals.currentTimeUpdated, (currentTime) => {
+    setCurrentTime(currentTime);
+  });
+
+  const timeMarkLeft = useMemo(() => {
+    // 8 = scrollmark.width / 2
+    const offsetLeft = currentTime * scale - scrollLeft - 8;
+    return offsetLeft;
+  }, [currentTime, scale, scrollLeft]);
 
   const timelineTrackWidth = cutsceneEditor.viewTimeMax * scale;
 
@@ -67,7 +80,7 @@ export const Timeline: FC<TimelineProps> = (props) => {
     ctx.strokeStyle = '#888';
     ctx.beginPath();
 
-    ctx.translate(-scroller.scrollLeft, 0);
+    ctx.translate(-scrollLeft, 0);
 
     const viewTimeMax = cutsceneEditor.viewTimeMax;
     const width = viewTimeMax * scale;
@@ -107,60 +120,52 @@ export const Timeline: FC<TimelineProps> = (props) => {
 
       ctx.fillText(text, i * scale, 13);
     }
-  }, [cutsceneEditor.viewTimeMax, scale]);
+  }, [cutsceneEditor.viewTimeMax, scale, scrollLeft]);
 
-  /* FIXME: may not update cus currentTime is also an external variable */
-  const updateTimeMark = useCallback(() => {
+  const handleScrollerScroll = useCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scroller = scrollerRef.current;
     if (isNil(scroller)) return;
-    // 8 = scrollmark.width / 2
-    const offsetLeft = cutsceneEditor.cutscene.currentTime * scale - scroller.scrollLeft - 8;
+    setScrollLeft(scroller.scrollLeft);
+  }, []);
 
-    const timeMarkLeft = offsetLeft + 'px';
-    setTimeMarkLeft(timeMarkLeft);
-  }, [cutsceneEditor.cutscene.currentTime, scale]);
-
-  const handleScrollerScroll = useCallback(
-    (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-      updateMarks();
-      updateTimeMark();
-    },
-    [updateMarks, updateTimeMark]
-  );
-
-  const handleTimelineScaledSignal = useCallback(
-    (value: number) => {
-      setScale(value);
+  const handleTimelineScaled = useCallback(
+    (scale: number) => {
+      setScale(scale);
 
       const scroller = scrollerRef.current;
       if (isNil(scroller)) return;
 
-      scroller.scrollLeft = (scroller.scrollLeft * value) / prevScale;
-      updateMarks();
-      updateTimeMark();
-      setPrevScale(value);
+      const scrollerLeft = (scroller.scrollLeft * scale) / prevScale;
+      scroller.scrollLeft = scrollerLeft;
+      setScrollLeft(scrollerLeft);
+      setPrevScale(scale);
     },
-    [prevScale, setScale, updateMarks, updateTimeMark]
+    [prevScale, setScale]
   );
 
-  const handleTimelineScaled = useCallback(
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  const handleTimelineWheel = useCallback(
     (e: WheelEvent) => {
+      e.preventDefault();
       if (e.altKey) {
-        e.preventDefault();
         const newScale = Math.max(2, scale + e.deltaY / 10);
-        handleTimelineScaledSignal(newScale);
+        handleTimelineScaled(newScale);
       }
     },
-    [handleTimelineScaledSignal, scale]
+    [handleTimelineScaled, scale]
   );
 
   useEffect(() => {
-    signals.timeUpdated.on(updateTimeMark);
+    const timelineDOM = timelineRef.current;
+    if (isNil(timelineDOM)) return;
+    // use addEventListener to use preventDefault()
+    timelineDOM.addEventListener('wheel', handleTimelineWheel);
 
     return () => {
-      signals.timeUpdated.off(updateTimeMark);
+      timelineDOM.removeEventListener('wheel', handleTimelineWheel);
     };
-  }, [signals.timeUpdated, updateTimeMark]);
+  }, [handleTimelineWheel]);
 
   useEffect(() => {
     updateMarks();
@@ -171,14 +176,8 @@ export const Timeline: FC<TimelineProps> = (props) => {
   }, [updateMarks]);
 
   useEffect(() => {
-    const timelineDOM = timelineRef.current;
-    if (isNil(timelineDOM)) return;
-    timelineDOM.addEventListener('wheel', handleTimelineScaled);
-
-    return () => {
-      timelineDOM.removeEventListener('wheel', handleTimelineScaled);
-    };
-  }, [handleTimelineScaled]);
+    updateMarks();
+  }, [updateMarks]);
 
   return (
     <div className="timeline" ref={timelineRef}>
@@ -190,7 +189,7 @@ export const Timeline: FC<TimelineProps> = (props) => {
           })}
         </div>
       </div>
-      <div className="timeline-timeMark" style={{ left: timeMarkLeft }}>
+      <div className="timeline-timeMark" style={{ left: timeMarkLeft + 'px' }}>
         <TimeMarkIcon />
       </div>
     </div>

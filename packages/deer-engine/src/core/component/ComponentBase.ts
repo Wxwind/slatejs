@@ -7,7 +7,7 @@ import { Signal } from '@/packages/signal';
 export abstract class ComponentBase<T extends ComponentType = ComponentType> {
   public readonly id: string;
 
-  public abstract readonly type: T;
+  public abstract readonly type: T; // equals class' name
 
   protected _entity: Entity;
 

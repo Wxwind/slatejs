@@ -1,4 +1,5 @@
-import { isNil } from '@/util';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { isNil, isPlainObject } from '@/util';
 import { globalTypeMap } from './GlobalTypeMap';
 import { getClassStath } from './decorators/util';
 
@@ -15,4 +16,35 @@ export const getRelativeProp = (compType: string, propPath: string) => {
     );
   }
   return metadataProp;
+};
+
+function toJson(obj: any): string {
+  if (isPlainObject(obj)) {
+    return JSON.stringify(obj);
+  }
+
+  if ('toJsonObject' in obj) {
+    const jsonObj = obj.toJsonObject();
+    return JSON.stringify(jsonObj);
+  }
+
+  console.error("toJsonObject() function is not existed in obj %o, are you missing '@egclass'?", obj);
+
+  return '<missing metadata>';
+}
+
+function fromJson<T extends object>(json: string, classType: new () => T) {
+  const jsonObj = JSON.parse(json);
+  const obj = new classType() as any;
+  if ('fromJsonObject' in obj) {
+    obj.fromJsonObject(jsonObj);
+  } else {
+    console.error("fromJsonObject() function is not existed in obj %o, are you missing '@egclass'?", obj);
+  }
+  return obj as T;
+}
+
+export const JsonModule = {
+  toJson,
+  fromJson,
 };

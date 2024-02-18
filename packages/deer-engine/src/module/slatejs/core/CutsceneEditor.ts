@@ -8,7 +8,7 @@ export class CutsceneEditor {
   private _lastStartPlayTime = 0;
 
   readonly signals = {
-    playStateUpdated: new Signal(),
+    playStateUpdated: new Signal<[PlayState]>(),
     cutSceneEditorSettingsUpdated: new Signal(),
     selectedClipUpdated: new Signal(),
   };
@@ -19,6 +19,7 @@ export class CutsceneEditor {
 
   // max seconds could be displayed in timeline
   // will be replaced by viewTimeMin and Max if drawn by canvas in future
+  // but for now it is almost useless.
   private _viewTimeMax = 500;
 
   private _selectedClip: ActionClip | undefined;
@@ -40,7 +41,7 @@ export class CutsceneEditor {
 
   public set playState(v: PlayState) {
     this._playState = v;
-    this.signals.playStateUpdated.emit();
+    this.signals.playStateUpdated.emit(v);
   }
 
   public get viewTimeMax(): number {

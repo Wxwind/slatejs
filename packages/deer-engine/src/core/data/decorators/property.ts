@@ -1,14 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isNil } from 'lodash';
 import { ClassFieldDecorator, IPropertyOptions } from '../type';
-import {
-  CACHE_KEY,
-  CLASS_NAME_KEY,
-  DecoratorMetadataObjectForRF,
-  MetadataProp,
-  getClassName,
-  getClassStathFromMetadata,
-} from './util';
+import { DecoratorMetadataObjectForRF, MetadataProp, getClassName, getClassStathFromMetadata } from './util';
 import merge from 'lodash/merge';
 
 // @property({})
@@ -24,6 +16,7 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
     const newStash = {
       type,
       typeName,
+      allowEmpty: true,
       set: context.access.set,
       get: context.access.get,
       uiOptions: {
@@ -39,11 +32,11 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
 }
 
 // TODO: support @property
-export const property3 = <This, Value>(target: This, context: ClassFieldDecoratorContext<This, Value>) => {
-  return (initialValue: Value) => {
-    return initialValue;
-  };
-};
+// export const property = <This, Value>(target: This, context: ClassFieldDecoratorContext<This, Value>) => {
+//   return (initialValue: Value) => {
+//     return initialValue;
+//   };
+// };
 
 // used for decorate get, set and autoAccessor
 export function accessor<This, Value>(
@@ -75,6 +68,7 @@ export function accessor<This, Value>(
         newStash = {
           type,
           typeName,
+          allowEmpty: true,
           get: context.access.get,
           set: context.access.set,
           uiOptions: {
@@ -86,6 +80,7 @@ export function accessor<This, Value>(
         newStash = {
           type,
           typeName,
+          allowEmpty: true,
           get: undefined,
           set: context.access.set,
           uiOptions: {
@@ -97,6 +92,7 @@ export function accessor<This, Value>(
         newStash = {
           type,
           typeName,
+          allowEmpty: true,
           get: context.access.get,
           set: undefined,
           uiOptions: {

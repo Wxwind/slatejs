@@ -3,6 +3,8 @@ import { TransformComponent } from './TransformComponent';
 
 export type ComponentType = 'MeshComponent' | 'TransformComponent';
 
+export class EGStructLike {}
+
 export type IVector2 = {
   x: number;
   y: number;

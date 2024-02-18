@@ -46,7 +46,7 @@ export class Cutscene {
 
   public set currentTime(v: number) {
     this._currentTime = v;
-    this.signals.timeUpdated.emit();
+    this.signals.currentTimeUpdated.emit(v);
   }
 
   public get playRate(): number {
@@ -82,7 +82,7 @@ export class Cutscene {
 
   public set length(v: number) {
     this._length = v;
-    this.signals.lengthChanged.emit();
+    this.signals.lengthChanged.emit(v);
   }
 
   public get length(): number {
@@ -122,8 +122,8 @@ export class Cutscene {
 
   readonly signals = {
     groupCountUpdated: new Signal(),
-    timeUpdated: new Signal(),
-    lengthChanged: new Signal(),
+    currentTimeUpdated: new Signal<[number]>(),
+    lengthChanged: new Signal<[number]>(),
     settingsUpdated: new Signal(),
   };
 

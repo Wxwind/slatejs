@@ -14,8 +14,9 @@ export const CutsceneEditorPanel: FC<CutsceneEditorPanelProps> = (props) => {
 
   const refresh = useDumbState();
   useBindSignal(cutsceneEditor.cutscene.signals.groupCountUpdated, refresh);
-  useBindSignal(cutsceneEditor.signals.cutSceneEditorSettingsUpdated, refresh);
-  useBindSignal(cutsceneEditor.signals.playStateUpdated, refresh);
+  useBindSignal(cutsceneEditor.signals.playStateUpdated, (playState) => {
+    refresh();
+  });
 
   const handleDropEntity = (entityId: string) => {
     cutsceneEditor.cutscene.addGroup(entityId, 'Actor');

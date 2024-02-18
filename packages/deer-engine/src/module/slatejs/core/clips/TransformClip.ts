@@ -3,7 +3,7 @@ import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } f
 import { ActionClip } from '../ActionClip';
 import { CutsceneTrack } from '../CutsceneTrack';
 import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
-import { Component, Entity, TransformComponent } from '@/core';
+import { Entity, TransformComponent } from '@/core';
 
 export class TransformClip extends ActionClip {
   protected _type = 'Transform' as const;
@@ -20,7 +20,7 @@ export class TransformClip extends ActionClip {
     // if (!isNil(this._actorComponent) && this._actorComponent.entity === this.actor) {
     //   return this._actorComponent;
     // }
-    // const comp = this.actor?.findComponentByType<TransformComponent>('Transform');
+    // const comp = this.actor?.findComponentByType<TransformComponent>('TransformComponent');
     // if (isNil(comp)) {
     //   throw new Error('TransformClip require TransformComponent');
     // }

@@ -17,6 +17,7 @@ export type MetadataProp = Partial<{
   typeName: string;
   set: (object: any, value: any) => void;
   get: (object: any) => unknown;
+  allowEmpty: boolean; // allow null or undefined when parse from json
   uiOptions: Partial<{
     group: string | GroupOptions;
     displayName: string;
@@ -25,6 +26,7 @@ export type MetadataProp = Partial<{
     max: number;
   }>;
 }>;
+
 export type AnyCtor = abstract new (...args: any[]) => unknown;
 
 export function getMetadataFromCtor(ctor: AnyCtor) {
@@ -37,6 +39,15 @@ export function getClassStath(ctor: abstract new (...args: any[]) => any): Metad
     ctor[Symbol.metadata] = {};
   }
   return getClassStathFromMetadata(ctor[Symbol.metadata]!);
+}
+
+export function hasClassStash(ctor: abstract new (...args: any[]) => any): boolean {
+  const metadata = ctor[Symbol.metadata];
+  let ok = !isNil(metadata);
+  if (ok) {
+    ok = !isNil((metadata as DecoratorMetadataObjectForRF).CACHE_KEY);
+  }
+  return ok;
 }
 
 export function getClassStathFromMetadata(metadata: DecoratorMetadataObject): MetadataClass {

@@ -17,7 +17,7 @@ export abstract class ActionClip implements IDirectable, IKeyable {
   protected _id: string;
   protected _name: string;
   protected abstract readonly _type: ClipType;
-  nfa = '1';
+
   get type(): ClipType {
     return this._type;
   }
