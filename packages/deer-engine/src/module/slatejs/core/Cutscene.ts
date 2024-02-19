@@ -363,8 +363,8 @@ export class Cutscene {
         p.triggerForward(curTime, prevTime);
       }
     } else if (curTime < prevTime) {
-      for (const p of this._timePointers) {
-        p.triggerBackward(curTime, prevTime);
+      for (let i = this._timePointers.length - 1; i >= 0; i--) {
+        this._timePointers[i].triggerBackward(curTime, prevTime);
       }
     }
 
