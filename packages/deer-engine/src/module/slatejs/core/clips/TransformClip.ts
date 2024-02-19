@@ -1,4 +1,4 @@
-import { genUUID } from '@/util';
+import { genUUID, isNil } from '@/util';
 import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } from '../type';
 import { ActionClip } from '../ActionClip';
 import { CutsceneTrack } from '../CutsceneTrack';
@@ -60,8 +60,16 @@ export class TransformClip extends ActionClip {
   }
 
   updateData: (data: UpdateActionClipDto) => void = (data) => {
-    data.startTime && (this._startTime = data.startTime);
-    data.endTime && (this._endTime = data.endTime);
+    if (!isNil(data.startTime)) {
+      if (data.startTime < 0) this._startTime = 0;
+      else this._startTime = data.startTime;
+    }
+
+    if (!isNil(data.endTime)) {
+      if (data.endTime < this._startTime) this._endTime = this._startTime + 0.1;
+      else this._endTime = data.endTime;
+    }
+
     data.name && (this._name = data.name);
     this.signals.clipUpdated.emit();
   };

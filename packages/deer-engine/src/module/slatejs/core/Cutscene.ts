@@ -17,6 +17,7 @@ import {
 import { DirectorGroup } from './groups/DirectorGroup';
 import { deerEngine } from '@/core';
 import { Signal } from '@/packages/signal';
+import { CutsceneEditor } from './CutsceneEditor';
 
 /**
  * Play timeline in edit mode.
@@ -314,6 +315,15 @@ export class Cutscene {
     this._previousTime = this._currentTime;
   };
 
+  resample = () => {
+    if (CutsceneEditor.isInPreviewMode) return;
+
+    if (this.currentTime > 0 && this.currentTime < this.length && this._timePointers.length > 0) {
+      this.sampleTimepointers(0, this.currentTime);
+      this.sampleTimepointers(this.currentTime, 0);
+    }
+  };
+
   // Initialize update time pointers bottom to top.
   // Initialize start&end time pointers order by the time pointed.
   // Make sure the timepointer event order is
@@ -358,11 +368,14 @@ export class Cutscene {
   };
 
   private sampleTimepointers = (curTime: number, prevTime: number) => {
-    if (curTime > prevTime) {
+    // make sure pointer will be trigged when dragging clip in editor.
+    if (!CutsceneEditor.isInPreviewMode || curTime > prevTime) {
       for (const p of this._timePointers) {
         p.triggerForward(curTime, prevTime);
       }
-    } else if (curTime < prevTime) {
+    }
+
+    if (!CutsceneEditor.isInPreviewMode || curTime < prevTime) {
       for (let i = this._timePointers.length - 1; i >= 0; i--) {
         this._timePointers[i].triggerBackward(curTime, prevTime);
       }

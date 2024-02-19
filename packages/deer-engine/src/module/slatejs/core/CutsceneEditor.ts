@@ -1,11 +1,12 @@
 import { Cutscene } from './Cutscene';
 import { Signal } from '@/packages/signal';
-import { IDirectable } from './IDirectable';
 import { ActionClip } from './ActionClip';
 import { PlayState } from './type';
 
 export class CutsceneEditor {
   private _lastStartPlayTime = 0;
+
+  static isInPreviewMode = false; // is in preview mode?
 
   readonly signals = {
     playStateUpdated: new Signal<[PlayState]>(),

@@ -39,10 +39,12 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
           endTime = object.endTime + offset;
         }
 
-        object.updateData({
-          startTime,
-          endTime,
-        });
+        if (startTime >= 0) {
+          object.updateData({
+            startTime,
+            endTime,
+          });
+        }
       };
 
       const onMouseUp = (e: MouseEvent) => {

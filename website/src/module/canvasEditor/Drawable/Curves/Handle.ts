@@ -3,7 +3,11 @@ import { Circle, CircleOptions } from '../Circle';
 import { Keyframe } from 'deer-engine';
 
 export class Handle extends Circle {
-  constructor(protected canvaskit: CanvasKit, options: CircleOptions, private keyframe: Keyframe) {
+  constructor(
+    protected canvaskit: CanvasKit,
+    options: CircleOptions,
+    private keyframe: Keyframe
+  ) {
     super(canvaskit, options);
 
     this.addEventListener('pointerdown', this.onDragStart);
