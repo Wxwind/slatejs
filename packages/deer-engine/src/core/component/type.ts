@@ -1,3 +1,4 @@
+import { egclass, property } from '../data';
 import { MeshComponent } from './MeshComponent';
 import { TransformComponent } from './TransformComponent';
 
@@ -5,32 +6,44 @@ export type ComponentType = 'MeshComponent' | 'TransformComponent';
 
 export class EGStructLike {}
 
-export type IVector2 = {
-  x: number;
-  y: number;
-};
-
-export class IVector3 {
+@egclass()
+export class FVector2 {
+  @property({ type: Number })
   x: number = 0;
+  @property({ type: Number })
   y: number = 0;
+}
+
+@egclass()
+export class FVector3 {
+  @property({ type: Number })
+  x: number = 0;
+  @property({ type: Number })
+  y: number = 0;
+  @property({ type: Number })
   z: number = 0;
 }
 
-export type IVector4 = {
-  x: number;
-  y: number;
-  z: number;
-  w: number;
-};
+@egclass()
+export class FVector4 {
+  @property({ type: Number })
+  x: number = 0;
+  @property({ type: Number })
+  y: number = 0;
+  @property({ type: Number })
+  z: number = 0;
+  @property({ type: Number })
+  w: number = 0;
+}
 
 export type MeshCompJson = {
   count: number;
 };
 
 export type TransformCompJson = {
-  position: IVector3;
-  rotation: IVector3;
-  scale: IVector3;
+  position: FVector3;
+  rotation: FVector3;
+  scale: FVector3;
 };
 
 export type ComponentTypeToJsonObjMap = {

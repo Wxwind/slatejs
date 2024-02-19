@@ -3,9 +3,11 @@ import {
   AnimationCurveJson,
   Component,
   Entity,
+  FVector3,
   InterpMode,
   MetadataProp,
-  TangentMode,
+  TransformComponent,
+  getClassName,
   getRelativeProp,
 } from '@/core';
 import { IAnimatable } from './IAnimatable';
@@ -43,7 +45,13 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
 
   disabled = false;
 
+  get enabled() {
+    return !this.disabled;
+  }
+
   metadataProp: MetadataProp;
+
+  private snapshot: number[] | undefined;
 
   private constructor(
     keyable: IKeyable,
@@ -76,6 +84,10 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     }
   }
 
+  get isValid(): boolean {
+    return !!this.parameterName && !!this.metadataProp;
+  }
+
   static constructFromJson = (clip: ActionClip, data: AnimatedParameterJson) => {
     const curves: AnimationCurve[] = data.curves.map((curve) => AnimationCurve.from(curve.keys));
     return new AnimatedParameter(clip, data.compType, data.propPath, data.propType, curves);
@@ -88,6 +100,29 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
       throw new Error(`cannot not read name of '${paramPath} in '${compType}''`);
     }
     return new AnimatedParameter(keyable, compType, paramType, paramPath, undefined);
+  };
+
+  setEnabled = (value: boolean, time: number) => {
+    if (this.enabled === value) {
+      this.disabled = !value;
+      if (time > 0 && this.snapshot) {
+        if (value) this.evaluate(time, 0);
+        else this.setCurrentValue(this.snapshot);
+      }
+    }
+  };
+
+  private setCurrentValue = (values: number[]) => {
+    if (!this.isValid) return;
+
+    const obj = this.getAnimatedObject();
+    if (!obj) return;
+
+    if (obj instanceof TransformComponent && this.parameterType === getClassName(FVector3)) {
+      // TODO: suport local pos,rotate,scale.
+    }
+
+    this.parameterModel.setDirect(obj, this.metadataProp, values);
   };
 
   hasAnyKey: () => boolean = () => {
@@ -186,6 +221,8 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   };
 
   getValue: () => number[] = () => {
+    if (!this.isValid) throw new Error('getValue() failed: Parameter is not valid.');
+
     const obj = this.getAnimatedObject();
     if (isNil(obj)) {
       throw new Error('getValue() failed: AnimatedObject is null.');
@@ -210,6 +247,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     }
 
     const evals: number[] = [];
+
     for (const curve of this.curves) {
       if (!this.hasAnyKey()) {
         return;
@@ -222,9 +260,19 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     this.setValue(evals);
   };
 
-  // TODO
-  saveSnapshot: () => void = () => {};
-  restoreSnapshot: () => void = () => {};
+  saveSnapshot: () => void = () => {
+    if (!this.isValid) return;
+
+    this.snapshot = this.getValue();
+  };
+
+  restoreSnapshot: () => void = () => {
+    if (!this.isValid || this.disabled) return;
+
+    if (this.snapshot !== undefined) this.setCurrentValue(this.snapshot);
+
+    this.snapshot = undefined;
+  };
 }
 
 function addKeyInCurve(curve: AnimationCurve, time: number, value: number, mode: InterpMode) {

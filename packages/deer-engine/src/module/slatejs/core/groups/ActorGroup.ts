@@ -26,5 +26,5 @@ export class ActorGroup extends CutsceneGroup {
     return group;
   }
 
-  onEnter: () => void = () => {};
+  enter: () => void = () => {};
 }

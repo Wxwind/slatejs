@@ -15,25 +15,25 @@ export interface IDirectable {
   get name(): string;
   get actor(): Entity | undefined;
 
-  onInitialize: () => boolean;
+  initialize: () => boolean;
 
-  onEnter: () => void;
+  enter: () => void;
 
-  onUpdate: (curTime: number, prevtime: number) => void;
+  update: (curTime: number, prevtime: number) => void;
 
-  onExit: () => void;
+  exit: () => void;
 
   /**
    * timePointer to trigger onEnter is the same to trigger onReverseEnter
    * (different play direction)
    */
-  onReverseEnter: () => void;
+  reverseEnter: () => void;
 
   /**
    * timePointer to trigger onExit is the same to trigger onReverseExit
    * (different play direction)
    */
-  onReverseExit: () => void;
+  reverseExit: () => void;
 }
 
 export const IDirectableToLocalTime = (directable: IDirectable, time: number) => {

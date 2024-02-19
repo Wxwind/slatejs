@@ -41,4 +41,13 @@ export class AnimationClip extends ActionClip {
     data.name && (this._name = data.name);
     this.signals.clipUpdated.emit();
   };
+
+  protected onInitialize(): boolean {
+    return true;
+  }
+  protected onEnter(): void {}
+  protected onUpdate(): void {}
+  protected onExit(): void {}
+  protected onReverseEnter(): void {}
+  protected onReverseExit(): void {}
 }

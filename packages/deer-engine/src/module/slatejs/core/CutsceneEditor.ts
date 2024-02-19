@@ -98,8 +98,9 @@ export class CutsceneEditor {
     this.playState = PlayState.Stop;
   };
 
-  stop = () => {
-    const t = this.playState !== PlayState.Stop ? this._lastStartPlayTime : 0;
+  stop = (isForceRewind = false) => {
+    console.log('stop');
+    const t = this.playState !== PlayState.Stop && !isForceRewind ? this._lastStartPlayTime : 0;
     this.cutscene.sample(t);
     this.playState = PlayState.Stop;
   };

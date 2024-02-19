@@ -13,6 +13,10 @@ export class AnimatedParameterCollection implements IAnimatable {
     this.animatedParamArray = animatedParamArray;
   }
 
+  get isValid(): boolean {
+    return !!this.animatedParamArray && this.animatedParamArray.length > 0;
+  }
+
   static constructFromJson = (clip: ActionClip, data: AnimatedParameterCollectionJson) => {
     const array = data.animatedParamArray.map((a) => AnimatedParameter.constructFromJson(clip, a));
     return new AnimatedParameterCollection(array);

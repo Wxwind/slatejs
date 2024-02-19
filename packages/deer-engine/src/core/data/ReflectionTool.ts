@@ -35,13 +35,13 @@ function toJson(obj: any): string {
 
 function fromJson<T extends object>(json: string, classType: new () => T) {
   const jsonObj = JSON.parse(json);
-  const obj = new classType() as any;
-  if ('fromJsonObject' in obj) {
+  const obj = new classType();
+  if ('fromJsonObject' in obj && typeof obj.fromJsonObject === 'function') {
     obj.fromJsonObject(jsonObj);
   } else {
     console.error("fromJsonObject() function is not existed in obj %o, are you missing '@egclass'?", obj);
   }
-  return obj as T;
+  return obj;
 }
 
 export const JsonModule = {

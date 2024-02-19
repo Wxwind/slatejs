@@ -3,12 +3,16 @@
 import { isNil } from '@/util';
 import { globalTypeMap } from '../GlobalTypeMap';
 import { ClassClassDecorator } from '../type';
-import { getClassName, getClassStath, hasClassStash } from './util';
+import { DecoratorMetadataObjectForRF, getClassName, getClassStath, hasClassStash } from './util';
 import { EGStructLike } from '@/core/component';
 
 export function egclass<Class extends new (...args: any[]) => any>(name?: string): ClassClassDecorator<Class> {
   return (target: Class, context: ClassDecoratorContext<Class>) => {
     globalTypeMap.set(name || getClassName(target), target);
+
+    const metadata = context.metadata as DecoratorMetadataObjectForRF;
+    const typeName = name || getClassName(target);
+    metadata.CLASS_NAME_KEY = typeName;
 
     target.prototype.toJsonObject = function () {
       console.log('inject tojson()');

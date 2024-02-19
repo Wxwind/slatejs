@@ -134,6 +134,13 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
           </div>
         </div>
       </div>
+      <button
+        onClick={() => {
+          console.log(JSON.stringify(data));
+        }}
+      >
+        aaa
+      </button>
     </CollapseBox>
   );
 };

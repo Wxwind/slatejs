@@ -63,14 +63,14 @@ export abstract class CutsceneGroup implements IDirectable {
     this._actor = value;
   }
 
-  onInitialize: () => boolean = () => {
+  initialize: () => boolean = () => {
     return true;
   };
-  onEnter: () => void = () => {};
-  onUpdate: (time: number) => void = () => {};
-  onExit: () => void = () => {};
-  onReverseEnter: () => void = () => {};
-  onReverseExit: () => void = () => {};
+  enter: () => void = () => {};
+  update: (time: number) => void = () => {};
+  exit: () => void = () => {};
+  reverseEnter: () => void = () => {};
+  reverseExit: () => void = () => {};
 
   findTrack = (trackId: string) => {
     return this._tracks.find((a) => a.id === trackId);

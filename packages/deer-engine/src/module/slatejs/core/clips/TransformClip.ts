@@ -1,4 +1,4 @@
-import { genUUID, isNil } from '@/util';
+import { genUUID } from '@/util';
 import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } from '../type';
 import { ActionClip } from '../ActionClip';
 import { CutsceneTrack } from '../CutsceneTrack';
@@ -65,4 +65,13 @@ export class TransformClip extends ActionClip {
     data.name && (this._name = data.name);
     this.signals.clipUpdated.emit();
   };
+
+  protected onInitialize(): boolean {
+    return true;
+  }
+  protected onEnter(): void {}
+  protected onUpdate(): void {}
+  protected onExit(): void {}
+  protected onReverseEnter(): void {}
+  protected onReverseExit(): void {}
 }

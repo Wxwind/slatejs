@@ -9,10 +9,14 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType> {
 
   public abstract readonly type: T; // equals class' name
 
-  protected _entity: Entity;
+  protected _entity: Entity | undefined;
 
-  public get entity(): Entity {
+  public get entity(): Entity | undefined {
     return this._entity;
+  }
+
+  public set entity(value: Entity | undefined) {
+    this._entity = value;
   }
 
   public abstract get isCanBeRemoved(): boolean;
@@ -21,8 +25,7 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType> {
     componentUpdated: new Signal(),
   };
 
-  constructor(entity: Entity) {
-    this._entity = entity;
+  constructor() {
     this.id = genUUID(UUID_PREFIX_COMP);
   }
 

@@ -77,18 +77,57 @@ export abstract class ActionClip implements IDirectable, IKeyable {
 
   abstract updateData: (data: UpdateActionClipDto) => void;
 
-  onInitialize: () => boolean = () => {
+  initialize: () => boolean = () => {
     return true;
   };
-  onUpdate: (curTime: number, previousTime: number) => void = (curTime, previousTime) => {
+
+  update: (curTime: number, previousTime: number) => void = (curTime, previousTime) => {
     this.updateAnimatedData(curTime, previousTime);
+    this.onUpdate();
   };
 
   private updateAnimatedData(time: number, previousTime: number) {
     this.animatedData.evaluate(time, previousTime);
   }
-  onEnter: () => void = () => {};
-  onExit: () => void = () => {};
-  onReverseEnter: () => void = () => {};
-  onReverseExit: () => void = () => {};
+
+  enter: () => void = () => {
+    this.setAnimParamsSnapshot();
+    this.onEnter();
+  };
+
+  exit: () => void = () => {
+    this.onExit();
+  };
+
+  reverseEnter: () => void = () => {
+    this.onReverseEnter();
+  };
+
+  reverseExit: () => void = () => {
+    this.restoreAnimParamsSnapshot();
+    this.onReverseExit();
+  };
+
+  private get hasParameters() {
+    return !!this.animatedData && this.animatedData.isValid;
+  }
+
+  private setAnimParamsSnapshot() {
+    if (this.hasParameters) {
+      this.animatedData.saveSnapshot();
+    }
+  }
+
+  private restoreAnimParamsSnapshot() {
+    if (this.hasParameters) {
+      this.animatedData.restoreSnapshot();
+    }
+  }
+
+  protected abstract onInitialize(): boolean;
+  protected abstract onEnter(): void;
+  protected abstract onUpdate(): void;
+  protected abstract onExit(): void;
+  protected abstract onReverseEnter(): void;
+  protected abstract onReverseExit(): void;
 }

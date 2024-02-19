@@ -278,7 +278,7 @@ export class EventBoundary {
     this.freeEvent(e);
   };
 
-  private onPointerMove(from: FederatedEvent): void {
+  private onPointerMove = (from: FederatedEvent) => {
     if (!(from instanceof FederatedPointerEvent)) {
       console.warn('EventBoundary cannot map a non-pointer event as a pointer event');
 
@@ -375,7 +375,7 @@ export class EventBoundary {
     trackingData.overTargets = e.composedPath();
 
     this.freeEvent(e);
-  }
+  };
 
   private onPointerOut = (from: FederatedEvent) => {
     if (!(from instanceof FederatedPointerEvent)) {

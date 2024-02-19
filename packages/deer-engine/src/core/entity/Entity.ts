@@ -16,7 +16,9 @@ export class Entity {
 
   constructor(name: string, parent: TransformComponent | DeerScene) {
     this.id = genUUID(UUID_PREFIX_ENTITY);
-    const transformComp = new TransformComponent(this, parent);
+    const transformComp = new TransformComponent();
+    transformComp.entity = this;
+    transformComp.parent = parent;
     this.addComponent(transformComp);
     this.rootComp = transformComp;
     this.name = name;
@@ -24,8 +26,9 @@ export class Entity {
 
   getCompArray = () => this.compArray;
 
-  addComponentByNew = <T extends Component>(compCtor: new (entity: Entity) => T) => {
-    const comp = new compCtor(this);
+  addComponentByNew = <T extends Component>(compCtor: new () => T) => {
+    const comp = new compCtor();
+    comp.entity = this;
     this.compMap.set(comp.id, comp);
     this.compArray.push(comp);
   };

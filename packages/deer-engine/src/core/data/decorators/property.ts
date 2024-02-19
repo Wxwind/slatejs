@@ -10,7 +10,6 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
     const classStash = getClassStathFromMetadata(metadata);
     const { type, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
-    metadata.CLASS_NAME_KEY = typeName;
 
     const originStash = classStash[context.name] ?? (classStash[context.name] = {});
     const newStash = {
@@ -60,7 +59,6 @@ export function accessor<This, Value>(
     const originStash = classStash[context.name] ?? (classStash[context.name] = {});
     const { type, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
-    metadata.CLASS_NAME_KEY = typeName;
 
     let newStash: MetadataProp;
     switch (context.kind) {

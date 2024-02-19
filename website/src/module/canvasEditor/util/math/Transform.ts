@@ -207,9 +207,3 @@ export class Transform {
     return result;
   }
 }
-
-const a: Transform = new Transform();
-a.translate(1, 0);
-a.scale(2, 2);
-const p = a.point({ x: 1, y: 1 });
-console.log(p.x, p.y);

@@ -33,8 +33,8 @@ export class StartTimePointer implements IDirectableTimePointer {
       if (!this._isTrigged) {
         console.log('startTimePointer: target Enter in TriggerForward');
         this._isTrigged = true;
-        this.target.onEnter();
-        this.target.onUpdate(IDirectableToLocalTime(this.target, curTime), 0);
+        this.target.enter();
+        this.target.update(IDirectableToLocalTime(this.target, curTime), 0);
       }
     }
   };
@@ -53,8 +53,8 @@ export class StartTimePointer implements IDirectableTimePointer {
       if (this._isTrigged) {
         console.log('startTimePointer: target ReverseExit in TriggerBackward');
         this._isTrigged = false;
-        this.target.onUpdate(0, IDirectableToLocalTime(this.target, prevTime));
-        this.target.onReverseExit();
+        this.target.update(0, IDirectableToLocalTime(this.target, prevTime));
+        this.target.reverseExit();
       }
     }
   };
@@ -86,8 +86,8 @@ export class EndTimePointer implements IDirectableTimePointer {
       if (!this._isTrigged) {
         this._isTrigged = true;
         console.log('entTimePointer: target Exit in TriggerForward');
-        this.target.onUpdate(IDirectableGetLengh(this.target), IDirectableToLocalTime(this.target, prevTime));
-        this.target.onExit();
+        this.target.update(IDirectableGetLengh(this.target), IDirectableToLocalTime(this.target, prevTime));
+        this.target.exit();
       }
     }
   };
@@ -97,8 +97,8 @@ export class EndTimePointer implements IDirectableTimePointer {
       if (this._isTrigged) {
         this._isTrigged = false;
         console.log('endTimePointer: target ReverseEnter in TriggerBackward');
-        this.target.onReverseEnter();
-        this.target.onUpdate(IDirectableToLocalTime(this.target, curTime), IDirectableGetLengh(this.target));
+        this.target.reverseEnter();
+        this.target.update(IDirectableToLocalTime(this.target, curTime), IDirectableGetLengh(this.target));
       }
     }
   };
@@ -133,7 +133,7 @@ export class UpdateTimePointer {
       const localCurTime = IDirectableToLocalTime(this.target, curTime);
       const localPrevTime = IDirectableToLocalTime(this.target, prevTime + delta);
 
-      this.target.onUpdate(localCurTime, localPrevTime);
+      this.target.update(localCurTime, localPrevTime);
       // target.startTime may update when playing
       this._lastTargetStartTime = this.target.startTime;
     }

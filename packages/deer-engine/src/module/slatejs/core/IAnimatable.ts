@@ -1,4 +1,5 @@
 export interface IAnimatable {
+  get isValid(): boolean;
   hasAnyKey: () => boolean;
   tryAddKey: (time: number) => boolean;
   removeKey: (time: number) => void;

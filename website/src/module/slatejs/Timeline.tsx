@@ -21,7 +21,7 @@ export const Timeline: FC<TimelineProps> = (props) => {
   const [scrollLeft, setScrollLeft] = useState(0);
 
   const [currentTime, setCurrentTime] = useState(0);
-  const [length, setLength] = useState(0);
+  const [length, setLength] = useState(16);
 
   const refresh = useDumbState();
   useBindSignal(cutsceneEditor.signals.cutSceneEditorSettingsUpdated, refresh);
@@ -84,6 +84,11 @@ export const Timeline: FC<TimelineProps> = (props) => {
 
     const viewTimeMax = cutsceneEditor.viewTimeMax;
     const width = viewTimeMax * scale;
+
+    const maxPlayWidth = 0.5 + length * scale;
+    ctx.fillStyle = '#333';
+    ctx.fillRect(maxPlayWidth, 0, width, canvas.height);
+
     const scale4 = scale / 4;
 
     for (let i = 0.5; i <= width; i += scale) {
@@ -120,7 +125,7 @@ export const Timeline: FC<TimelineProps> = (props) => {
 
       ctx.fillText(text, i * scale, 13);
     }
-  }, [cutsceneEditor.viewTimeMax, scale, scrollLeft]);
+  }, [cutsceneEditor.viewTimeMax, length, scale, scrollLeft]);
 
   const handleScrollerScroll = useCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scroller = scrollerRef.current;
@@ -147,7 +152,9 @@ export const Timeline: FC<TimelineProps> = (props) => {
 
   const handleTimelineWheel = useCallback(
     (e: WheelEvent) => {
-      e.preventDefault();
+      if (Math.abs(e.deltaY) > 0.1) {
+        e.preventDefault();
+      }
       if (e.altKey) {
         const newScale = Math.max(2, scale + e.deltaY / 10);
         handleTimelineScaled(newScale);
@@ -159,7 +166,7 @@ export const Timeline: FC<TimelineProps> = (props) => {
   useEffect(() => {
     const timelineDOM = timelineRef.current;
     if (isNil(timelineDOM)) return;
-    // use addEventListener to use preventDefault()
+    // use addEventListener to avoid passive event
     timelineDOM.addEventListener('wheel', handleTimelineWheel);
 
     return () => {

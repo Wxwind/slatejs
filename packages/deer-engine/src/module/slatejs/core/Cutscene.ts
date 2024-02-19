@@ -323,15 +323,15 @@ export class Cutscene {
     const updateTimePointer: UpdateTimePointer[] = [];
 
     for (const group of [...this._groups].reverse()) {
-      if (group.isActive && group.onInitialize()) {
+      if (group.isActive && group.initialize()) {
         timePointers.push(new StartTimePointer(group));
 
         for (const track of [...group.children].reverse()) {
-          if (track.isActive && track.onInitialize()) {
+          if (track.isActive && track.initialize()) {
             timePointers.push(new StartTimePointer(track));
 
             for (const clip of [...track.children].reverse()) {
-              if (clip.isActive && track.onInitialize()) {
+              if (clip.isActive && track.initialize()) {
                 timePointers.push(new StartTimePointer(clip));
                 // -----
                 const u3 = new UpdateTimePointer(clip);

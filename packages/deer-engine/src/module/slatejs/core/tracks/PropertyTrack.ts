@@ -20,15 +20,15 @@ export class PropertyTrack extends CutsceneTrack<'Property'> {
     super(parent, id, name, clips);
   }
 
-  onEnter: () => void = () => {
+  enter: () => void = () => {
     this._animationData.saveSnapshot();
   };
 
-  onUpdate: (curTime: number, prevTime: number) => void = (curTime, prevTime) => {
+  update: (curTime: number, prevTime: number) => void = (curTime, prevTime) => {
     this._animationData.evaluate(curTime, prevTime);
   };
 
-  onReverseEnter: () => void = () => {
+  reverseEnter: () => void = () => {
     this._animationData.restoreSnapshot();
   };
 

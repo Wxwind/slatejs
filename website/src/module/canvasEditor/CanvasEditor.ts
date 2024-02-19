@@ -45,14 +45,6 @@ export class CanvasEditor implements ICanvas {
     this.supportsPointerEvents = supportsPointerEvents;
     this.supportsTouchEvents = supportsTouchEvents;
 
-    this.context = {
-      canvas: this,
-      config: { containerId, devicePixelRatio, supportsCSSTransform, supportsPointerEvents, supportsTouchEvents },
-    };
-
-    this.plugins.push(new EventPlugin());
-    this.plugins.forEach((p) => p.init(this.context));
-
     const container = document.getElementById(containerId);
     if (container) {
       this.parentEl = container;
@@ -87,6 +79,14 @@ export class CanvasEditor implements ICanvas {
     this.resizeObserver = resizeObserver;
 
     this.resize(this.parentEl.clientWidth, this.parentEl.clientHeight);
+
+    this.context = {
+      canvas: this,
+      config: { containerId, devicePixelRatio, supportsCSSTransform, supportsPointerEvents, supportsTouchEvents },
+    };
+
+    this.plugins.push(new EventPlugin());
+    this.plugins.forEach((p) => p.init(this.context));
 
     this.drawFrame();
   }

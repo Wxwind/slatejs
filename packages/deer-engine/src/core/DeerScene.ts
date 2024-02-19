@@ -97,6 +97,10 @@ export class DeerScene {
     this.scene.add(trans.rootObj);
   };
 
+  removeChild = (trans: TransformComponent) => {
+    this.scene.remove(trans.rootObj);
+  };
+
   dispose = () => {
     this.entityManager.onDestory();
     this.renderer.dispose();

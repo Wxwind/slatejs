@@ -26,5 +26,5 @@ export class DirectorGroup extends CutsceneGroup {
     return group;
   }
 
-  onEnter: () => void = () => {};
+  enter: () => void = () => {};
 }

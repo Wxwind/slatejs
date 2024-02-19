@@ -64,14 +64,14 @@ export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackT
     this._clips = clips;
   }
 
-  onInitialize: () => boolean = () => {
+  initialize: () => boolean = () => {
     return true;
   };
-  onEnter: () => void = () => {};
-  onUpdate: (curTime: number, prevtime: number) => void = () => {};
-  onExit: () => void = () => {};
-  onReverseEnter: () => void = () => {};
-  onReverseExit: () => void = () => {};
+  enter: () => void = () => {};
+  update: (curTime: number, prevtime: number) => void = () => {};
+  exit: () => void = () => {};
+  reverseEnter: () => void = () => {};
+  reverseExit: () => void = () => {};
 
   findClip = (clipId: string) => {
     return this._clips.find((a) => a.id === clipId);

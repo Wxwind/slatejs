@@ -1,7 +1,6 @@
 import { Object3D, Vector3 } from 'three';
 import { ComponentBase } from './ComponentBase';
-import { TransformCompJson, IVector3 } from './type';
-import { Entity } from '../entity';
+import { TransformCompJson, FVector3 } from './type';
 import { DeerScene } from '../DeerScene';
 import { accessor, egclass } from '../data';
 
@@ -10,7 +9,20 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
   type = 'TransformComponent' as const;
 
   rootObj: Object3D;
-  parent: TransformComponent | DeerScene;
+
+  private _parent: TransformComponent | DeerScene | undefined;
+
+  public get parent(): TransformComponent | DeerScene | undefined {
+    return this._parent;
+  }
+
+  public set parent(v: TransformComponent | DeerScene) {
+    if (this.parent) {
+      this.parent.removeChild(this);
+    }
+    v.addChild(this);
+    this._parent = v;
+  }
 
   children: TransformComponent[] = [];
 
@@ -18,47 +30,44 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
     return false;
   }
 
-  @accessor({ type: IVector3 })
-  public get position(): IVector3 {
+  @accessor({ type: FVector3 })
+  public get position(): FVector3 {
     return this.rootObj.position;
   }
 
-  @accessor({ type: IVector3 })
-  public set position(v: IVector3) {
+  @accessor({ type: FVector3 })
+  public set position(v: FVector3) {
     this.rootObj.position.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
   }
 
-  @accessor({ type: IVector3 })
-  public get rotation(): IVector3 {
+  @accessor({ type: FVector3 })
+  public get rotation(): FVector3 {
     return new Vector3(this.rootObj.rotation.x, this.rootObj.rotation.y, this.rootObj.rotation.z);
   }
 
-  @accessor({ type: IVector3 })
-  public set rotation(v: IVector3) {
+  @accessor({ type: FVector3 })
+  public set rotation(v: FVector3) {
     this.rootObj.rotation.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
   }
 
-  @accessor({ type: IVector3 })
-  public get scale(): IVector3 {
+  @accessor({ type: FVector3 })
+  public get scale(): FVector3 {
     return this.rootObj.scale;
   }
 
-  @accessor({ type: IVector3 })
-  public set scale(v: IVector3) {
+  @accessor({ type: FVector3 })
+  public set scale(v: FVector3) {
     this.rootObj.scale.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
   }
 
-  constructor(entity: Entity, parent: TransformComponent | DeerScene) {
-    super(entity);
+  constructor() {
+    super();
 
     const emptyObj = new Object3D();
     this.rootObj = emptyObj;
-
-    parent.addChild(this);
-    this.parent = parent;
   }
 
   getChildren: () => TransformComponent[] = () => {
@@ -81,7 +90,7 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
 
   onDestory: () => void = () => {
     for (const c of this.children) {
-      c.entity.onDestory();
+      c.entity?.onDestory();
     }
     this.rootObj.clear();
   };

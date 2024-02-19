@@ -34,8 +34,8 @@ export class EntityManager {
       typeof parent === 'string'
         ? this.findEntityById(parent)?.findComponentByType<TransformComponent>('TransformComponent') || this.scene
         : isNil(parent)
-        ? this.scene
-        : parent;
+          ? this.scene
+          : parent;
 
     const e = new Entity(name, p);
     if (isNil(parent)) {
@@ -73,7 +73,9 @@ export class EntityManager {
     this.entityArray.length = 0;
   };
 
-  private mapEntityForHierarchy: (entity: Entity) => EntityForHierarchy = (entity: Entity) => {
+  private mapEntityForHierarchy: (entity: Entity | undefined) => EntityForHierarchy = (entity: Entity | undefined) => {
+    if (isNil(entity)) return { id: '<missing>', name: '<missing>', children: [] };
+
     return {
       id: entity.id,
       name: entity.name,
