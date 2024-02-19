@@ -24,7 +24,7 @@ export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
   return (
     <InputNumber
       autoComplete="off"
-      value={value}
+      value={num}
       precision={precision}
       onPressEnter={(e) => {
         e.currentTarget.blur();

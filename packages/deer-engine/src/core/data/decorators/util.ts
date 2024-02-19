@@ -13,7 +13,7 @@ export type DecoratorMetadataObjectForRF = Partial<{
 export type MetadataClass = Record<string | symbol, MetadataProp | undefined>;
 
 export type MetadataProp = Partial<{
-  type: (new () => unknown) | Array<new () => unknown>;
+  type: (new () => unknown) | (new () => unknown)[];
   typeName: string;
   set: (object: any, value: any) => void;
   get: (object: any) => unknown;
@@ -62,10 +62,10 @@ export function getClassStathFromMetadata(metadata: DecoratorMetadataObject): Me
 export function getClassName(objOrCtor: AnyCtor | AnyCtor[] | Record<string, unknown>): string {
   if (typeof objOrCtor === 'function') {
     // is ctor
-    // const metadata = getMetadataFromCtor(objOrCtor);
-    // if (metadata && metadata.CLASS_NAME_KEY) {
-    //   return metadata.CLASS_NAME_KEY;
-    // }
+    const metadata = getMetadataFromCtor(objOrCtor);
+    if (metadata && metadata.CLASS_NAME_KEY) {
+      return metadata.CLASS_NAME_KEY;
+    }
 
     let ret = '';
     //  for browsers which have name property in the constructor of the object, such as chrome

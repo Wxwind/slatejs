@@ -1,4 +1,4 @@
-import { Entity } from '@/core';
+import { Entity, egclass } from '@/core';
 import { Cutscene } from './Cutscene';
 import { CutsceneTrack } from './CutsceneTrack';
 import { IDirectable } from './IDirectable';
@@ -19,7 +19,7 @@ export abstract class CutsceneGroup implements IDirectable {
     trackCountChanged: new Signal(),
   };
 
-  protected constructor(director: Cutscene, id: string, tracks: CutsceneTrack[]) {
+  constructor(director: Cutscene, id: string, tracks: CutsceneTrack[]) {
     this._root = director;
     this._id = id;
     this._tracks = tracks;

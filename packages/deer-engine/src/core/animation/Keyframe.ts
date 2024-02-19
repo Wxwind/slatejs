@@ -1,3 +1,5 @@
+import { egclass, property } from '../data';
+
 /** The tangent weight mode uesd for cubic interpolation  */
 export enum WeightMode {
   None = 'None',
@@ -21,38 +23,34 @@ export enum TangentMode {
   None = 'None', // No tangents
 }
 
+@egclass()
 export class Keyframe {
-  time: number;
-  value: number;
-  inTangent: number;
-  outTangent: number;
-  inWeight: number;
-  outWeight: number;
-  tangentMode: TangentMode;
-  weightMode: WeightMode;
-  interpMode: InterpMode;
+  @property({ type: Number })
+  time: number = 0;
 
-  constructor(time: number, value: number);
-  constructor(time: number, value: number, inTangent: number, outTangent: number);
-  constructor(time: number, value: number, inTangent: number, outTangent: number, inWeight: number, outWeight: number);
-  constructor(
-    time: number,
-    value: number,
-    inTangent?: number,
-    outTangent?: number,
-    inWeight?: number,
-    outWeight?: number
-  ) {
-    this.weightMode = WeightMode.None;
-    this.interpMode = InterpMode.Linaer;
-    this.tangentMode = TangentMode.Auto;
-    this.time = time;
-    this.value = value;
-    this.inTangent = inTangent || 0;
-    this.outTangent = outTangent || 0;
-    this.inWeight = inWeight || 0;
-    this.outWeight = outWeight || 0;
-  }
+  @property({ type: Number })
+  value: number = 0;
+
+  @property({ type: Number })
+  inTangent: number = 0;
+
+  @property({ type: Number })
+  outTangent: number = 0;
+
+  @property({ type: Number })
+  inWeight: number = 0;
+
+  @property({ type: Number })
+  outWeight: number = 0;
+
+  @property({ type: String })
+  tangentMode: TangentMode = TangentMode.Auto;
+
+  @property({ type: String })
+  weightMode: WeightMode = WeightMode.None;
+
+  @property({ type: String })
+  interpMode: InterpMode = InterpMode.Linaer;
 }
 
 export const isNotWeighted = (key1: Keyframe, key2: Keyframe) => {

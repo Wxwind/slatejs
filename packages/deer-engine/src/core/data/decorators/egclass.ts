@@ -15,8 +15,7 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
     metadata.CLASS_NAME_KEY = typeName;
 
     target.prototype.toJsonObject = function () {
-      console.log('inject tojson()');
-      const toJson = (ctor: new () => unknown, thisObj: any) => {
+      const toJson = (ctor: new () => unknown | (new () => unknown)[], thisObj: any) => {
         const obj: Record<string, any> = {};
         const stash = getClassStath(ctor);
         for (const key in stash) {
@@ -40,6 +39,17 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
             continue;
           }
 
+          // is base type
+          if (ctor === Number || ctor === Boolean || ctor === String) {
+            const prop = metaProp.get?.(thisObj);
+            obj[key] = prop;
+            continue;
+          }
+
+          // TODO: entity/component reference
+          // if (ctor instanceof Entity || ctor instanceof ComponentBase) {
+          // }
+
           const prop = metaProp.get?.(thisObj);
 
           if (Array.isArray(ctor)) {
@@ -61,7 +71,6 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
     };
 
     target.prototype.fromJsonObject = function (json: Record<string, any>) {
-      console.log('inject fromjson()');
       const constructFromCtors = (
         ctor: (new () => unknown) | (new () => unknown)[],
         json: Record<string, any>,
@@ -90,6 +99,12 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
             }
 
             if (EGStructLike === ctor) {
+              metaProp.set?.(thisObj, json[key]);
+              continue;
+            }
+
+            // is base type
+            if (ctor === Number || ctor === Boolean || ctor === String) {
               metaProp.set?.(thisObj, json[key]);
               continue;
             }

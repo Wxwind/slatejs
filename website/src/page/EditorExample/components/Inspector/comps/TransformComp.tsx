@@ -1,10 +1,10 @@
 import { CollapseBox } from '@/assets/components';
-import { TransformCompJson, TransformComponent } from 'deer-engine';
+import { JsonModule, TransformCompJson, TransformComponent } from 'deer-engine';
 import { ChangeEvent, FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import set from 'lodash/set';
 import { BlurInputNumber } from '@/assets/components/BlurInputNumber';
-import { useBindSignal, useDumbState } from '@/hooks';
+import { useBindSignal } from '@/hooks';
 
 interface TransformCompProps {
   comp: TransformComponent;
@@ -19,11 +19,13 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
     scale: { x: 0, y: 0, z: 0 },
   });
 
-  const refresh = useDumbState();
-  useBindSignal(comp.signals.componentUpdated, refresh);
+  useBindSignal(comp.signals.componentUpdated, () => {
+    const obj = JsonModule.toJsonObject(comp);
+    setData(obj);
+  });
 
   useEffect(() => {
-    const obj = comp.toJsonObject();
+    const obj = JsonModule.toJsonObject(comp);
     setData(obj);
   }, [comp, setData]);
 
@@ -134,13 +136,6 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
           </div>
         </div>
       </div>
-      <button
-        onClick={() => {
-          console.log(JSON.stringify(data));
-        }}
-      >
-        aaa
-      </button>
     </CollapseBox>
   );
 };

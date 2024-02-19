@@ -10,6 +10,7 @@ import {
   isOutWeightEnabled,
 } from './Keyframe';
 import { solveCubic } from './soleveCubic';
+import { egclass, property } from '../data';
 
 export enum AnimationCurveExtrapolation {
   Linaer = 'Linaer',
@@ -35,7 +36,9 @@ export type AnimationCurveJson = {
   postExtrapolation: AnimationCurveExtrapolation;
 };
 
+@egclass()
 export class AnimationCurve {
+  @property({ type: [Keyframe] })
   keys: Keyframe[];
 
   preExtrapolation: AnimationCurveExtrapolation;
@@ -60,7 +63,10 @@ export class AnimationCurve {
   addKey = (time: number, value: number) => {
     let index: number = 0;
     for (; index < this.keys.length && time > this.keys[index].time; index++);
-    this.keys.splice(index, 0, new Keyframe(time, value));
+    const keyframe = new Keyframe();
+    keyframe.time = time;
+    keyframe.value = value;
+    this.keys.splice(index, 0, keyframe);
     return index;
   };
 

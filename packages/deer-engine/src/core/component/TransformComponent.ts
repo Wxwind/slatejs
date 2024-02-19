@@ -101,24 +101,4 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
     this.rootObj.scale.set(data.scale.x, data.scale.y, data.scale.z);
     this.signals.componentUpdated.emit();
   };
-
-  toJsonObject: () => TransformCompJson = () => {
-    return {
-      position: {
-        x: this.rootObj.position.x,
-        y: this.rootObj.position.y,
-        z: this.rootObj.position.z,
-      },
-      rotation: {
-        x: this.rootObj.rotation.x,
-        y: this.rootObj.rotation.y,
-        z: this.rootObj.rotation.z,
-      },
-      scale: {
-        x: this.rootObj.scale.x,
-        y: this.rootObj.scale.y,
-        z: this.rootObj.scale.z,
-      },
-    };
-  };
 }

@@ -1,15 +1,16 @@
-import { Entity } from '@/core';
+import { Entity, egclass } from '@/core';
 import { CutsceneGroup } from '../CutsceneGroup';
 import { Cutscene } from '../Cutscene';
 import { TransformTrack } from '../tracks/TransformTrack';
 import { genUUID } from '@/util';
 import { CutsceneGroupData } from '../type';
 
+@egclass()
 export class DirectorGroup extends CutsceneGroup {
   protected _actor: Entity | undefined;
 
   get name(): string {
-    return 'DirectorGroup';
+    return this._actor?.name || '';
   }
 
   static constructFromJson(director: Cutscene, data: CutsceneGroupData) {

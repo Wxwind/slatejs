@@ -3,7 +3,7 @@ import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
 import { Entity } from '../entity';
 import { MeshCompJson } from './type';
-import { egclass } from '../data';
+import { accessor, egclass } from '../data';
 
 @egclass()
 export class MeshComponent extends ComponentBase<'MeshComponent'> {
@@ -18,6 +18,12 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
   public set entity(value: Entity | undefined) {
     value?.rootComp.rootObj.add(this.mesh);
     this._entity = value;
+  }
+
+  @accessor({ type: Number })
+  public get count() {
+    const count = Array.isArray(this.mesh.material) ? this.mesh.material.length : 1;
+    return count;
   }
 
   constructor() {
@@ -45,12 +51,4 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
   };
 
   updateByJson: (data: MeshCompJson) => void = (data) => {};
-
-  toJsonObject: () => MeshCompJson = () => {
-    const count = Array.isArray(this.mesh.material) ? this.mesh.material.length : 1;
-
-    return {
-      count,
-    };
-  };
 }
