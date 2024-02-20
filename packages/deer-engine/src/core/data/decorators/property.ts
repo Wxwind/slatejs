@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassFieldDecorator, IPropertyOptions } from '../type';
-import { DecoratorMetadataObjectForRF, MetadataProp, getClassName, getClassStathFromMetadata } from './util';
+import {
+  DecoratorMetadataObjectForRF,
+  MetadataClass,
+  MetadataProp,
+  getClassName,
+  getClassStathFromMetadata,
+  getMetadataFromCtor,
+} from './util';
 import merge from 'lodash/merge';
 
 // @property({})
@@ -9,14 +16,15 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
     const classStash = getClassStathFromMetadata(metadata);
 
-    const { type, ...uiOptions } = options;
+    const { type, allowEmpty, animatable, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
 
     const originStash = classStash[context.name] ?? (classStash[context.name] = {});
-    const newStash = {
+    const newStash: MetadataProp = {
       type,
       typeName,
-      allowEmpty: true,
+      allowEmpty,
+      animatable,
       set: context.access.set,
       get: context.access.get,
       uiOptions: {
@@ -24,7 +32,10 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
       },
     };
 
-    classStash[context.name] = merge(originStash, newStash);
+    // must clone metadata.__propertyCache__ before modified, otherwise metadata will be mixed by inheritance. May it be the babel's bug?
+    metadata.__propertyCache__ = { ...metadata.__propertyCache__ };
+    metadata.__propertyCache__[context.name] = merge(originStash || {}, newStash);
+
     return;
   };
 
@@ -57,8 +68,8 @@ export function accessor<This, Value>(
   ) => {
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
     const classStash = getClassStathFromMetadata(metadata);
-    const originStash = classStash[context.name] ?? (classStash[context.name] = {});
-    const { type, ...uiOptions } = options;
+    const originStash = classStash[context.name];
+    const { type, allowEmpty, animatable, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
 
     let newStash: MetadataProp;
@@ -67,7 +78,8 @@ export function accessor<This, Value>(
         newStash = {
           type,
           typeName,
-          allowEmpty: true,
+          allowEmpty,
+          animatable,
           get: context.access.get,
           set: context.access.set,
           uiOptions: {
@@ -79,7 +91,8 @@ export function accessor<This, Value>(
         newStash = {
           type,
           typeName,
-          allowEmpty: true,
+          allowEmpty,
+          animatable,
           get: undefined,
           set: context.access.set,
           uiOptions: {
@@ -91,7 +104,8 @@ export function accessor<This, Value>(
         newStash = {
           type,
           typeName,
-          allowEmpty: true,
+          allowEmpty,
+          animatable,
           get: context.access.get,
           set: undefined,
           uiOptions: {
@@ -103,7 +117,12 @@ export function accessor<This, Value>(
         return;
     }
 
-    classStash[context.name] = merge(originStash, newStash);
+    console.log(typeName, context.name, metadata);
+
+    // must clone metadata.__propertyCache__ before modified, otherwise metadata will be mixed by inheritance.
+    metadata.__propertyCache__ = { ...metadata.__propertyCache__ };
+    metadata.__propertyCache__[context.name] = merge(originStash || {}, newStash);
+
     return;
   };
 

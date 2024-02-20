@@ -2,12 +2,9 @@
 import { isNil } from '@/util';
 import { GroupOptions } from '../type';
 
-export const CACHE_KEY = Symbol('__propertyCache__');
-export const CLASS_NAME_KEY = Symbol('__classname__');
-
 export type DecoratorMetadataObjectForRF = Partial<{
-  CACHE_KEY: MetadataClass;
-  CLASS_NAME_KEY: string;
+  __propertyCache__: MetadataClass;
+  __classname__: string;
 }>;
 
 export type MetadataClass = Record<string | symbol, MetadataProp | undefined>;
@@ -18,6 +15,7 @@ export type MetadataProp = Partial<{
   set: (object: any, value: any) => void;
   get: (object: any) => unknown;
   allowEmpty: boolean; // allow null or undefined when parse from json
+  animatable: boolean; // can be animated in slatejs.
   uiOptions: Partial<{
     group: string | GroupOptions;
     displayName: string;
@@ -45,15 +43,17 @@ export function hasClassStash(ctor: abstract new (...args: any[]) => any): boole
   const metadata = ctor[Symbol.metadata];
   let ok = !isNil(metadata);
   if (ok) {
-    ok = !isNil((metadata as DecoratorMetadataObjectForRF).CACHE_KEY);
+    ok = !isNil((metadata as DecoratorMetadataObjectForRF).__propertyCache__);
   }
   return ok;
 }
 
 export function getClassStathFromMetadata(metadata: DecoratorMetadataObject): MetadataClass {
-  return (
-    (metadata as DecoratorMetadataObjectForRF).CACHE_KEY ?? ((metadata as DecoratorMetadataObjectForRF).CACHE_KEY = {})
-  );
+  const m = metadata as DecoratorMetadataObjectForRF;
+  if (isNil(m.__propertyCache__)) {
+    m.__propertyCache__ = {};
+  }
+  return m.__propertyCache__;
 }
 
 /**
@@ -63,8 +63,8 @@ export function getClassName(objOrCtor: AnyCtor | AnyCtor[] | Record<string, unk
   if (typeof objOrCtor === 'function') {
     // is ctor
     const metadata = getMetadataFromCtor(objOrCtor);
-    if (metadata && metadata.CLASS_NAME_KEY) {
-      return metadata.CLASS_NAME_KEY;
+    if (metadata && metadata.__classname__) {
+      return metadata.__classname__;
     }
 
     let ret = '';

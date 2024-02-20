@@ -4,7 +4,7 @@ import { ClipType, CreateActionClipDto, CutsceneTrackType } from './type';
 import { AnimationClip, TransformClip } from './clips';
 import { ActionClip } from './ActionClip';
 import { Signal } from '@/packages/signal';
-import { accessor } from '@/core';
+import { accessor, egclass } from '@/core';
 
 export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackType> implements IDirectable {
   protected _clips: ActionClip[];

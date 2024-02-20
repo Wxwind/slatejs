@@ -46,4 +46,6 @@ export type IPropertyOptions = Partial<{
   tooltip: string;
   min: number;
   max: number;
+  allowEmpty: boolean;
+  animatable: boolean;
 }>;

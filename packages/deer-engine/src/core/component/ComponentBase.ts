@@ -3,7 +3,7 @@ import { genUUID } from '@/util/utils';
 import { ComponentType, ComponentTypeToJsonObjMap } from './type';
 import { Entity } from '../entity';
 import { Signal } from '@/packages/signal';
-import { property } from '../data';
+import { accessor, property } from '../data';
 
 export abstract class ComponentBase<T extends ComponentType = ComponentType> {
   @property({ type: String })

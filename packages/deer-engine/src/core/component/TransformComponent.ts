@@ -64,10 +64,12 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
   }
 
   constructor() {
+    console.log('init base');
     super();
 
     const emptyObj = new Object3D();
     this.rootObj = emptyObj;
+    console.log('init transform');
   }
 
   getChildren: () => TransformComponent[] = () => {

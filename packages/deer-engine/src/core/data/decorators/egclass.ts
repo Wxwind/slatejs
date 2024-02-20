@@ -11,7 +11,7 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
 
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
     const typeName = name || getClassName(target);
-    metadata.CLASS_NAME_KEY = typeName;
+    metadata.__classname__ = typeName;
 
     target.prototype.toJsonObject = function () {
       const toJson = (ctor: new () => unknown | (new () => unknown)[], thisObj: any) => {
