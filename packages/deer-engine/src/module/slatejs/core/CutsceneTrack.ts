@@ -4,6 +4,7 @@ import { ClipType, CreateActionClipDto, CutsceneTrackType } from './type';
 import { AnimationClip, TransformClip } from './clips';
 import { ActionClip } from './ActionClip';
 import { Signal } from '@/packages/signal';
+import { accessor } from '@/core';
 
 export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackType> implements IDirectable {
   protected _clips: ActionClip[];
@@ -17,8 +18,15 @@ export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackT
     clipCountChanged: new Signal(),
   };
 
+  @accessor({ type: String })
   get name(): string {
     return this._name;
+  }
+
+  @accessor({ type: String })
+  set name(v: string) {
+    this._name = v;
+    this.signals.trackUpdated.emit();
   }
 
   get id(): string {

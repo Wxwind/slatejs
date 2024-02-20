@@ -4,7 +4,6 @@ import { isNil } from '@/util';
 import { globalTypeMap } from '../GlobalTypeMap';
 import { ClassClassDecorator } from '../type';
 import { DecoratorMetadataObjectForRF, getClassName, getClassStath, hasClassStash } from './util';
-import { EGStructLike } from '@/core/component';
 
 export function egclass<Class extends new (...args: any[]) => any>(name?: string): ClassClassDecorator<Class> {
   return (target: Class, context: ClassDecoratorContext<Class>) => {
@@ -18,6 +17,7 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
       const toJson = (ctor: new () => unknown | (new () => unknown)[], thisObj: any) => {
         const obj: Record<string, any> = {};
         const stash = getClassStath(ctor);
+
         for (const key in stash) {
           const metaProp = stash[key];
           if (isNil(metaProp)) {
@@ -28,12 +28,6 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
 
           if (isNil(ctor)) {
             console.log('propstash has no type, will be serialized as plain object.');
-            const prop = metaProp.get?.(thisObj);
-            obj[key] = prop;
-            continue;
-          }
-
-          if (EGStructLike === ctor) {
             const prop = metaProp.get?.(thisObj);
             obj[key] = prop;
             continue;
@@ -94,11 +88,6 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
 
             if (isNil(ctor)) {
               console.log('propstash has no type, will be assigned as plain object.');
-              metaProp.set?.(thisObj, json[key]);
-              continue;
-            }
-
-            if (EGStructLike === ctor) {
               metaProp.set?.(thisObj, json[key]);
               continue;
             }

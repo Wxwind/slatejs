@@ -3,9 +3,11 @@ import { genUUID } from '@/util/utils';
 import { ComponentType, ComponentTypeToJsonObjMap } from './type';
 import { Entity } from '../entity';
 import { Signal } from '@/packages/signal';
+import { property } from '../data';
 
 export abstract class ComponentBase<T extends ComponentType = ComponentType> {
-  public readonly id: string;
+  @property({ type: String })
+  public id: string;
 
   public abstract readonly type: T; // equals class' name
 

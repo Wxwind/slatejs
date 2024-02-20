@@ -1,15 +1,22 @@
 import { isNil } from '@/util';
-import { TransformComponent } from '../component';
+import { ComponentBase, TransformComponent } from '../component';
 import { genUUID } from '@/util/utils';
 import { UUID_PREFIX_ENTITY } from '@/config';
 import { DeerScene } from '../DeerScene';
 import { EntityInfo } from './type';
 import { Component, ComponentData } from '../component/type';
+import { JsonModule, property } from '../data';
 
 export class Entity {
+  @property({ type: String })
   id: string;
+
+  @property({ type: String })
   name: string;
+
   private readonly compMap = new Map<string, Component>();
+
+  @property({})
   private readonly compArray: Component[] = [];
 
   public readonly rootComp: TransformComponent;
@@ -106,7 +113,7 @@ export class Entity {
       return {
         id: a.id,
         type: a.type,
-        config: a.toJsonObject(),
+        config: JsonModule.toJsonObject(a),
       } as ComponentData;
     });
 

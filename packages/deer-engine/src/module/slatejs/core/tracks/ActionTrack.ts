@@ -8,15 +8,15 @@ import { constructClipFrom } from '../clips';
 import { egclass } from '@/core';
 
 @egclass()
-export class TransformTrack extends CutsceneTrack<'Transform'> {
-  protected _type = 'Transform' as const;
+export class ActionTrack extends CutsceneTrack<'Action'> {
+  protected _type = 'Action' as const;
 
   constructor(parent: IDirectable, id: string, name: string, clips: ActionClip[]) {
     super(parent, id, name, clips);
   }
 
   static constructFromJson(parent: CutsceneGroup, data: CutsceneTrackData) {
-    const track = new TransformTrack(parent, data.id, data.name, []);
+    const track = new ActionTrack(parent, data.id, data.name, []);
     data.children.forEach((clipJson) => {
       track._clips.push(constructClipFrom(track, clipJson));
     });
@@ -24,6 +24,6 @@ export class TransformTrack extends CutsceneTrack<'Transform'> {
   }
 
   static construct(parent: CutsceneGroup, name: string) {
-    return new TransformTrack(parent, genUUID('cst'), name, []);
+    return new ActionTrack(parent, genUUID('cst'), name, []);
   }
 }

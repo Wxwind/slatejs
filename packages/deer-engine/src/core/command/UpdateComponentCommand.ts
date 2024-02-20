@@ -3,6 +3,7 @@ import { DeerScene } from '../DeerScene';
 import { CommandType } from './type';
 import { ComponentBase, ComponentData, ComponentJson } from '../component';
 import { isNil } from '@/util';
+import { JsonModule } from '../data';
 
 export class UpdateComponentCommand implements ICommand {
   type: CommandType = 'UpdateComponent';
@@ -23,7 +24,7 @@ export class UpdateComponentCommand implements ICommand {
     }
     if (comp.type === this.compInfo.type) {
       const c = comp as ComponentBase<typeof comp.type>;
-      this.oldCompConfig = c.toJsonObject();
+      this.oldCompConfig = JsonModule.toJsonObject(c);
       c.updateByJson(this.compInfo.config);
       return true;
     } else {

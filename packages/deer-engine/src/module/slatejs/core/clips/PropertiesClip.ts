@@ -6,8 +6,8 @@ import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
 import { Entity, TransformComponent, egclass } from '@/core';
 
 @egclass()
-export class TransformClip extends ActionClip {
-  protected _type = 'Transform' as const;
+export class PropertiesClip extends ActionClip {
+  protected _type = 'Properties' as const;
 
   private _animatedParams!: AnimatedParameterCollection;
 
@@ -35,30 +35,33 @@ export class TransformClip extends ActionClip {
   }
 
   static constructFromJson(parent: CutsceneTrack, data: CreateActionClipByJsonDto) {
-    const clip = new TransformClip(parent, data.id, data.name, data.startTime, data.endTime);
+    const clip = new PropertiesClip(parent, data.id, data.name, data.startTime, data.endTime);
     const animatedParams = AnimatedParameterCollection.constructFromJson(clip, data.animatedParams);
     clip._animatedParams = animatedParams;
     return clip;
   }
 
   static construct(parent: CutsceneTrack, data: CreateActionClipDto) {
-    const clip = new TransformClip(parent, genUUID('csc'), data.name || 'transform clip', data.startTime, data.endTime);
+    const clip = new PropertiesClip(
+      parent,
+      genUUID('csc'),
+      data.name || 'properties clip',
+      data.startTime,
+      data.endTime
+    );
+
     const animatedParams = new AnimatedParameterCollection();
-
-    const posParam = animatedParams.addParameter(clip, 'TransformComponent', 'position');
-    const rotateParam = animatedParams.addParameter(clip, 'TransformComponent', 'rotation');
-    const scaleParam = animatedParams.addParameter(clip, 'TransformComponent', 'scale');
-
-    posParam.addKey(1, 0.5);
-    posParam.addKey(5, 10.5);
-    rotateParam.addKey(1, 90);
-    rotateParam.addKey(5, 100);
-    scaleParam.addKey(1, 1);
-    scaleParam.addKey(5, 2);
 
     clip._animatedParams = animatedParams;
     return clip;
   }
+
+  addProperty = (compTypeName: string, paramPath: string) => {
+    const propParam = this._animatedParams.addParameter(this, compTypeName, paramPath);
+
+    propParam.addKey(1, 0);
+    propParam.addKey(5, 0);
+  };
 
   updateData: (data: UpdateActionClipDto) => void = (data) => {
     if (!isNil(data.startTime)) {

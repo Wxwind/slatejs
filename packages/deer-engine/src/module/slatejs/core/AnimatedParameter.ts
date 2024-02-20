@@ -7,8 +7,10 @@ import {
   InterpMode,
   MetadataProp,
   TransformComponent,
+  egclass,
   getClassName,
   getRelativeProp,
+  property,
 } from '@/core';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';
@@ -23,74 +25,66 @@ import { ActionClip } from './ActionClip';
 export type AnimatedParameterJson = {
   keyableId: string;
   compType: string;
-  propType: string;
-  propPath: string;
+  paramType: string;
+  paramName: string;
   curves: AnimationCurveJson[];
 };
 
+@egclass()
 export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParameterType> implements IAnimatable {
-  curves: AnimationCurve[];
+  @property({ type: [AnimationCurve] })
+  curves!: AnimationCurve[];
 
-  compType: string;
-  parameterName: string; // key of compType
-  parameterType: string;
+  // TODO compType can also be ActionClip's type name when target is ActionClip.
+  @property({ type: String })
+  compType!: string;
 
-  private keyable: IKeyable;
+  @property({ type: String })
+  paramName!: string; // key of compType
 
-  private parameterModel: IAnimatedParameterModel<T>;
+  @property({ type: String })
+  paramType!: string;
+
+  private keyable!: IKeyable;
+
+  private parameterModel!: IAnimatedParameterModel<T>;
 
   private get target() {
     return this.keyable.animatedParametersTarget;
   }
 
+  @property({ type: Boolean })
   disabled = false;
 
   get enabled() {
     return !this.disabled;
   }
 
-  metadataProp: MetadataProp;
+  metadataProp!: MetadataProp;
 
   private snapshot: number[] | undefined;
 
-  private constructor(
-    keyable: IKeyable,
-    compType: string,
-    paramType: string,
-    paramName: string,
-    curves: AnimationCurve[] | undefined
-  ) {
-    this.keyable = keyable;
-    this.compType = compType;
-    this.parameterType = paramType;
-    this.parameterName = paramName;
-
-    this.metadataProp = getRelativeProp(compType, paramName);
-
-    if (paramType in TypeToAnimParamModelMapInstance) {
-      this.parameterModel = new TypeToAnimParamModelMapInstance[paramType]();
-      if (isNil(curves)) {
-        const c = [];
-        const n = this.parameterModel.requiredCurveCount;
-        for (let i = 0; i < n; i++) {
-          c.push(new AnimationCurve());
-        }
-        this.curves = c;
-      } else {
-        this.curves = curves;
-      }
-    } else {
-      throw new Error(`type ${paramType} is not surpported in animatedParameter.`);
-    }
-  }
-
   get isValid(): boolean {
-    return !!this.parameterName && !!this.metadataProp;
+    return !!this.paramName && !!this.metadataProp;
   }
 
   static constructFromJson = (clip: ActionClip, data: AnimatedParameterJson) => {
     const curves: AnimationCurve[] = data.curves.map((curve) => AnimationCurve.from(curve.keys));
-    return new AnimatedParameter(clip, data.compType, data.propPath, data.propType, curves);
+
+    const a = new AnimatedParameter();
+    a.keyable = clip;
+    a.compType = data.compType;
+    a.paramType = data.paramType;
+    a.paramName = data.paramName;
+    a.metadataProp = getRelativeProp(data.compType, data.paramName);
+
+    if (data.paramType in TypeToAnimParamModelMapInstance) {
+      a.parameterModel = new TypeToAnimParamModelMapInstance[data.paramType]();
+      a.curves = curves;
+    } else {
+      throw new Error(`type ${data.paramType} is not surpported in animatedParameter.`);
+    }
+    return a;
   };
 
   static construct = (keyable: IKeyable, compType: string, paramPath: string) => {
@@ -99,7 +93,27 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     if (isNil(paramType)) {
       throw new Error(`cannot not read name of '${paramPath} in '${compType}''`);
     }
-    return new AnimatedParameter(keyable, compType, paramType, paramPath, undefined);
+
+    const a = new AnimatedParameter();
+    a.keyable = keyable;
+    a.compType = compType;
+    a.paramType = paramType;
+    a.paramName = paramPath;
+    a.metadataProp = getRelativeProp(compType, paramPath);
+
+    if (paramType in TypeToAnimParamModelMapInstance) {
+      a.parameterModel = new TypeToAnimParamModelMapInstance[paramType]();
+
+      const c = [];
+      const n = a.parameterModel.requiredCurveCount;
+      for (let i = 0; i < n; i++) {
+        c.push(new AnimationCurve());
+      }
+      a.curves = c;
+    } else {
+      throw new Error(`type ${paramType} is not surpported in animatedParameter.`);
+    }
+    return a;
   };
 
   setEnabled = (value: boolean, time: number) => {
@@ -118,7 +132,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     const obj = this.getAnimatedObject();
     if (!obj) return;
 
-    if (obj instanceof TransformComponent && this.parameterType === getClassName(FVector3)) {
+    if (obj instanceof TransformComponent && this.paramType === getClassName(FVector3)) {
       // TODO: suport local pos,rotate,scale.
     }
 
@@ -209,14 +223,14 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
       return o;
     }
 
-    if (isValidKey(this.parameterName, this.target)) {
-      const o = this.target[this.parameterName];
+    if (isValidKey(this.paramName, this.target)) {
+      const o = this.target[this.paramName];
       this._cachedAnimatedObject = o;
       return o;
     }
 
     throw new Error(
-      `couldn't find cachedAnimatedObject. (target= ${this.target.constructor.name}, compType= ${this.compType}, parameterPath=${this.parameterName})`
+      `couldn't find cachedAnimatedObject. (target= ${this.target.constructor.name}, compType= ${this.compType}, parameterPath=${this.paramName})`
     );
   };
 

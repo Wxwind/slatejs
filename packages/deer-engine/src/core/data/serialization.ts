@@ -20,7 +20,7 @@ function toJson(obj: any): string {
   if ('toJsonObject' in obj) {
     const jsonObj = obj.toJsonObject();
     jsonObj['metadata'] = {
-      typeName: getClassName(obj),
+      __type__: getClassName(obj),
     };
     return JSON.stringify(jsonObj);
   }
@@ -52,7 +52,7 @@ function toJsonObject(obj: any) {
 function fromJson(json: string) {
   const jsonObj = JSON.parse(json);
 
-  const classType = globalTypeMap.get(jsonObj['metadata']);
+  const classType = globalTypeMap.get(jsonObj?.metadata?.__type__);
 
   // if not have metadata, treated as plain object
   if (!classType) {

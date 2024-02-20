@@ -1,7 +1,7 @@
 import { PartialSome } from '@/util';
 import { AnimatedParameterCollectionJson } from '../AnimatedParameterCollection';
 
-export type ClipType = 'Transform' | 'Animation';
+export type ClipType = 'Transform' | 'Animation' | 'Properties';
 
 export type ActionClipData = {
   id: string;

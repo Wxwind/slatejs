@@ -4,8 +4,6 @@ import { TransformComponent } from './TransformComponent';
 
 export type ComponentType = 'MeshComponent' | 'TransformComponent';
 
-export class EGStructLike {}
-
 @egclass()
 export class FVector2 {
   @property({ type: Number })

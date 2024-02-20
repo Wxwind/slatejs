@@ -1,6 +1,6 @@
 import { ActionClipData } from './actionClip';
 
-export type CutsceneTrackType = 'Property' | 'Transform' | 'Camera';
+export type CutsceneTrackType = 'Action' | 'Transform' | 'Camera';
 
 export type CutsceneTrackData = {
   id: string;

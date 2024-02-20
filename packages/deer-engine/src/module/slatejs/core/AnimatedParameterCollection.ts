@@ -1,3 +1,4 @@
+import { egclass, property } from '@/core';
 import { ActionClip } from './ActionClip';
 import { AnimatedParameter, AnimatedParameterJson } from './AnimatedParameter';
 import { IAnimatable } from './IAnimatable';
@@ -6,12 +7,13 @@ import { IKeyable } from './IKeyable';
 export type AnimatedParameterCollectionJson = {
   animatedParamArray: AnimatedParameterJson[];
 };
-export class AnimatedParameterCollection implements IAnimatable {
-  animatedParamArray: AnimatedParameter[];
 
-  private constructor(animatedParamArray: AnimatedParameter[]) {
-    this.animatedParamArray = animatedParamArray;
-  }
+@egclass()
+export class AnimatedParameterCollection implements IAnimatable {
+  @property({ type: [AnimatedParameter] })
+  animatedParamArray: AnimatedParameter[] = [];
+
+  constructor() {}
 
   get isValid(): boolean {
     return !!this.animatedParamArray && this.animatedParamArray.length > 0;
@@ -19,11 +21,13 @@ export class AnimatedParameterCollection implements IAnimatable {
 
   static constructFromJson = (clip: ActionClip, data: AnimatedParameterCollectionJson) => {
     const array = data.animatedParamArray.map((a) => AnimatedParameter.constructFromJson(clip, a));
-    return new AnimatedParameterCollection(array);
+    const a = new AnimatedParameterCollection();
+    a.animatedParamArray = array;
+    return a;
   };
 
   static construct = () => {
-    return new AnimatedParameterCollection([]);
+    return new AnimatedParameterCollection();
   };
 
   addParameter = (keyable: IKeyable, compTypeName: string, paramPath: string) => {

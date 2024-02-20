@@ -8,6 +8,7 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
   const decorator = (target: undefined, context: ClassFieldDecoratorContext<This, Value>) => {
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
     const classStash = getClassStathFromMetadata(metadata);
+
     const { type, ...uiOptions } = options;
     const typeName = type ? getClassName(type) : undefined;
 

@@ -1,4 +1,4 @@
-import { Component, DeerScene, MeshComponent, TransformComponent } from 'deer-engine';
+import { Component, DeerScene, MeshComponent, TransformComponent, getMetadataFromCtor } from 'deer-engine';
 import { FC, ReactNode } from 'react';
 import { MeshComp, TransformComp } from './comps';
 import { useBindSignal, useDumbState } from '@/hooks';
@@ -17,8 +17,10 @@ export const EntityInspector: FC<EntityInspectorProps> = (props) => {
   const TypeToComp: (comp: Component) => ReactNode = (comp) => {
     switch (comp.type) {
       case 'MeshComponent':
+        console.log('Mesh', getMetadataFromCtor(MeshComponent));
         return <MeshComp comp={comp as MeshComponent} />;
       case 'TransformComponent':
+        console.log('Transform', getMetadataFromCtor(TransformComponent));
         return <TransformComp comp={comp as TransformComponent} />;
 
       default:

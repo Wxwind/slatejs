@@ -3,8 +3,9 @@ import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } f
 import { ActionClip } from '../ActionClip';
 import { CutsceneTrack } from '../CutsceneTrack';
 import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
-import { Component } from '@/core';
+import { Component, egclass } from '@/core';
 
+@egclass()
 export class AnimationClip extends ActionClip {
   protected _type = 'Animation' as const;
 
@@ -18,7 +19,7 @@ export class AnimationClip extends ActionClip {
     return this;
   }
 
-  private constructor(parent: CutsceneTrack, id: string, name: string, start: number, end: number) {
+  constructor(parent: CutsceneTrack, id: string, name: string, start: number, end: number) {
     super(parent, id, name, start, end);
   }
 
@@ -31,7 +32,7 @@ export class AnimationClip extends ActionClip {
 
   static construct(parent: CutsceneTrack, data: CreateActionClipDto) {
     const clip = new AnimationClip(parent, genUUID('csc'), data.name || 'animation clip', data.startTime, data.endTime);
-    clip._animatedParams = AnimatedParameterCollection.construct();
+    clip._animatedParams = new AnimatedParameterCollection();
     return clip;
   }
 
