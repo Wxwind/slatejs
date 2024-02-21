@@ -1,2 +1,2 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const globalTypeMap = new Map<string, new (...args: any[]) => any>();
+export const globalTypeMap = new Map<string, new () => any>();

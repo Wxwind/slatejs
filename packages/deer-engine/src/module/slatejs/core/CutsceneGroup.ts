@@ -1,12 +1,11 @@
-import { Entity, egclass } from '@/core';
+import { Entity } from '@/core';
 import { Cutscene } from './Cutscene';
 import { CutsceneTrack } from './CutsceneTrack';
 import { IDirectable } from './IDirectable';
 import { isNil } from '@/util';
 import { ActionTrack } from './tracks';
-import { CutsceneTrackType } from './type';
 import { Signal } from '@/packages/signal';
-import { TransformTrack } from './tracks/TransformTrack';
+import { AnimationTrack } from './tracks/AnimationTrack';
 
 export abstract class CutsceneGroup implements IDirectable {
   protected _tracks: CutsceneTrack[] = [];
@@ -76,14 +75,14 @@ export abstract class CutsceneGroup implements IDirectable {
     return this._tracks.find((a) => a.id === trackId);
   };
 
-  addTrack = (type: CutsceneTrackType) => {
+  addTrack = (type: string) => {
     let newTrack = null;
     switch (type) {
-      case 'Action':
+      case 'ActionTrack':
         newTrack = ActionTrack.construct(this, 'Action Track');
         break;
-      case 'Transform':
-        newTrack = TransformTrack.construct(this, 'Transform Track');
+      case 'AnimationTrack':
+        newTrack = AnimationTrack.construct(this, 'Aniamtion Track');
         break;
       default:
         break;

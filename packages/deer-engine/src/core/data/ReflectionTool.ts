@@ -1,8 +1,8 @@
 import { isNil } from '@/util';
 import { globalTypeMap } from './GlobalTypeMap';
-import { getClassStath } from './decorators/util';
+import { AnyCtor, NoAbstractCtor, getClassStath } from './decorators/util';
 
-export const getRelativeProp = (compType: string, propPath: string) => {
+export function getRelativeProp(compType: string, propPath: string) {
   const classCtor = globalTypeMap.get(compType);
   if (isNil(classCtor)) {
     throw new Error(`cannot find metadata of class '${compType}', must add @egclass for class to register class type`);
@@ -15,4 +15,31 @@ export const getRelativeProp = (compType: string, propPath: string) => {
     );
   }
   return metadataProp;
-};
+}
+
+// isSubclassOf(ClassA,ClassA) also returns true
+export function isSubclassOf(ctor: AnyCtor, ancestor: AnyCtor): boolean {
+  let c = ctor.prototype;
+  while (c) {
+    if (c.constructor === ancestor) return true;
+    c = Object.getPrototypeOf(c);
+  }
+  return false;
+}
+
+const subclassMap = new Map<AnyCtor, NoAbstractCtor[]>();
+
+export function getSubclassOf(ctor: AnyCtor): NoAbstractCtor[] {
+  const cache = subclassMap.get(ctor);
+  if (cache) return cache;
+
+  const res: NoAbstractCtor[] = [];
+  for (const c of globalTypeMap.values()) {
+    if (isSubclassOf(c, ctor)) {
+      res.push(c);
+    }
+  }
+
+  subclassMap.set(ctor, res);
+  return res;
+}

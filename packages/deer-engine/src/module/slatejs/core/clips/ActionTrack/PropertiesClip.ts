@@ -1,11 +1,14 @@
 import { genUUID, isNil } from '@/util';
-import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } from '../type';
-import { ActionClip } from '../ActionClip';
-import { CutsceneTrack } from '../CutsceneTrack';
-import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
+import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } from '../../type';
+import { ActionClip } from '../../ActionClip';
+import { CutsceneTrack } from '../../CutsceneTrack';
+import { AnimatedParameterCollection } from '../../AnimatedParameterCollection';
 import { Entity, TransformComponent, egclass } from '@/core';
+import { attachTrack } from '../../decorators';
+import { ActionTrack } from '../../tracks';
 
 @egclass()
+@attachTrack(['ActionTrack'])
 export class PropertiesClip extends ActionClip {
   protected _type = 'Properties' as const;
 
@@ -57,7 +60,9 @@ export class PropertiesClip extends ActionClip {
   }
 
   addProperty = (compTypeName: string, paramPath: string) => {
-    const propParam = this._animatedParams.addParameter(this, compTypeName, paramPath);
+    const propParam = this._animatedParams?.addParameter(this, compTypeName, paramPath);
+
+    if (!propParam) return;
 
     propParam.addKey(1, 0);
     propParam.addKey(5, 0);

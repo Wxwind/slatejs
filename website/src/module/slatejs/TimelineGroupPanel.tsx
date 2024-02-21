@@ -18,9 +18,11 @@ export const TimelineGroupPanel: FC<TimelineGroupPanelProps> = (props) => {
   return (
     <div style={{ width: `${width}px` }}>
       <div className="timeline-group-panel">{object.name}</div>
-      {object.children.map((a) => (
-        <TimelineTracksPanel key={a.id} width={width} object={a} />
-      ))}
+      <div className="flex flex-col gap-y-1">
+        {object.children.map((a) => (
+          <TimelineTracksPanel key={a.id} width={width} object={a} />
+        ))}
+      </div>
     </div>
   );
 };

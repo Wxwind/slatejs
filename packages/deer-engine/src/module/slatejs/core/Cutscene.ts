@@ -413,7 +413,6 @@ export class Cutscene {
 
         const trackData: CutsceneTrackData = {
           id: track.id,
-          type: track.type,
           name: track.name,
           children: clips,
         };

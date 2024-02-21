@@ -1,7 +1,7 @@
 import { Entity, egclass } from '@/core';
 import { CutsceneGroup } from '../CutsceneGroup';
 import { CutsceneGroupData } from '../type';
-import { TransformTrack } from '../tracks/TransformTrack';
+import { AnimationTrack } from '../tracks/AnimationTrack';
 import { Cutscene } from '../Cutscene';
 import { genUUID } from '@/util';
 
@@ -16,7 +16,7 @@ export class ActorGroup extends CutsceneGroup {
   static constructFromJson(director: Cutscene, data: CutsceneGroupData) {
     const group = new ActorGroup(director, data.id, []);
     data.children.forEach((t) => {
-      const track = TransformTrack.constructFromJson(group, t);
+      const track = AnimationTrack.constructFromJson(group, t);
       group._tracks.push(track);
     });
     return group;

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isNil } from '@/util';
 import { GroupOptions } from '../type';
+import { CutsceneTrack } from '@/module';
 
 export type DecoratorMetadataObjectForRF = Partial<{
   __propertyCache__: MetadataClass;
   __classname__: string;
+  __attachTracks__: string[];
 }>;
 
 export type MetadataClass = Record<string | symbol, MetadataProp | undefined>;
@@ -24,8 +26,14 @@ export type MetadataProp = Partial<{
     max: number;
   }>;
 }>;
+9;
+export type AnyCtor = (new (...args: any[]) => any) | (abstract new (...args: any[]) => any);
 
-export type AnyCtor = abstract new (...args: any[]) => unknown;
+export type NoAbstractCtor = new (...args: any[]) => any;
+
+export function getMetadataFromObj(obj: any) {
+  return obj.constructor[Symbol.metadata] as DecoratorMetadataObjectForRF;
+}
 
 export function getMetadataFromCtor(ctor: AnyCtor) {
   return ctor[Symbol.metadata] as DecoratorMetadataObjectForRF;

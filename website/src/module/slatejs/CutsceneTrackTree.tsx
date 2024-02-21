@@ -13,7 +13,7 @@ export const CutsceneTrackTree: FC<CutsceneTrackTreeProps> = (props) => {
   const { object, depth, paddingLeft } = props;
 
   return (
-    <div className="pb-0.5 w-full">
+    <div className="pb-0.5 w-full flex flex-col gap-y-1">
       {object.map((a) => (
         <CutsceneTrackPanel key={a.id} object={a} depth={depth} paddingLeft={paddingLeft} />
       ))}

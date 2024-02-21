@@ -6,3 +6,4 @@ export * from './ActionClip';
 export * from './IDirectable';
 export * from './clips';
 export * from './type';
+export * from './decorators';

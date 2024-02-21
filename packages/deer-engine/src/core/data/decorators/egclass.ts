@@ -5,6 +5,7 @@ import { globalTypeMap } from '../GlobalTypeMap';
 import { ClassClassDecorator } from '../type';
 import { DecoratorMetadataObjectForRF, getClassName, getClassStath, hasClassStash } from './util';
 
+// FIXME fix with Class extends new () => any
 export function egclass<Class extends new (...args: any[]) => any>(name?: string): ClassClassDecorator<Class> {
   return (target: Class, context: ClassDecoratorContext<Class>) => {
     globalTypeMap.set(name || getClassName(target), target);

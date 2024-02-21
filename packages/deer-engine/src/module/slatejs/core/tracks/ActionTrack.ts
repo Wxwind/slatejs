@@ -8,9 +8,7 @@ import { constructClipFrom } from '../clips';
 import { egclass } from '@/core';
 
 @egclass()
-export class ActionTrack extends CutsceneTrack<'Action'> {
-  protected _type = 'Action' as const;
-
+export class ActionTrack extends CutsceneTrack {
   constructor(parent: IDirectable, id: string, name: string, clips: ActionClip[]) {
     super(parent, id, name, clips);
   }

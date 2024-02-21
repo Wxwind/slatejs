@@ -1,11 +1,13 @@
 import { genUUID, isNil } from '@/util';
-import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } from '../type';
-import { ActionClip } from '../ActionClip';
-import { CutsceneTrack } from '../CutsceneTrack';
-import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
+import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } from '../../type';
+import { ActionClip } from '../../ActionClip';
+import { CutsceneTrack } from '../../CutsceneTrack';
+import { AnimatedParameterCollection } from '../../AnimatedParameterCollection';
 import { Entity, TransformComponent, egclass } from '@/core';
+import { attachTrack } from '../../decorators';
 
 @egclass()
+@attachTrack(['ActionTrack'])
 export class TransformClip extends ActionClip {
   protected _type = 'Transform' as const;
 

@@ -4,8 +4,10 @@ import { ActionClip } from '../ActionClip';
 import { CutsceneTrack } from '../CutsceneTrack';
 import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
 import { Component, egclass } from '@/core';
+import { attachTrack } from '../decorators';
 
 @egclass()
+@attachTrack(['AnimationTrack'])
 export class AnimationClip extends ActionClip {
   protected _type = 'Animation' as const;
 

@@ -2,10 +2,10 @@ import { ActionClip } from '../ActionClip';
 import { CutsceneTrack } from '../CutsceneTrack';
 import { ActionClipData } from '../type';
 import { AnimationClip } from './AnimationClip';
-import { TransformClip } from './TransformClip';
+import { TransformClip } from './ActionTrack/TransformClip';
 
 export * from './AnimationClip';
-export * from './TransformClip';
+export * from './ActionTrack';
 
 export function constructClipFrom(parent: CutsceneTrack, data: ActionClipData): ActionClip {
   switch (data.type) {

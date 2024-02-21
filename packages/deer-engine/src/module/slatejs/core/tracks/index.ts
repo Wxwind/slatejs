@@ -1,2 +1,2 @@
 export * from './ActionTrack';
-export * from './TransformTrack';
+export * from './AnimationTrack';

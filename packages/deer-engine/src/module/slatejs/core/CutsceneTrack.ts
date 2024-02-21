@@ -1,17 +1,16 @@
 import { isNil } from '@/util';
 import { IDirectable } from './IDirectable';
-import { ClipType, CreateActionClipDto, CutsceneTrackType } from './type';
+import { ClipType, CreateActionClipDto } from './type';
 import { AnimationClip, TransformClip } from './clips';
 import { ActionClip } from './ActionClip';
 import { Signal } from '@/packages/signal';
-import { accessor, egclass } from '@/core';
+import { accessor } from '@/core';
 
-export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackType> implements IDirectable {
+export abstract class CutsceneTrack implements IDirectable {
   protected _clips: ActionClip[];
   private _parent: IDirectable;
   private _id: string;
   private _name: string;
-  protected abstract readonly _type: T;
 
   readonly signals = {
     trackUpdated: new Signal(),
@@ -55,10 +54,6 @@ export abstract class CutsceneTrack<T extends CutsceneTrackType = CutsceneTrackT
 
   get endTime() {
     return this.parent?.endTime || 0;
-  }
-
-  get type() {
-    return this._type;
   }
 
   get actor() {

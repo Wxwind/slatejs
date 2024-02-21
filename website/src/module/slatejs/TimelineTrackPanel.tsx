@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { CutsceneTrack } from 'deer-engine';
+import { AnyCtor, CutsceneTrack, findAttachableClips, getMetadataFromCtor } from 'deer-engine';
 import { TimelineActionClip } from './TimelineActionClip';
 import { useScaleStore } from './store';
 import { useBindSignal, useDumbState } from '@/hooks';
@@ -19,16 +19,19 @@ const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
   useBindSignal(object.signals.clipCountChanged, refresh);
   useBindSignal(object.signals.trackUpdated, refresh);
 
-  const contextList: ContextListItem[] = [
-    {
-      name: 'add transform clip',
+  const clips = findAttachableClips(getMetadataFromCtor(object.constructor as AnyCtor).__classname__);
+
+  const contextList: ContextListItem[] = clips.map((a) => {
+    const metadata = getMetadataFromCtor(a);
+    return {
+      name: metadata.__classname__ || '<missing classname>',
       onSelect: () => {
         const start = offsetX / scale;
         const end = start + 2;
         object.addClip('Transform', { startTime: start, endTime: end });
       },
-    },
-  ];
+    };
+  });
 
   return (
     <div style={{ width: `${width}px`, height: '32px', position: 'relative' }}>
