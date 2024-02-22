@@ -3,33 +3,22 @@ import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } f
 import { ActionClip } from '../../ActionClip';
 import { CutsceneTrack } from '../../CutsceneTrack';
 import { AnimatedParameterCollection } from '../../AnimatedParameterCollection';
-import { Entity, TransformComponent, egclass } from '@/core';
+import { Entity, egclass, property } from '@/core';
 import { attachTrack } from '../../decorators';
-import { ActionTrack } from '../../tracks';
 
 @egclass()
 @attachTrack(['ActionTrack'])
 export class PropertiesClip extends ActionClip {
   protected _type = 'Properties' as const;
 
+  @property({ type: AnimatedParameterCollection })
   private _animatedParams!: AnimatedParameterCollection;
 
   get animatedData(): AnimatedParameterCollection {
     return this._animatedParams;
   }
 
-  private _actorComponent: TransformComponent | undefined;
-
   get animatedParametersTarget(): Entity | undefined {
-    // if (!isNil(this._actorComponent) && this._actorComponent.entity === this.actor) {
-    //   return this._actorComponent;
-    // }
-    // const comp = this.actor?.findComponentByType<TransformComponent>('TransformComponent');
-    // if (isNil(comp)) {
-    //   throw new Error('TransformClip require TransformComponent');
-    // }
-    // this._actorComponent = comp;
-    // return comp;
     return this.actor;
   }
 
@@ -66,6 +55,7 @@ export class PropertiesClip extends ActionClip {
 
     propParam.addKey(1, 0);
     propParam.addKey(5, 0);
+    this.signals.clipUpdated.emit();
   };
 
   updateData: (data: UpdateActionClipDto) => void = (data) => {

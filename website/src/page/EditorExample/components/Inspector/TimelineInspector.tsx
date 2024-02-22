@@ -3,9 +3,9 @@ import { CanvasEditor, Curves } from '@/module/canvasEditor';
 import { Circle } from '@/module/canvasEditor/Drawable/Circle';
 import { useCanvaskitStore } from '@/store';
 import { isNil } from '@/util';
-import { AnimationCurve, CutsceneEditor } from 'deer-engine';
-
+import { ActionClip, AnimationCurve, CutsceneEditor, globalTypeMap } from 'deer-engine';
 import { FC, useEffect, useState } from 'react';
+import { getEditorRenderer } from '@/decorator';
 
 interface TimelineInspectorProps {
   cutsceneEditor: CutsceneEditor;
@@ -49,10 +49,25 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     };
   }, [canvasKit]);
 
+  const getUICompFromType = (object: ActionClip | undefined) => {
+    if (!object) return <div>not select any clip.</div>;
+    const ctor = globalTypeMap.get(object.constructor.name);
+    if (isNil(ctor))
+      return (
+        <div>
+          {object?.type}----{object.constructor.name}
+        </div>
+      );
+    const comp = getEditorRenderer(ctor);
+    return <div>{comp({ target: object })}</div>;
+  };
+
   return (
     <div className="flex-1">
+      <div>{getUICompFromType(selectedClip)}</div>
+      <div>------------</div>
       <div>CurveEditor</div>
-      <div className=" w-48 h-60" id="curve-editor" />
+      <div className="w-48 h-60" id="curve-editor" />
     </div>
   );
 };

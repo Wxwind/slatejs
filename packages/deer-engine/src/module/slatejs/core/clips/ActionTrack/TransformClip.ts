@@ -3,7 +3,7 @@ import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } f
 import { ActionClip } from '../../ActionClip';
 import { CutsceneTrack } from '../../CutsceneTrack';
 import { AnimatedParameterCollection } from '../../AnimatedParameterCollection';
-import { Entity, TransformComponent, egclass } from '@/core';
+import { Entity, egclass, property } from '@/core';
 import { attachTrack } from '../../decorators';
 
 @egclass()
@@ -11,13 +11,14 @@ import { attachTrack } from '../../decorators';
 export class TransformClip extends ActionClip {
   protected _type = 'Transform' as const;
 
+  @property({ type: AnimatedParameterCollection })
   private _animatedParams!: AnimatedParameterCollection;
 
   get animatedData(): AnimatedParameterCollection {
     return this._animatedParams;
   }
 
-  private _actorComponent: TransformComponent | undefined;
+  // private _actorComponent: TransformComponent | undefined;
 
   get animatedParametersTarget(): Entity | undefined {
     // if (!isNil(this._actorComponent) && this._actorComponent.entity === this.actor) {
@@ -52,11 +53,11 @@ export class TransformClip extends ActionClip {
     const scaleParam = animatedParams.addParameter(clip, 'TransformComponent', 'scale');
 
     posParam.addKey(1, 0.5);
-    posParam.addKey(5, 10.5);
+    posParam.addKey(4, 5.5);
     rotateParam.addKey(1, 90);
-    rotateParam.addKey(5, 100);
+    rotateParam.addKey(4, 100);
     scaleParam.addKey(1, 1);
-    scaleParam.addKey(5, 2);
+    scaleParam.addKey(4, 2);
 
     clip._animatedParams = animatedParams;
     return clip;

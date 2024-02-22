@@ -49,7 +49,7 @@ export const MainPanel: FC<MainPanelProps> = (props) => {
         style={{ top: dragLineHeight }}
         onMouseDown={handleMouseDown}
       />
-      <div className="absolute w-full" style={{ top: `${dragLineHeight + 2}px` }}>
+      <div className="absolute w-full bottom-0" style={{ top: `${dragLineHeight + 2}px` }}>
         <Inspector scene={scene} cutsceneEditor={cutsceneEditor} />
       </div>
     </div>

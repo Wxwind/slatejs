@@ -1,9 +1,9 @@
-import { CollapseBox } from '@/assets/components';
+import { CollapseBox } from '@/components/baseComponent';
 import { JsonModule, TransformCompJson, TransformComponent } from 'deer-engine';
 import { ChangeEvent, FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import set from 'lodash/set';
-import { BlurInputNumber } from '@/assets/components/BlurInputNumber';
+import { BlurInputNumber } from '@/components/baseComponent/BlurInputNumber';
 import { useBindSignal } from '@/hooks';
 
 interface TransformCompProps {

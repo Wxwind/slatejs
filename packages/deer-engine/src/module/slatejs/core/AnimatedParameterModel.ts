@@ -57,7 +57,7 @@ export class AnimatedBoolModel implements IAnimatedParameterModel<boolean> {
     metadataProp,
     numbers
   ) => {
-    ReflectionTool.setValue(target, metadataProp, numbers[0]);
+    ReflectionTool.setValue(target, metadataProp, numbers[0] >= 1);
   };
 
   getDirect: (target: object, metadataProp: MetadataProp) => number[] = (target, metadataProp) => {

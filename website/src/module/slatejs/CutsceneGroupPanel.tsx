@@ -2,8 +2,8 @@ import { FC } from 'react';
 import { CutsceneTrackTree } from './CutsceneTrackTree';
 import { CutsceneGroup, CutsceneTrack, getMetadataFromCtor, getSubclassOf } from 'deer-engine';
 import { useDumbState, useBindSignal } from '@/hooks';
-import { ProDropdownMenu, DroplistItem } from '@/assets/components';
-import { PlusIcon } from '@radix-ui/react-icons';
+import { ProDropdownMenu, DroplistItem } from '@/components/baseComponent';
+import { RxPlus } from 'react-icons/rx';
 
 interface CutsceneGroupPanelProps {
   // style
@@ -35,7 +35,7 @@ export const CutsceneGroupPanel: FC<CutsceneGroupPanelProps> = (props) => {
       <div className="cutscene-group-panel-item">
         <div>{object.name}</div>
         <ProDropdownMenu list={dropList}>
-          <PlusIcon />
+          <RxPlus fontSize={15} />
         </ProDropdownMenu>
       </div>
       <CutsceneTrackTree object={object.children} depth={depth + 1} paddingLeft={paddingLeft} />

@@ -3,7 +3,7 @@ import { AnyCtor, CutsceneTrack, findAttachableClips, getMetadataFromCtor } from
 import { TimelineActionClip } from './TimelineActionClip';
 import { useScaleStore } from './store';
 import { useBindSignal, useDumbState } from '@/hooks';
-import { ContextListItem, ProContextMenu } from '@/assets/components';
+import { ContextListItem, ProContextMenu } from '@/components/baseComponent';
 
 interface TimelineTracksProps {
   width: number;

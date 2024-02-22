@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { isNil } from '@/util';
-import { ChevronRightIcon } from '@radix-ui/react-icons';
+import { RxChevronRight } from 'react-icons/rx';
 
 export type ContextListItem = { name: string; onSelect?: (e: Event) => void; children?: ContextListItem[] };
 
@@ -32,7 +32,7 @@ export const ProContextMenu: FC<PropsWithChildren<ProContextMenuProps>> = (props
         <ContextMenu.SubTrigger>
           {item.name}
           <div className="ml-auto pl-5 text-violet-400">
-            <ChevronRightIcon />
+            <RxChevronRight />
           </div>
         </ContextMenu.SubTrigger>
         <ContextMenu.Portal>

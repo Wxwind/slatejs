@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import classnames from 'classnames';
 import { CutsceneEditor } from 'deer-engine';
-import { PlayIcon, StopIcon, TrackNextIcon, TrackPreviousIcon } from '@radix-ui/react-icons';
+import { RxPlay, RxStop, RxTrackNext, RxTrackPrevious } from 'react-icons/rx';
 
 export interface ControlsProps {
   className?: string;
@@ -14,14 +14,14 @@ export const Controls: FC<ControlsProps> = (props) => {
     <div className={classnames('controls', className)}>
       <div className="controls-btn-line">
         <div className="controls-btn">
-          <TrackPreviousIcon
+          <RxTrackPrevious
             onClick={() => {
               cutsceneEditor.setTime(cutsceneEditor.cutscene.currentTime - 1);
             }}
           />
         </div>
         <div className="controls-btn">
-          <PlayIcon
+          <RxPlay
             className="rotate-180"
             onClick={() => {
               cutsceneEditor.playReverse();
@@ -29,21 +29,21 @@ export const Controls: FC<ControlsProps> = (props) => {
           />
         </div>
         <div className="controls-btn">
-          <StopIcon
+          <RxStop
             onClick={() => {
               cutsceneEditor.stop();
             }}
           />
         </div>
         <div className="controls-btn">
-          <PlayIcon
+          <RxPlay
             onClick={() => {
               cutsceneEditor.play();
             }}
           />
         </div>
         <div className="controls-btn">
-          <TrackNextIcon
+          <RxTrackNext
             onClick={() => {
               cutsceneEditor.setTime(cutsceneEditor.cutscene.currentTime + 1);
             }}

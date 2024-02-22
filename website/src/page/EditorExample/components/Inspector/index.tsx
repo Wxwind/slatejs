@@ -14,7 +14,7 @@ export const Inspector: FC<InspectorProps> = (props) => {
   const { className, cutsceneEditor, scene } = props;
 
   return (
-    <Tabs.Root className="flex flex-col" defaultValue="entity">
+    <Tabs.Root className="flex flex-col h-full" defaultValue="entity">
       <Tabs.List className="flex border-b border-gray-500 bg-gray-300">
         <Tabs.Trigger
           className="py-1 px-2 flex items-center justify-center select-none outline-none data-[state=active]:text-blue-600 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-current"
@@ -29,10 +29,10 @@ export const Inspector: FC<InspectorProps> = (props) => {
           Timeline
         </Tabs.Trigger>
       </Tabs.List>
-      <Tabs.Content value="entity">
+      <Tabs.Content value="entity" className="overflow-y-auto">
         <EntityInspector scene={scene} />
       </Tabs.Content>
-      <Tabs.Content value="timeline">
+      <Tabs.Content value="timeline" className="overflow-y-auto">
         <TimelineInspector cutsceneEditor={cutsceneEditor} />
       </Tabs.Content>
     </Tabs.Root>

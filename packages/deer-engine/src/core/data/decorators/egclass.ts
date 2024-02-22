@@ -44,18 +44,26 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
           // TODO: entity/component reference
           // if (ctor instanceof Entity || ctor instanceof ComponentBase) {
           // }
-
           const prop = metaProp.get?.(thisObj);
 
-          if (Array.isArray(ctor)) {
+          if (Array.isArray(prop) && Array.isArray(ctor)) {
+            // thisObj is array, and the field of thisObj is also array.
             const res = [];
-            for (const c of ctor) {
-              res.push(toJson(c, prop));
+            for (let i = 0; i < prop.length; i++) {
+              let j = i;
+              if (j > ctor.length - 1) j = ctor.length - 1;
+              const type = ctor[j];
+
+              res.push(toJson(type, prop[i]));
             }
+
             obj[key] = res;
-          } else {
+          } else if (!Array.isArray(ctor) && !Array.isArray(prop)) {
             const o = toJson(ctor, prop);
             obj[key] = o;
+          } else {
+            const ctorname = Array.isArray(ctor) ? ctor.map((a) => a.name).join(', ') : ctor.name;
+            throw new Error(`the type '${ctorname}' in metadata don't match the field '${prop}'`);
           }
         }
 

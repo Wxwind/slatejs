@@ -113,10 +113,21 @@ export abstract class CutsceneTrack implements IDirectable {
     return newClip;
   };
 
-  removeClip = (ClipId: string) => {
+  removeClipById = (ClipId: string) => {
     const index = this._clips.findIndex((a) => a.id === ClipId);
-    if (isNil(index)) {
-      console.log(`can't remove Clip(id = '${ClipId}') in ${this.name}(id = '${this.id}')`);
+    if (index === -1) {
+      console.log(`can't remove Clip(id = '${ClipId}') in track '${this.name}'(id = '${this.id}')`);
+      return;
+    }
+
+    this._clips.splice(index, 1);
+    this.signals.clipCountChanged.emit();
+  };
+
+  removeClip = (clip: ActionClip) => {
+    const index = this._clips.findIndex((a) => a === clip);
+    if (index === -1) {
+      console.log(`can't remove Clip(id = '${clip.id}') in track '${this.name}'(id = '${this.id}')`);
       return;
     }
 

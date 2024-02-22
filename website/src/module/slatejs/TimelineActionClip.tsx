@@ -1,9 +1,11 @@
 import { FC, useCallback } from 'react';
-import { ActionClip, cutsceneEditor } from 'deer-engine';
+import { ActionClip, CutsceneTrack, cutsceneEditor } from 'deer-engine';
 import { useScaleStore } from './store';
-import { ComponentInstanceIcon } from '@radix-ui/react-icons';
+import { BsDiamond } from 'react-icons/bs';
 import { clamp } from 'deer-engine';
 import { useDumbState, useBindSignal } from '@/hooks';
+import classNames from 'classnames';
+import { ContextListItem, ProContextMenu } from '@/components/baseComponent';
 
 interface TimelineActionClipProps {
   object: ActionClip;
@@ -17,6 +19,9 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
   const refresh = useDumbState();
   useBindSignal(object.signals.clipUpdated, refresh);
   useBindSignal(object.signals.keysChanged, refresh);
+
+  const selectedClip = cutsceneEditor.selectedClip;
+  useBindSignal(cutsceneEditor.signals.selectedClipUpdated, refresh);
 
   const handleClickBlock = () => {
     cutsceneEditor.selectedClip = object;
@@ -118,31 +123,58 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
     }
   }
 
+  const contextList: ContextListItem[] = [
+    {
+      name: 'delete',
+      onSelect: (e) => {
+        (object.parent as CutsceneTrack).removeClip(object);
+      },
+    },
+  ];
+
   return (
-    <div
-      className="timeline-action-clip"
-      onClick={handleClickBlock}
-      onMouseDown={handleMouseDown}
-      style={{
-        position: 'absolute',
-        left: object.startTime * scale,
-        width: (object.endTime - object.startTime) * scale,
-      }}
-    >
-      <div className="resize-left" onMouseDown={handleDragLeft} />
-      <div className="resize-right" onMouseDown={handleDragRight} />
-      <div className="flex items-center h-full">{object.name}</div>
-      {keys.map((key) => (
+    <ProContextMenu list={contextList}>
+      <div
+        className={classNames(
+          'absolute top-0 h-[31px] border-[#aaf] border rounded-sm overflow-hidden text-ellipsis whitespace-nowrap select-none',
+          selectedClip?.id === object.id ? ' bg-slate-400' : 'bg-[#88f]'
+        )}
+        onClick={handleClickBlock}
+        onMouseDown={handleMouseDown}
+        style={{
+          left: object.startTime * scale,
+          width: (object.endTime - object.startTime) * scale,
+        }}
+      >
         <div
-          key={`${key}`}
-          style={{
-            position: 'absolute',
-            left: key * scale,
+          className={'absolute top-0 left-0 w-[6px] h-[30px] cursor-w-resize'}
+          onMouseDown={handleDragLeft}
+          onClick={(e) => {
+            e.stopPropagation();
           }}
-        >
-          <ComponentInstanceIcon />
+        />
+        <div
+          className={'absolute top-0 right-0 w-[6px] h-[30px] cursor-e-resize'}
+          onMouseDown={handleDragRight}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        />
+        <div className={classNames('flex items-center h-2/3', object)}>{object.name}</div>
+        <div className="h-1/3 bg-slate-200">
+          {keys.map((key) => (
+            <div
+              key={`${key}`}
+              style={{
+                position: 'absolute',
+                left: key * scale,
+              }}
+            >
+              <BsDiamond fontSize={10} />
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      </div>
+    </ProContextMenu>
   );
 };

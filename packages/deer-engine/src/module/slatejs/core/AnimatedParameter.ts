@@ -24,9 +24,9 @@ import { ActionClip } from './ActionClip';
 
 export type AnimatedParameterJson = {
   keyableId: string;
-  compType: string;
+  type: string;
   paramType: string;
-  paramName: string;
+  paramPath: string;
   curves: AnimationCurveJson[];
 };
 
@@ -35,14 +35,14 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   @property({ type: [AnimationCurve] })
   curves!: AnimationCurve[];
 
-  // TODO compType can also be ActionClip's type name when target is ActionClip.
+  // TODO: type can also be ActionClip's type name when target is ActionClip.
   @property({ type: String })
-  compType!: string;
+  type!: string; // name of Component or ActionClip
 
+  // TODO: support nested proppath like 'a/b/c'
   @property({ type: String })
-  paramName!: string; // key of compType
+  paramPath!: string; // key of type
 
-  @property({ type: String })
   paramType!: string;
 
   private keyable!: IKeyable;
@@ -65,41 +65,49 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   private snapshot: number[] | undefined;
 
   get isValid(): boolean {
-    return !!this.paramName && !!this.metadataProp;
+    return !!this.paramPath && !!this.metadataProp;
   }
 
   static constructFromJson = (clip: ActionClip, data: AnimatedParameterJson) => {
-    const curves: AnimationCurve[] = data.curves.map((curve) => AnimationCurve.from(curve.keys));
+    const { type, paramPath, keyableId, curves } = data;
+    const c: AnimationCurve[] = curves.map((curve) => AnimationCurve.from(curve.keys));
 
     const a = new AnimatedParameter();
+    // FIXME read from keyableId
     a.keyable = clip;
-    a.compType = data.compType;
-    a.paramType = data.paramType;
-    a.paramName = data.paramName;
-    a.metadataProp = getRelativeProp(data.compType, data.paramName);
+    a.type = type;
+
+    const metadataProp = getRelativeProp(type, paramPath);
+    const paramType = metadataProp.typeName;
+    if (isNil(paramType)) {
+      throw new Error(`cannot not read name of '${paramPath} in '${type}''`);
+    }
+    a.paramType = paramType;
+    a.paramPath = paramPath;
+    a.metadataProp = getRelativeProp(type, paramPath);
 
     if (data.paramType in TypeToAnimParamModelMapInstance) {
       a.parameterModel = new TypeToAnimParamModelMapInstance[data.paramType]();
-      a.curves = curves;
+      a.curves = c;
     } else {
       throw new Error(`type ${data.paramType} is not surpported in animatedParameter.`);
     }
     return a;
   };
 
-  static construct = (keyable: IKeyable, compType: string, paramPath: string) => {
-    const metadataProp = getRelativeProp(compType, paramPath);
+  static construct = (keyable: IKeyable, type: string, paramPath: string) => {
+    const metadataProp = getRelativeProp(type, paramPath);
     const paramType = metadataProp.typeName;
     if (isNil(paramType)) {
-      throw new Error(`cannot not read name of '${paramPath} in '${compType}''`);
+      throw new Error(`cannot not read name of '${paramPath} in '${type}''`);
     }
 
     const a = new AnimatedParameter();
     a.keyable = keyable;
-    a.compType = compType;
+    a.type = type;
     a.paramType = paramType;
-    a.paramName = paramPath;
-    a.metadataProp = getRelativeProp(compType, paramPath);
+    a.paramPath = paramPath;
+    a.metadataProp = getRelativeProp(type, paramPath);
 
     if (paramType in TypeToAnimParamModelMapInstance) {
       a.parameterModel = new TypeToAnimParamModelMapInstance[paramType]();
@@ -206,31 +214,33 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   private _cachedAnimatedObject: Component | ActionClip | undefined;
   // get Component or ActionClip from this.keyable.animatedParameterTarget
   private getAnimatedObject = () => {
-    if (this._cachedAnimatedObject !== undefined) {
-      return this._cachedAnimatedObject;
-    }
     if (this.target === undefined) {
       return undefined;
     }
+
+    if (this._cachedAnimatedObject !== undefined) {
+      return this._cachedAnimatedObject;
+    }
+
     if (this.target instanceof Entity) {
-      const o = this.target.findComponentByType(this.compType as Component['type']);
+      const o = this.target.findComponentByType(this.type as Component['type']);
       if (isNil(o)) {
         throw new Error(
-          `couldn't find component in target. (target= ${this.target.constructor.name}, compType= ${this.compType})`
+          `couldn't find component in target. (target= ${this.target.constructor.name}, type= ${this.type})`
         );
       }
       this._cachedAnimatedObject = o;
       return o;
     }
 
-    if (isValidKey(this.paramName, this.target)) {
-      const o = this.target[this.paramName];
-      this._cachedAnimatedObject = o;
-      return o;
+    if (isValidKey(this.paramPath, this.target)) {
+      //  const o = this.target[this.paramPath];
+      this._cachedAnimatedObject = this.target;
+      return this.target;
     }
 
     throw new Error(
-      `couldn't find cachedAnimatedObject. (target= ${this.target.constructor.name}, compType= ${this.compType}, parameterPath=${this.paramName})`
+      `couldn't find cachedAnimatedObject. (target= ${this.target.constructor.name}, type= ${this.type}, parameterPath=${this.paramPath})`
     );
   };
 

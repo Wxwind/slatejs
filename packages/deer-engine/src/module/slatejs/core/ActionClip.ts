@@ -3,7 +3,7 @@ import { ClipType, UpdateActionClipDto } from './type';
 import { IKeyable } from './IKeyable';
 import { AnimatedParameterCollection } from './AnimatedParameterCollection';
 import { Signal } from '@/packages/signal';
-import { Component, Entity } from '@/core';
+import { Entity, property } from '@/core';
 
 export type ActionClipBaseInitParam = {
   start: number;
@@ -11,10 +11,14 @@ export type ActionClipBaseInitParam = {
   name: string;
 };
 export abstract class ActionClip implements IDirectable, IKeyable {
-  protected _startTime;
-  protected _endTime;
+  @property({ type: Number })
+  protected _startTime: number;
+  @property({ type: Number })
+  protected _endTime: number;
   protected _parent: IDirectable;
+  @property({ type: String })
   protected _id: string;
+  @property({ type: String })
   protected _name: string;
   protected abstract readonly _type: ClipType;
 
@@ -60,7 +64,7 @@ export abstract class ActionClip implements IDirectable, IKeyable {
 
   abstract get animatedData(): AnimatedParameterCollection;
 
-  abstract get animatedParametersTarget(): Component | Entity | ActionClip | undefined;
+  abstract get animatedParametersTarget(): Entity | ActionClip | undefined;
 
   readonly signals = {
     clipUpdated: new Signal(),

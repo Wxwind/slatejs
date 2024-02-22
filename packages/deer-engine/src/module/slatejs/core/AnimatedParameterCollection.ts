@@ -3,6 +3,7 @@ import { ActionClip } from './ActionClip';
 import { AnimatedParameter, AnimatedParameterJson } from './AnimatedParameter';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';
+import { Signal } from '@/packages/signal';
 
 export type AnimatedParameterCollectionJson = {
   animatedParamArray: AnimatedParameterJson[];
@@ -19,6 +20,10 @@ export class AnimatedParameterCollection implements IAnimatable {
     return !!this.animatedParamArray && this.animatedParamArray.length > 0;
   }
 
+  signals = {
+    updated: new Signal<[]>(),
+  };
+
   static constructFromJson = (clip: ActionClip, data: AnimatedParameterCollectionJson) => {
     const array = data.animatedParamArray.map((a) => AnimatedParameter.constructFromJson(clip, a));
     const a = new AnimatedParameterCollection();
@@ -30,8 +35,8 @@ export class AnimatedParameterCollection implements IAnimatable {
     return new AnimatedParameterCollection();
   };
 
-  addParameter = (keyable: IKeyable, compTypeName: string, paramPath: string) => {
-    const animatedParam = AnimatedParameter.construct(keyable, compTypeName, paramPath);
+  addParameter = (keyable: IKeyable, type: string, paramPath: string) => {
+    const animatedParam = AnimatedParameter.construct(keyable, type, paramPath);
     this.animatedParamArray.push(animatedParam);
     return animatedParam;
   };
