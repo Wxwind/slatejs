@@ -23,8 +23,8 @@ export const CutsceneEditorPanel: FC<CutsceneEditorPanelProps> = (props) => {
   };
 
   return (
-    <div className="cutscene-editor">
-      <div className="cutscene-editor-left-panel flex flex-col h-full">
+    <div className="relative w-full h-full bg-[#333] flex">
+      <div className="bg-[#555861] w-1/4 flex flex-col h-full">
         <Controls cutsceneEditor={cutsceneEditor} />
         <div
           className={classNames(
@@ -56,7 +56,7 @@ export const CutsceneEditorPanel: FC<CutsceneEditorPanelProps> = (props) => {
           ))}
         </div>
       </div>
-      <div className="cutscene-editor-right-panel">
+      <div className="h-full w-3/4">
         <Timeline cutsceneEditor={cutsceneEditor} />
       </div>
     </div>

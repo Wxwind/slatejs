@@ -187,16 +187,19 @@ export const Timeline: FC<TimelineProps> = (props) => {
   }, [updateMarks]);
 
   return (
-    <div className="timeline" ref={timelineRef}>
-      <canvas height={32} className="timeline-time-canvas" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
-      <div className="timeline-scroller" ref={scrollerRef} onScroll={handleScrollerScroll}>
+    <div className="relative w-full h-full overflow-hidden bg-[#444]" ref={timelineRef}>
+      <canvas height={32} className="absolute" ref={timeCanvasRef} onMouseDown={handleClickTimeCanvas} />
+      <div className="absolute top-8 bottom-0 w-full overflow-auto" ref={scrollerRef} onScroll={handleScrollerScroll}>
         <div style={{ width: `${timelineTrackWidth}px` }}>
           {cutsceneEditor.cutscene.groups.map((a) => {
             return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} object={a} />;
           })}
         </div>
       </div>
-      <div className="timeline-timeMark" style={{ left: timeMarkLeft + 'px' }}>
+      <div
+        className="absolute w-4 h-full mt-4 pointer-events-none top-0 timeline-timeMark"
+        style={{ left: timeMarkLeft + 'px' }}
+      >
         <TimeMarkIcon />
       </div>
     </div>

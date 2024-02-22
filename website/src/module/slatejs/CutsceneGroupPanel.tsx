@@ -31,8 +31,8 @@ export const CutsceneGroupPanel: FC<CutsceneGroupPanelProps> = (props) => {
   });
 
   return (
-    <div className="cutscene-group-panel">
-      <div className="cutscene-group-panel-item">
+    <div>
+      <div className="h-8 px-2 py-0 flex items-center justify-between">
         <div>{object.name}</div>
         <ProDropdownMenu list={dropList}>
           <RxPlus fontSize={15} />

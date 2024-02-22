@@ -11,16 +11,16 @@ export interface ControlsProps {
 export const Controls: FC<ControlsProps> = (props) => {
   const { className, cutsceneEditor } = props;
   return (
-    <div className={classnames('controls', className)}>
-      <div className="controls-btn-line">
-        <div className="controls-btn">
+    <div className={classnames('relative h-8 bg-[#333] w-full text-gray-300', className)}>
+      <div className="h-full flex items-center gap-x-1">
+        <div className="cursor-pointer hover:text-white">
           <RxTrackPrevious
             onClick={() => {
               cutsceneEditor.setTime(cutsceneEditor.cutscene.currentTime - 1);
             }}
           />
         </div>
-        <div className="controls-btn">
+        <div className="cursor-pointer hover:text-white">
           <RxPlay
             className="rotate-180"
             onClick={() => {
@@ -28,21 +28,21 @@ export const Controls: FC<ControlsProps> = (props) => {
             }}
           />
         </div>
-        <div className="controls-btn">
+        <div className="cursor-pointer hover:text-white">
           <RxStop
             onClick={() => {
               cutsceneEditor.stop();
             }}
           />
         </div>
-        <div className="controls-btn">
+        <div className="cursor-pointer hover:text-white">
           <RxPlay
             onClick={() => {
               cutsceneEditor.play();
             }}
           />
         </div>
-        <div className="controls-btn">
+        <div className="cursor-pointer hover:text-white">
           <RxTrackNext
             onClick={() => {
               cutsceneEditor.setTime(cutsceneEditor.cutscene.currentTime + 1);

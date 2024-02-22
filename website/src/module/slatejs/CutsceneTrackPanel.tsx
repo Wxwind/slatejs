@@ -17,7 +17,7 @@ export const CutsceneTrackPanel: FC<CutsceneTrackPanelProps> = (props) => {
   useBindSignal(object.signals.trackUpdated, refresh);
 
   return (
-    <div className="cutscene-track-panel" style={{ paddingLeft: `${paddingLeft * depth}px` }}>
+    <div className="h-8 flex items-center" style={{ paddingLeft: `${paddingLeft * depth}px` }}>
       {object.name}
     </div>
   );

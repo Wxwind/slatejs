@@ -35,7 +35,7 @@ const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
 
   return (
     <div style={{ width: `${width}px`, height: '32px', position: 'relative' }}>
-      <div className="timeline-track-panel">
+      <div className="h-8 bg-gray-500">
         <ProContextMenu list={contextList}>
           <div
             className="w-full h-full"
