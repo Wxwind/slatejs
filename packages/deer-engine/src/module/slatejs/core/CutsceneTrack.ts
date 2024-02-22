@@ -1,7 +1,7 @@
 import { isNil } from '@/util';
 import { IDirectable } from './IDirectable';
 import { ClipType, CreateActionClipDto } from './type';
-import { AnimationClip, TransformClip } from './clips';
+import { AnimationClip, PropertiesClip, TransformClip } from './clips';
 import { ActionClip } from './ActionClip';
 import { Signal } from '@/packages/signal';
 import { accessor } from '@/core';
@@ -80,18 +80,25 @@ export abstract class CutsceneTrack implements IDirectable {
     return this._clips.find((a) => a.id === clipId);
   };
 
-  addClip = (type: ClipType, { name, startTime, endTime }: CreateActionClipDto) => {
+  addClip = (type: string, { name, startTime, endTime }: CreateActionClipDto) => {
     let newClip: ActionClip | null = null;
     switch (type) {
-      case 'Transform':
+      case 'TransformClip':
         newClip = TransformClip.construct(this, {
           name: name,
           startTime: startTime,
           endTime: endTime,
         });
         break;
-      case 'Animation':
+      case 'AnimationClip':
         newClip = AnimationClip.construct(this, {
+          name: name,
+          startTime: startTime,
+          endTime: endTime,
+        });
+        break;
+      case 'PropertiesClip':
+        newClip = PropertiesClip.construct(this, {
           name: name,
           startTime: startTime,
           endTime: endTime,
@@ -101,10 +108,9 @@ export abstract class CutsceneTrack implements IDirectable {
       default:
         break;
     }
-    console.log('create transform clip', newClip);
 
     if (isNil(newClip)) {
-      console.error(`can't add clip of type ${type}`);
+      console.error(`can't add clip of type '${type}'`);
       return;
     }
 

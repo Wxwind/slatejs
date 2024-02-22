@@ -1,8 +1,8 @@
 import { Editor, EditorProps } from '@/components/editor/Editor';
 import { ClassClassDecorator, NoAbstractCtor } from 'deer-engine';
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 
-export const globalEditorMap = new Map<NoAbstractCtor, FC<EditorProps<any>>>();
+export const globalEditorMap = new Map<NoAbstractCtor, FC<EditorProps>>();
 
 export function customEditor<Class extends new () => Editor>(ctor: NoAbstractCtor): ClassClassDecorator<Class> {
   return (target: Class, context: ClassDecoratorContext<Class>) => {

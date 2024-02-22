@@ -1,11 +1,15 @@
 import { customEditor } from '@/decorator';
-import { PropertiesClip } from 'deer-engine';
+import { JsonModule, PropertiesClip } from 'deer-engine';
 import { Editor, EditorProps } from './Editor';
+import { FC } from 'react';
+
+const PropertiesClipEditorComp: FC<EditorProps<PropertiesClip>> = (props) => {
+  const { target } = props;
+
+  return <div className="w-full">{JsonModule.toJson(target)}</div>;
+};
 
 @customEditor(PropertiesClip)
-export class PropertiesClipEditor extends Editor {
-  onEditorGUI = (props: EditorProps<PropertiesClip>) => {
-    const { target } = props;
-    return <div>{target.id}</div>;
-  };
+export class PropertiesClipditor extends Editor {
+  onEditorGUI = (props: EditorProps<PropertiesClip>) => <PropertiesClipEditorComp {...props} />;
 }

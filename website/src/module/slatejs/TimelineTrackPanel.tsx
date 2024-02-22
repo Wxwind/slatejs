@@ -28,7 +28,7 @@ const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
       onSelect: () => {
         const start = offsetX / scale;
         const end = start + 2;
-        object.addClip('Transform', { startTime: start, endTime: end });
+        object.addClip(metadata.__classname__ || '', { startTime: start, endTime: end });
       },
     };
   });
