@@ -24,8 +24,9 @@ export const useCanvaskitStore = create<CanvaskitStoreType>((set, get) => ({
       set({ isLoading: true });
       const ck = await CanvasKitInit({
         locateFile: (file) => {
-          console.log('file', file);
-          return 'https://libs.cdnjs.net/canvaskit-wasm/0.39.1/' + file;
+          console.log('file', file); // canvaskit.wasm
+          // https://libs.cdnjs.net/canvaskit-wasm/0.39.1/
+          return '/' + file;
         },
       });
       set({ canvaskit: ck, isLoading: false });

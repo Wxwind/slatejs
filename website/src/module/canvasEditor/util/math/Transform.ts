@@ -136,7 +136,7 @@ export class Transform {
   /**
    * Invert the matrix
    */
-  invert() {
+  invertSelf() {
     const d = 1 / (this.m[0] * this.m[3] - this.m[1] * this.m[2]);
     const m0 = this.m[3] * d;
     const m1 = -this.m[1] * d;
@@ -151,6 +151,18 @@ export class Transform {
     this.m[4] = m4;
     this.m[5] = m5;
     return this;
+  }
+
+  invert() {
+    const d = 1 / (this.m[0] * this.m[3] - this.m[1] * this.m[2]);
+    const m0 = this.m[3] * d;
+    const m1 = -this.m[1] * d;
+    const m2 = -this.m[2] * d;
+    const m3 = this.m[0] * d;
+    const m4 = d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]);
+    const m5 = d * (this.m[1] * this.m[4] - this.m[0] * this.m[5]);
+
+    return new Transform([m0, m1, m2, m3, m4, m5]);
   }
 
   /**

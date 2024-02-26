@@ -1,6 +1,6 @@
 import { customEditor } from '@/decorator';
 import { JsonModule, TransformClip } from 'deer-engine';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { Editor, EditorProps } from './Editor';
 import { useDumbState, useBindSignal } from '@/hooks';
 
@@ -10,9 +10,6 @@ const TransformClipEditorComp: FC<EditorProps<TransformClip>> = (props) => {
   const refresh = useDumbState();
   useBindSignal(target.signals.clipUpdated, refresh);
   useBindSignal(target.signals.keysChanged, refresh);
-  useEffect(() => {
-    console.log('123');
-  }, []);
 
   return <div className="w-full">{JsonModule.toJson(target)}</div>;
 };

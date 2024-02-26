@@ -153,8 +153,6 @@ export class EventBoundary {
       target = target.parent;
     }
 
-    propagationPath.push(this.rootTarget);
-
     return propagationPath;
   }
 
@@ -190,6 +188,7 @@ export class EventBoundary {
 
       return;
     }
+
     const now = performance.now();
     const e = this.createPointerEvent(from);
 
@@ -383,6 +382,7 @@ export class EventBoundary {
 
       return;
     }
+    console.log('on pointer out');
 
     const trackingData = this.trackingData(from.pointerId);
 
@@ -655,21 +655,41 @@ export class EventBoundary {
     return this.mappingState.trackingData[id];
   }
 
-  public hitTest(x: number, y: number): DrawableObject {
-    // TODO
-    // const invertedPath = this.hitTestRecursive(this.rootTarget, new Point(x, y), this.hitTestFn, this.hitPruneFn);
-    // return invertedPath && invertedPath[0];
-    return null as any;
+  public hitTest(x: number, y: number): DrawableObject | null {
+    const invertedPath = this.hitTestRecursive(this.rootTarget, new Point(x, y));
+    return invertedPath && invertedPath[0];
   }
 
-  protected hitTestRecursive(
-    currentTarget: DrawableObject | null,
-    location: Point,
-    testFn: (object: DrawableObject, pt: Point) => boolean,
-    pruneFn?: (object: DrawableObject, pt: Point) => boolean
-  ): DrawableObject[] {
-    // TODO
-    return [];
+  protected hitTestRecursive(currentTarget: DrawableObject, location: Point): DrawableObject[] | null {
+    if (!currentTarget.visible) return null;
+
+    if (currentTarget.children.length > 0) {
+      const children = currentTarget.children;
+      for (let i = children.length - 1; i >= 0; i--) {
+        const child = children[i];
+
+        const nestedHit = this.hitTestRecursive(child, location);
+
+        if (nestedHit) {
+          // check if not hit or child has been removed from its parent
+          if (nestedHit.length > 0 && !nestedHit[nestedHit.length - 1].parent) {
+            continue;
+          }
+
+          if (nestedHit.length > 0) {
+            nestedHit.push(currentTarget);
+          }
+
+          return nestedHit;
+        }
+      }
+    }
+
+    if (currentTarget.isPointHit(location)) {
+      return [currentTarget];
+    }
+
+    return null;
   }
 
   private allocateEvent<T extends FederatedEvent>(constructor: { new (boundary: EventBoundary): T }): T {

@@ -67,7 +67,6 @@ test('exec cmd4 should clear dirty command(cmd3)', () => {
   expect(cmdMgr.size).toBe(3);
   const isDid = cmdMgr.redo(); // should not work here
   const now = cmdMgr.top();
-  console.log(isDid);
 
   expect(now).toBe(cmd4);
   expect(isDid).toBeFalsy();

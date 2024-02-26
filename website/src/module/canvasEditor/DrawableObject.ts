@@ -7,9 +7,12 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
   abstract _render: (canvas: Canvas) => void;
   abstract isPointHit: (point: Vector2) => boolean;
 
+  visible = true;
   protected transform = new Transform();
 
   render = (canvas: Canvas) => {
+    if (!this.visible) return;
+
     this._render(canvas);
     for (const child of this.children) {
       child._render(canvas);
@@ -20,6 +23,7 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
 
   addChild = (drawable: DrawableObject) => {
     this.children.push(drawable);
+    drawable.parent = this;
   };
 
   removeChild = (drawable: DrawableObject) => {
@@ -29,6 +33,15 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
       return;
     }
 
+    drawable.parent = undefined;
     this.children.splice(index, 1);
+  };
+
+  transformToWorld: (point: Vector2) => Vector2 = (point) => {
+    return this.transform.point(point);
+  };
+
+  worldToTranform: (point: Vector2) => Vector2 = (point) => {
+    return this.transform.invert().point(point);
   };
 }

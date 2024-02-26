@@ -6,7 +6,10 @@ export class Polygon extends DrawableObject {
   points: Vector2[];
   paint: Paint;
 
-  constructor(private canvaskit: CanvasKit, points: Vector2[]) {
+  constructor(
+    private canvaskit: CanvasKit,
+    points: Vector2[]
+  ) {
     super();
     this.points = points;
     const paint = new canvaskit.Paint();

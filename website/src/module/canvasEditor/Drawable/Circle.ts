@@ -35,7 +35,8 @@ export class Circle extends DrawableObject {
   }
 
   isPointHit: (point: Vector2) => boolean = (point) => {
-    return distance2(point, this.center) <= this.radius * this.radius;
+    const localP = this.worldToTranform(point);
+    return distance2(localP, this.center) <= this.radius * this.radius;
   };
 
   _render: (canvas: Canvas) => void = (canvas) => {

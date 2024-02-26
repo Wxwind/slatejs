@@ -91,20 +91,12 @@ export class CanvasEditor implements ICanvas {
     this.drawFrame();
   }
 
-  addChild = (drawable: DrawableObject) => {
-    this.root.addChild(drawable);
-  };
-
-  removeChild = (drawable: DrawableObject) => {
-    this.root.removeChild(drawable);
-  };
-
-  // TODO
   viewport2Canvas: (point: Vector2) => Vector2 = (point) => {
-    return {
-      x: 0,
-      y: 0,
-    };
+    return this.root.worldToTranform(point);
+  };
+
+  canvasToViewPort: (point: Vector2) => Vector2 = (point) => {
+    return this.root.transformToWorld(point);
   };
 
   private render: (canvas: Canvas) => void = (canvas) => {

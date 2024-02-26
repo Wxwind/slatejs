@@ -13,7 +13,10 @@ export class Curves extends DrawableObject {
 
   coord: CoordinateSystem;
 
-  constructor(private canvaskit: CanvasKit, curves: AnimationCurve[]) {
+  constructor(
+    private canvaskit: CanvasKit,
+    curves: AnimationCurve[]
+  ) {
     super();
     const paint = new canvaskit.Paint();
     const color = canvaskit.Color(80, 80, 80, 1);
@@ -33,12 +36,14 @@ export class Curves extends DrawableObject {
   };
 
   private drawBezierCurve = (canvas: Canvas) => {
+    const unitWidth = this.unitWidth;
     const curves = this.curves;
+    canvas.scale(unitWidth, unitWidth);
     for (let i = 0; i < curves.length; i++) {
       const curve = curves[i];
       const path = new this.canvaskit.Path();
       const key0 = curve.keys[0];
-      path.moveTo(key0.time, key0.value);
+      path.moveTo(key0.time * unitWidth, key0.value);
       const keys = curve.keys;
       for (let j = 1; j < curve.keys.length; j++) {
         const prevKey = keys[j - 1];
@@ -95,6 +100,8 @@ export class Curves extends DrawableObject {
 
           const [p1x, p1y, p2x, p2y] = getp1p2(prevKey, nowKey);
 
+          console.log('draw weighted key', p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
+
           path.cubicTo(p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
         }
       }
@@ -103,7 +110,8 @@ export class Curves extends DrawableObject {
         // this.drawHandle(canvas, key);
       }
     }
-    canvas.drawLine(10, 20, 200, 230, this.curvePaint);
+    canvas.drawLine(1, 2, 3, 4, this.curvePaint);
+    canvas.scale(1 / unitWidth, 1 / unitWidth);
   };
 
   private drawHandle = (canvas: Canvas, key: Keyframe) => {
@@ -115,7 +123,7 @@ export class Curves extends DrawableObject {
       radius: 10,
     });
 
-    handle.addEventListener('po', (e) => {});
+    handle.addEventListener('pointermove', (e) => {});
 
     handle._render(canvas);
   };

@@ -185,7 +185,7 @@ export class EventPlugin implements IPlugin {
     this.setCursor(this.rootBoundary.cursor);
   };
 
-  private onPointerUp = (nativeEvent: InteractivePointerEvent) => (nativeEvent: InteractivePointerEvent) => {
+  private onPointerUp = (nativeEvent: InteractivePointerEvent) => {
     const canvas = this.canvas;
     if (!canvas) return;
     if (canvas.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') return;
