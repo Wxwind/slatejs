@@ -218,4 +218,9 @@ export class Transform {
 
     return result;
   }
+
+  toFloat32Array() {
+    const m = this.m;
+    return Float32Array.of(m[0], m[2], m[4], m[1], m[3], m[5], 0, 0, 1);
+  }
 }

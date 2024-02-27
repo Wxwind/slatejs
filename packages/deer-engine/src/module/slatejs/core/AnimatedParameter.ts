@@ -5,6 +5,7 @@ import {
   Entity,
   FVector3,
   InterpMode,
+  Keyframe,
   MetadataProp,
   TransformComponent,
   egclass,
@@ -160,7 +161,10 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
   addKey = (time: number, value: number) => {
     if (!this.disabled) {
       for (let i = 0; i < this.curves.length; i++) {
-        this.curves[i].addKey(time, value);
+        const keyframe = new Keyframe();
+        keyframe.time = time;
+        keyframe.value = value;
+        this.curves[i].addKey(keyframe);
       }
     }
   };
@@ -190,7 +194,10 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
 
     if (!this.disabled) {
       for (let i = 0; i < this.curves.length; i++) {
-        this.curves[i].addKey(time, nums[i]);
+        const keyframe = new Keyframe();
+        keyframe.time = time;
+        keyframe.value = nums[i];
+        this.curves[i].addKey(keyframe);
       }
     }
   };
@@ -310,7 +317,11 @@ function addKeyInCurve(curve: AnimationCurve, time: number, value: number, mode:
     }
   }
 
-  const index = curve.addKey(time, value);
+  const keyframe = new Keyframe();
+  keyframe.time = time;
+  keyframe.value = value;
+
+  const index = curve.addKey(keyframe);
   const newKey = curve.getKey(index);
   newKey.interpMode = mode;
   // try set tangentMode from neighbors

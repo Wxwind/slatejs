@@ -32,10 +32,10 @@ export class Keyframe {
   value: number = 0;
 
   @property({ type: Number })
-  inTangent: number = 0;
+  inTangent: number = 0.3;
 
   @property({ type: Number })
-  outTangent: number = 0;
+  outTangent: number = 0.3;
 
   @property({ type: Number })
   inWeight: number = 0;

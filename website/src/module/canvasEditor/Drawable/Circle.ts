@@ -1,6 +1,7 @@
-import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
+import { Canvas, Paint } from 'canvaskit-wasm';
 import { DrawableObject } from '../DrawableObject';
 import { Vector2, distance2 } from '../util';
+import { CanvasRenderingContext } from '../interface';
 
 export interface CircleOptions {
   center: Vector2;
@@ -14,10 +15,11 @@ export class Circle extends DrawableObject {
   radius: number;
 
   constructor(
-    protected canvaskit: CanvasKit,
+    protected context: CanvasRenderingContext,
     options: CircleOptions
   ) {
     super();
+    const { canvaskit } = context;
     const paint = new canvaskit.Paint();
     const color = canvaskit.Color(255, 0, 0, 1);
 
@@ -35,7 +37,7 @@ export class Circle extends DrawableObject {
   }
 
   isPointHit: (point: Vector2) => boolean = (point) => {
-    const localP = this.worldToTranform(point);
+    const localP = this.toLocal(point);
     return distance2(localP, this.center) <= this.radius * this.radius;
   };
 

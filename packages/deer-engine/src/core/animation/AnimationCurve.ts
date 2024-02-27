@@ -60,12 +60,9 @@ export class AnimationCurve {
     return curves;
   };
 
-  addKey = (time: number, value: number) => {
+  addKey = (keyframe: Keyframe) => {
     let index: number = 0;
-    for (; index < this.keys.length && time > this.keys[index].time; index++);
-    const keyframe = new Keyframe();
-    keyframe.time = time;
-    keyframe.value = value;
+    for (; index < this.keys.length && keyframe.time > this.keys[index].time; index++);
     this.keys.splice(index, 0, keyframe);
     return index;
   };
@@ -74,8 +71,10 @@ export class AnimationCurve {
     return this.keys[index];
   };
 
+  /** remove key at index, then add key into keys and sort them. */
   moveKey = (index: number, key: Keyframe) => {
-    this.keys.splice(index, 1, key);
+    this.keys.splice(index, 1);
+    this.addKey(key);
   };
 
   removeKey = (index: number) => {
@@ -231,12 +230,13 @@ export class AnimationCurve {
           // p1 = q0 + u0 / 3
           // p2 = q1 - u1 / 3
           // p3 = q1
-          // where: u0 = f(q0)', u1 = f(q1)'
-          // assume u = dt * tangent
-          // ps: But why can we (unreal / cocos) use t directly as x which hermite(t) = (x,y)?
-          // Apparentely t != t where beizer(t).x = t.
+          // where: u0 = f(q0)' = key1.outTangent, u1 = f(q1)' = key2.inTangent
+          // ps: we (unreal / cocos) use t directly as x which hermite(t) = (x,y)
+          // see: https://www.desmos.com/calculator/11id2t3jdf
           const oneThird = 1 / 3;
+          // p1 = (key1.time + dt * oneThird, key1.value + key1.outTangent * dt * oneThird)
           const p1 = p0 + key1.outTangent * dt * oneThird;
+          // p2 = (key2.time - dt * oneThird, key2.value - key2.outTangent * dt * oneThird)
           const p2 = p3 - key2.inTangent * dt * oneThird;
 
           return bezierInterp(p0, p1, p2, p3, t);

@@ -382,7 +382,6 @@ export class EventBoundary {
 
       return;
     }
-    console.log('on pointer out');
 
     const trackingData = this.trackingData(from.pointerId);
 

@@ -1,12 +1,13 @@
 import { useBindSignal, useDumbState } from '@/hooks';
 import { CanvasEditor, Curves } from '@/module/canvasEditor';
-import { Circle } from '@/module/canvasEditor/Drawable/Circle';
 import { useCanvaskitStore } from '@/store';
 import { isNil } from '@/util';
-import { ActionClip, AnimationCurve, CutsceneEditor, globalTypeMap } from 'deer-engine';
+import { ActionClip, AnimationCurve, CutsceneEditor, Keyframe, globalTypeMap } from 'deer-engine';
 import { FC, useEffect, useState } from 'react';
 import { getEditorRenderer } from '@/decorator';
 import { Handle } from '@/module/canvasEditor/Drawable/Curves/Handle';
+import { CoordinateSystem } from '@/module/canvasEditor/Drawable/CoordinateSystem';
+import { CanvasRenderingContext } from '@/module/canvasEditor/interface';
 
 interface TimelineInspectorProps {
   cutsceneEditor: CutsceneEditor;
@@ -27,27 +28,49 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     const curvesEditor = new CanvasEditor(canvasKit, { containerId: 'curve-editor' });
     setCurvesEditor(curvesEditor);
     const curves: AnimationCurve[] = [];
-    const c = new AnimationCurve();
-    c.addKey(1, -2);
-    c.addKey(3, -4);
-    c.addKey(8, -20);
-    curves.push(c);
+
+    const c1 = new AnimationCurve();
+    const k0 = new Keyframe();
+    k0.time = 1;
+    k0.value = 2;
+    c1.addKey(k0);
+    const k1 = new Keyframe();
+    k1.time = 3;
+    k1.value = 3;
+    c1.addKey(k1);
+    const k2 = new Keyframe();
+    k2.time = 5;
+    k2.value = 5;
+    c1.addKey(k2);
+    curves.push(c1);
 
     const c2 = new AnimationCurve();
-    c2.addKey(2, -2);
-    c2.addKey(8, -8);
-    c2.addKey(14, -14);
+    const k3 = new Keyframe();
+    k3.time = 2;
+    k3.value = 2;
+    c2.addKey(k3);
+    const k4 = new Keyframe();
+    k4.time = 3;
+    k4.value = 7;
+    c2.addKey(k4);
+    const k5 = new Keyframe();
+    k5.time = 5;
+    k5.value = 5;
+    c2.addKey(k5);
     curves.push(c2);
 
-    curvesEditor.root.addChild(new Curves(canvasKit, curves));
-    const circle = new Circle(canvasKit, { center: { x: 150, y: 80 }, radius: 20 });
-    circle.addEventListener('click', () => {
-      console.log('click circle');
-    });
-    curvesEditor.root.addChild(circle);
+    const context: CanvasRenderingContext = {
+      canvaskit: canvasKit,
+      root: curvesEditor.root,
+      viewScaleInfo: {
+        scale: 2,
+      },
+      viewSizeInfo: { width: 320, height: 320 },
+    };
 
-    const handle = new Handle(canvasKit, { center: { x: 50, y: 50 }, radius: 20 });
-    curvesEditor.root.addChild(handle);
+    const coord = new CoordinateSystem(context);
+    coord.addChild(new Curves(context, curves));
+    curvesEditor.root.addChild(coord);
 
     return () => {
       curvesEditor.dispose();
@@ -72,7 +95,7 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
       <div>{getUICompFromType(selectedClip)}</div>
       <div>------------</div>
       <div>CurveEditor</div>
-      <div className="w-48 h-60" id="curve-editor" />
+      <div style={{ width: 300, height: 400 }} id="curve-editor" />
     </div>
   );
 };

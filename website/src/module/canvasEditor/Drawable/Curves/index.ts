@@ -2,21 +2,19 @@ import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
 import { AnimationCurve, Keyframe, isInWeightEnabled, isNotWeighted, isOutWeightEnabled } from 'deer-engine';
 import { DrawableObject } from '../../DrawableObject';
 import { Vector2 } from '../../util';
-import { CoordinateSystem } from '../CoordinateSystem';
-import { Circle } from '../Circle';
+import { Handle } from './Handle';
+import { CanvasRenderingContext } from '../../interface';
 
 export class Curves extends DrawableObject {
   curves: AnimationCurve[];
-  unitWidth = 32; // pixels per unit
 
   curvePaint: Paint;
 
-  coord: CoordinateSystem;
-
   constructor(
-    private canvaskit: CanvasKit,
+    private context: CanvasRenderingContext,
     curves: AnimationCurve[]
   ) {
+    const { canvaskit } = context;
     super();
     const paint = new canvaskit.Paint();
     const color = canvaskit.Color(80, 80, 80, 1);
@@ -24,26 +22,51 @@ export class Curves extends DrawableObject {
     paint.setColor(color);
     paint.setStyle(canvaskit.PaintStyle.Stroke);
     this.curvePaint = paint;
-    this.coord = new CoordinateSystem(canvaskit);
     this.curves = curves;
+
+    for (const curve of curves) {
+      for (let j = 0; j < curve.keys.length; j += 1) {
+        const handle = this.createHandle(context, curve, curve.keys[j]);
+        this.addChild(handle);
+      }
+    }
   }
+
+  createHandle = (context: CanvasRenderingContext, curve: AnimationCurve, key: Keyframe) => {
+    const handle = new Handle(context, {
+      center: {
+        x: key.time,
+        y: key.value,
+      },
+      radius: 0.2,
+    });
+
+    handle.setDragMoveHandler((pos) => {
+      const index = curve.keys.findIndex((a) => a === key);
+      key.time = pos.x;
+      key.value = pos.y;
+      curve.moveKey(index, key);
+      handle.setOptions({ center: pos });
+    });
+
+    return handle;
+  };
 
   isPointHit: (point: Vector2) => boolean = () => false;
 
   _render: (canvas: Canvas) => void = (canvas) => {
-    this.coord._render(canvas);
     this.drawBezierCurve(canvas);
   };
 
   private drawBezierCurve = (canvas: Canvas) => {
-    const unitWidth = this.unitWidth;
     const curves = this.curves;
-    canvas.scale(unitWidth, unitWidth);
+
     for (let i = 0; i < curves.length; i++) {
       const curve = curves[i];
-      const path = new this.canvaskit.Path();
+      if (curve.keys.length === 0) continue;
+      const path = new this.context.canvaskit.Path();
       const key0 = curve.keys[0];
-      path.moveTo(key0.time * unitWidth, key0.value);
+      path.moveTo(key0.time, key0.value);
       const keys = curve.keys;
       for (let j = 1; j < curve.keys.length; j++) {
         const prevKey = keys[j - 1];
@@ -51,16 +74,13 @@ export class Curves extends DrawableObject {
 
         // not weighted curve
         if (isNotWeighted(prevKey, nowKey)) {
-          const getp1p2 = (p0: number, p3: number) => {
-            const dt = nowKey.time - prevKey.time;
-            const oneThird = 1 / 3;
-            const p1 = p0 + prevKey.outTangent * dt * oneThird;
-            const p2 = p3 - nowKey.inTangent * dt * oneThird;
-            return [p1, p2];
-          };
+          const dt = nowKey.time - prevKey.time;
+          const oneThird = 1 / 3;
 
-          const [p1x, p2x] = getp1p2(prevKey.time, nowKey.time);
-          const [p1y, p2y] = getp1p2(prevKey.value, nowKey.value);
+          const p1x = prevKey.time + oneThird * dt;
+          const p2x = nowKey.time - oneThird * dt;
+          const p1y = prevKey.value + prevKey.outTangent * dt * oneThird;
+          const p2y = nowKey.value - nowKey.inTangent * dt * oneThird;
 
           path.cubicTo(p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
         }
@@ -100,31 +120,10 @@ export class Curves extends DrawableObject {
 
           const [p1x, p1y, p2x, p2y] = getp1p2(prevKey, nowKey);
 
-          console.log('draw weighted key', p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
-
           path.cubicTo(p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
         }
-      }
-
-      for (let j = 0; j < curve.keys.length; j += 1) {
-        // this.drawHandle(canvas, key);
+        canvas.drawPath(path, this.curvePaint);
       }
     }
-    canvas.drawLine(1, 2, 3, 4, this.curvePaint);
-    canvas.scale(1 / unitWidth, 1 / unitWidth);
-  };
-
-  private drawHandle = (canvas: Canvas, key: Keyframe) => {
-    const handle = new Circle(this.canvaskit, {
-      center: {
-        x: key.time,
-        y: key.value,
-      },
-      radius: 10,
-    });
-
-    handle.addEventListener('pointermove', (e) => {});
-
-    handle._render(canvas);
   };
 }

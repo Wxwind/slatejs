@@ -1,7 +1,6 @@
 import { Canvas, CanvasKit, GrDirectContext, Surface } from 'canvaskit-wasm';
 import { debounce } from '@/util';
 import { CanvasConfig, CanvasContext, ICanvas } from './types';
-import { DrawableObject } from './DrawableObject';
 import { Group } from './Drawable/Group';
 import { IPlugin } from './Plugin';
 import { EventPlugin } from './events';
