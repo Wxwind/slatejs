@@ -11,7 +11,7 @@ const TransformClipEditorComp: FC<EditorProps<TransformClip>> = (props) => {
   useBindSignal(target.signals.clipUpdated, refresh);
   useBindSignal(target.signals.keysChanged, refresh);
 
-  return <div className="w-full">{JsonModule.toJson(target)}</div>;
+  return <div className="w-full">TransformClip</div>;
 };
 
 @customEditor(TransformClip)

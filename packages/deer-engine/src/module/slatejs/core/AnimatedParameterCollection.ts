@@ -38,6 +38,7 @@ export class AnimatedParameterCollection implements IAnimatable {
   addParameter = (keyable: IKeyable, type: string, paramPath: string) => {
     const animatedParam = AnimatedParameter.construct(keyable, type, paramPath);
     this.animatedParamArray.push(animatedParam);
+    this.signals.updated.emit();
     return animatedParam;
   };
 
@@ -57,7 +58,7 @@ export class AnimatedParameterCollection implements IAnimatable {
         isKeyAdded = true;
       }
     }
-
+    if (isKeyAdded) this.signals.updated.emit();
     return isKeyAdded;
   };
 
@@ -65,6 +66,7 @@ export class AnimatedParameterCollection implements IAnimatable {
     for (const animatedParam of this.animatedParamArray) {
       animatedParam.removeKey(time);
     }
+    this.signals.updated.emit();
   };
 
   evaluate: (curTime: number, prevTime: number) => void = (curTime, prevTime) => {

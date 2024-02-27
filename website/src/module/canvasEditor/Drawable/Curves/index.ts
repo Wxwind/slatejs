@@ -1,5 +1,5 @@
-import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
-import { AnimationCurve, Keyframe, isInWeightEnabled, isNotWeighted, isOutWeightEnabled } from 'deer-engine';
+import { Canvas, Paint } from 'canvaskit-wasm';
+import { AnimationCurve, Keyframe, Signal, isInWeightEnabled, isNotWeighted, isOutWeightEnabled } from 'deer-engine';
 import { DrawableObject } from '../../DrawableObject';
 import { Vector2 } from '../../util';
 import { Handle } from './Handle';
@@ -9,6 +9,10 @@ export class Curves extends DrawableObject {
   curves: AnimationCurve[];
 
   curvePaint: Paint;
+
+  signals = {
+    curvesChanged: new Signal(),
+  };
 
   constructor(
     private context: CanvasRenderingContext,
@@ -32,7 +36,19 @@ export class Curves extends DrawableObject {
     }
   }
 
-  createHandle = (context: CanvasRenderingContext, curve: AnimationCurve, key: Keyframe) => {
+  setCurves = (curves: AnimationCurve[]) => {
+    const context = this.context;
+    this.curves = curves;
+    this.removeAllChildren();
+    for (const curve of curves) {
+      for (let j = 0; j < curve.keys.length; j += 1) {
+        const handle = this.createHandle(context, curve, curve.keys[j]);
+        this.addChild(handle);
+      }
+    }
+  };
+
+  private createHandle = (context: CanvasRenderingContext, curve: AnimationCurve, key: Keyframe) => {
     const handle = new Handle(context, {
       center: {
         x: key.time,
@@ -47,6 +63,7 @@ export class Curves extends DrawableObject {
       key.value = pos.y;
       curve.moveKey(index, key);
       handle.setOptions({ center: pos });
+      this.signals.curvesChanged.emit();
     });
 
     return handle;

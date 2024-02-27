@@ -22,7 +22,7 @@ export class CoordinateSystem extends DrawableObject {
 
     // set left bottom point is (0,0)
     const transform = this.transform;
-    transform.translate(0, 400 - 0.1);
+    transform.translate(0, this.context.viewSizeInfo.height - 0.1);
     transform.rotate(Math.PI);
     transform.scale(-1, 1);
 

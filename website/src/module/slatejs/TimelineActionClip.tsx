@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { ActionClip, CutsceneTrack, cutsceneEditor } from 'deer-engine';
 import { useScaleStore } from './store';
 import { BsDiamond } from 'react-icons/bs';
@@ -14,11 +14,15 @@ interface TimelineActionClipProps {
 export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
   const { object } = props;
 
+  const [offsetX, setOffsetX] = useState(0);
   const { scale } = useScaleStore();
 
   const refresh = useDumbState();
   useBindSignal(object.signals.clipUpdated, refresh);
   useBindSignal(object.signals.keysChanged, refresh);
+
+  // emitted when curve updated in curve editor
+  useBindSignal(object.animatedData.signals.updated, refresh);
 
   const selectedClip = cutsceneEditor.selectedClip;
   useBindSignal(cutsceneEditor.signals.selectedClipUpdated, refresh);
@@ -130,6 +134,13 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
         (object.parent as CutsceneTrack).removeClip(object);
       },
     },
+    {
+      name: 'add key',
+      onSelect: () => {
+        const time = offsetX / scale;
+        object.animatedData.tryAddKey(time);
+      },
+    },
   ];
 
   return (
@@ -141,6 +152,9 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
         )}
         onClick={handleClickBlock}
         onMouseDown={handleMouseDown}
+        onContextMenu={(e) => {
+          setOffsetX(e.nativeEvent.offsetX);
+        }}
         style={{
           left: object.startTime * scale,
           width: (object.endTime - object.startTime) * scale,
@@ -167,7 +181,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
               key={`${key}`}
               style={{
                 position: 'absolute',
-                left: key * scale,
+                left: key * scale - 10 / 2,
               }}
             >
               <BsDiamond fontSize={10} />

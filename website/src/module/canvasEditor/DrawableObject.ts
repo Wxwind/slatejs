@@ -42,6 +42,13 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
     this.children.splice(index, 1);
   };
 
+  removeAllChildren = () => {
+    for (const c of this.children) {
+      c.parent = undefined;
+    }
+    this.children.length = 0;
+  };
+
   // convert point from local space to parent space
   transformToWorld: (point: Vector2) => Vector2 = (point) => {
     return this.transform.point(point);
@@ -53,7 +60,7 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
   };
 
   toLocal = (point: Vector2) => {
-    let localP = point;
+    let localP = { x: point.x, y: point.y };
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let obj: IFederatedEventTarget | undefined = this;
 

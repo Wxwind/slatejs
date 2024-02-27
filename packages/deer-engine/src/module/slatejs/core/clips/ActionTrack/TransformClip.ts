@@ -52,12 +52,12 @@ export class TransformClip extends ActionClip {
     const rotateParam = animatedParams.addParameter(clip, 'TransformComponent', 'rotation');
     const scaleParam = animatedParams.addParameter(clip, 'TransformComponent', 'scale');
 
-    posParam.addKey(1, 0.5);
-    posParam.addKey(4, 5.5);
+    posParam.addKey(0.5, 0.5);
+    posParam.addKey(6, 5.5);
     rotateParam.addKey(1, 90);
-    rotateParam.addKey(4, 100);
-    scaleParam.addKey(1, 1);
-    scaleParam.addKey(4, 2);
+    rotateParam.addKey(5, 100);
+    scaleParam.addKey(0.5, 1);
+    scaleParam.addKey(5, 2);
 
     clip._animatedParams = animatedParams;
     return clip;

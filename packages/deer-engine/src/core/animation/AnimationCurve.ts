@@ -40,8 +40,9 @@ export type AnimationCurveJson = {
 export class AnimationCurve {
   @property({ type: [Keyframe] })
   keys: Keyframe[];
-
+  @property({ type: String })
   preExtrapolation: AnimationCurveExtrapolation;
+  @property({ type: String })
   postExtrapolation: AnimationCurveExtrapolation;
 
   public get length() {
@@ -232,7 +233,8 @@ export class AnimationCurve {
           // p3 = q1
           // where: u0 = f(q0)' = key1.outTangent, u1 = f(q1)' = key2.inTangent
           // ps: we (unreal / cocos) use t directly as x which hermite(t) = (x,y)
-          // see: https://www.desmos.com/calculator/11id2t3jdf
+          // @see: https://math.stackexchange.com/questions/4128882/nonparametric-hermite-cubic-to-bezier-curve
+          // @see: https://www.desmos.com/calculator/xab4fkksud
           const oneThird = 1 / 3;
           // p1 = (key1.time + dt * oneThird, key1.value + key1.outTangent * dt * oneThird)
           const p1 = p0 + key1.outTangent * dt * oneThird;
