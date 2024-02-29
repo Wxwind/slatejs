@@ -49,12 +49,12 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
     this.children.length = 0;
   };
 
-  // convert point from local space to parent space
+  /** convert point from local space to parent space */
   transformToWorld: (point: Vector2) => Vector2 = (point) => {
     return this.transform.point(point);
   };
 
-  // convert point from parent space to local space
+  /** convert point from parent space to local space */
   worldToTranform: (point: Vector2) => Vector2 = (point) => {
     return this.transform.invert().point(point);
   };

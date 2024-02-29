@@ -1,10 +1,11 @@
 import { Canvas, CanvasKit, GrDirectContext, Surface } from 'canvaskit-wasm';
 import { debounce } from '@/util';
-import { CanvasConfig, CanvasContext, ICanvas } from './types';
+import { CanvasConfig, ICanvas, IRenderer, RenderingPluginContext } from './interface';
 import { Group } from './Drawable/Group';
-import { IPlugin } from './Plugin';
+import { IPlugin } from './interface';
 import { EventPlugin } from './events';
 import { Vector2 } from './util';
+import { Renderer } from './renderer';
 
 export class CanvasEditor implements ICanvas {
   parentEl: HTMLElement;
@@ -12,26 +13,13 @@ export class CanvasEditor implements ICanvas {
 
   private resizeObserver: ResizeObserver;
 
-  canvaskit: CanvasKit;
-  grContext: GrDirectContext;
-  surface!: Surface;
-
-  supportsTouchEvents = false;
-  supportsPointerEvents = true;
-
-  devicePixelRatio: number;
-
-  private isDirty = false;
-  private animateID = -1;
-
   root: Group = new Group();
-
-  context: CanvasContext;
 
   plugins: IPlugin[] = [];
 
+  renderer: IRenderer;
+
   constructor(canvaskit: CanvasKit, options: CanvasConfig) {
-    this.canvaskit = canvaskit;
     const {
       containerId,
       devicePixelRatio = window.devicePixelRatio,
@@ -39,10 +27,6 @@ export class CanvasEditor implements ICanvas {
       supportsPointerEvents = true,
       supportsTouchEvents = false,
     } = options;
-
-    this.devicePixelRatio = devicePixelRatio;
-    this.supportsPointerEvents = supportsPointerEvents;
-    this.supportsTouchEvents = supportsTouchEvents;
 
     const container = document.getElementById(containerId);
     if (container) {
@@ -60,13 +44,19 @@ export class CanvasEditor implements ICanvas {
 
     container.appendChild(canvasEl);
 
-    const context = canvaskit.MakeWebGLContext(canvaskit.GetWebGLContext(canvasEl));
-    if (!context) {
-      throw new Error('Failed to configure WebGl canvas context');
-    }
-    this.grContext = context;
-
     const debouncedResize = debounce(this.resize);
+
+    const context: RenderingPluginContext = {
+      canvas: this,
+      config: { containerId, devicePixelRatio, supportsCSSTransform, supportsPointerEvents, supportsTouchEvents },
+      canvasEl: canvasEl,
+      root: this.root,
+    };
+
+    this.plugins.push(new EventPlugin());
+    this.plugins.forEach((p) => p.init(context));
+
+    this.renderer = new Renderer(context, canvaskit);
 
     // observe resize
     const resizeObserver = new ResizeObserver((entries) => {
@@ -78,16 +68,6 @@ export class CanvasEditor implements ICanvas {
     this.resizeObserver = resizeObserver;
 
     this.resize(this.parentEl.clientWidth, this.parentEl.clientHeight);
-
-    this.context = {
-      canvas: this,
-      config: { containerId, devicePixelRatio, supportsCSSTransform, supportsPointerEvents, supportsTouchEvents },
-    };
-
-    this.plugins.push(new EventPlugin());
-    this.plugins.forEach((p) => p.init(this.context));
-
-    this.drawFrame();
   }
 
   viewport2Canvas: (point: Vector2) => Vector2 = (point) => {
@@ -98,51 +78,13 @@ export class CanvasEditor implements ICanvas {
     return this.root.transformToWorld(point);
   };
 
-  private render: (canvas: Canvas) => void = (canvas) => {
-    this.root.render(canvas);
-  };
-
-  private drawFrame = () => {
-    this.animateID = this.surface.requestAnimationFrame(() => this.drawFrame());
-    // if (!this.isDirty) return;
-    const canvas = this.surface.getCanvas();
-    // reset matrix
-    canvas.concat(this.canvaskit.Matrix.invert(canvas.getTotalMatrix())!);
-
-    canvas.scale(this.devicePixelRatio, this.devicePixelRatio); // physical pixels to CSS pixels
-
-    this.render(canvas);
-    // ??
-    this.surface.flush();
-    this.isDirty = false;
-  };
-
   private resize = (width: number, height: number) => {
-    this.canvasEl.width = width * this.devicePixelRatio; // CSS pixels to physical pixels
-    this.canvasEl.height = height * this.devicePixelRatio;
-
-    const surface = this.canvaskit.MakeOnScreenGLSurface(
-      this.grContext,
-      width * this.devicePixelRatio,
-      height * this.devicePixelRatio,
-      this.canvaskit.ColorSpace.SRGB
-    );
-    if (!surface) {
-      throw new Error('Failed to initialize current swapchain Surface');
-    }
-    this.surface = surface;
-
-    this.setDirty();
-  };
-
-  protected setDirty = () => {
-    this.isDirty = true;
+    this.renderer.resize(width, height);
   };
 
   dispose = () => {
     this.resizeObserver.unobserve(this.parentEl);
     this.parentEl.removeChild(this.canvasEl);
-
-    cancelAnimationFrame(this.animateID);
+    this.renderer.dispose();
   };
 }

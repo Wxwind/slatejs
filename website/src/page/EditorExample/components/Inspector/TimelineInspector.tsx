@@ -25,41 +25,41 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
 
   useEffect(() => {
     if (isNil(canvasKit)) return;
-    if (isNil(selectedClip)) return;
+    //  if (isNil(selectedClip)) return;
     const curvesEditor = new CanvasEditor(canvasKit, { containerId: 'curve-editor' });
     setCurvesEditor(curvesEditor);
-    const curves = selectedClip.animatedData.animatedParamArray.map((a) => a.curves).flat();
-    // const curves: AnimationCurve[] = [];
+    // const curves = selectedClip.animatedData.animatedParamArray.map((a) => a.curves).flat();
+    const curves: AnimationCurve[] = [];
 
-    // const c1 = new AnimationCurve();
-    // const k0 = new Keyframe();
-    // k0.time = 1;
-    // k0.value = 2;
-    // c1.addKey(k0);
-    // const k1 = new Keyframe();
-    // k1.time = 3;
-    // k1.value = 3;
-    // c1.addKey(k1);
-    // const k2 = new Keyframe();
-    // k2.time = 5;
-    // k2.value = 5;
-    // c1.addKey(k2);
-    // curves.push(c1);
+    const c1 = new AnimationCurve();
+    const k0 = new Keyframe();
+    k0.time = 1;
+    k0.value = 2;
+    c1.addKey(k0);
+    const k1 = new Keyframe();
+    k1.time = 3;
+    k1.value = 3;
+    c1.addKey(k1);
+    const k2 = new Keyframe();
+    k2.time = 5;
+    k2.value = 5;
+    c1.addKey(k2);
+    curves.push(c1);
 
-    // const c2 = new AnimationCurve();
-    // const k3 = new Keyframe();
-    // k3.time = 2;
-    // k3.value = 2;
-    // c2.addKey(k3);
-    // const k4 = new Keyframe();
-    // k4.time = 3;
-    // k4.value = 7;
-    // c2.addKey(k4);
-    // const k5 = new Keyframe();
-    // k5.time = 5;
-    // k5.value = 5;
-    // c2.addKey(k5);
-    // curves.push(c2);
+    const c2 = new AnimationCurve();
+    const k3 = new Keyframe();
+    k3.time = 2;
+    k3.value = 2;
+    c2.addKey(k3);
+    const k4 = new Keyframe();
+    k4.time = 3;
+    k4.value = 7;
+    c2.addKey(k4);
+    const k5 = new Keyframe();
+    k5.time = 5;
+    k5.value = 5;
+    c2.addKey(k5);
+    curves.push(c2);
 
     const context: CanvasRenderingContext = {
       canvaskit: canvasKit,
@@ -75,9 +75,9 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     coord.addChild(drawnCurve);
     curvesEditor.root.addChild(coord);
 
-    drawnCurve.signals.curvesChanged.addListener(() => {
-      selectedClip.animatedData.signals.updated.emit();
-    });
+    // drawnCurve.signals.curvesChanged.addListener(() => {
+    //   selectedClip.animatedData.signals.updated.emit();
+    // });
 
     return () => {
       curvesEditor.dispose();

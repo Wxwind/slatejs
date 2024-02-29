@@ -12,6 +12,8 @@ export class Handle extends Circle {
     this.addEventListener('pointerdown', this.onDragStart);
     this.addEventListener('pointerup', this.onDragEnd);
     this.addEventListener('pointerupoutside', this.onDragEnd);
+
+    this.cursor = 'pointer';
   }
 
   setDragMoveHandler = (fn: (localPos: Vector2) => void) => {

@@ -1,4 +1,4 @@
-import { CanvasContext } from '../types';
+import { CanvasContext } from './canvas';
 
 export interface RenderingPluginContext extends CanvasContext {}
 
