@@ -1,4 +1,4 @@
-import { DrawableObject } from '../DrawableObject';
+import { DisplayObject } from '../DisplayObject';
 import { Point } from '../util/math';
 
 import { FederatedEvent } from './FederatedEvent';
@@ -20,7 +20,7 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
   metaKey = false;
 
   /** This is currently not implemented in the Federated Events API. */
-  relatedTarget: DrawableObject | null = null;
+  relatedTarget: DisplayObject | null = null;
 
   /** Whether the "shift" key was pressed when this mouse event occurred. */
   shiftKey = false;

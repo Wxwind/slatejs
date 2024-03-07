@@ -2,13 +2,18 @@ import { Canvas } from 'canvaskit-wasm';
 import { IDrawable } from './IDrawable';
 import { FederatedEventTarget, IFederatedEventTarget } from './events/FederatedEventTarget';
 import { Transform, Vector2 } from './util/math';
+import { ICanvas } from './interface';
 
-export abstract class DrawableObject extends FederatedEventTarget implements IDrawable {
+export abstract class DisplayObject extends FederatedEventTarget implements IDrawable {
   abstract _render: (canvas: Canvas) => void;
   abstract isPointHit: (point: Vector2) => boolean;
 
   visible = true;
   protected transform = new Transform();
+
+  ownerCanvas!: ICanvas;
+
+  children: DisplayObject[] = [];
 
   render = (canvas: Canvas) => {
     if (!this.visible) return;
@@ -24,14 +29,12 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
     canvas.restore();
   };
 
-  children: DrawableObject[] = [];
-
-  addChild = (drawable: DrawableObject) => {
+  addChild = (drawable: DisplayObject) => {
     this.children.push(drawable);
     drawable.parent = this;
   };
 
-  removeChild = (drawable: DrawableObject) => {
+  removeChild = (drawable: DisplayObject) => {
     const index = this.children.findIndex((a) => a === drawable);
     if (index === -1) {
       console.warn('drawable is not exit');
@@ -64,9 +67,9 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let obj: IFederatedEventTarget | undefined = this;
 
-    const parents: DrawableObject[] = [];
+    const parents: DisplayObject[] = [];
     while (obj) {
-      parents.push(obj as DrawableObject);
+      parents.push(obj as DisplayObject);
       obj = obj.parent;
     }
 
@@ -83,9 +86,9 @@ export abstract class DrawableObject extends FederatedEventTarget implements IDr
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let obj: IFederatedEventTarget | undefined = this;
 
-    const parents: DrawableObject[] = [];
+    const parents: DisplayObject[] = [];
     while (obj) {
-      parents.push(obj as DrawableObject);
+      parents.push(obj as DisplayObject);
       obj = obj.parent;
     }
 

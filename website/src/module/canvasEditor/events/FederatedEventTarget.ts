@@ -2,6 +2,7 @@ import { EventEmitter } from '@/packages/eventEmitter';
 import { FederatedEvent } from '.';
 import { Cursor } from './types';
 import { FederatedEventEmitterTypes, FederatedEventMap } from './FederatedEventMap';
+import { DisplayObject } from '../DisplayObject';
 
 type AddListenerOptions = boolean | AddEventListenerOptions;
 type RemoveListenerOptions = boolean | EventListenerOptions;
@@ -37,6 +38,8 @@ export interface IFederatedEventTarget {
     listener: EventListenerOrEventListenerObject,
     options?: RemoveListenerOptions
   ): void;
+
+  dispatchEvent<T extends FederatedEvent>(e: T, skipPropagate?: boolean): boolean;
 }
 
 export class FederatedEventTarget implements IFederatedEventTarget {
@@ -90,5 +93,15 @@ export class FederatedEventTarget implements IFederatedEventTarget {
     listener = typeof listener === 'function' ? listener : listener.handleEvent;
 
     this.emitter.off(type, listener);
+  }
+
+  dispatchEvent<T extends FederatedEvent>(e: T): boolean {
+    const canvas = (this as unknown as DisplayObject).ownerCanvas;
+    e.manager = canvas!.getEventSystem();
+    e.target = this;
+    if (!e.manager) return false;
+    e.manager.dispatchEvent(e, e.type);
+
+    return !e.defaultPrevented;
   }
 }

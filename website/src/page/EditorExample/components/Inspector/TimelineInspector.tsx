@@ -1,13 +1,10 @@
 import { useBindSignal, useDumbState } from '@/hooks';
 import { CanvasEditor, Curves } from '@/module/canvasEditor';
-import { useCanvaskitStore } from '@/store';
 import { isNil } from '@/util';
 import { ActionClip, AnimationCurve, CutsceneEditor, Keyframe, globalTypeMap } from 'deer-engine';
 import { FC, useEffect, useState } from 'react';
 import { getEditorRenderer } from '@/decorator';
-import { Handle } from '@/module/canvasEditor/Drawable/Curves/Handle';
 import { CoordinateSystem } from '@/module/canvasEditor/Drawable/CoordinateSystem';
-import { CanvasRenderingContext } from '@/module/canvasEditor/interface';
 
 interface TimelineInspectorProps {
   cutsceneEditor: CutsceneEditor;
@@ -15,8 +12,6 @@ interface TimelineInspectorProps {
 
 export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   const { cutsceneEditor } = props;
-  const { getCanvaskit } = useCanvaskitStore();
-  const canvasKit = getCanvaskit();
   const [curvesEditor, setCurvesEditor] = useState<CanvasEditor>();
 
   const selectedClip = cutsceneEditor.selectedClip;
@@ -24,9 +19,9 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   useBindSignal(cutsceneEditor.signals.selectedClipUpdated, refresh);
 
   useEffect(() => {
-    if (isNil(canvasKit)) return;
     //  if (isNil(selectedClip)) return;
-    const curvesEditor = new CanvasEditor(canvasKit, { containerId: 'curve-editor' });
+    const container = document.getElementById('curve-editor')!;
+    const curvesEditor = new CanvasEditor({ container });
     setCurvesEditor(curvesEditor);
     // const curves = selectedClip.animatedData.animatedParamArray.map((a) => a.curves).flat();
     const curves: AnimationCurve[] = [];
@@ -61,17 +56,9 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     c2.addKey(k5);
     curves.push(c2);
 
-    const context: CanvasRenderingContext = {
-      canvaskit: canvasKit,
-      root: curvesEditor.root,
-      viewScaleInfo: {
-        scale: 1,
-      },
-      viewSizeInfo: { width: 300, height: 400 },
-    };
-
-    const coord = new CoordinateSystem(context);
-    const drawnCurve = new Curves(context, curves);
+    const coord = curvesEditor.createElement(CoordinateSystem);
+    const drawnCurve = curvesEditor.createElement(Curves);
+    drawnCurve.setCurves(curves);
     coord.addChild(drawnCurve);
     curvesEditor.root.addChild(coord);
 
@@ -82,7 +69,7 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     return () => {
       curvesEditor.dispose();
     };
-  }, [canvasKit, selectedClip]);
+  }, [selectedClip]);
 
   const getUICompFromType = (object: ActionClip | undefined) => {
     if (!object) return <div>not select any clip.</div>;

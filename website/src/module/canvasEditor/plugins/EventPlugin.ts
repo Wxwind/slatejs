@@ -5,12 +5,12 @@ import {
   FormattedPointerEvent,
   FormattedTouch,
   InteractivePointerEvent,
-} from '.';
-import { CanvasConfig, IPlugin, RenderingPluginContext } from '../interface';
+} from '../events';
+import { CanvasConfig, CanvasContext, IPlugin } from '../interface';
 import { ICanvas } from '../interface';
 import { isUndefined } from '../util';
-import { EventBoundary } from './EventBoundary';
-import { FederatedWheelEvent } from './FederatedWheelEvent';
+import { EventSystem } from '../systems/EventSystem';
+import { FederatedWheelEvent } from '../events/FederatedWheelEvent';
 
 const MOUSE_POINTER_ID = 1;
 const TOUCH_TO_POINTER: Record<string, string> = {
@@ -22,10 +22,9 @@ const TOUCH_TO_POINTER: Record<string, string> = {
 };
 
 export class EventPlugin implements IPlugin {
-  name = 'event system';
+  private eventSystem!: EventSystem;
 
-  private rootBoundary!: EventBoundary;
-
+  private canvasEl!: HTMLCanvasElement;
   private canvas!: ICanvas;
 
   private rootPointerEvent = new FederatedPointerEvent(null);
@@ -33,24 +32,28 @@ export class EventPlugin implements IPlugin {
 
   private config!: Required<CanvasConfig>;
 
-  init(context: RenderingPluginContext): void {
-    const { canvas, config } = context;
+  apply(context: CanvasContext): void {
+    const { renderingContext, config, eventSystem, renderingSystem } = context;
+    const canvas = renderingContext.root.ownerCanvas;
     this.canvas = canvas;
     this.config = config;
+    const canvasEl = context.contextSystem.getCanvasElement();
+    this.canvasEl = canvasEl;
+    this.eventSystem = eventSystem;
 
-    this.rootBoundary = new EventBoundary(canvas.root);
-    this.addEvents(canvas.canvasEl);
+    renderingSystem.hooks.init.tap(() => {
+      this.addEvents(canvasEl);
+    });
+    renderingSystem.hooks.destory.tap(() => {
+      this.removeEvents(canvasEl);
+    });
   }
 
-  destroy(): void {
-    this.removeEvents(this.canvas);
-  }
-
-  addEvents(el: HTMLCanvasElement) {
+  private addEvents(el: HTMLCanvasElement) {
     if (this.config.supportsPointerEvents) {
       this.addPointerEventListener(el);
     } else {
-      this.addTouchEventListener(el);
+      this.addMouseEventListener(el);
     }
 
     if (this.config.supportsTouchEvents) {
@@ -60,13 +63,12 @@ export class EventPlugin implements IPlugin {
     el.addEventListener('wheel', this.onPointerWheel, { passive: true, capture: true });
   }
 
-  removeEvents(canvas: ICanvas | undefined) {
-    if (!canvas) return;
-    const el = canvas.canvasEl;
+  private removeEvents(el: HTMLCanvasElement | undefined) {
+    if (!el) return;
     if (this.config.supportsPointerEvents) {
       this.removePointerEventListener(el);
     } else {
-      this.removeTouchEventListener(el);
+      this.removeMouseEventListener(el);
     }
 
     if (this.config.supportsTouchEvents) {
@@ -76,7 +78,7 @@ export class EventPlugin implements IPlugin {
     el.removeEventListener('wheel', this.onPointerWheel, true);
   }
 
-  addPointerEventListener(el: HTMLElement) {
+  private addPointerEventListener(el: HTMLElement) {
     window.addEventListener('pointermove', this.onPointerMove, true);
     el.addEventListener('pointerdown', this.onPointerDown, true);
     el.addEventListener('pointerleave', this.onPointerOverOut, true);
@@ -85,7 +87,7 @@ export class EventPlugin implements IPlugin {
     window.addEventListener('pointercancel', this.onPointerCancel, true);
   }
 
-  removePointerEventListener(el: HTMLElement) {
+  private removePointerEventListener(el: HTMLElement) {
     window.removeEventListener('pointermove', this.onPointerMove, true);
     el.removeEventListener('pointerdown', this.onPointerDown, true);
     el.removeEventListener('pointerleave', this.onPointerOverOut, true);
@@ -94,21 +96,21 @@ export class EventPlugin implements IPlugin {
     window.removeEventListener('pointercancel', this.onPointerCancel, true);
   }
 
-  addTouchEventListener(el: HTMLElement) {
+  private addTouchEventListener(el: HTMLElement) {
     el.addEventListener('touchstart', this.onPointerDown, true);
     el.addEventListener('touchend', this.onPointerUp, true);
     el.addEventListener('touchmove', this.onPointerMove, true);
     el.addEventListener('touchcancel', this.onPointerCancel, true);
   }
 
-  removeTouchEventListener(el: HTMLElement) {
+  private removeTouchEventListener(el: HTMLElement) {
     el.removeEventListener('touchstart', this.onPointerDown, true);
     el.removeEventListener('touchend', this.onPointerUp, true);
     el.removeEventListener('touchmove', this.onPointerMove, true);
     el.removeEventListener('touchcancel', this.onPointerCancel, true);
   }
 
-  addMouseEventListener = (el: HTMLElement) => {
+  private addMouseEventListener = (el: HTMLElement) => {
     window.addEventListener('mousemove', this.onPointerMove, true);
     el.addEventListener('mousedown', this.onPointerDown, true);
     el.addEventListener('mouseout', this.onPointerOverOut, true);
@@ -116,7 +118,7 @@ export class EventPlugin implements IPlugin {
     window.addEventListener('mouseup', this.onPointerUp, true);
   };
 
-  removeMouseEventListener = (el: HTMLElement) => {
+  private removeMouseEventListener = (el: HTMLElement) => {
     window.removeEventListener('mousemove', this.onPointerMove, true);
     el.removeEventListener('mousedown', this.onPointerDown, true);
     el.removeEventListener('mouseout', this.onPointerOverOut, true);
@@ -131,15 +133,15 @@ export class EventPlugin implements IPlugin {
       return;
     }
 
-    const normalizedEvents = this.normalizeToPointerEvent(nativeEvent, canvas);
+    const normalizedEvents = this.normalizeToPointerEvent(nativeEvent);
 
     for (const normalizedEvent of normalizedEvents) {
       const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvent, canvas, nativeEvent);
 
-      this.rootBoundary.mapEvent(event);
+      this.eventSystem.mapEvent(event);
     }
 
-    this.setCursor(this.rootBoundary.cursor);
+    this.setCursor(this.eventSystem.cursor);
   };
 
   private onPointerDown = (nativeEvent: InteractivePointerEvent) => {
@@ -147,7 +149,7 @@ export class EventPlugin implements IPlugin {
     if (!canvas) return;
     if (this.config.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') return;
 
-    const events = this.normalizeToPointerEvent(nativeEvent, canvas);
+    const events = this.normalizeToPointerEvent(nativeEvent);
 
     if ((events[0] as any).isNormalized) {
       const cancelable = nativeEvent.cancelable || !('cancelable' in nativeEvent);
@@ -159,10 +161,10 @@ export class EventPlugin implements IPlugin {
 
     for (const event of events) {
       const federatedEvent = this.bootstrapEvent(this.rootPointerEvent, event, canvas, nativeEvent);
-      this.rootBoundary.mapEvent(federatedEvent);
+      this.eventSystem.mapEvent(federatedEvent);
     }
 
-    this.setCursor(this.rootBoundary.cursor);
+    this.setCursor(this.eventSystem.cursor);
   };
 
   // same as onPointerMove
@@ -173,15 +175,15 @@ export class EventPlugin implements IPlugin {
       return;
     }
 
-    const normalizedEvents = this.normalizeToPointerEvent(nativeEvent, canvas);
+    const normalizedEvents = this.normalizeToPointerEvent(nativeEvent);
 
     for (const normalizedEvent of normalizedEvents) {
       const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvent, canvas, nativeEvent);
 
-      this.rootBoundary.mapEvent(event);
+      this.eventSystem.mapEvent(event);
     }
 
-    this.setCursor(this.rootBoundary.cursor);
+    this.setCursor(this.eventSystem.cursor);
   };
 
   private onPointerUp = (nativeEvent: InteractivePointerEvent) => {
@@ -189,7 +191,7 @@ export class EventPlugin implements IPlugin {
     if (!canvas) return;
     if (this.config.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') return;
 
-    const canvasEl = this.canvas?.canvasEl;
+    const canvasEl = this.canvasEl;
 
     let outside = 'outside';
     try {
@@ -204,32 +206,32 @@ export class EventPlugin implements IPlugin {
     } catch (e) {
       // nativeEvent.target maybe not Node, such as Window
     }
-    const normalizedEvents = this.normalizeToPointerEvent(nativeEvent, canvas);
+    const normalizedEvents = this.normalizeToPointerEvent(nativeEvent);
 
     for (const normalizedEvent of normalizedEvents) {
       const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvent, canvas, nativeEvent);
       event.type += outside;
-      this.rootBoundary.mapEvent(event);
+      this.eventSystem.mapEvent(event);
     }
 
-    this.setCursor(this.rootBoundary.cursor);
+    this.setCursor(this.eventSystem.cursor);
   };
 
   private onPointerWheel = (nativeEvent: InteractivePointerEvent) => {
     const wheelEvent = this.normalizeWheelEvent(nativeEvent as WheelEvent);
-    this.rootBoundary.mapEvent(wheelEvent);
+    this.eventSystem.mapEvent(wheelEvent);
   };
 
   private onPointerCancel = (nativeEvent: InteractivePointerEvent) => {
     const canvas = this.canvas;
     if (!canvas) return;
-    const normalizedEvents = this.normalizeToPointerEvent(nativeEvent, canvas);
+    const normalizedEvents = this.normalizeToPointerEvent(nativeEvent);
 
     for (const normalizedEvent of normalizedEvents) {
       const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvent, canvas, nativeEvent);
-      this.rootBoundary.mapEvent(event);
+      this.eventSystem.mapEvent(event);
     }
-    this.setCursor(this.rootBoundary.cursor);
+    this.setCursor(this.eventSystem.cursor);
   };
 
   /**
@@ -257,7 +259,7 @@ export class EventPlugin implements IPlugin {
   }
 
   private setCursor(cursor: Cursor | null | undefined) {
-    this.canvas && (this.canvas.canvasEl.style.cursor = cursor || 'default');
+    this.canvas && (this.canvasEl.style.cursor = cursor || 'default');
   }
 
   private bootstrapEvent(
@@ -302,7 +304,7 @@ export class EventPlugin implements IPlugin {
     return event;
   }
 
-  private normalizeToPointerEvent(event: InteractivePointerEvent, canvas: ICanvas): PointerEvent[] {
+  private normalizeToPointerEvent(event: InteractivePointerEvent): PointerEvent[] {
     const normalizedEvents = [];
     if (this.config.supportsTouchEvents && event instanceof TouchEvent) {
       for (let i = 0; i < event.changedTouches.length; i++) {
@@ -389,7 +391,7 @@ export class EventPlugin implements IPlugin {
       x = offsetX;
       y = offsetY;
     } else {
-      const bbox = this.canvas?.canvasEl.getBoundingClientRect();
+      const bbox = this.canvasEl.getBoundingClientRect();
       if (bbox) {
         x = clientX - bbox.left;
         y = clientY - bbox.top;

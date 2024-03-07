@@ -1,25 +1,35 @@
-import { CanvasKit } from 'canvaskit-wasm';
-import { DrawableObject } from '../DrawableObject';
 import { Group } from '..';
 import { Vector2 } from '../util';
+import { DisplayObject } from '../DisplayObject';
+import { RenderingSystem, EventSystem, ContextSystem } from '../systems';
 
 export interface ICanvas {
-  parentEl: HTMLElement;
-  canvasEl: HTMLCanvasElement;
+  container: HTMLElement;
   root: Group;
 
+  createElement: <T extends DisplayObject>(ctor: new (context: CanvasContext) => T) => T;
+
   viewport2Canvas: (point: Vector2) => Vector2;
+
+  getEventSystem: () => EventSystem;
 }
 
 export interface CanvasContext {
   config: Required<CanvasConfig>;
-  canvas: ICanvas;
-  canvasEl: HTMLCanvasElement;
-  root: Group;
+
+  renderingContext: RenderingContext;
+
+  eventSystem: EventSystem;
+  renderingSystem: RenderingSystem;
+  contextSystem: ContextSystem;
 }
 
 export interface CanvasConfig {
-  containerId: string;
+  container: HTMLElement;
+  canvasEl?: HTMLCanvasElement;
+  width?: number;
+  height?: number;
+
   devicePixelRatio?: number;
 
   supportsCSSTransform?: boolean;
@@ -27,18 +37,7 @@ export interface CanvasConfig {
   supportsTouchEvents?: boolean;
 }
 
-export interface ViewSizeInfo {
-  width: number;
-  height: number;
-}
-
-export interface ViewScaleInfo {
-  scale: number;
-}
-
-export interface CanvasRenderingContext {
-  canvaskit: CanvasKit;
-  root: DrawableObject;
-  viewSizeInfo: ViewSizeInfo;
-  viewScaleInfo: ViewScaleInfo;
+export interface RenderingContext {
+  root: Group;
+  renderListCurrentFrame: DisplayObject[];
 }

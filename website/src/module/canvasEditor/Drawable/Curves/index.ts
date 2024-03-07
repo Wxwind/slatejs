@@ -1,12 +1,14 @@
 import { Canvas, Paint } from 'canvaskit-wasm';
 import { AnimationCurve, Keyframe, Signal, isInWeightEnabled, isNotWeighted, isOutWeightEnabled } from 'deer-engine';
-import { DrawableObject } from '../../DrawableObject';
+import { DisplayObject } from '../../DisplayObject';
 import { Vector2 } from '../../util';
 import { Handle } from './Handle';
-import { CanvasRenderingContext } from '../../interface';
+import { CanvasContext } from '../../interface';
+import { ContextSystem } from '../../systems';
+import { CanvasKitContext } from '../../plugins/plugin-canvaskit/interface';
 
-export class Curves extends DrawableObject {
-  curves: AnimationCurve[];
+export class Curves extends DisplayObject {
+  curves: AnimationCurve[] = [];
 
   curvePaint: Paint;
 
@@ -14,42 +16,32 @@ export class Curves extends DrawableObject {
     curvesChanged: new Signal(),
   };
 
-  constructor(
-    private context: CanvasRenderingContext,
-    curves: AnimationCurve[]
-  ) {
-    const { canvaskit } = context;
+  constructor(private context: CanvasContext) {
     super();
-    const paint = new canvaskit.Paint();
-    const color = canvaskit.Color(80, 80, 80, 1);
+    const { CanvasKit } = (this.context.contextSystem as ContextSystem<CanvasKitContext>).getContext();
+    const paint = new CanvasKit.Paint();
+    const color = CanvasKit.Color(80, 80, 80, 1);
 
     paint.setColor(color);
-    paint.setStyle(canvaskit.PaintStyle.Stroke);
+    paint.setStyle(CanvasKit.PaintStyle.Stroke);
     this.curvePaint = paint;
-    this.curves = curves;
-
-    for (const curve of curves) {
-      for (let j = 0; j < curve.keys.length; j += 1) {
-        const handle = this.createHandle(context, curve, curve.keys[j]);
-        this.addChild(handle);
-      }
-    }
   }
 
   setCurves = (curves: AnimationCurve[]) => {
-    const context = this.context;
     this.curves = curves;
     this.removeAllChildren();
     for (const curve of curves) {
       for (let j = 0; j < curve.keys.length; j += 1) {
-        const handle = this.createHandle(context, curve, curve.keys[j]);
-        this.addChild(handle);
+        this.createHandle(curve, curve.keys[j]);
       }
     }
   };
 
-  private createHandle = (context: CanvasRenderingContext, curve: AnimationCurve, key: Keyframe) => {
-    const handle = new Handle(context, {
+  private createHandle = (curve: AnimationCurve, key: Keyframe) => {
+    const handle = this.ownerCanvas.createElement(Handle);
+    this.addChild(handle);
+
+    handle.setOptions({
       center: {
         x: key.time,
         y: key.value,
@@ -78,10 +70,12 @@ export class Curves extends DrawableObject {
   private drawBezierCurve = (canvas: Canvas) => {
     const curves = this.curves;
 
+    const { CanvasKit } = (this.context.contextSystem as ContextSystem<CanvasKitContext>).getContext();
+
     for (let i = 0; i < curves.length; i++) {
       const curve = curves[i];
       if (curve.keys.length === 0) continue;
-      const path = new this.context.canvaskit.Path();
+      const path = new CanvasKit.Path();
       const key0 = curve.keys[0];
       path.moveTo(key0.time, key0.value);
       const keys = curve.keys;

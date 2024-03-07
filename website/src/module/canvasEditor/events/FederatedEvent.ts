@@ -1,5 +1,5 @@
 import { Point } from '../util/math';
-import { EventBoundary } from './EventBoundary';
+import { EventSystem } from '../systems/EventSystem';
 import { IFederatedEventTarget } from './FederatedEventTarget';
 
 export class FederatedEvent<N extends UIEvent = UIEvent> {
@@ -8,7 +8,7 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
   readonly AT_TARGET = 2;
   readonly BUBBLING_PHASE = 3;
 
-  readonly manager: EventBoundary | null;
+  manager: EventSystem | null;
 
   eventPhase = 0;
 
@@ -18,7 +18,7 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
   path: IFederatedEventTarget[] = [];
 
   /** Event-specific detail */
-  detail = 0;
+  detail: object | undefined | number;
 
   /**
    * the original event.
@@ -79,7 +79,7 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
     return this.viewport.y;
   }
 
-  constructor(manager: EventBoundary | null) {
+  constructor(manager: EventSystem | null) {
     this.manager = manager;
   }
 
@@ -99,7 +99,7 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
     this.propagationStopped = true;
   }
 
-  /** return [target, parent, root, Canvas] */
+  /** return [target, parent, root] */
   composedPath(): IFederatedEventTarget[] {
     if (this.manager && (!this.path || this.path[0] !== this.target)) {
       this.path = this.target ? this.manager.propagationPath(this.target) : [];

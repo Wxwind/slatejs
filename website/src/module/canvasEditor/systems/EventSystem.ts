@@ -1,25 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FederatedEvent } from './FederatedEvent';
-import { Cursor, TrackingData } from './types';
-import { DrawableObject } from '../DrawableObject';
-import { IFederatedEventTarget } from './FederatedEventTarget';
-import { FederatedPointerEvent } from './FederatedPointerEvent';
-import { FederatedMouseEvent } from './FederatedMouseEvent';
+import { FederatedEvent } from '../events/FederatedEvent';
+import { Cursor, TrackingData } from '../events/types';
+import { DisplayObject } from '../DisplayObject';
+import { IFederatedEventTarget } from '../events/FederatedEventTarget';
+import { FederatedPointerEvent } from '../events/FederatedPointerEvent';
+import { FederatedMouseEvent } from '../events/FederatedMouseEvent';
 import { Point } from '../util/math';
-import { FederatedWheelEvent } from './FederatedWheelEvent';
+import { FederatedWheelEvent } from '../events/FederatedWheelEvent';
+import { CanvasContext } from '../interface';
 
 const PROPAGATION_LIMIT = 2048;
 
-export class EventBoundary {
+export class EventSystem {
   cursor: Cursor | null = 'default';
 
-  private rootTarget: DrawableObject;
+  private rootTarget!: DisplayObject;
 
   private mappingTable: Record<
     string,
     {
       fn: (e: FederatedEvent) => void;
-      priority: number;
+      priority: number; // not used for now.
     }[]
   > = {};
 
@@ -29,8 +30,10 @@ export class EventBoundary {
 
   private eventPool: Map<typeof FederatedEvent, FederatedEvent[]> = new Map();
 
-  constructor(rootTarget: DrawableObject) {
-    this.rootTarget = rootTarget;
+  constructor(private context: CanvasContext) {}
+
+  init() {
+    this.rootTarget = this.context.renderingContext.root;
     this.addEventMapping('pointerdown', this.onPointerDown);
     this.addEventMapping('pointerup', this.onPointerUp);
     this.addEventMapping('pointermove', this.onPointerMove);
@@ -654,12 +657,12 @@ export class EventBoundary {
     return this.mappingState.trackingData[id];
   }
 
-  public hitTest(x: number, y: number): DrawableObject | null {
+  public hitTest(x: number, y: number): DisplayObject | null {
     const invertedPath = this.hitTestRecursive(this.rootTarget, new Point(x, y));
     return invertedPath && invertedPath[0];
   }
 
-  protected hitTestRecursive(currentTarget: DrawableObject, location: Point): DrawableObject[] | null {
+  protected hitTestRecursive(currentTarget: DisplayObject, location: Point): DisplayObject[] | null {
     if (!currentTarget.visible) return null;
 
     if (currentTarget.children.length > 0) {
@@ -691,7 +694,7 @@ export class EventBoundary {
     return null;
   }
 
-  private allocateEvent<T extends FederatedEvent>(constructor: { new (boundary: EventBoundary): T }): T {
+  private allocateEvent<T extends FederatedEvent>(constructor: { new (boundary: EventSystem): T }): T {
     if (!this.eventPool.has(constructor as any)) {
       this.eventPool.set(constructor as any, []);
     }

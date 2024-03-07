@@ -1,8 +1,8 @@
 import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
-import { DrawableObject } from '../DrawableObject';
+import { DisplayObject } from '../DisplayObject';
 import { Vector2, isPointInShape } from '../util/math';
 
-export class Polygon extends DrawableObject {
+export class Polygon extends DisplayObject {
   points: Vector2[];
   paint: Paint;
 

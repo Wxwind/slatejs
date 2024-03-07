@@ -1,34 +1,33 @@
 import { Canvas, Paint } from 'canvaskit-wasm';
-import { DrawableObject } from '../DrawableObject';
+import { DisplayObject } from '../DisplayObject';
 import { Vector2, distance2 } from '../util';
-import { CanvasRenderingContext } from '../interface';
+import { CanvasContext } from '../interface';
+import { CanvasKitContext } from '../plugins/plugin-canvaskit/interface';
+import { ContextSystem } from '../systems';
 
 export interface CircleOptions {
   center: Vector2;
   radius: number;
 }
 
-export class Circle extends DrawableObject {
+export class Circle extends DisplayObject {
   paint: Paint;
 
-  center: Vector2;
-  radius: number;
+  center: Vector2 = { x: 0, y: 0 };
+  radius = 1;
 
-  constructor(
-    protected context: CanvasRenderingContext,
-    options: CircleOptions
-  ) {
+  constructor(protected context: CanvasContext) {
     super();
-    const { canvaskit } = context;
-    const paint = new canvaskit.Paint();
-    const color = canvaskit.Color(255, 0, 0, 1);
+    const { CanvasKit } = (this.context.contextSystem as ContextSystem<CanvasKitContext>).getContext();
+    const paint = new CanvasKit.Paint();
+    const color = CanvasKit.Color(255, 0, 0, 1);
 
     paint.setColor(color);
-    paint.setStyle(canvaskit.PaintStyle.Stroke);
+    paint.setStyle(CanvasKit.PaintStyle.Stroke);
     this.paint = paint;
 
-    this.center = options.center;
-    this.radius = options.radius;
+    // this.center = options.center;
+    // this.radius = options.radius;
   }
 
   setOptions(options: Partial<CircleOptions>) {

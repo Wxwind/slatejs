@@ -1,8 +1,8 @@
 import { Canvas } from 'canvaskit-wasm';
-import { DrawableObject } from '../DrawableObject';
+import { DisplayObject } from '../DisplayObject';
 import { Vector2 } from '../util';
 
-export class Group extends DrawableObject {
+export class Group extends DisplayObject {
   _render: (canvas: Canvas) => void = () => {
     return;
   };

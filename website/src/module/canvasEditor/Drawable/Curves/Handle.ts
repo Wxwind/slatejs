@@ -1,13 +1,13 @@
-import { Circle, CircleOptions } from '../Circle';
+import { Circle } from '../Circle';
 import { FederatedPointerEvent } from '../../events';
 import { Vector2 } from '../../util';
-import { CanvasRenderingContext } from '../../interface';
+import { CanvasContext } from '../../interface';
 
 export class Handle extends Circle {
   private onDragMoveCallBack: ((localPos: Vector2) => void) | undefined = undefined;
 
-  constructor(context: CanvasRenderingContext, options: CircleOptions) {
-    super(context, options);
+  constructor(context: CanvasContext) {
+    super(context);
 
     this.addEventListener('pointerdown', this.onDragStart);
     this.addEventListener('pointerup', this.onDragEnd);
@@ -21,7 +21,7 @@ export class Handle extends Circle {
   };
 
   onDragStart = () => {
-    this.context.root?.addEventListener('pointermove', this.onDragMove);
+    this.context.renderingContext.root?.addEventListener('pointermove', this.onDragMove);
   };
 
   onDragMove = (e: FederatedPointerEvent) => {
@@ -31,6 +31,6 @@ export class Handle extends Circle {
 
   onDragEnd = (e: FederatedPointerEvent) => {
     console.log('drag end', e.type);
-    this.context.root?.removeEventListener('pointermove', this.onDragMove);
+    this.context.renderingContext.root?.removeEventListener('pointermove', this.onDragMove);
   };
 }

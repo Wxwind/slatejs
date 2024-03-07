@@ -1,28 +1,30 @@
 import { Canvas, Paint } from 'canvaskit-wasm';
 import { AnimationCurve } from 'deer-engine';
-import { DrawableObject } from '../DrawableObject';
+import { DisplayObject } from '../DisplayObject';
 import { Vector2 } from '../util';
-import { CanvasRenderingContext } from '../interface';
+import { CanvasContext, RenderingContext } from '../interface';
+import { ContextSystem } from '../systems';
+import { CanvasKitContext } from '../plugins/plugin-canvaskit/interface';
 
-export class CoordinateSystem extends DrawableObject {
+export class CoordinateSystem extends DisplayObject {
   curves: AnimationCurve[] = [];
   unitWidth = 32; // pixels per unit
 
   coordPaint: Paint;
 
-  constructor(private context: CanvasRenderingContext) {
+  constructor(private context: CanvasContext) {
     super();
-    const { canvaskit } = context;
-    const paint = new canvaskit.Paint();
-    const color = canvaskit.Color(80, 80, 80, 1);
+    const { CanvasKit } = (this.context.contextSystem as ContextSystem<CanvasKitContext>).getContext();
+    const paint = new CanvasKit.Paint();
+    const color = CanvasKit.Color(80, 80, 80, 1);
 
     paint.setColor(color);
-    paint.setStyle(canvaskit.PaintStyle.Stroke);
+    paint.setStyle(CanvasKit.PaintStyle.Stroke);
     this.coordPaint = paint;
 
     // set left bottom point is (0,0)
     const transform = this.transform;
-    transform.translate(0, this.context.viewSizeInfo.height - 0.1);
+    transform.translate(0, this.context.contextSystem.getCanvasElement().height || 400 - 0.1);
     transform.rotate(Math.PI);
     transform.scale(-1, 1);
 
@@ -36,9 +38,9 @@ export class CoordinateSystem extends DrawableObject {
   };
 
   drawCoordinateSystem = (canvas: Canvas) => {
-    const { canvaskit } = this.context;
-    const Path = canvaskit.Path;
-    const XYWHRect = canvaskit.XYWHRect;
+    const { CanvasKit } = (this.context.contextSystem as ContextSystem<CanvasKitContext>).getContext();
+    const Path = CanvasKit.Path;
+    const XYWHRect = CanvasKit.XYWHRect;
 
     const rectSize = this.unitWidth;
     const lineNum = Math.ceil(400 / rectSize);
