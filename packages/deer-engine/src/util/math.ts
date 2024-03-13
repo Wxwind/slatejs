@@ -1,5 +1,3 @@
-import { isNil } from './typeGuard';
-
 export const isNearlyZero = (v: number) => {
   return Math.abs(v) <= 10e-6;
 };
@@ -11,12 +9,9 @@ export function clamp(num: number, min: number, max: number) {
     max = a;
   }
   let res = num;
-  if (!isNil(max)) {
-    res = Math.min(res, max);
-  }
-  if (!isNil(min)) {
-    res = Math.max(res, min);
-  }
+  res = Math.min(res, max);
+  res = Math.max(res, min);
+
   return res;
 }
 

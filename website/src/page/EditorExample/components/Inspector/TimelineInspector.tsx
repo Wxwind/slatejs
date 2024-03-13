@@ -1,10 +1,9 @@
 import { useBindSignal, useDumbState } from '@/hooks';
-import { CanvasEditor, Curves } from '@/module/canvasEditor';
+import { CanvasEditor, Curves, CoordinateSystem } from 'deer-canvas';
 import { isNil } from '@/util';
 import { ActionClip, AnimationCurve, CutsceneEditor, Keyframe, globalTypeMap } from 'deer-engine';
 import { FC, useEffect, useState } from 'react';
 import { getEditorRenderer } from '@/decorator';
-import { CoordinateSystem } from '@/module/canvasEditor/Drawable/CoordinateSystem';
 
 interface TimelineInspectorProps {
   cutsceneEditor: CutsceneEditor;

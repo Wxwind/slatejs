@@ -5,13 +5,14 @@
   "type": "module",
   "packageManager": "pnpm@8.8.0",
   "scripts": {
-    "dev": "concurrently -n engine,website \"pnpm --filter deer-engine watch\" \"pnpm --filter website dev\"",
+    "dev": "concurrently -n engine,website \"pnpm --filter deer-engine watch\" \"pnpm --filter deer-canvas watch\" \"pnpm --filter website dev\"",
     "dev:eg": "pnpm --filter deer-engine watch",
     "build": "pnpm run build:eg && pnpm run build:website",
     "build:website": "pnpm --filter website build",
     "build:eg": "pnpm --filter deer-engine build",
-    "lint:website": "pnpm --filter website lint:ts",
+    "lint:website": "pnpm --filter website... lint:ts",
     "lint:eg": "pnpm --filter deer-engine lint:ts",
+    "lint:canvas": "pnpm --filter deer-canvas lint:ts",
     "preview": "pnpm --filter website preview"
   },
   "dependencies": {

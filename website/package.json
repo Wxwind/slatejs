@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:ts": "tsc --noEmit -p ./tsconfig.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest"
   },
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.23.9",
@@ -17,9 +18,10 @@
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-menubar": "^1.0.4",
     "@radix-ui/react-tabs": "^1.0.4",
-    "canvaskit-wasm": "^0.39.1",
     "classnames": "^2.3.2",
     "deer-engine": "workspace:*",
+    "deer-canvas": "workspace:*",
+    "gl-matrix": "^3.4.3",
     "immer": "^10.0.3",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -31,6 +33,7 @@
     "zustand": "^4.4.4"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.6",
     "@types/lodash": "^4.14.202",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
@@ -39,9 +42,11 @@
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.38.0",
+    "jest": "^29.7.0",
     "postcss": "^8.4.31",
     "sass": "^1.66.1",
     "tailwindcss": "^3.3.3",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.3.3",
     "vite": "^4.3.9"
   }
