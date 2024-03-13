@@ -18,7 +18,7 @@ export class CanvasEditor implements ICanvas {
   container: HTMLElement;
   canvasEl: HTMLCanvasElement;
 
-  private resizeObserver: ResizeObserver;
+  // private resizeObserver: ResizeObserver;
 
   root: Group;
   camera!: ICamera;
@@ -94,13 +94,13 @@ export class CanvasEditor implements ICanvas {
     const debouncedResize = debounce(this.resize);
 
     // observe container's resize event
-    const resizeObserver = new ResizeObserver((entries) => {
-      const { width, height } = entries[0].contentRect;
-      debouncedResize(width, height);
-    });
+    // const resizeObserver = new ResizeObserver((entries) => {
+    //   const { width, height } = entries[0].contentRect;
+    //   debouncedResize(width, height);
+    // });
 
-    resizeObserver.observe(this.container);
-    this.resizeObserver = resizeObserver;
+    // resizeObserver.observe(this.container);
+    // this.resizeObserver = resizeObserver;
   }
 
   private initRenderContext = () => {
@@ -224,7 +224,7 @@ export class CanvasEditor implements ICanvas {
   getConfig = () => this.context.config;
 
   dispose = () => {
-    this.resizeObserver.unobserve(this.container);
+    //  this.resizeObserver.unobserve(this.container);
     this.container.removeChild(this.canvasEl);
     this.context.renderingSystem.dispose();
     this.animateID && cancelAnimationFrame(this.animateID);

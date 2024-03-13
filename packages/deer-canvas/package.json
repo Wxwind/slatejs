@@ -26,23 +26,17 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.1",
-    "@types/jest": "^29.5.6",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
     "eslint": "^8.52.0",
-    "jest": "^29.7.0",
-    "jest-matcher-deep-close-to": "^3.0.2",
     "rollup": "^3.25.3",
     "rollup-plugin-dts": "^5.3.1",
-    "ts-jest": "^29.1.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.202",
     "@use-gesture/vanilla": "^10.3.0",
     "canvaskit-wasm": "^0.39.1",
     "deer-engine": "workspace:*",
-    "gl-matrix": "^3.4.3",
-    "lodash": "^4.17.21"
+    "gl-matrix": "^3.4.3"
   }
 }

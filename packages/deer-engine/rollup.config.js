@@ -9,8 +9,8 @@ export default [
   {
     input: 'src/index.ts',
     plugins: [
-      // resolve(),
-      // commonjs(),
+      resolve(),
+      commonjs(),
       babel({
         exclude: ['node_modules/**'],
         extensions: ['ts', 'tsx', 'mjs', 'js', 'jsx'],
@@ -44,8 +44,8 @@ export default [
   {
     input: 'src/index.ts',
     plugins: [
-      // resolve(),
-      // commonjs(),
+      resolve(),
+      commonjs(),
       babel({
         exclude: ['node_modules/**'],
         extensions: ['ts', 'tsx', 'mjs', 'js', 'jsx'],

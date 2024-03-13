@@ -2,7 +2,7 @@ import { Canvas, Paint } from 'canvaskit-wasm';
 import { AnimationCurve } from 'deer-engine';
 import { DisplayObject } from '../DisplayObject';
 import { Vector2 } from '../util';
-import { CanvasContext, RenderingContext } from '../interface';
+import { CanvasContext } from '../interface';
 import { ContextSystem } from '../systems';
 import { CanvasKitContext } from '../plugins/plugin-canvaskit/interface';
 

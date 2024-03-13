@@ -26,3 +26,4 @@ dist-ssr
 pnpm-lock.yaml
 .rollup.cache
 stats.html
+coverage

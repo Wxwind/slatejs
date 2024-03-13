@@ -65,7 +65,7 @@ export class CanvasKitContextSystem implements ContextSystem<CanvasKitContext> {
       locateFile: (file) => {
         console.log('file', file);
         // https://libs.cdnjs.net/canvaskit-wasm/0.39.1/
-        return '/' + file;
+        return 'https://libs.cdnjs.net/canvaskit-wasm/0.39.1/' + file;
       },
     });
   };

@@ -8,8 +8,8 @@ export default [
   {
     input: 'src/index.ts',
     plugins: [
-      // resolve(),
-      // commonjs(),
+      resolve(),
+      commonjs(),
       typescript(),
       alias({
         entries: [
@@ -36,8 +36,8 @@ export default [
   {
     input: 'src/index.ts',
     plugins: [
-      // resolve(),
-      // commonjs(),
+      resolve(),
+      commonjs(),
       typescript(),
       dts(),
       alias({

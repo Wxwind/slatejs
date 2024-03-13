@@ -1,7 +1,7 @@
-import { ICanvas } from '@/interface';
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { Camera, CameraProjectionMode } from '@/camera';
 import { CanvasEditor } from '@/index';
+import 'isomorphic-fetch';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
