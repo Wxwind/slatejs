@@ -13,7 +13,7 @@ export class EventEmitter<E extends ValidEventTypes = string | symbol, ARGS exte
   } = {};
 
   once: <T extends EventNames<E>>(event: T, fn: EventListener<E, T, ARGS>) => this = (event, fn) => {
-    const wrapFn: (...args: Parameters<typeof fn>) => void = (...args) => {
+    const wrapFn: (...args: ARGS) => void = (...args) => {
       fn(...args);
       this.off(event, wrapFn as typeof fn);
     };
@@ -44,7 +44,7 @@ export class EventEmitter<E extends ValidEventTypes = string | symbol, ARGS exte
 
   emit: <T extends EventNames<E>>(event: T, ...args: EventArgs<E, T, ARGS>) => void = (event, ...args) => {
     this.listeners[event]?.forEach((fn) => {
-      fn(...args);
+      fn(...(args as ARGS));
     });
   };
 }
