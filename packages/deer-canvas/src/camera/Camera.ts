@@ -2,10 +2,9 @@ import { EventEmitter } from '@/packages/eventEmitter';
 import { CameraProjectionMode, CameraTrackingMode, CameraType, ClipSpaceNearZ, ICamera, View } from './interface';
 import { ICanvas } from '../interface';
 import { mat4, vec4, vec3, vec2, quat, mat3 } from 'gl-matrix';
-import { clamp, deg2rad, rad2deg } from '../util';
+import { clamp, deg2rad, rad2deg, createVec3, getAngle, makeOrthoGraphic, makePerspective } from '../util';
 import { Landmark } from './Landmark';
 import { EaseType, EasingFunction } from '../easing';
-import { createVec3, getAngle, makeOrthoGraphic, makePerspective } from './util';
 
 const MIN_DISTANCE = 0.0002;
 
