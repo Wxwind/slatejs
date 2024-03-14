@@ -1,6 +1,6 @@
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
-import { Camera, CameraProjectionMode } from '@/camera';
-import { CanvasEditor } from '@/index';
+import { Camera, CameraProjectionMode } from '../src/camera';
+import { CanvasEditor } from '../src/CanvasEditor';
 import 'isomorphic-fetch';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
@@ -27,5 +27,6 @@ describe('Camera', () => {
 
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.ORTHOGRAPHIC);
     expect(camera.Zoom).toBe(1);
+    expect(1 + 1).toBe(2);
   });
 });
