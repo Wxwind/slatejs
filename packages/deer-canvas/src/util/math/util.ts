@@ -37,6 +37,15 @@ export function createVec3(x: number | vec2 | vec3 | vec4, y = 0, z = 0) {
   return vec3.fromValues(x[0] || 0, x[1] || y, x[2] || z);
 }
 
+/** 
+ * assume z from -1 to 1
+  [
+  (2n) / (r - l),      0,             (r + l) / (r - l),          0,
+  0,               (2n) / (t - b),    (t + b) / (t - b),          0,
+  0,                   0,            -(f + n) / (f - n),   -(2f * n) / (f - n),
+  0,                   0,                   -1,                   0
+  ]
+ */
 export function makePerspective(
   out: mat4,
   left: number,
@@ -47,33 +56,31 @@ export function makePerspective(
   far: number,
   zero?: boolean
 ): mat4 {
-  const x = (2 * near) / (right - left);
-  const y = (2 * near) / (top - bottom);
-
-  const a = (right + left) / (right - left);
-  const b = (top + bottom) / (top - bottom);
+  const lf = right - left;
+  const tb = top - bottom;
+  const nf = far - near;
 
   let c: number;
   let d: number;
 
   if (zero) {
-    c = -far / (far - near);
-    d = (-far * near) / (far - near);
+    c = -far / nf;
+    d = (-far * near) / nf;
   } else {
-    c = -(far + near) / (far - near);
-    d = (-2 * far * near) / (far - near);
+    c = -(far + near) / nf;
+    d = (-2 * far * near) / nf;
   }
 
-  out[0] = x;
+  out[0] = (2 * near) / lf;
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
   out[4] = 0;
-  out[5] = y;
+  out[5] = (2 * near) / tb;
   out[6] = 0;
   out[7] = 0;
-  out[8] = a;
-  out[9] = b;
+  out[8] = (right + left) / lf;
+  out[9] = (top + bottom) / tb;
   out[10] = c;
   out[11] = -1;
   out[12] = 0;
@@ -83,6 +90,15 @@ export function makePerspective(
   return out;
 }
 
+/**
+ * assume z from -1 to 1
+  [
+  2 / (r - l),         0,             0           -(l + r) / (r - l),
+  0,               2 / (t - b),       0,          -(t + b) / (t - b),
+  0,                   0,         -2 / (f - n),   -(n + f) / (f - n),
+  0,                   0,             0,                  1
+  ]
+ */
 export function makeOrthoGraphic(
   out: mat4,
   left: number,

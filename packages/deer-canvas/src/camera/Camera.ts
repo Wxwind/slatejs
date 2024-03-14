@@ -30,6 +30,9 @@ export class Camera implements ICamera {
    * vertical field of view angle
    */
   protected fov = 30;
+  /**
+   * height : width
+   */
   protected aspect = 1;
   protected boxLeft = 0;
   protected boxRight = 0;
@@ -353,6 +356,7 @@ export class Camera implements ICamera {
   };
 
   setZoomByViewportPoint = (zoom: number, viewportPoint: vec2) => {
+    // TODO
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
 
     return this;
