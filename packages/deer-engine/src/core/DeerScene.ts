@@ -4,7 +4,7 @@ import { Control } from './Control';
 import { EntityManager } from './manager/EntityManager';
 import { TransformComponent } from './component';
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
-import { debounce } from '..';
+import { debounce } from '@/util';
 
 export class DeerScene {
   scene: Scene;

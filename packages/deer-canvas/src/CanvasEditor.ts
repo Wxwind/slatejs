@@ -1,6 +1,6 @@
 import { debounce } from '@/util';
 import { CanvasConfig, CanvasContext, RenderingContext, ICanvas, IRenderingPlugin } from './interface';
-import { Group } from './Drawable/Group';
+import { Group } from './drawable';
 import { Vector2 } from './util';
 import { RenderingSystem, EventSystem } from './systems';
 import { DisplayObject } from './DisplayObject';

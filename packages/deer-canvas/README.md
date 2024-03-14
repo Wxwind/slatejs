@@ -1,2 +1,2 @@
-# deer-engine
-The 3D engine built in threejs.
+# deer-canvas
+The 2D canvas rendering engine.
