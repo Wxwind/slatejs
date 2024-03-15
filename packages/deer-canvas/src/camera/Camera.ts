@@ -74,7 +74,8 @@ export class Camera implements ICamera {
 
   // Angles
   /**
-   * +z is 0
+   * CameraType.TRACKING - -z is 0. Increasing anti-clockwise in HCS
+   * Other type - +z is 0. Increasing clockwise in HCS (rotate world = false)
    */
   protected azimuth = 0;
   protected elevation = 0;
