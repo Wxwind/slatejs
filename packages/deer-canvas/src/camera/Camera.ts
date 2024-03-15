@@ -117,6 +117,10 @@ export class Camera implements ICamera {
 
   isPerspective = () => this.projectionMode === CameraProjectionMode.PERSPECTIVE;
 
+  get Type() {
+    return this.type;
+  }
+
   get ProjectionMode() {
     return this.projectionMode;
   }
@@ -139,6 +143,27 @@ export class Camera implements ICamera {
 
   get WorldTransform() {
     return this.matrix;
+  }
+
+  /**
+   * not support for modified, used for unit test.
+   */
+  get Up() {
+    return this.up;
+  }
+
+  /**
+   * not support for modified, used for unit test.
+   */
+  get Right() {
+    return this.right;
+  }
+
+  /**
+   * not support for modified, used for unit test.
+   */
+  get Forward() {
+    return this.forward;
   }
 
   get Position() {
@@ -569,6 +594,9 @@ export class Camera implements ICamera {
       const relAzimuth = getAngle(azimuth);
       const relElevation = getAngle(elevation);
       const relRoll = getAngle(roll);
+      this.elevation = relElevation;
+      this.azimuth = relAzimuth;
+      this.roll = relRoll;
       const rotX = quat.setAxisAngle(quat.create(), [1, 0, 0], deg2rad(this.rotateWorld ? 1 : -1) * relElevation);
       const rotY = quat.setAxisAngle(quat.create(), [0, 1, 0], deg2rad(this.rotateWorld ? 1 : -1) * relAzimuth);
       const rotZ = quat.setAxisAngle(quat.create(), [0, 0, 1], relRoll);
@@ -590,6 +618,15 @@ export class Camera implements ICamera {
 
       this._computeMatrix();
     }
+
+    this._getAxes();
+    if (this.type === CameraType.ORBITING || this.type === CameraType.EXPLORING) {
+      this._getPosition();
+    } else if (this.type === CameraType.TRACKING) {
+      this._getFocalPoint();
+    }
+
+    this._update();
     return this;
   };
 
@@ -612,10 +649,11 @@ export class Camera implements ICamera {
   dolly = (value: number) => {
     const n = this.forward;
     const pos = vec3.clone(this.position);
-    const step = clamp(value * this.dollyingStep, this.minDistance, this.maxDistance);
-    pos[0] += step * n[0];
-    pos[1] += step * n[1];
-    pos[2] += step * n[2];
+    const step = value * this.dollyingStep;
+    const clampedStep = clamp(this.distance + step, this.minDistance, this.maxDistance) - this.distance;
+    pos[0] += clampedStep * n[0];
+    pos[1] += clampedStep * n[1];
+    pos[2] += clampedStep * n[2];
 
     this._setPosition(pos);
     if (this.type === CameraType.ORBITING || this.type === CameraType.EXPLORING) {
@@ -689,6 +727,9 @@ export class Camera implements ICamera {
     }
   };
 
+  /**
+   * Recalculate properties from current maxtrix.
+   */
   private _update = () => {
     this._getAxes();
     this._getPosition();
@@ -791,7 +832,7 @@ export class Camera implements ICamera {
     if (this.type === CameraType.TRACKING) {
       rotX = quat.setAxisAngle(rotX, [1, 0, 0], deg2rad(this.elevation));
       rotY = quat.setAxisAngle(rotY, [0, 1, 0], deg2rad(this.azimuth));
-    } else {
+    } else if (this.type === CameraType.EXPLORING || this.type === CameraType.ORBITING) {
       // only consider HCS for EXPLORING and ORBITING cameras
       rotX = quat.setAxisAngle(rotX, [1, 0, 0], (this.rotateWorld ? 1 : -1) * deg2rad(this.elevation));
       rotY = quat.setAxisAngle(rotY, [0, 1, 0], (this.rotateWorld ? 1 : -1) * deg2rad(this.azimuth));

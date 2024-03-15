@@ -1,8 +1,9 @@
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
-import { Camera, CameraProjectionMode, ClipSpaceNearZ } from '../src/camera';
+import { Camera, CameraProjectionMode, CameraTrackingMode, CameraType, ClipSpaceNearZ } from '../src/camera';
 import { CanvasEditor } from '../src/CanvasEditor';
 import 'isomorphic-fetch';
 import { mat4, vec3 } from 'gl-matrix';
+import { deg2rad } from '@/util';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
@@ -304,5 +305,91 @@ describe('Camera', () => {
     expect(camera.Azimuth).toBeCloseTo(30);
     expect(camera.Elevation).toBeCloseTo(30);
     expect(camera.Roll).toBeCloseTo(30);
+  });
+
+  test('should CameraType.ORBITING work', () => {
+    const camera = new Camera(canvas);
+    camera
+      .setPosition(width / 2, height / 2, 500)
+      .setFocalPoint(width / 2, height / 2, 0)
+      .setPerspective(0.1, 1000, 45, width / height);
+
+    camera.setType(CameraType.ORBITING);
+
+    expect(camera.Type).toBe(CameraType.ORBITING);
+    expect(camera.FocalPoint).toStrictEqual(vec3.fromValues(300, 250, 0));
+    expect(camera.Position).toStrictEqual(vec3.fromValues(300, 250, 500));
+    expect(camera.Azimuth).toBeCloseTo(0);
+    expect(camera.Elevation).toBeCloseTo(0);
+    expect(camera.Roll).toBeCloseTo(0);
+    expect(camera.Distance).toBeCloseTo(500);
+
+    camera.rotate(0, 0, 30);
+    expect(camera.FocalPoint).toStrictEqual(vec3.fromValues(300, 250, 0));
+    expect(camera.Distance).toBeCloseTo(500);
+    expect(camera.Forward).toBeDeepCloseTo(vec3.fromValues(0, 0, 1));
+    expect(camera.Up).toBeDeepCloseTo(vec3.fromValues(-Math.sin(deg2rad(30)), Math.cos(deg2rad(30)), 0));
+    expect(camera.Right).toBeDeepCloseTo(vec3.fromValues(Math.cos(deg2rad(30)), Math.sin(deg2rad(30)), 0));
+    expect(camera.Forward).toBeDeepCloseTo(vec3.fromValues(0, 0, 1));
+
+    camera.rotate(30, 0, 0);
+    const exvec1 = vec3.fromValues(300 - 500 * Math.sin(deg2rad(30)), 250, 500 * Math.cos(deg2rad(30)));
+    expect(camera.Azimuth).toBeCloseTo(30);
+    expect(camera.FocalPoint).toStrictEqual(vec3.fromValues(300, 250, 0));
+    expect(camera.Distance).toBeCloseTo(500);
+    expect(camera.Position).toBeDeepCloseTo(exvec1);
+
+    camera.rotate(0, 40, 0);
+    const a = 500 * Math.cos(deg2rad(40));
+    const b = 500 * Math.sin(deg2rad(40));
+    const exvec2 = vec3.fromValues(300 - a * Math.sin(deg2rad(30)), 250 + b, a * Math.cos(deg2rad(30)));
+    expect(camera.Elevation).toBeCloseTo(40);
+    expect(camera.FocalPoint).toStrictEqual(vec3.fromValues(300, 250, 0));
+    expect(camera.Distance).toBeCloseTo(500);
+    expect(camera.Position).toBeDeepCloseTo(exvec2);
+  });
+
+  test('should CameraType.TRACKING work', () => {
+    const camera = new Camera(canvas);
+    camera
+      .setPosition(width / 2, height / 2, 500)
+      .setFocalPoint(width / 2, height / 2, 0)
+      .setPerspective(0.1, 1000, 45, width / height);
+
+    camera.setType(CameraType.TRACKING, CameraTrackingMode.ROTATIONAL);
+    const focalToWatch = vec3.fromValues(300, 250, 0);
+    const camPos = vec3.fromValues(300, 250, 500);
+
+    expect(camera.Type).toBe(CameraType.TRACKING);
+    expect(camera.FocalPoint).toStrictEqual(focalToWatch);
+    expect(camera.Position).toStrictEqual(camPos);
+    expect(camera.Azimuth).toBeCloseTo(0);
+    expect(camera.Elevation).toBeCloseTo(0);
+    expect(camera.Roll).toBeCloseTo(0);
+    expect(camera.Distance).toBeCloseTo(500);
+
+    camera.rotate(0, 0, 30);
+    expect(camera.FocalPoint).toStrictEqual(focalToWatch);
+    expect(camera.Distance).toBeCloseTo(500);
+    expect(camera.Forward).toBeDeepCloseTo(vec3.fromValues(0, 0, 1));
+    expect(camera.Up).toBeDeepCloseTo(vec3.fromValues(-Math.sin(deg2rad(30)), Math.cos(deg2rad(30)), 0));
+    expect(camera.Right).toBeDeepCloseTo(vec3.fromValues(Math.cos(deg2rad(30)), Math.sin(deg2rad(30)), 0));
+    expect(camera.Forward).toBeDeepCloseTo(vec3.fromValues(0, 0, 1));
+
+    camera.rotate(30, 0, 0);
+    const exvec1 = vec3.fromValues(300 - 500 * Math.sin(deg2rad(30)), 250, 500 - 500 * Math.cos(deg2rad(30)));
+    expect(camera.Azimuth).toBeCloseTo(30);
+    expect(camera.FocalPoint).toBeDeepCloseTo(exvec1);
+    expect(camera.Distance).toBeCloseTo(500);
+    expect(camera.Position).toBeDeepCloseTo(camPos);
+
+    camera.rotate(0, 40, 0);
+    const a = 500 * Math.cos(deg2rad(40));
+    const b = 500 * Math.sin(deg2rad(40));
+    const exvec2 = vec3.fromValues(300 - a * Math.sin(deg2rad(30)), 250 + b, 500 - a * Math.cos(deg2rad(30)));
+    expect(camera.Elevation).toBeCloseTo(40);
+    expect(camera.FocalPoint).toBeDeepCloseTo(exvec2);
+    expect(camera.Distance).toBeCloseTo(500);
+    expect(camera.Position).toBeDeepCloseTo(camPos);
   });
 });

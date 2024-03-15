@@ -70,6 +70,8 @@ export interface ICamera {
   canvas: ICanvas;
   eventEmitter: EventEmitter;
 
+  get Type(): CameraType;
+
   get ProjectionMode(): CameraProjectionMode;
   get ProjectionMatrix(): mat4;
   get ProjectionInverse(): mat4;
@@ -82,6 +84,9 @@ export interface ICamera {
    * Camera's matrix. From view to world
    */
   get WorldTransform(): mat4;
+  get Up(): vec3;
+  get Right(): vec3;
+  get Forward(): vec3;
   get Position(): vec3;
   get FocalPoint(): vec3;
   get Distance(): number;
