@@ -11,7 +11,7 @@ export interface ControlsProps {
 export const Controls: FC<ControlsProps> = (props) => {
   const { className, cutsceneEditor } = props;
   return (
-    <div className={classnames('relative h-8 bg-[#333] w-full text-gray-300', className)}>
+    <div className={classnames('relative h-8 bg-[#333] w-full text-gray-300 controls', className)}>
       <div className="h-full flex items-center gap-x-1">
         <div className="cursor-pointer hover:text-white">
           <RxTrackPrevious
