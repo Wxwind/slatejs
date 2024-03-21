@@ -87,6 +87,9 @@ export interface ICamera {
   get ProjectionInverse(): mat4;
   /**
    * The matrix applied from camera pos to camera frustum center (Ignore Z axis).
+   * 'camera frustum center' is [(l + r) /2, (t - b) / 2],means frustum always
+   * be [0,1] in both x nad y axis.
+   * This matrix tells how to set transform of dom canvas to apply camera.
    */
   get OrthographicMatrix(): mat4;
   /**
