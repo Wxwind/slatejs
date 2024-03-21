@@ -1,4 +1,4 @@
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 import { Point } from '../util/math';
 
 import { FederatedEvent } from './FederatedEvent';

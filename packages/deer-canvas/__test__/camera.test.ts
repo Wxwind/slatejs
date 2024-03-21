@@ -25,7 +25,7 @@ describe('Camera', () => {
     const camera = new Camera(canvas)
       .setPosition(width / 2, height / 2, 500)
       .setFocalPoint(width / 2, height / 2, 0)
-      .setOrthographic(width / -2, width / 2, height / -2, height / 2, 0.1, 1000);
+      .setOrthographic(-width / 2, width / 2, height / 2, -height / 2, 0.1, 1000);
 
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.ORTHOGRAPHIC);
     expect(camera.Zoom).toBe(1);
@@ -132,7 +132,7 @@ describe('Camera', () => {
         0,
         0,
         -0,
-        0.004000000189989805,
+        -0.004000000189989805,
         -0,
         -0,
         0,
@@ -285,6 +285,8 @@ describe('Camera', () => {
       .setPosition(width / 2, height / 2, 500)
       .setFocalPoint(width / 2, height / 2, 0)
       .setPerspective(0.1, 1000, 45, width / height);
+    camera.setType(CameraType.ORBITING);
+
     expect(camera.FocalPoint).toStrictEqual(vec3.fromValues(300, 250, 0));
     expect(camera.Position).toStrictEqual(vec3.fromValues(300, 250, 500));
     expect(camera.Azimuth).toBeCloseTo(0);
@@ -301,10 +303,25 @@ describe('Camera', () => {
     expect(camera.Elevation).toBeCloseTo(30);
     expect(camera.Roll).toBeCloseTo(0);
 
-    camera.rotate(0, 0, 30);
+    camera.rotate(0, 30, 0);
     expect(camera.Azimuth).toBeCloseTo(30);
-    expect(camera.Elevation).toBeCloseTo(30);
+    expect(camera.Elevation).toBeCloseTo(60);
+    expect(camera.Roll).toBeCloseTo(0);
+
+    camera.rotate(30, 0, 0);
+    expect(camera.Azimuth).toBeCloseTo(60);
+    expect(camera.Elevation).toBeCloseTo(60);
+    expect(camera.Roll).toBeCloseTo(0);
+
+    camera.rotate(0, 0, 30);
+    expect(camera.Azimuth).toBeCloseTo(60);
+    expect(camera.Elevation).toBeCloseTo(60);
     expect(camera.Roll).toBeCloseTo(30);
+
+    camera.rotate(0, 0, 30);
+    expect(camera.Azimuth).toBeCloseTo(60);
+    expect(camera.Elevation).toBeCloseTo(60);
+    expect(camera.Roll).toBeCloseTo(60);
   });
 
   test('should CameraType.ORBITING work', () => {

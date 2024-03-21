@@ -1,5 +1,5 @@
 import { CanvasContext, RenderingContext } from '../interface';
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 import { SyncHook } from '../util/tapable';
 import { ICamera } from '../camera';
 

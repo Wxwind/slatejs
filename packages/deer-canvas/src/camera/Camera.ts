@@ -1,5 +1,13 @@
 import { EventEmitter } from '@/packages/eventEmitter';
-import { CameraProjectionMode, CameraTrackingMode, CameraType, ClipSpaceNearZ, ICamera, View } from './interface';
+import {
+  CameraEvent,
+  CameraProjectionMode,
+  CameraTrackingMode,
+  CameraType,
+  ClipSpaceNearZ,
+  ICamera,
+  View,
+} from './interface';
 import { ICanvas } from '../interface';
 import { mat4, vec4, vec3, vec2, quat, mat3 } from 'gl-matrix';
 import { clamp, deg2rad, rad2deg, createVec3, getAngle, makeOrthoGraphic, makePerspective } from '../util';
@@ -34,6 +42,9 @@ export class Camera implements ICamera {
    * height : width
    */
   protected aspect = 1;
+  /**
+   * Orthographic
+   */
   protected boxLeft = 0;
   protected boxRight = 0;
   protected boxTop = 0;
@@ -41,7 +52,7 @@ export class Camera implements ICamera {
 
   protected zoom = 1;
 
-  // Axes
+  // Axes (left hands)
   /**
    * u axis / +x / right
    */
@@ -74,8 +85,10 @@ export class Camera implements ICamera {
 
   // Angles
   /**
-   * CameraType.TRACKING - -z is 0. Increasing anti-clockwise in HCS
-   * Other type - +z is 0. Increasing clockwise in HCS (rotate world = false)
+   * - Camera posZ > focalPoint posZ is 0
+   * - CameraType.TRACKING - Increasing anti-clockwise in HCS
+   * - CameraType.EXPLORING and ORBITING - Increasing clockwise in HCS (when rotate world = false)
+   * - CameraType.EXPLORING's rotate world flag is true by defult, so it will increasing anti-clockwise like CameraType.TRACKING
    */
   protected azimuth = 0;
   protected elevation = 0;
@@ -272,6 +285,7 @@ export class Camera implements ICamera {
   setMatrix = (matrix: mat4) => {
     this.matrix = matrix;
     this._update();
+    this._getOrthoMatrix();
 
     return this;
   };
@@ -424,6 +438,7 @@ export class Camera implements ICamera {
     mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, -1, 1));
     mat4.invert(this.projectionMatrixInverse, this.projectionMatrix);
 
+    this.triggerUpdate();
     return this;
   };
 
@@ -468,9 +483,12 @@ export class Camera implements ICamera {
     );
 
     // flipY since the origin of OpenGL/WebGL is bottom-left compared with top-left in Canvas2D
-    mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, -1, 1));
+    // FIXME perhaps unnecessary indeed
+    // mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, -1, 1));
     mat4.invert(this.projectionMatrixInverse, this.projectionMatrix);
 
+    this._getOrthoMatrix();
+    this.triggerUpdate();
     return this;
   };
 
@@ -509,6 +527,7 @@ export class Camera implements ICamera {
     this._getAxes();
     this._getDistance();
     this._getAngles();
+    this.triggerUpdate();
     return this;
   };
 
@@ -531,6 +550,7 @@ export class Camera implements ICamera {
 
     this._setPosition(pos);
 
+    this.triggerUpdate();
     return this;
   };
 
@@ -555,6 +575,7 @@ export class Camera implements ICamera {
       this._getFocalPoint();
     }
 
+    this.triggerUpdate();
     return this;
   };
 
@@ -569,6 +590,7 @@ export class Camera implements ICamera {
       this._getFocalPoint();
     }
 
+    this.triggerUpdate();
     return this;
   };
 
@@ -583,6 +605,7 @@ export class Camera implements ICamera {
       this._getFocalPoint();
     }
 
+    this.triggerUpdate();
     return this;
   };
 
@@ -591,16 +614,16 @@ export class Camera implements ICamera {
    */
   rotate = (azimuth: number, elevation: number, roll: number) => {
     if (this.type === CameraType.EXPLORING) {
-      // TODO refactor
+      // FIXME refactor. From nucleo.js, but it's definitely wrong when you rotate roll and azimuth.
       const relAzimuth = getAngle(azimuth);
       const relElevation = getAngle(elevation);
       const relRoll = getAngle(roll);
-      this.elevation = relElevation;
-      this.azimuth = relAzimuth;
-      this.roll = relRoll;
+
+      this.roll += relRoll;
+
       const rotX = quat.setAxisAngle(quat.create(), [1, 0, 0], deg2rad(this.rotateWorld ? 1 : -1) * relElevation);
       const rotY = quat.setAxisAngle(quat.create(), [0, 1, 0], deg2rad(this.rotateWorld ? 1 : -1) * relAzimuth);
-      const rotZ = quat.setAxisAngle(quat.create(), [0, 0, 1], relRoll);
+      const rotZ = quat.setAxisAngle(quat.create(), [0, 0, 1], deg2rad(relRoll));
 
       let rotQ = quat.multiply(quat.create(), rotY, rotX);
       rotQ = quat.multiply(quat.create(), rotQ, rotZ);
@@ -632,15 +655,31 @@ export class Camera implements ICamera {
   };
 
   /**
+   * Translate camera
+   */
+  translate = (x: number | vec2 | vec3 | vec4, y = 0, z = 0) => {
+    const coords = createVec3(x, y, z);
+    const pos = vec3.clone(this.position);
+
+    vec3.add(pos, pos, coords);
+    this._setPosition(pos);
+
+    this.triggerUpdate();
+    return this;
+  };
+
+  /**
    * Translate camera left to right and up to down.
    */
   pan = (tx: number, ty: number) => {
     const coords = createVec3(tx, ty);
     const pos = vec3.clone(this.position);
 
-    vec3.add(pos, pos, coords);
+    vec3.add(pos, pos, vec3.scale(vec3.create(), this.right, coords[0]));
+    vec3.add(pos, pos, vec3.scale(vec3.create(), this.up, coords[1]));
     this._setPosition(pos);
 
+    this.triggerUpdate();
     return this;
   };
 
@@ -663,8 +702,26 @@ export class Camera implements ICamera {
       vec3.add(this.focalPoint, pos, this.distanceVector);
     }
 
+    this.triggerUpdate();
     return this;
   };
+
+  // updateWithActor = (actor: DisplayObject) => {
+  //   if (this.following != actor) return; //fail safe
+
+  //   switch (this.trackingMode) {
+  //     case CameraTrackingMode.DEFAULT:
+  //       break;
+  //     case CameraTrackingMode.ROTATIONAL:
+  //     case CameraTrackingMode.CINEMATIC:
+  //       this.setFocalPoint(actor.position);
+  //       break;
+  //     case CameraTrackingMode.TRANSLATIONAL:
+  //       this.translate(actor.rotation);
+  //       this.setFocalPoint(actor.position);
+  //       break;
+  //   }
+  // };
 
   createLandmark = (
     name: string,
@@ -736,6 +793,8 @@ export class Camera implements ICamera {
     this._getPosition();
     this._getDistance();
     this._getAngles();
+
+    this.triggerUpdate();
   };
 
   /**
@@ -819,10 +878,12 @@ export class Camera implements ICamera {
     m[13] = this.position[1];
     m[14] = this.position[2];
     m[15] = 1;
+
+    this._getOrthoMatrix();
   };
 
   /**
-   * Rebuild matrix from roll, elevation, azimuth and position
+   * Rebuild matrix from roll, elevation, azimuth and position / focalPoint
    */
   private _computeMatrix = () => {
     let rotX = quat.create();
@@ -852,4 +913,28 @@ export class Camera implements ICamera {
       mat4.translate(this.matrix, this.matrix, [0, 0, this.distance]);
     }
   };
+
+  private _getOrthoMatrix() {
+    if (this.projectionMode !== CameraProjectionMode.ORTHOGRAPHIC) {
+      return;
+    }
+
+    const position = this.position;
+    const rotZ = quat.setAxisAngle(quat.create(), [0, 0, 1], -deg2rad(this.roll));
+    mat4.fromRotationTranslationScaleOrigin(
+      this.orthographicMatrix,
+      rotZ,
+      vec3.fromValues(
+        (this.boxRight - this.boxLeft) / 2 - position[0],
+        (this.boxTop - this.boxBottom) / 2 - position[1],
+        0
+      ),
+      vec3.fromValues(this.zoom, this.zoom, 1),
+      position
+    );
+  }
+
+  private triggerUpdate() {
+    this.eventEmitter.emit(CameraEvent.UPDATED);
+  }
 }

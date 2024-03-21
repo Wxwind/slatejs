@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FederatedEvent } from '../events/FederatedEvent';
 import { Cursor, TrackingData } from '../events/types';
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 import { IFederatedEventTarget } from '../events/FederatedEventTarget';
 import { FederatedPointerEvent } from '../events/FederatedPointerEvent';
 import { FederatedMouseEvent } from '../events/FederatedMouseEvent';

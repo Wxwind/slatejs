@@ -2,7 +2,7 @@ import { EventEmitter } from '@/packages/eventEmitter';
 import { FederatedEvent } from '.';
 import { Cursor } from './types';
 import { FederatedEventEmitterTypes, FederatedEventMap } from './FederatedEventMap';
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 
 type AddListenerOptions = boolean | AddEventListenerOptions;
 type RemoveListenerOptions = boolean | EventListenerOptions;

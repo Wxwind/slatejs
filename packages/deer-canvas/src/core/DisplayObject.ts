@@ -1,8 +1,9 @@
 import { Canvas } from 'canvaskit-wasm';
-import { IDrawable } from './IDrawable';
-import { FederatedEventTarget, IFederatedEventTarget } from './events/FederatedEventTarget';
-import { Transform, Vector2 } from './util/math';
-import { ICanvas } from './interface';
+import { IDrawable } from '../interface/IDrawable';
+import { FederatedEventTarget, IFederatedEventTarget } from '../events/FederatedEventTarget';
+import { Vector2 } from '../util/math';
+import { ICanvas } from '../interface';
+import { Transform } from './Transform';
 
 export abstract class DisplayObject extends FederatedEventTarget implements IDrawable {
   abstract _render: (canvas: Canvas) => void;

@@ -1,5 +1,5 @@
 import { Canvas, Paint } from 'canvaskit-wasm';
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 import { Vector2, distance2 } from '../util';
 import { CanvasContext } from '../interface';
 import { CanvasKitContext } from '../plugins/plugin-canvaskit/interface';

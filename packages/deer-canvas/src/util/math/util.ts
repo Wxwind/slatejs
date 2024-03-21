@@ -1,19 +1,15 @@
 import { vec2, vec3, vec4, mat4 } from 'gl-matrix';
 import { isNumber } from '../typeGuard';
 
-const PI_OVER_DEG180 = Math.PI / 180;
-const DEG180_OVER_PI = 180 / Math.PI;
+const DEG2RAD = Math.PI / 180;
+const RAD2DEG = 180 / Math.PI;
 
 export function deg2rad(deg: number) {
-  return deg * PI_OVER_DEG180;
+  return deg * DEG2RAD;
 }
 
 export function rad2deg(rad: number) {
-  return rad * DEG180_OVER_PI;
-}
-
-export function getRotation(radians: number) {
-  return rad2deg(radians);
+  return rad * RAD2DEG;
 }
 
 export function getAngle(angle?: number) {
@@ -114,6 +110,7 @@ export function makeOrthoGraphic(
   } else {
     mat4.ortho(out, left, right, bottom, top, near, far);
   }
+
   return out;
 }
 

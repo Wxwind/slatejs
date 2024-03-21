@@ -1,5 +1,5 @@
 import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 import { Vector2, isPointInShape } from '../util/math';
 
 export class Polygon extends DisplayObject {

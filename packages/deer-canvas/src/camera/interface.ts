@@ -12,22 +12,28 @@ export enum CameraProjectionMode {
 export enum CameraType {
   /**
    * - Is described by world coordinates
+   * - Camera at center in HCS.
    * - Change focal point with every rotation
    * - Not effected by rotate world
    * - Elevation > 90 is not allowed
+   * - Elevation = 90 towards above
    */
   TRACKING,
   /**
    * - Is described by focus point, distance, own azimuth and elevation
+   * - FocalPoint at center in HCS.
    * - Change position with every rotation
    * - Elevation > 90 is not allowed
+   * - Elevation = 90 is over the focalPoint
    */
   ORBITING,
   /**
    * - Is described by focus point, distance, own azimuth and elevation
+   * - FocalPoint at center in HCS.
    * - Change position with every rotation
    * - Rotate world by default
-   * - Elevation > 90 is allowed
+   * - Elevation > 90 is allowed, allows the camera to rotate upside-down
+   * - Elevation = 90 is under the focalPoint
    */
   EXPLORING,
 }
@@ -49,6 +55,10 @@ export enum CameraTrackingMode {
    * Change the focusPoint. And change up axes when setFocalPoint()
    */
   CINEMATIC,
+}
+
+export enum CameraEvent {
+  UPDATED = 'updated',
 }
 
 export type View = {
@@ -75,6 +85,9 @@ export interface ICamera {
   get ProjectionMode(): CameraProjectionMode;
   get ProjectionMatrix(): mat4;
   get ProjectionInverse(): mat4;
+  /**
+   * The matrix applied from camera pos to camera frustum center (Ignore Z axis).
+   */
   get OrthographicMatrix(): mat4;
   /**
    * Inverse(Camera's matrix). From world to view

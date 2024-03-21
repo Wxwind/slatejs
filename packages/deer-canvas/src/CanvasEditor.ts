@@ -3,7 +3,7 @@ import { CanvasConfig, CanvasContext, RenderingContext, ICanvas, IRenderingPlugi
 import { Group } from './drawable';
 import { Vector2 } from './util';
 import { RenderingSystem, EventSystem } from './systems';
-import { DisplayObject } from './DisplayObject';
+import { DisplayObject } from './core/DisplayObject';
 import { CanvasKitRendererPlguin, EventPlugin } from './plugins';
 import { CanvasKitContextSystem } from './systems/CanvasKitContextSystem';
 import { Camera, ClipSpaceNearZ, ICamera } from './camera';

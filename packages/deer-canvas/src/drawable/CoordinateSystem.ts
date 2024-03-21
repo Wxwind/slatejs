@@ -1,6 +1,6 @@
 import { Canvas, Paint } from 'canvaskit-wasm';
 import { AnimationCurve } from 'deer-engine';
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 import { Vector2 } from '../util';
 import { CanvasContext } from '../interface';
 import { ContextSystem } from '../systems';
@@ -26,9 +26,9 @@ export class CoordinateSystem extends DisplayObject {
     const transform = this.transform;
     transform.translate(0, this.context.contextSystem.getCanvasElement().height || 400 - 0.1);
     transform.rotate(Math.PI);
-    transform.scale(-1, 1);
+    transform.scaleTo(-1, 1);
 
-    transform.scale(this.unitWidth, this.unitWidth);
+    transform.scaleTo(this.unitWidth, this.unitWidth);
   }
 
   isPointHit: (point: Vector2) => boolean = () => true;

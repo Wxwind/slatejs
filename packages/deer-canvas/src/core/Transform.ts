@@ -1,13 +1,16 @@
-import { Vector2 } from './Vector2';
-import { getRotation } from './util';
+import { mat4, quat, vec3 } from 'gl-matrix';
+import { Vector2 } from '../util/math/Vector2';
+import { rad2deg } from '../util/math/util';
 
 export class Transform {
-  /**
-   * [ m[0], m[2], m[4] ]
-   * [ m[1], m[3], m[5] ]
-   * [ 0   , 0   , 1    ]
-   */
   m: [number, number, number, number, number, number];
+
+  private matrix: mat4 = mat4.create();
+  private matrixWorld: mat4 = mat4.create();
+  position: vec3 = vec3.create();
+  quaternion: quat = quat.create();
+  rotation: vec3 = vec3.create();
+  scale: vec3 = vec3.create();
 
   constructor(m: [number, number, number, number, number, number] = [1, 0, 0, 1, 0, 0]) {
     this.m = m;
@@ -41,7 +44,7 @@ export class Transform {
   /**
    * Transform point
    */
-  point(point: Vector2) {
+  point(point: Vector2): Vector2 {
     const m = this.m;
     return {
       x: m[0] * point.x + m[2] * point.y + m[4],
@@ -61,7 +64,7 @@ export class Transform {
   /**
    * Apply scale
    */
-  scale(sx: number, sy: number) {
+  scaleTo(sx: number, sy: number) {
     this.m[0] *= sx;
     this.m[1] *= sx;
     this.m[2] *= sy;
@@ -83,6 +86,7 @@ export class Transform {
     this.m[1] = m12;
     this.m[2] = m21;
     this.m[3] = m22;
+
     return this;
   }
 
@@ -173,7 +177,13 @@ export class Transform {
   }
 
   /**
+   *
    * convert transformation matrix back into node's attributes
+   */
+  /**
+   * [ m[0], m[2], m[4] ]
+   * [ m[1], m[3], m[5] ]
+   * [ 0   , 0   , 1    ]
    */
   decompose() {
     const a = this.m[0];
@@ -214,7 +224,7 @@ export class Transform {
       // a = b = c = d = 0
     }
 
-    result.rotation = getRotation(result.rotation);
+    result.rotation = rad2deg(result.rotation);
 
     return result;
   }

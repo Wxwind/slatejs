@@ -1,5 +1,5 @@
 import { Canvas } from 'canvaskit-wasm';
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 import { Vector2 } from '../util';
 
 export class Group extends DisplayObject {

@@ -1,6 +1,6 @@
 import { Group } from '..';
 import { Vector2 } from '../util';
-import { DisplayObject } from '../DisplayObject';
+import { DisplayObject } from '../core/DisplayObject';
 import { RenderingSystem, EventSystem, ContextSystem } from '../systems';
 import { ICamera } from '../camera';
 
@@ -11,13 +11,13 @@ export interface ICanvas {
   createElement: <T extends DisplayObject>(ctor: new (context: CanvasContext) => T) => T;
 
   /**
-   * Transform point from canvas viewport space to screen space.
+   * Transform point from canvas viewport space to world space.
    * @param viewport viewport point in canvas
    */
   viewport2Canvas: (viewport: Vector2) => Vector2;
   /**
-   * Transform point from canvas screen space to viewport space.
-   * @param canvas screen point in canvas
+   * Transform point from canvas world space to viewport space.
+   * @param canvas world point in canvas
    */
   canvas2Viewport: (canvas: Vector2) => Vector2;
   /**

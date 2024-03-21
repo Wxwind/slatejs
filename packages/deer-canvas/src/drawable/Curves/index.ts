@@ -1,6 +1,6 @@
 import { Canvas, Paint } from 'canvaskit-wasm';
 import { AnimationCurve, Keyframe, Signal, isInWeightEnabled, isNotWeighted, isOutWeightEnabled } from 'deer-engine';
-import { DisplayObject } from '../../DisplayObject';
+import { DisplayObject } from '../../core/DisplayObject';
 import { Vector2 } from '../../util';
 import { Handle } from './Handle';
 import { CanvasContext } from '../../interface';
