@@ -1,5 +1,5 @@
 import { useBindSignal, useDumbState } from '@/hooks';
-import { CanvasEditor, Curves, CoordinateSystem } from 'deer-canvas';
+import { CanvasEditor, Curve } from 'deer-canvas';
 import { isNil } from '@/util';
 import { ActionClip, AnimationCurve, CutsceneEditor, Keyframe, globalTypeMap } from 'deer-engine';
 import { FC, useEffect, useState } from 'react';
@@ -54,16 +54,13 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     k5.value = 5;
     c2.addKey(k5);
     curves.push(c2);
-
-    const coord = curvesEditor.createElement(CoordinateSystem);
-    const drawnCurve = curvesEditor.createElement(Curves);
-    drawnCurve.setCurves(curves);
-    coord.addChild(drawnCurve);
-    curvesEditor.root.addChild(coord);
-
-    // drawnCurve.signals.curvesChanged.addListener(() => {
-    //   selectedClip.animatedData.signals.updated.emit();
-    // });
+    curves.forEach((curve) => {
+      const c = curvesEditor.createElement(Curve, { style: { curve: curve } });
+      curvesEditor.root.addChild(c);
+      c.signals.curvesChanged.addListener(() => {
+        selectedClip?.animatedData.signals.updated.emit();
+      });
+    });
 
     return () => {
       curvesEditor.dispose();

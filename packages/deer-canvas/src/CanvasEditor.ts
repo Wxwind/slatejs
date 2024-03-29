@@ -1,14 +1,23 @@
-import { debounce } from '@/util';
-import { CanvasConfig, CanvasContext, RenderingContext, ICanvas, IRenderingPlugin } from './interface';
+import { debounce, isNil, isString } from '@/util';
+import {
+  CanvasConfig,
+  CanvasContext,
+  RenderingContext,
+  ICanvas,
+  IRenderingPlugin,
+  DisplayObjectConfig,
+  BaseStyleProps,
+} from './interface';
 import { Group } from './drawable';
 import { Vector2 } from './util';
 import { RenderingSystem, EventSystem } from './systems';
 import { DisplayObject } from './core/DisplayObject';
 import { CanvasKitRendererPlguin, EventPlugin } from './plugins';
-import { CanvasKitContextSystem } from './systems/CanvasKitContextSystem';
 import { Camera, ClipSpaceNearZ, ICamera } from './camera';
 import { mat4, vec3 } from 'gl-matrix';
 import { CullingPlugin } from './plugins/CullingPlugin';
+import { Canvas2DContextSystem } from './plugins/plugin-canvas2d-renderer/Canvas2DContextSystem';
+import { Canvas2DRendererPlugin } from './plugins/plugin-canvas2d-renderer/Canvas2DRendererPlugin';
 
 const DEFAULT_CAMERA_Z = 500;
 const DEFAULT_CAMERA_NEAR = 0.1;
@@ -40,22 +49,29 @@ export class CanvasEditor implements ICanvas {
       supportsTouchEvents = false,
     } = options;
 
-    const root = new Group();
+    const root = new Group({
+      id: 'root',
+      name: 'root',
+    });
     root.ownerCanvas = this;
     this.root = root;
 
-    this.container = container;
+    if (isString(container)) {
+      const c = document.getElementById(container);
+      if (isNil(c)) throw new Error(`cannot find HTMLElement(id= ${container})`);
+      this.container = c;
+    } else this.container = container;
 
-    container.style.touchAction = 'none';
+    this.container.style.touchAction = 'none';
 
     if (canvasEl) {
       this.canvasEl = canvasEl;
       if (container && canvasEl.parentElement !== container) {
-        container.appendChild(canvasEl);
+        this.container.appendChild(canvasEl);
       }
     } else if (container) {
       const canvasEl = document.createElement('canvas');
-      container.appendChild(canvasEl);
+      this.container.appendChild(canvasEl);
       this.canvasEl = canvasEl;
     } else {
       throw new Error('need canvasEl or container');
@@ -85,10 +101,10 @@ export class CanvasEditor implements ICanvas {
 
     this.initCamera(canvasWidth, canvasHeight, ClipSpaceNearZ.NEGATIVE_ONE);
 
-    this.initRendererSystem();
+    this.initRenderer();
 
     // plugins.apply will hook to renderSystem.hooks
-    this.plugins.push(new EventPlugin(), new CullingPlugin(), new CanvasKitRendererPlguin());
+    this.plugins.push(new EventPlugin(), new CullingPlugin(), new Canvas2DRendererPlugin());
     this.plugins.forEach((a) => a.apply(this.context));
 
     const debouncedResize = debounce(this.resize);
@@ -124,26 +140,26 @@ export class CanvasEditor implements ICanvas {
     this.context.camera = camera;
   };
 
-  private initRendererSystem = () => {
+  private initRenderer = () => {
     this.context.renderingSystem = new RenderingSystem(this.context);
     this.context.eventSystem = new EventSystem(this.context);
-    this.context.contextSystem = new CanvasKitContextSystem(this.context);
+    this.context.contextSystem = new Canvas2DContextSystem(this.context);
 
     this.context.eventSystem.init();
 
     if (this.context.contextSystem.init) {
       this.context.contextSystem.init();
-      this.initRenderSystem();
+      this.initRenderingSystem();
     } else if (this.context.contextSystem.initAsync) {
       this.context.contextSystem.initAsync().then(() => {
-        this.initRenderSystem();
+        this.initRenderingSystem();
       });
     } else {
       throw new Error('contextSystem must has init() or initAsync()');
     }
   };
 
-  private initRenderSystem = () => {
+  private initRenderingSystem = () => {
     this.context.renderingSystem.init();
     this.run();
   };
@@ -163,8 +179,11 @@ export class CanvasEditor implements ICanvas {
     this.getContextSystem().resize(width, height);
   };
 
-  createElement = <T extends DisplayObject>(ctor: new (context: CanvasContext) => T) => {
-    const obj = new ctor(this.context);
+  createElement = <T extends DisplayObject, StyleProps extends BaseStyleProps>(
+    ctor: new (config: DisplayObjectConfig<StyleProps>) => T,
+    config: DisplayObjectConfig<StyleProps>
+  ) => {
+    const obj = new ctor(config);
     obj.ownerCanvas = this;
 
     return obj;

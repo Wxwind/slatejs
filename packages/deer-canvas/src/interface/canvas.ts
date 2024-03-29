@@ -3,12 +3,16 @@ import { Vector2 } from '../util';
 import { DisplayObject } from '../core/DisplayObject';
 import { RenderingSystem, EventSystem, ContextSystem } from '../systems';
 import { ICamera } from '../camera';
+import { BaseStyleProps, DisplayObjectConfig } from './displayObject';
 
 export interface ICanvas {
   container: HTMLElement;
   root: Group;
 
-  createElement: <T extends DisplayObject>(ctor: new (context: CanvasContext) => T) => T;
+  createElement: <T extends DisplayObject, StyleProps extends BaseStyleProps>(
+    ctor: new (config: DisplayObjectConfig<StyleProps>) => T,
+    config: DisplayObjectConfig<StyleProps>
+  ) => T;
 
   /**
    * Transform point from canvas viewport space to world space.
@@ -35,7 +39,7 @@ export interface ICanvas {
 }
 
 export interface CanvasContext {
-  config: Required<CanvasConfig>;
+  config: ResolvedCanvasConfig;
   camera: ICamera;
 
   renderingContext: RenderingContext;
@@ -46,7 +50,7 @@ export interface CanvasContext {
 }
 
 export interface CanvasConfig {
-  container: HTMLElement;
+  container: HTMLElement | string;
   canvasEl?: HTMLCanvasElement;
   width?: number;
   height?: number;
@@ -56,6 +60,10 @@ export interface CanvasConfig {
   supportsCSSTransform?: boolean;
   supportsPointerEvents?: boolean;
   supportsTouchEvents?: boolean;
+}
+
+export interface ResolvedCanvasConfig extends Required<CanvasConfig> {
+  container: HTMLElement;
 }
 
 export interface RenderingContext {

@@ -1,36 +1,30 @@
-import { Canvas, Paint } from 'canvaskit-wasm';
 import { DisplayObject } from '../core/DisplayObject';
 import { Vector2, distance2 } from '../util';
-import { CanvasContext } from '../interface';
-import { CanvasKitContext } from '../plugins/plugin-canvaskit/interface';
-import { ContextSystem } from '../systems';
+import { BaseStyleProps, DisplayObjectConfig } from '../interface';
+import { Shape } from '@/types';
 
-export interface CircleOptions {
+export interface CircleStyleProps extends BaseStyleProps {
   center: Vector2;
   radius: number;
 }
 
-export class Circle extends DisplayObject {
-  paint: Paint;
+export class Circle extends DisplayObject<CircleStyleProps> {
+  type = Shape.Circle;
 
   center: Vector2 = { x: 0, y: 0 };
   radius = 1;
 
-  constructor(protected context: CanvasContext) {
-    super();
-    const { CanvasKit } = (this.context.contextSystem as ContextSystem<CanvasKitContext>).getContext();
-    const paint = new CanvasKit.Paint();
-    const color = CanvasKit.Color(255, 0, 0, 1);
+  constructor(config: DisplayObjectConfig<CircleStyleProps>) {
+    super({
+      type: Shape.Circle,
+      ...config,
+    });
 
-    paint.setColor(color);
-    paint.setStyle(CanvasKit.PaintStyle.Stroke);
-    this.paint = paint;
-
-    // this.center = options.center;
-    // this.radius = options.radius;
+    this.center = config.style?.center || { x: 0, y: 0 };
+    this.radius = config.style?.radius || 5;
   }
 
-  setOptions(options: Partial<CircleOptions>) {
+  setOptions(options: Partial<CircleStyleProps>) {
     this.center = options.center ?? this.center;
     this.radius = options.radius ?? this.radius;
   }
@@ -38,9 +32,5 @@ export class Circle extends DisplayObject {
   isPointHit: (point: Vector2) => boolean = (point) => {
     const localP = this.toLocal(point);
     return distance2(localP, this.center) <= this.radius * this.radius;
-  };
-
-  _render: (canvas: Canvas) => void = (canvas) => {
-    canvas.drawCircle(this.center.x, this.center.y, this.radius, this.paint);
   };
 }

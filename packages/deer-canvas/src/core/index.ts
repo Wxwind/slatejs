@@ -1,2 +1,2 @@
 export * from './DisplayObject';
-export * from './Transform';
+export * from './components/Transform';

@@ -1,32 +1,26 @@
-import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
 import { DisplayObject } from '../core/DisplayObject';
 import { Vector2, isPointInShape } from '../util/math';
+import { BaseStyleProps, DisplayObjectConfig } from '@/interface';
 
-export class Polygon extends DisplayObject {
+export interface PolygonStyleProps extends BaseStyleProps {
   points: Vector2[];
-  paint: Paint;
+}
 
-  constructor(
-    private canvaskit: CanvasKit,
-    points: Vector2[]
-  ) {
-    super();
-    this.points = points;
-    const paint = new canvaskit.Paint();
-    const color = canvaskit.Color(255, 0, 0, 1);
+export class Polygon extends DisplayObject<PolygonStyleProps> {
+  points: Vector2[];
 
-    paint.setColor(color);
-    paint.setStyle(canvaskit.PaintStyle.Stroke);
-    this.paint = paint;
+  constructor(config: DisplayObjectConfig<PolygonStyleProps>) {
+    super(config);
+    this.points = config.style?.points || [];
   }
 
-  _render: (canvas: Canvas) => void = (canvas) => {
+  _render: () => void = () => {
     const array = [];
     for (const p of this.points) {
       array.push(p.x);
       array.push(p.y);
     }
-    canvas.drawPoints(this.canvaskit.PointMode.Polygon, array, this.paint);
+    // canvas.drawPoints(this.canvaskit.PointMode.Polygon, array, this.paint);
   };
 
   isPointHit: (point: Vector2) => boolean = (point) => {

@@ -1,7 +1,7 @@
 import CanvasKitInit, { CanvasKit } from 'canvaskit-wasm';
-import { CanvasKitContext } from '../plugins/plugin-canvaskit/interface';
-import { ContextSystem } from './ContextSystem';
-import { CanvasConfig, CanvasContext } from '../interface';
+import { CanvasKitContext } from './interface';
+import { ContextSystem } from '../../systems/ContextSystem';
+import { CanvasConfig, CanvasContext } from '../../interface';
 
 export class CanvasKitContextSystem implements ContextSystem<CanvasKitContext> {
   private dpr!: number;
@@ -9,6 +9,7 @@ export class CanvasKitContextSystem implements ContextSystem<CanvasKitContext> {
   private canvasEl!: HTMLCanvasElement;
 
   private config: Required<CanvasConfig>;
+
   constructor(context: CanvasContext) {
     this.config = context.config;
   }

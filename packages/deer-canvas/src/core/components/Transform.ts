@@ -1,6 +1,6 @@
 import { mat4, quat, vec3 } from 'gl-matrix';
-import { Vector2 } from '../util/math/Vector2';
-import { rad2deg } from '../util/math/util';
+import { Vector2 } from '../../util/math/Vector2';
+import { rad2deg } from '../../util/math/util';
 
 export class Transform {
   m: [number, number, number, number, number, number];

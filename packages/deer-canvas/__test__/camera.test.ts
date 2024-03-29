@@ -1,7 +1,7 @@
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { Camera, CameraProjectionMode, CameraTrackingMode, CameraType, ClipSpaceNearZ } from '../src/camera';
 import { CanvasEditor } from '../src/CanvasEditor';
-import 'isomorphic-fetch';
+import 'isomorphic-fetch'; // for init CanvasKit
 import { mat4, vec3 } from 'gl-matrix';
 import { deg2rad } from '@/util';
 

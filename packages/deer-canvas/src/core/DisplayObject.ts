@@ -1,34 +1,48 @@
-import { Canvas } from 'canvaskit-wasm';
 import { IDrawable } from '../interface/IDrawable';
 import { FederatedEventTarget, IFederatedEventTarget } from '../events/FederatedEventTarget';
 import { Vector2 } from '../util/math';
-import { ICanvas } from '../interface';
-import { Transform } from './Transform';
+import { BaseStyleProps, DisplayObjectConfig, ICanvas } from '../interface';
+import { Transform } from './components/Transform';
+import { Renderable, Sortable } from './components';
+import { Shape } from '@/types';
 
-export abstract class DisplayObject extends FederatedEventTarget implements IDrawable {
-  abstract _render: (canvas: Canvas) => void;
-  abstract isPointHit: (point: Vector2) => boolean;
+export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyleProps>
+  extends FederatedEventTarget
+  implements IDrawable
+{
+  id: string;
+  name: string;
+  readonly type: Shape;
+  style: StyleProps;
+  readonly config: DisplayObjectConfig<StyleProps>;
 
   visible = true;
+
   protected transform = new Transform();
+
+  sortable: Sortable = {
+    dirty: false,
+    renderOrder: 0,
+    sorted: undefined,
+  };
+  renderable: Renderable = {
+    dirty: false,
+  };
 
   ownerCanvas!: ICanvas;
 
   children: DisplayObject[] = [];
 
-  render = (canvas: Canvas) => {
-    if (!this.visible) return;
+  constructor(config: DisplayObjectConfig<StyleProps>) {
+    super();
+    this.config = config;
+    this.id = config.id || '<not assigned>';
+    this.name = config.name || '<not assigned>';
+    this.type = config.type || Shape.Group;
+    this.style = config.style || (DEFAULT_STYLE_PROPS as StyleProps);
+  }
 
-    canvas.save();
-
-    canvas.concat(this.transform.toFloat32Array());
-    this._render(canvas);
-    for (const child of this.children) {
-      child.render(canvas);
-    }
-
-    canvas.restore();
-  };
+  abstract isPointHit: (point: Vector2) => boolean;
 
   addChild = (drawable: DisplayObject) => {
     this.children.push(drawable);
@@ -101,3 +115,8 @@ export abstract class DisplayObject extends FederatedEventTarget implements IDra
     return localP;
   };
 }
+
+const DEFAULT_STYLE_PROPS: Required<BaseStyleProps> = {
+  zIndex: 0,
+  visible: true,
+};
