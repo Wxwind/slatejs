@@ -33,7 +33,7 @@ export function createVec3(x: number | vec2 | vec3 | vec4, y = 0, z = 0) {
   return vec3.fromValues(x[0] || 0, x[1] || y, x[2] || z);
 }
 
-/** 
+/**
  * assume z from -1 to 1
   [
   (2n) / (r - l),      0,             (r + l) / (r - l),          0,

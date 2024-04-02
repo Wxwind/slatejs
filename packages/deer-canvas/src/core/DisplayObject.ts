@@ -44,6 +44,10 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
 
   abstract isPointHit: (point: Vector2) => boolean;
 
+  getWorldTransform = () => {
+    return this.transform.toFloat32Array();
+  };
+
   addChild = (drawable: DisplayObject) => {
     this.children.push(drawable);
     drawable.parent = this;
@@ -116,7 +120,7 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
   };
 }
 
-const DEFAULT_STYLE_PROPS: Required<BaseStyleProps> = {
+const DEFAULT_STYLE_PROPS: BaseStyleProps = {
   zIndex: 0,
   visible: true,
 };

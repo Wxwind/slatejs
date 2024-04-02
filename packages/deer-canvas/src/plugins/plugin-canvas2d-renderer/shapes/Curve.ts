@@ -4,7 +4,7 @@ import { Curve } from '@/drawable';
 import { AnimationCurve, isInWeightEnabled, isNotWeighted, isOutWeightEnabled, Keyframe } from 'deer-engine';
 
 export class CurveRenderer implements StyleRenderer {
-  render = (object: DisplayObject, ctx: CanvasRenderingContext2D) => {
+  render = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {
     const { curve } = (object as Curve).style;
     this.drawBezierCurve(curve, ctx);
   };
@@ -69,7 +69,8 @@ export class CurveRenderer implements StyleRenderer {
 
         ctx.bezierCurveTo(p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
       }
-      ctx.closePath();
+      ctx.lineWidth = 0.1;
+      ctx.stroke();
     }
   };
 }

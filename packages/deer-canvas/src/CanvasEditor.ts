@@ -12,7 +12,7 @@ import { Group } from './drawable';
 import { Vector2 } from './util';
 import { RenderingSystem, EventSystem } from './systems';
 import { DisplayObject } from './core/DisplayObject';
-import { CanvasKitRendererPlguin, EventPlugin } from './plugins';
+import { EventPlugin } from './plugins';
 import { Camera, ClipSpaceNearZ, ICamera } from './camera';
 import { mat4, vec3 } from 'gl-matrix';
 import { CullingPlugin } from './plugins/CullingPlugin';
@@ -228,12 +228,12 @@ export class CanvasEditor implements ICanvas {
 
   client2Viewport = (client: Vector2) => {
     const bbox = this.canvasEl?.getBoundingClientRect();
-    return { x: client.x - (bbox?.left || 0), y: client.y - (bbox?.right || 0) };
+    return { x: client.x - (bbox?.left || 0), y: client.y - (bbox?.top || 0) };
   };
 
   viewport2Client = (viewport: Vector2) => {
     const bbox = this.canvasEl?.getBoundingClientRect();
-    return { x: viewport.x + (bbox?.left || 0), y: viewport.y + (bbox?.right || 0) };
+    return { x: viewport.x + (bbox?.left || 0), y: viewport.y + (bbox?.top || 0) };
   };
 
   getEventSystem = () => this.context.eventSystem;

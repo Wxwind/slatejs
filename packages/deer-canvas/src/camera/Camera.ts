@@ -396,8 +396,13 @@ export class Camera implements ICamera {
   };
 
   setZoomByViewportPoint = (zoom: number, viewportPoint: vec2) => {
-    // TODO
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
+    const roll = this.roll;
+    this.rotate(0, 0, -roll);
+    this._setPosition(x, y, this.position[2]);
+    this.setFocalPoint(x, y, this.focalPoint[2]);
+    this.setZoom(zoom);
+    this.rotate(0, 0, roll);
 
     return this;
   };
@@ -484,7 +489,7 @@ export class Camera implements ICamera {
 
     // flipY since the origin of OpenGL/WebGL is bottom-left compared with top-left in Canvas2D
     // FIXME perhaps unnecessary indeed
-    // mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, -1, 1));
+    mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, -1, 1));
     mat4.invert(this.projectionMatrixInverse, this.projectionMatrix);
 
     this._getOrthoMatrix();

@@ -1,5 +1,5 @@
 import { DisplayObject } from '@/core';
 
 export interface StyleRenderer {
-  render: (object: DisplayObject, ctx: CanvasRenderingContext2D) => void;
+  render: (ctx: CanvasRenderingContext2D, object: DisplayObject) => void;
 }

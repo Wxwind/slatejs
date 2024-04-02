@@ -5,15 +5,16 @@ import { Shape } from '@/types';
 import { mat4 } from 'gl-matrix';
 import { CirleRenderer, StyleRenderer } from './shapes';
 import { CurveRenderer } from './shapes/Curve';
+import { isNil } from '@/util';
 
 export class Canvas2DRendererPlugin implements IRenderingPlugin {
   private fullRendering = false;
 
-  private renderQueue: DisplayObject[] = [];
   private styleRendererFactory!: Record<Shape, StyleRenderer | undefined>;
 
   private dprMatrix = mat4.create();
   private vpMatrix = mat4.create();
+  private tmpMat4 = mat4.create();
 
   apply = (context: CanvasContext) => {
     const { renderingSystem, renderingContext, contextSystem, config, camera } = context;
@@ -26,14 +27,7 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
 
     this.styleRendererFactory = styleRendererFactory;
 
-    renderingSystem.hooks.render.tap((object: DisplayObject) => {
-      if (!this.fullRendering) {
-        // render at the end of frame
-        this.renderQueue.push(object);
-      }
-    });
-
-    renderingSystem.hooks.endFrame.tap(() => {
+    renderingSystem.hooks.render.tap((renderQueue: DisplayObject[]) => {
       const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();
       if (this.fullRendering) {
         this.renderByZIndex(renderingContext.root, ctx, context);
@@ -53,7 +47,7 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
         );
         // rendering
         // TODO: dirty render (merge AABB and intersect)
-        const dirtyObjects = this.renderQueue;
+        const dirtyObjects = renderQueue;
 
         dirtyObjects
           .sort((a, b) => a.sortable.renderOrder - b.sortable.renderOrder)
@@ -64,10 +58,10 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
           });
         // reset matrix
         ctx.restore();
-
-        this.renderQueue = [];
       }
     });
+
+    renderingSystem.hooks.endFrame.tap(() => {});
   };
 
   private renderByZIndex = (object: DisplayObject, ctx: CanvasRenderingContext2D, canvasContext: CanvasContext) => {
@@ -95,12 +89,35 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
 
       ctx.save();
 
-      // render shape
       // apply style
-      renderer.render(object, ctx);
+      this.applyStyle(ctx, object);
+      // render shape
+      renderer.render(ctx, object);
       ctx.restore();
     }
   };
 
-  private applyWorldTransform = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {};
+  private applyWorldTransform = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {
+    // TODO: Support anchor
+    mat4.copy(this.tmpMat4, object.getWorldTransform());
+    mat4.multiply(this.tmpMat4, this.vpMatrix, this.tmpMat4);
+
+    ctx.setTransform(
+      this.tmpMat4[0],
+      this.tmpMat4[1],
+      this.tmpMat4[4],
+      this.tmpMat4[5],
+      this.tmpMat4[12],
+      this.tmpMat4[13]
+    );
+  };
+
+  private applyStyle = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {
+    const { opacity, fillStyle, strokeStyle: stokeStyle, lineWidth } = object.style;
+
+    if (!isNil(opacity)) ctx.globalAlpha = opacity;
+    if (!isNil(fillStyle)) ctx.fillStyle = fillStyle;
+    if (!isNil(stokeStyle)) ctx.strokeStyle = stokeStyle;
+    if (!isNil(lineWidth)) ctx.lineWidth = lineWidth;
+  };
 }

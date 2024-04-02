@@ -25,15 +25,15 @@ export class RenderingSystem {
     /**
      * called before every object is rendered
      */
-    beforeRender: new SyncHook<[DisplayObject]>(),
+    beforeRender: new SyncHook<[]>(),
     /**
      * called when every object is renderings
      */
-    render: new SyncHook<[DisplayObject]>(),
+    render: new SyncHook<[DisplayObject[]]>(),
     /**
      * called after every object is rendered
      */
-    afterRender: new SyncHook<[DisplayObject]>(),
+    afterRender: new SyncHook<[]>(),
     /**
      * called at the end of every frame
      */
@@ -61,14 +61,13 @@ export class RenderingSystem {
     const { renderingContext } = this.context;
 
     this.renderDisplayObject(this.context.renderingContext.root, this.context.renderingContext);
+    // console.log(this.stats);
 
     this.hooks.beginFrame.call();
 
-    renderingContext.renderListCurrentFrame.forEach((object) => {
-      this.hooks.beforeRender.call(object);
-      this.hooks.render.call(object);
-      this.hooks.afterRender.call(object);
-    });
+    this.hooks.beforeRender.call();
+    this.hooks.render.call(renderingContext.renderListCurrentFrame);
+    this.hooks.afterRender.call();
 
     this.hooks.endFrame.call();
     renderingContext.renderListCurrentFrame = [];
