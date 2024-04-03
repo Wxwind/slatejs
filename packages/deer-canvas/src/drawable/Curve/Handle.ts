@@ -26,7 +26,7 @@ export class Handle {
   };
 
   onDragMove = (e: FederatedPointerEvent) => {
-    const localP = this.circle.toLocal({ x: e.globalX, y: e.globalY });
+    const localP = this.circle.worldToLocal({ x: e.globalX, y: e.globalY });
     this.onDragMoveCallBack?.(localP);
   };
 

@@ -30,7 +30,7 @@ export class Circle extends DisplayObject<CircleStyleProps> {
   }
 
   isPointHit: (point: Vector2) => boolean = (point) => {
-    const localP = this.toLocal(point);
+    const localP = this.worldToLocal(point);
     return distance2(localP, this.center) <= this.radius * this.radius;
   };
 }

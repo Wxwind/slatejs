@@ -4,6 +4,8 @@ import { SyncHook } from '../util/tapable';
 import { ICamera } from '../camera';
 
 export class RenderingSystem {
+  renderListCurrentFrame: DisplayObject[] = [];
+
   private stats = {
     /**
      * the count of display objects in scene
@@ -58,32 +60,33 @@ export class RenderingSystem {
       rerenderedCount: 0,
     };
 
-    const { renderingContext } = this.context;
-
-    this.renderDisplayObject(this.context.renderingContext.root, this.context.renderingContext);
+    const root = this.context.renderingContext.root;
+    root.transform.syncRecursive();
+    this.renderDisplayObject(root, this.context.renderingContext);
     // console.log(this.stats);
 
     this.hooks.beginFrame.call();
 
     this.hooks.beforeRender.call();
-    this.hooks.render.call(renderingContext.renderListCurrentFrame);
+    this.hooks.render.call(this.renderListCurrentFrame);
     this.hooks.afterRender.call();
 
     this.hooks.endFrame.call();
-    renderingContext.renderListCurrentFrame = [];
+    this.renderListCurrentFrame = [];
   };
 
   /** Collect objects to render */
   private renderDisplayObject(displayObject: DisplayObject, renderingContext: RenderingContext) {
     // TODO: dirty check first
-    const isDirty = true;
+    const renderable = displayObject.renderable;
+    const isDirty = true; // renderable.dirty
 
     if (isDirty) {
       // TODO: cull
       const needRender = this.hooks.cull.call(displayObject, this.context.camera);
       if (needRender) {
         this.stats.rerenderedCount++;
-        renderingContext.renderListCurrentFrame.push(displayObject);
+        this.renderListCurrentFrame.push(displayObject);
       }
     }
 

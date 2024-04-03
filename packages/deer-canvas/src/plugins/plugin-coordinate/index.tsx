@@ -2,8 +2,10 @@ import { CanvasContext, IRenderingPlugin } from '@/interface';
 
 export class CoordinatePlugin implements IRenderingPlugin {
   apply = (context: CanvasContext) => {
-    const { renderingSystem, renderingContext, contextSystem, config, camera } = context;
+    const { renderingSystem, renderingContext } = context;
 
-    renderingSystem.hooks.beginFrame.tap(() => {});
+    renderingSystem.hooks.init.tap(() => {
+      renderingContext.root.transform.setLocalScale(16, 16);
+    });
   };
 }

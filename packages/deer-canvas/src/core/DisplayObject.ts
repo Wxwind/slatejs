@@ -5,6 +5,7 @@ import { BaseStyleProps, DisplayObjectConfig, ICanvas } from '../interface';
 import { Transform } from './components/Transform';
 import { Renderable, Sortable } from './components';
 import { Shape } from '@/types';
+import { vec3 } from 'gl-matrix';
 
 export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyleProps>
   extends FederatedEventTarget
@@ -18,7 +19,7 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
 
   visible = true;
 
-  protected transform = new Transform();
+  transform = new Transform(this);
 
   sortable: Sortable = {
     dirty: false,
@@ -27,6 +28,7 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
   };
   renderable: Renderable = {
     dirty: false,
+    boundsDirty: false,
   };
 
   ownerCanvas!: ICanvas;
@@ -71,52 +73,16 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
     this.children.length = 0;
   };
 
-  /** convert point from local space to parent space */
-  transformToWorld: (point: Vector2) => Vector2 = (point) => {
-    return this.transform.point(point);
+  worldToLocal = (point: Vector2) => {
+    const tmpVec3 = vec3.fromValues(point.x, point.y, 0);
+    const res = vec3.transformMat4(tmpVec3, tmpVec3, this.transform.getWorldTransformInverse());
+    return { x: res[0], y: res[1] };
   };
 
-  /** convert point from parent space to local space */
-  worldToTranform: (point: Vector2) => Vector2 = (point) => {
-    return this.transform.invert().point(point);
-  };
-
-  toLocal = (point: Vector2) => {
-    let localP = { x: point.x, y: point.y };
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let obj: IFederatedEventTarget | undefined = this;
-
-    const parents: DisplayObject[] = [];
-    while (obj) {
-      parents.push(obj as DisplayObject);
-      obj = obj.parent;
-    }
-
-    for (let i = parents.length - 1; i >= 0; i--) {
-      const p = parents[i];
-      localP = p.worldToTranform(localP);
-    }
-
-    return localP;
-  };
-
-  toWorld = (point: Vector2) => {
-    let localP = point;
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let obj: IFederatedEventTarget | undefined = this;
-
-    const parents: DisplayObject[] = [];
-    while (obj) {
-      parents.push(obj as DisplayObject);
-      obj = obj.parent;
-    }
-
-    for (let i = 0; i < parents.length; i++) {
-      const p = parents[i];
-      localP = p.transformToWorld(localP);
-    }
-
-    return localP;
+  localToWorld = (point: Vector2) => {
+    const tmpVec3 = vec3.fromValues(point.x, point.y, 0);
+    const res = vec3.transformMat4(tmpVec3, tmpVec3, this.transform.getWorldTransform());
+    return { x: res[0], y: res[1] };
   };
 }
 

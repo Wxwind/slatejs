@@ -1,236 +1,233 @@
-import { mat4, quat, vec3 } from 'gl-matrix';
-import { Vector2 } from '../../util/math/Vector2';
-import { rad2deg } from '../../util/math/util';
+import { mat4, quat, vec2, vec3 } from 'gl-matrix';
+import { DisplayObject } from '../DisplayObject';
+import { createVec3, isNil } from '@/util';
 
 export class Transform {
-  m: [number, number, number, number, number, number];
+  /** Local Space */
+  private localMatrix = mat4.create();
+  private localPosition = vec3.create();
+  private localRotation = quat.create();
+  private localScale = vec3.fromValues(1, 1, 1);
 
-  private matrix: mat4 = mat4.create();
-  private matrixWorld: mat4 = mat4.create();
-  position: vec3 = vec3.create();
-  quaternion: quat = quat.create();
-  rotation: vec3 = vec3.create();
-  scale: vec3 = vec3.create();
+  /** World Space */
+  private worldMatrix = mat4.create();
+  private worldMatrixInverse = mat4.create();
+  private worldPosition = vec3.create();
+  private worldRotation = quat.create();
+  private worldScale = vec3.create();
 
-  constructor(m: [number, number, number, number, number, number] = [1, 0, 0, 1, 0, 0]) {
-    this.m = m;
-  }
+  dirtyFlag = false;
+  localDirtyFlag = false;
 
-  reset() {
-    this.m[0] = 1;
-    this.m[1] = 0;
-    this.m[2] = 0;
-    this.m[3] = 1;
-    this.m[4] = 0;
-    this.m[5] = 0;
-  }
+  constructor(private owner: DisplayObject) {}
 
-  /**
-   * Copy Konva.Transform object
-   */
-  copy() {
-    return new Transform(this.m);
-  }
+  /** sync self */
+  private syncMatrix = () => {
+    if (this.localDirtyFlag) {
+      mat4.fromRotationTranslationScale(this.localMatrix, this.localRotation, this.localPosition, this.localScale);
+      this.localDirtyFlag = false;
+    }
+    if (this.dirtyFlag) {
+      const parent = this.owner.parent as DisplayObject | undefined;
+      if (isNil(parent)) {
+        mat4.copy(this.worldMatrix, this.localMatrix);
+      } else {
+        mat4.multiply(this.worldMatrix, parent.transform.worldMatrix, this.localMatrix);
+      }
+      mat4.invert(this.worldMatrixInverse, this.worldMatrix);
 
-  copyInto(tr: Transform) {
-    tr.m[0] = this.m[0];
-    tr.m[1] = this.m[1];
-    tr.m[2] = this.m[2];
-    tr.m[3] = this.m[3];
-    tr.m[4] = this.m[4];
-    tr.m[5] = this.m[5];
-  }
+      mat4.getTranslation(this.worldPosition, this.worldMatrix);
+      mat4.getRotation(this.worldRotation, this.worldMatrix);
+      mat4.getScaling(this.worldScale, this.worldMatrix);
+      this.dirtyFlag = false;
+    }
+  };
 
-  /**
-   * Transform point
-   */
-  point(point: Vector2): Vector2 {
-    const m = this.m;
-    return {
-      x: m[0] * point.x + m[2] * point.y + m[4],
-      y: m[1] * point.x + m[3] * point.y + m[5],
-    };
-  }
+  /** sync self and children */
+  syncRecursive = () => {
+    this.syncMatrix();
+    for (const child of this.owner.children) {
+      child.transform.syncRecursive();
+    }
+  };
 
-  /**
-   * Apply translation
-   */
-  translate(x: number, y: number) {
-    this.m[4] += this.m[0] * x + this.m[2] * y;
-    this.m[5] += this.m[1] * x + this.m[3] * y;
+  private syncFromParentsToChildren = (updateParents: boolean, updateChildren: boolean) => {
+    if (updateParents) {
+      const parent = this.owner.parent as DisplayObject | undefined;
+      if (!isNil(parent)) {
+        parent.transform.syncFromParentsToChildren(true, false);
+      }
+    }
+
+    this.syncMatrix();
+
+    if (updateChildren) {
+      for (const child of this.owner.children) {
+        child.transform.syncFromParentsToChildren(false, true);
+      }
+    }
+  };
+
+  /** local to parent */
+  getLocalTransform = () => {
+    return this.localMatrix;
+  };
+
+  /** local to world */
+  getWorldTransform = () => {
+    this.syncFromParentsToChildren(true, false);
+    return this.worldMatrix;
+  };
+
+  /** world to local */
+  getWorldTransformInverse = () => {
+    this.syncFromParentsToChildren(true, false);
+    return this.worldMatrixInverse;
+  };
+
+  getPosition: () => vec3 = () => {
+    this.syncFromParentsToChildren(true, false);
+    return this.worldPosition;
+  };
+
+  setPosition: (pos: vec3) => void = (pos) => {
+    this.syncFromParentsToChildren(true, false);
+    if (vec3.equals(this.worldPosition, pos)) return;
+    vec3.copy(this.worldPosition, pos);
+
+    const parent = this.owner.parent as DisplayObject | undefined;
+    if (isNil(parent)) {
+      vec3.copy(this.localPosition, pos);
+    } else {
+      vec3.transformMat4(this.localPosition, pos, parent.transform.getWorldTransformInverse());
+    }
+
+    this.dirtifyLocal();
     return this;
-  }
+  };
+
+  getRotation: () => quat = () => {
+    this.syncFromParentsToChildren(true, false);
+
+    return this.worldRotation;
+  };
+
+  setRotation: (q: quat) => void = (q) => {
+    this.syncFromParentsToChildren(true, false);
+
+    const parent = this.owner.parent as DisplayObject | undefined;
+    if (isNil(parent)) {
+      quat.copy(this.localRotation, q);
+    } else {
+      const parentQuat = parent.transform.worldRotation;
+      const parentQuatInverse = quat.invert(quat.create(), parentQuat);
+      quat.multiply(this.localRotation, parentQuatInverse, q);
+      quat.normalize(this.localRotation, this.localRotation);
+    }
+
+    this.dirtifyLocal();
+    return this;
+  };
+
+  getScale: () => vec3 = () => {
+    this.syncFromParentsToChildren(true, false);
+    return this.worldScale;
+  };
+
+  getLocalPosition: () => vec3 = () => {
+    return this.localPosition;
+  };
+
+  setLocalPosition: (pos: vec3 | vec2) => void = (pos) => {
+    const p = createVec3(pos);
+    if (vec3.equals(this.localPosition, p)) return;
+    this.localPosition = p;
+
+    this.dirtifyLocal();
+    return this;
+  };
+
+  getLocalRotation: () => quat = () => {
+    return this.localRotation;
+  };
+
+  setLocalRotition: (q: quat) => void = (q) => {
+    this.localRotation = q;
+
+    this.dirtifyLocal();
+    return this;
+  };
+
+  getLocalScale: () => vec3 = () => {
+    return this.localScale;
+  };
 
   /**
    * Apply scale
    */
-  scaleTo(sx: number, sy: number) {
-    this.m[0] *= sx;
-    this.m[1] *= sx;
-    this.m[2] *= sy;
-    this.m[3] *= sy;
+  setLocalScale(sx: number, sy: number, sz = this.localScale[2]) {
+    const scale = vec3.fromValues(sx, sy, sz);
+    if (vec3.equals(scale, this.localScale)) return this;
+
+    vec3.copy(this.localScale, scale);
+
+    this.dirtifyLocal();
     return this;
   }
 
   /**
-   * Apply rotation
+   * Apply translation to world position
    */
-  rotate(rad: number) {
-    const c = Math.cos(rad);
-    const s = Math.sin(rad);
-    const m11 = this.m[0] * c + this.m[2] * s;
-    const m12 = this.m[1] * c + this.m[3] * s;
-    const m21 = this.m[0] * -s + this.m[2] * c;
-    const m22 = this.m[1] * -s + this.m[3] * c;
-    this.m[0] = m11;
-    this.m[1] = m12;
-    this.m[2] = m21;
-    this.m[3] = m22;
+  translate = (() => {
+    const tmpVec3 = vec3.create();
+    const tmpPos = vec3.create();
 
-    return this;
-  }
-
-  /**
-   * Returns the translation
-   */
-  getTranslation() {
-    return {
-      x: this.m[4],
-      y: this.m[5],
+    return (x: number, y: number) => {
+      if (x === 0 && y === 0) return this;
+      const move = vec3.set(tmpVec3, x, y, 0);
+      vec3.add(tmpPos, this.getPosition(), move);
+      this.setPosition(tmpPos);
+      this.dirtifyLocal();
+      return this;
     };
-  }
+  })();
 
-  /**
-   * Apply skew
-   */
-  skew(sx: number, sy: number) {
-    const m11 = this.m[0] + this.m[2] * sy;
-    const m12 = this.m[1] + this.m[3] * sy;
-    const m21 = this.m[2] + this.m[0] * sx;
-    const m22 = this.m[3] + this.m[1] * sx;
-    this.m[0] = m11;
-    this.m[1] = m12;
-    this.m[2] = m21;
-    this.m[3] = m22;
-    return this;
-  }
-
-  /**
-   * Transform multiplication
-   */
-  multiply(matrix: Transform) {
-    const m11 = this.m[0] * matrix.m[0] + this.m[2] * matrix.m[1];
-    const m12 = this.m[1] * matrix.m[0] + this.m[3] * matrix.m[1];
-
-    const m21 = this.m[0] * matrix.m[2] + this.m[2] * matrix.m[3];
-    const m22 = this.m[1] * matrix.m[2] + this.m[3] * matrix.m[3];
-
-    const dx = this.m[0] * matrix.m[4] + this.m[2] * matrix.m[5] + this.m[4];
-    const dy = this.m[1] * matrix.m[4] + this.m[3] * matrix.m[5] + this.m[5];
-
-    this.m[0] = m11;
-    this.m[1] = m12;
-    this.m[2] = m21;
-    this.m[3] = m22;
-    this.m[4] = dx;
-    this.m[5] = dy;
-    return this;
-  }
-
-  /**
-   * Invert the matrix
-   */
-  invertSelf() {
-    const d = 1 / (this.m[0] * this.m[3] - this.m[1] * this.m[2]);
-    const m0 = this.m[3] * d;
-    const m1 = -this.m[1] * d;
-    const m2 = -this.m[2] * d;
-    const m3 = this.m[0] * d;
-    const m4 = d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]);
-    const m5 = d * (this.m[1] * this.m[4] - this.m[0] * this.m[5]);
-    this.m[0] = m0;
-    this.m[1] = m1;
-    this.m[2] = m2;
-    this.m[3] = m3;
-    this.m[4] = m4;
-    this.m[5] = m5;
-    return this;
-  }
-
-  invert() {
-    const d = 1 / (this.m[0] * this.m[3] - this.m[1] * this.m[2]);
-    const m0 = this.m[3] * d;
-    const m1 = -this.m[1] * d;
-    const m2 = -this.m[2] * d;
-    const m3 = this.m[0] * d;
-    const m4 = d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]);
-    const m5 = d * (this.m[1] * this.m[4] - this.m[0] * this.m[5]);
-
-    return new Transform([m0, m1, m2, m3, m4, m5]);
-  }
-
-  /**
-   * return matrix
-   */
-  getMatrix() {
-    return this.m;
-  }
-
-  /**
-   *
-   * convert transformation matrix back into node's attributes
-   */
-  /**
-   * [ m[0], m[2], m[4] ]
-   * [ m[1], m[3], m[5] ]
-   * [ 0   , 0   , 1    ]
-   */
-  decompose() {
-    const a = this.m[0];
-    const b = this.m[1];
-    const c = this.m[2];
-    const d = this.m[3];
-    const e = this.m[4];
-    const f = this.m[5];
-
-    const delta = a * d - b * c;
-
-    const result = {
-      x: e,
-      y: f,
-      rotation: 0,
-      scaleX: 0,
-      scaleY: 0,
-      skewX: 0,
-      skewY: 0,
-    };
-
-    // Apply the QR-like decomposition.
-    if (a !== 0 || b !== 0) {
-      const r = Math.sqrt(a * a + b * b);
-      result.rotation = b > 0 ? Math.acos(a / r) : -Math.acos(a / r);
-      result.scaleX = r;
-      result.scaleY = delta / r;
-      result.skewX = (a * c + b * d) / delta;
-      result.skewY = 0;
-    } else if (c !== 0 || d !== 0) {
-      const s = Math.sqrt(c * c + d * d);
-      result.rotation = Math.PI / 2 - (d > 0 ? Math.acos(-c / s) : -Math.acos(c / s));
-      result.scaleX = delta / s;
-      result.scaleY = s;
-      result.skewX = 0;
-      result.skewY = (a * c + b * d) / delta;
-    } else {
-      // a = b = c = d = 0
+  /** localMatrix will be recomposed in next frame */
+  dirtifyLocal = () => {
+    this.localDirtyFlag = true;
+    if (!this.dirtyFlag) {
+      this.dirtyWorld();
     }
+  };
 
-    result.rotation = rad2deg(result.rotation);
+  /** matrix will be recomposed in next frame, and notify children / parents this has been updated */
+  dirtyWorld = () => {
+    this.dirtyFlag = true;
 
-    return result;
-  }
+    dirtifySelfAndDescendant(this.owner);
+    dirtifyAncestorBounds(this.owner);
+  };
 
   toFloat32Array() {
-    const m = this.m;
-    return Float32Array.of(m[0], m[2], m[4], m[1], m[3], m[5], 0, 0, 1);
+    const m = this.worldMatrix;
+    return Float32Array.of(m[0], m[2], m[12], m[1], m[3], m[13], 0, 0, 1);
   }
 }
+
+const dirtifySelfAndDescendant = (object: DisplayObject) => {
+  const { transform, renderable } = object;
+  transform.dirtyFlag = true;
+  renderable.dirty = true;
+  object.children.forEach((child) => {
+    dirtifySelfAndDescendant(child);
+  });
+};
+
+const dirtifyAncestorBounds = (object: DisplayObject) => {
+  object.renderable.dirty = true;
+  let p = object;
+  while (p) {
+    p.renderable.boundsDirty = true;
+    p = p.parent as DisplayObject;
+  }
+};

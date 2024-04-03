@@ -12,12 +12,10 @@ import { Group } from './drawable';
 import { Vector2 } from './util';
 import { RenderingSystem, EventSystem } from './systems';
 import { DisplayObject } from './core/DisplayObject';
-import { EventPlugin } from './plugins';
+import { EventPlugin, Canvas2DRendererPlugin, CullingPlugin, CoordinatePlugin } from './plugins';
 import { Camera, ClipSpaceNearZ, ICamera } from './camera';
+import { Canvas2DContextSystem } from './plugins/plugin-canvas2d-renderer/Canvas2dContextSystem';
 import { mat4, vec3 } from 'gl-matrix';
-import { CullingPlugin } from './plugins/CullingPlugin';
-import { Canvas2DContextSystem } from './plugins/plugin-canvas2d-renderer/Canvas2DContextSystem';
-import { Canvas2DRendererPlugin } from './plugins/plugin-canvas2d-renderer/Canvas2DRendererPlugin';
 
 const DEFAULT_CAMERA_Z = 500;
 const DEFAULT_CAMERA_NEAR = 0.1;
@@ -104,7 +102,7 @@ export class CanvasEditor implements ICanvas {
     this.initRenderer();
 
     // plugins.apply will hook to renderSystem.hooks
-    this.plugins.push(new EventPlugin(), new CullingPlugin(), new Canvas2DRendererPlugin());
+    this.plugins.push(new EventPlugin(), new CullingPlugin(), new Canvas2DRendererPlugin(), new CoordinatePlugin());
     this.plugins.forEach((a) => a.apply(this.context));
 
     const debouncedResize = debounce(this.resize);
@@ -122,7 +120,6 @@ export class CanvasEditor implements ICanvas {
   private initRenderContext = () => {
     const renderContext: RenderingContext = {
       root: this.root,
-      renderListCurrentFrame: [],
     };
 
     this.context.renderingContext = renderContext;

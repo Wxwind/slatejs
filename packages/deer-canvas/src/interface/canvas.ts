@@ -68,5 +68,4 @@ export interface ResolvedCanvasConfig extends Required<CanvasConfig> {
 
 export interface RenderingContext {
   root: Group;
-  renderListCurrentFrame: DisplayObject[];
 }
