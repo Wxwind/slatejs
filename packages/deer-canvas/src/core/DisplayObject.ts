@@ -1,5 +1,5 @@
 import { IDrawable } from '../interface/IDrawable';
-import { FederatedEventTarget, IFederatedEventTarget } from '../events/FederatedEventTarget';
+import { FederatedEventTarget } from '../events/FederatedEventTarget';
 import { Vector2 } from '../util/math';
 import { BaseStyleProps, DisplayObjectConfig, ICanvas } from '../interface';
 import { Transform } from './components/Transform';
@@ -47,12 +47,13 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
   abstract isPointHit: (point: Vector2) => boolean;
 
   getWorldTransform = () => {
-    return this.transform.toFloat32Array();
+    return this.transform.getWorldTransform();
   };
 
   addChild = (drawable: DisplayObject) => {
     this.children.push(drawable);
     drawable.parent = this;
+    drawable.transform.dirtyWorld();
   };
 
   removeChild = (drawable: DisplayObject) => {

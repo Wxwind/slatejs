@@ -2,14 +2,16 @@ import { DisplayObject } from '@/core';
 import { StyleRenderer } from './interface';
 import { Curve } from '@/drawable';
 import { AnimationCurve, isInWeightEnabled, isNotWeighted, isOutWeightEnabled, Keyframe } from 'deer-engine';
+import { isNil } from '@/util';
 
 export class CurveRenderer implements StyleRenderer {
   render = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {
-    const { curve } = (object as Curve).style;
+    const { curve } = object as Curve;
     this.drawBezierCurve(curve, ctx);
   };
 
-  private drawBezierCurve = (curve: AnimationCurve, ctx: CanvasRenderingContext2D) => {
+  private drawBezierCurve = (curve: AnimationCurve | undefined, ctx: CanvasRenderingContext2D) => {
+    if (isNil(curve)) return;
     if (curve.keys.length === 0) return;
     ctx.beginPath();
     const key0 = curve.keys[0];

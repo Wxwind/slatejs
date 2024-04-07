@@ -29,6 +29,7 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
 
     renderingSystem.hooks.render.tap((renderQueue: DisplayObject[]) => {
       const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();
+
       if (this.fullRendering) {
         this.renderByZIndex(renderingContext.root, ctx, context);
       } else {
@@ -37,6 +38,7 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
         mat4.multiply(this.vpMatrix, this.dprMatrix, camera.OrthographicMatrix);
 
         ctx.save();
+        ctx.clearRect(0, 0, config.width, config.height);
         ctx.setTransform(
           this.vpMatrix[0],
           this.vpMatrix[1],
@@ -81,7 +83,6 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
     canvasContext: CanvasContext
   ) => {
     const objType = object.type;
-
     const renderer = this.styleRendererFactory[objType];
 
     if (renderer) {
@@ -100,6 +101,7 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
   private applyWorldTransform = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {
     // TODO: Support anchor
     mat4.copy(this.tmpMat4, object.getWorldTransform());
+
     mat4.multiply(this.tmpMat4, this.vpMatrix, this.tmpMat4);
 
     ctx.setTransform(

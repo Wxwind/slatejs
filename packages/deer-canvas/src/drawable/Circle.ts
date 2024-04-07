@@ -27,6 +27,7 @@ export class Circle extends DisplayObject<CircleStyleProps> {
   setOptions(options: Partial<CircleStyleProps>) {
     this.center = options.center ?? this.center;
     this.radius = options.radius ?? this.radius;
+    this.transform.dirtifyLocal();
   }
 
   isPointHit: (point: Vector2) => boolean = (point) => {

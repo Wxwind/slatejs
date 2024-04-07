@@ -21,6 +21,7 @@ export class Camera implements ICamera {
   canvas: ICanvas;
 
   clipSpaceNearZ = ClipSpaceNearZ.NEGATIVE_ONE;
+  protected flipY = false;
   protected type: CameraType = CameraType.EXPLORING;
   /**
    * works only when camera type is Tracking.
@@ -227,6 +228,11 @@ export class Camera implements ICamera {
   get View() {
     return this.view;
   }
+
+  setFlipY = (bool: boolean) => {
+    this.flipY = bool;
+    this.setOrthographic(this.boxLeft, this.boxRight, this.boxTop, this.boxBottom, this.near, this.far);
+  };
 
   setType = (type: CameraType, trackingMode?: CameraTrackingMode) => {
     this.type = type;
@@ -440,7 +446,7 @@ export class Camera implements ICamera {
       this.clipSpaceNearZ === ClipSpaceNearZ.ZERO
     );
     // flipY since the origin of OpenGL/WebGL is bottom-left compared with top-left in Canvas2D
-    mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, -1, 1));
+    mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, this.flipY ? 1 : -1, 1));
     mat4.invert(this.projectionMatrixInverse, this.projectionMatrix);
 
     this.triggerUpdate();
@@ -488,8 +494,7 @@ export class Camera implements ICamera {
     );
 
     // flipY since the origin of OpenGL/WebGL is bottom-left compared with top-left in Canvas2D
-    // FIXME perhaps unnecessary indeed
-    mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, -1, 1));
+    mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, this.flipY ? 1 : -1, 1));
     mat4.invert(this.projectionMatrixInverse, this.projectionMatrix);
 
     this._getOrthoMatrix();
@@ -934,7 +939,7 @@ export class Camera implements ICamera {
         (this.boxTop - this.boxBottom) / 2 - position[1],
         0
       ),
-      vec3.fromValues(this.zoom, this.zoom, 1),
+      vec3.fromValues(this.zoom, this.flipY ? -1 : 1 * this.zoom, 1),
       position
     );
   }

@@ -101,10 +101,6 @@ export class CanvasEditor implements ICanvas {
 
     this.initRenderer();
 
-    // plugins.apply will hook to renderSystem.hooks
-    this.plugins.push(new EventPlugin(), new CullingPlugin(), new Canvas2DRendererPlugin(), new CoordinatePlugin());
-    this.plugins.forEach((a) => a.apply(this.context));
-
     const debouncedResize = debounce(this.resize);
 
     // observe container's resize event
@@ -157,6 +153,10 @@ export class CanvasEditor implements ICanvas {
   };
 
   private initRenderingSystem = () => {
+    // plugins.apply will hook to renderSystem.hooks
+    this.plugins.push(new EventPlugin(), new CullingPlugin(), new Canvas2DRendererPlugin(), new CoordinatePlugin());
+    this.plugins.forEach((a) => a.apply(this.context));
+
     this.context.renderingSystem.init();
     this.run();
   };

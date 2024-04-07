@@ -1,16 +1,12 @@
 import { AnimationCurve, Keyframe, Signal } from 'deer-engine';
 import { DisplayObject } from '../../core/DisplayObject';
-import { Vector2 } from '../../util';
+import { Vector2, isNil } from '../../util';
 import { Handle } from './Handle';
-import { BaseStyleProps, DisplayObjectConfig } from '../../interface';
+import { DisplayObjectConfig } from '../../interface';
 import { Shape } from '@/types';
 import { Circle } from '../Circle';
 
-export interface CurveProps extends BaseStyleProps {
-  curve: AnimationCurve;
-}
-
-export class Curve extends DisplayObject<CurveProps> {
+export class Curve extends DisplayObject {
   type = Shape.Curve;
   curve: AnimationCurve | undefined;
 
@@ -18,15 +14,14 @@ export class Curve extends DisplayObject<CurveProps> {
     curvesChanged: new Signal(),
   };
 
-  constructor(config: DisplayObjectConfig<CurveProps>) {
+  constructor(config: DisplayObjectConfig) {
     super(config);
-
-    this.curve = config.style?.curve;
   }
 
-  setCurve = (curve: AnimationCurve) => {
+  setCurve = (curve: AnimationCurve | undefined) => {
     this.curve = curve;
     this.removeAllChildren();
+    if (isNil(curve)) return;
     for (let j = 0; j < curve.keys.length; j += 1) {
       this.createHandle(curve, curve.keys[j]);
     }

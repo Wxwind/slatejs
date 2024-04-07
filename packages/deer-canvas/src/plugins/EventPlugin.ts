@@ -151,6 +151,7 @@ export class EventPlugin implements IRenderingPlugin {
 
     const events = this.normalizeToPointerEvent(nativeEvent);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((events[0] as any).isNormalized) {
       const cancelable = nativeEvent.cancelable || !('cancelable' in nativeEvent);
 

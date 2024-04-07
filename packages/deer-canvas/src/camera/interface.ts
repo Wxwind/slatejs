@@ -117,6 +117,8 @@ export interface ICamera {
 
   get View(): View;
 
+  setFlipY: (bool: boolean) => void;
+
   isOrthographic: () => boolean;
   isPerspective: () => boolean;
 

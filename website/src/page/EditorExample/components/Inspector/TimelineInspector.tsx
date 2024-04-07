@@ -1,5 +1,5 @@
 import { useBindSignal, useDumbState } from '@/hooks';
-import { CanvasEditor, Curve, Circle } from 'deer-canvas';
+import { CanvasEditor, Curve } from 'deer-canvas';
 import { isNil } from '@/util';
 import { ActionClip, AnimationCurve, CutsceneEditor, Keyframe, globalTypeMap } from 'deer-engine';
 import { FC, useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     const container = document.getElementById('curve-editor')!;
     const curvesEditor = new CanvasEditor({ container, width: 300, height: 400 });
     setCurvesEditor(curvesEditor);
+
     // const curves = selectedClip.animatedData.animatedParamArray.map((a) => a.curves).flat();
     const curves: AnimationCurve[] = [];
 
@@ -55,24 +56,13 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
     c2.addKey(k5);
     curves.push(c2);
     curves.forEach((curve) => {
-      const c = curvesEditor.createElement(Curve, { style: { curve: curve } });
+      const c = curvesEditor.createElement(Curve, {});
       curvesEditor.root.addChild(c);
       c.signals.curvesChanged.addListener(() => {
         selectedClip?.animatedData.signals.updated.emit();
       });
+      c.setCurve(curve);
     });
-
-    const a = curvesEditor.createElement(Circle, {
-      style: {
-        center: {
-          x: 0,
-          y: 0,
-        },
-        radius: 2,
-      },
-    });
-
-    curvesEditor.root.addChild(a);
 
     return () => {
       curvesEditor.dispose();

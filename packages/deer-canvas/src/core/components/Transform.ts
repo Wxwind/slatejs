@@ -16,7 +16,9 @@ export class Transform {
   private worldRotation = quat.create();
   private worldScale = vec3.create();
 
+  // will be dirtified by self changed or parent changed
   dirtyFlag = false;
+  // will be dirtified by self changed only.
   localDirtyFlag = false;
 
   constructor(private owner: DisplayObject) {}
@@ -210,7 +212,7 @@ export class Transform {
 
   toFloat32Array() {
     const m = this.worldMatrix;
-    return Float32Array.of(m[0], m[2], m[12], m[1], m[3], m[13], 0, 0, 1);
+    return Float32Array.of(m[0], m[4], m[12], m[1], m[5], m[13], 0, 0, 1);
   }
 }
 

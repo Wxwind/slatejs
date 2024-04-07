@@ -3,10 +3,11 @@ import { StyleRenderer } from './interface';
 import { Curve } from '@/drawable';
 import { Canvas, CanvasKit, Paint } from 'canvaskit-wasm';
 import { AnimationCurve, isInWeightEnabled, isNotWeighted, isOutWeightEnabled, Keyframe } from 'deer-engine';
+import { isNil } from '@/util';
 
 export class CurveRenderer implements StyleRenderer {
   render = (object: DisplayObject, CanvasKit: CanvasKit, canvas: Canvas) => {
-    const { curve } = (object as Curve).style;
+    const { curve } = object as Curve;
 
     const paint = new CanvasKit.Paint();
     const color = CanvasKit.Color(80, 80, 80, 1);
@@ -16,7 +17,8 @@ export class CurveRenderer implements StyleRenderer {
     this.drawBezierCurve(curve, canvas, CanvasKit, paint);
   };
 
-  private drawBezierCurve = (curve: AnimationCurve, canvas: Canvas, CanvasKit: CanvasKit, paint: Paint) => {
+  private drawBezierCurve = (curve: AnimationCurve | undefined, canvas: Canvas, CanvasKit: CanvasKit, paint: Paint) => {
+    if (isNil(curve)) return;
     if (curve.keys.length === 0) return;
     const path = new CanvasKit.Path();
     const key0 = curve.keys[0];
