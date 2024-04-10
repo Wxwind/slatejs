@@ -27,6 +27,8 @@ describe('Camera', () => {
       .setFocalPoint(width / 2, height / 2, 0)
       .setOrthographic(-width / 2, width / 2, height / 2, -height / 2, 0.1, 1000);
 
+    camera.setFlipY(true);
+
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.ORTHOGRAPHIC);
     expect(camera.Zoom).toBe(1);
     expect(camera.Near).toBe(0.1);
@@ -112,6 +114,8 @@ describe('Camera', () => {
       .setPosition(width / 2, height / 2, 500)
       .setFocalPoint(width / 2, height / 2, 0)
       .setOrthographic(width / -2, width / 2, height / -2, height / 2, 0.1, 1000);
+
+    camera.setFlipY(true);
 
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.ORTHOGRAPHIC);
     expect(camera.Zoom).toBe(1);

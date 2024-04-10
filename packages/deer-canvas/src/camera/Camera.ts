@@ -21,6 +21,8 @@ export class Camera implements ICamera {
   canvas: ICanvas;
 
   clipSpaceNearZ = ClipSpaceNearZ.NEGATIVE_ONE;
+
+  /** true - webgl, false - Canvas2D */
   protected flipY = false;
   protected type: CameraType = CameraType.EXPLORING;
   /**

@@ -83,7 +83,7 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   };
 
   return (
-    <div className="flex-1 w-full break-words">
+    <div className="flex-1 w-full break-words px-2">
       <div>{getUICompFromType(selectedClip)}</div>
       <div>------------</div>
       <div>CurveEditor</div>
