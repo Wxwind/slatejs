@@ -12,7 +12,7 @@ import { Group } from './drawable';
 import { Vector2 } from './util';
 import { RenderingSystem, EventSystem } from './systems';
 import { DisplayObject } from './core/DisplayObject';
-import { EventPlugin, Canvas2DRendererPlugin, CullingPlugin, CoordinatePlugin } from './plugins';
+import { EventPlugin, Canvas2DRendererPlugin, CullingPlugin, CoordinatePlugin, ControlPlugin } from './plugins';
 import { Camera, ClipSpaceNearZ, ICamera } from './camera';
 import { Canvas2DContextSystem } from './plugins/plugin-canvas2d-renderer/Canvas2dContextSystem';
 import { mat4, vec3 } from 'gl-matrix';
@@ -21,7 +21,7 @@ const DEFAULT_CAMERA_Z = 500;
 const DEFAULT_CAMERA_NEAR = 0.1;
 const DEFAULT_CAMERA_FAR = 1000;
 
-export class CanvasEditor implements ICanvas {
+export class DeerCanvas implements ICanvas {
   container: HTMLElement;
   canvasEl: HTMLCanvasElement;
 
@@ -154,7 +154,13 @@ export class CanvasEditor implements ICanvas {
 
   private initRenderingSystem = () => {
     // plugins.apply will hook to renderSystem.hooks
-    this.plugins.push(new EventPlugin(), new CullingPlugin(), new Canvas2DRendererPlugin(), new CoordinatePlugin());
+    this.plugins.push(
+      new EventPlugin(),
+      new CullingPlugin(),
+      new Canvas2DRendererPlugin(),
+      new CoordinatePlugin(),
+      new ControlPlugin()
+    );
     this.plugins.forEach((a) => a.apply(this.context));
 
     this.context.renderingSystem.init();

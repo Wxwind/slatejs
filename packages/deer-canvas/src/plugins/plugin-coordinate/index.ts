@@ -40,8 +40,6 @@ export class CoordinatePlugin implements IRenderingPlugin {
       renderingContext.root.transform.setLocalScale(this.cellSize[0], this.cellSize[1]);
     });
 
-    renderingSystem.hooks.beforeRender.tap(() => {});
-
     renderingSystem.hooks.afterRender.tap(() => {
       const { width, height } = config;
       const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();

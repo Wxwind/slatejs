@@ -1,5 +1,5 @@
 import { useBindSignal, useDumbState } from '@/hooks';
-import { CanvasEditor, Curve } from 'deer-canvas';
+import { Curve, DeerCanvas } from 'deer-canvas';
 import { isNil } from '@/util';
 import { ActionClip, AnimationCurve, CutsceneEditor, Keyframe, globalTypeMap } from 'deer-engine';
 import { FC, useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ interface TimelineInspectorProps {
 
 export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   const { cutsceneEditor } = props;
-  const [curvesEditor, setCurvesEditor] = useState<CanvasEditor>();
+  const [curvesEditor, setCurvesEditor] = useState<DeerCanvas>();
 
   const selectedClip = cutsceneEditor.selectedClip;
   const refresh = useDumbState();
@@ -20,7 +20,7 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   useEffect(() => {
     //  if (isNil(selectedClip)) return;
     const container = document.getElementById('curve-editor')!;
-    const curvesEditor = new CanvasEditor({ container, width: 300, height: 400 });
+    const curvesEditor = new DeerCanvas({ container, width: 300, height: 400 });
     setCurvesEditor(curvesEditor);
 
     // const curves = selectedClip.animatedData.animatedParamArray.map((a) => a.curves).flat();

@@ -1,6 +1,6 @@
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { Camera, CameraProjectionMode, CameraTrackingMode, CameraType, ClipSpaceNearZ } from '../src/camera';
-import { CanvasEditor } from '../src/CanvasEditor';
+import { DeerCanvas } from '../src/DeerCanvas';
 import 'isomorphic-fetch'; // for init CanvasKit
 import { mat4, vec3 } from 'gl-matrix';
 import { deg2rad } from '@/util';
@@ -14,7 +14,7 @@ document.body.prepend($container);
 const width = 600;
 const height = 500;
 
-const canvas = new CanvasEditor({
+const canvas = new DeerCanvas({
   container: $container,
   width,
   height,
