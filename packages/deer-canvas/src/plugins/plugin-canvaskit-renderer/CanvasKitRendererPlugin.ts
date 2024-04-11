@@ -6,6 +6,7 @@ import { CirleRenderer, StyleRenderer } from './shape';
 import { CurveRenderer } from './shape/Curve';
 
 export class CanvasKitRendererPlguin implements IRenderingPlugin {
+  name = 'CanvasKitRenderer';
   private styleRendererFactory!: Record<Shape, StyleRenderer | undefined>;
 
   apply(context: CanvasContext): void {
@@ -15,6 +16,7 @@ export class CanvasKitRendererPlguin implements IRenderingPlugin {
       [Shape.Circle]: new CirleRenderer(),
       [Shape.Curve]: new CurveRenderer(),
       [Shape.Group]: undefined,
+      [Shape.Line]: undefined,
     };
 
     this.styleRendererFactory = styleRendererFactory;

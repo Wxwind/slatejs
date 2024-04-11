@@ -3,7 +3,7 @@ import { CanvasContext, IRenderingPlugin } from '@/interface';
 import { ContextSystem } from '@/systems';
 import { Shape } from '@/types';
 import { mat4 } from 'gl-matrix';
-import { CirleRenderer, StyleRenderer } from './shapes';
+import { CirleRenderer, LineRenderer, StyleRenderer } from './shapes';
 import { CurveRenderer } from './shapes/Curve';
 import { isNil } from '@/util';
 
@@ -33,9 +33,10 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
     const { renderingSystem, renderingContext, contextSystem, config, camera } = context;
 
     const styleRendererFactory: Record<Shape, StyleRenderer | undefined> = {
+      [Shape.Group]: undefined,
       [Shape.Circle]: new CirleRenderer(),
       [Shape.Curve]: new CurveRenderer(),
-      [Shape.Group]: undefined,
+      [Shape.Line]: new LineRenderer(),
     };
 
     this.styleRendererFactory = styleRendererFactory;

@@ -1,4 +1,3 @@
-import { Canvas } from 'canvaskit-wasm';
 import { DisplayObject } from '../core/DisplayObject';
 import { Vector2 } from '../util';
 import { Shape } from '@/types';
@@ -17,10 +16,6 @@ export class Group extends DisplayObject {
       ...config,
     });
   }
-
-  _render: (canvas: Canvas) => void = () => {
-    return;
-  };
 
   isPointHit = (point: Vector2) => {
     // FIXME should be false when point out of canvas.

@@ -47,7 +47,7 @@ export class Keyframe {
   tangentMode: TangentMode = TangentMode.Auto;
 
   @property({ type: String })
-  weightMode: WeightMode = WeightMode.None;
+  weightMode: WeightMode = WeightMode.Both;
 
   @property({ type: String })
   interpMode: InterpMode = InterpMode.Linaer;
