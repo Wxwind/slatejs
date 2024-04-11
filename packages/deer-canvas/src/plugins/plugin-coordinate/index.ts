@@ -10,18 +10,33 @@ export interface RulerScale {
   isPrimaryKey: boolean;
 }
 
+export type CoordinatePluginOpts = {
+  cellSize: vec2;
+
+  minstep: number;
+  maxStep: number;
+
+  /** style */
+  lineWidth: number;
+  fontSize: number;
+  fontFamily: string;
+  fontWeight: number;
+  textColor: string;
+  gridSubkeyColor: string;
+  gridKeyColor: string;
+};
+
 export class CoordinatePlugin implements IRenderingPlugin {
-  rulerWidth = 10;
-  cellSize: vec2 = [16, 16];
+  cellSize: vec2 = [32, 32];
 
   minstep = 0.05 * 16;
   maxStep = 100 * 16;
 
-  rulerTextOffset = 16;
+  rulerTextOffset: number;
 
   /** style */
-  lineSize = 1;
-  fontSize = 10;
+  lineWidth = 1;
+  fontSize = 8;
   fontFamily = 'monospace';
   fontWeight = 100;
   textColor = '#00000080';
@@ -29,6 +44,23 @@ export class CoordinatePlugin implements IRenderingPlugin {
   gridKeyColor = '#CCCCCC40';
 
   dpr = 1;
+
+  constructor(opts?: Partial<CoordinatePluginOpts>) {
+    if (opts) {
+      opts.cellSize && (this.cellSize = opts.cellSize);
+      opts.minstep && (this.minstep = opts.minstep);
+      opts.maxStep && (this.maxStep = opts.maxStep);
+      opts.lineWidth && (this.lineWidth = opts.lineWidth);
+      opts.fontSize && (this.fontSize = opts.fontSize);
+      opts.fontFamily && (this.fontFamily = opts.fontFamily);
+      opts.fontWeight && (this.fontWeight = opts.fontWeight);
+      opts.textColor && (this.textColor = opts.textColor);
+      opts.gridSubkeyColor && (this.gridSubkeyColor = opts.gridSubkeyColor);
+      opts.gridKeyColor && (this.gridKeyColor = opts.gridKeyColor);
+    }
+
+    this.rulerTextOffset = this.cellSize[0] - 2;
+  }
 
   apply = (context: CanvasContext) => {
     const { renderingSystem, renderingContext, camera, config, contextSystem } = context;
@@ -38,6 +70,11 @@ export class CoordinatePlugin implements IRenderingPlugin {
     renderingSystem.hooks.init.tap(() => {
       camera.setFlipY(true);
       renderingContext.root.transform.setLocalScale(this.cellSize[0], this.cellSize[1]);
+    });
+
+    renderingSystem.hooks.init.tap(() => {
+      const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();
+      ctx.clearRect(0, 0, config.width, config.height);
     });
 
     renderingSystem.hooks.afterRender.tap(() => {
@@ -66,17 +103,29 @@ export class CoordinatePlugin implements IRenderingPlugin {
     });
   };
 
+  /**
+   * @param offset offset of origin
+   */
   calculateRulerScale(length: number, offset: number, scale: number, flip: boolean): RulerScale[] {
     const list: RulerScale[] = [];
 
-    const step = clamp(scale, this.minstep, this.maxStep);
-    const begin = offset * step;
-    const end = (length + offset) * step;
+    //  const step = clamp(scale, this.minstep, this.maxStep);
+    const step = scale;
 
-    for (let i = begin; i <= end; i += step) {
-      list.push({ num: i / step, position: flip ? length - i : i, isPrimaryKey: true });
-      const subi = i / 2;
-      list.push({ num: subi / step, position: flip ? length - subi : subi, isPrimaryKey: false });
+    const begin = offset / step;
+    const end = (length + offset) / step;
+
+    // console.log('begin: %s, end: %s, axis: %s', begin, end, flip ? 'y' : 'x', offset);
+
+    const keyUnit = 1;
+    for (let i = Math.floor(begin); i <= Math.ceil(end); i += keyUnit) {
+      list.push({ num: i, position: flip ? length - (i * step - offset) : i * step - offset, isPrimaryKey: true });
+      const subi = i + keyUnit / 2;
+      list.push({
+        num: subi,
+        position: flip ? length - (subi * step - offset) : subi * step - offset,
+        isPrimaryKey: false,
+      });
     }
 
     return list;
@@ -91,7 +140,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
       });
-      ctx.fillText(r.num.toString(), r.position, canvasHeight - this.rulerTextOffset + this.fontSize);
+      ctx.fillText(r.num.toFixed(2), r.position, canvasHeight - this.rulerTextOffset + this.fontSize);
     });
   }
 
@@ -105,7 +154,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
       });
-      ctx.fillText(r.num.toString(), this.rulerTextOffset, r.position);
+      ctx.fillText(r.num.toFixed(2), this.rulerTextOffset, r.position);
     });
   }
 
@@ -125,7 +174,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       ctx.lineTo(a.position, height);
       ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubkeyColor;
       ctx.closePath();
-      ctx.lineWidth = this.lineSize;
+      ctx.lineWidth = this.lineWidth;
       ctx.setLineDash([]);
       ctx.stroke();
     }
@@ -135,7 +184,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       ctx.lineTo(width, a.position);
       ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubkeyColor;
       ctx.closePath();
-      ctx.lineWidth = this.lineSize;
+      ctx.lineWidth = this.lineWidth;
       ctx.setLineDash([]);
       ctx.stroke();
     }
