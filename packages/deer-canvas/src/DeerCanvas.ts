@@ -159,7 +159,7 @@ export class DeerCanvas implements ICanvas {
     this.plugins.push(
       new EventPlugin(),
       new CullingPlugin(),
-      new Canvas2DRendererPlugin(),
+      new Canvas2DRendererPlugin({ forceSkipClear: true }),
       new CoordinatePlugin(),
       new ControlPlugin()
     );

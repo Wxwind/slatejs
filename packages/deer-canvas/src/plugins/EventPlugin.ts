@@ -22,6 +22,7 @@ const TOUCH_TO_POINTER: Record<string, string> = {
 };
 
 export class EventPlugin implements IRenderingPlugin {
+  name = 'EventPlugin';
   private eventSystem!: EventSystem;
 
   private canvasEl: HTMLCanvasElement | undefined;

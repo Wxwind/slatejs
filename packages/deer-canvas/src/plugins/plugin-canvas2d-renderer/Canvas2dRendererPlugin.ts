@@ -7,7 +7,12 @@ import { CirleRenderer, StyleRenderer } from './shapes';
 import { CurveRenderer } from './shapes/Curve';
 import { isNil } from '@/util';
 
+export type Canvas2DRendererPluginOpts = {
+  forceSkipClear: boolean;
+};
+
 export class Canvas2DRendererPlugin implements IRenderingPlugin {
+  name = 'Canvas2DRenderer';
   private fullRendering = false;
 
   private styleRendererFactory!: Record<Shape, StyleRenderer | undefined>;
@@ -15,6 +20,14 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
   private dprMatrix = mat4.create();
   private vpMatrix = mat4.create();
   private tmpMat4 = mat4.create();
+
+  private forceSkipClear = false;
+
+  constructor(opts?: Partial<Canvas2DRendererPluginOpts>) {
+    if (opts) {
+      opts.forceSkipClear && (this.forceSkipClear = opts.forceSkipClear);
+    }
+  }
 
   apply = (context: CanvasContext) => {
     const { renderingSystem, renderingContext, contextSystem, config, camera } = context;
@@ -38,7 +51,7 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
         mat4.multiply(this.vpMatrix, this.dprMatrix, camera.OrthographicMatrix);
 
         ctx.save();
-        ctx.clearRect(0, 0, config.width, config.height);
+        !this.forceSkipClear && ctx.clearRect(0, 0, config.width * dpr, config.height * dpr);
         ctx.setTransform(
           this.vpMatrix[0],
           this.vpMatrix[1],

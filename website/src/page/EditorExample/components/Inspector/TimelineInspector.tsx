@@ -20,7 +20,7 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   useEffect(() => {
     //  if (isNil(selectedClip)) return;
     const container = document.getElementById('curve-editor')!;
-    const curvesEditor = new DeerCanvas({ container, width: 300, height: 400 });
+    const curvesEditor = new DeerCanvas({ container, width: 300, height: 400, devicePixelRatio: 2 });
     setCurvesEditor(curvesEditor);
 
     // const curves = selectedClip.animatedData.animatedParamArray.map((a) => a.curves).flat();

@@ -1,8 +1,9 @@
 import { Point } from '@/util';
 import { CanvasContext, IRenderingPlugin } from '../interface';
-import { Gesture, FullGestureState, EventTypes } from '@use-gesture/vanilla';
+import { Gesture, FullGestureState } from '@use-gesture/vanilla';
 
 export class ControlPlugin implements IRenderingPlugin {
+  name = 'Control';
   private gesture: Gesture | undefined;
 
   private context: CanvasContext = {} as CanvasContext;

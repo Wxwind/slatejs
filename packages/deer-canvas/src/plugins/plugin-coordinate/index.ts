@@ -1,6 +1,5 @@
 import { CanvasContext, IRenderingPlugin } from '@/interface';
 import { ContextSystem } from '@/systems';
-import { clamp } from '@/util';
 import { vec2, vec3 } from 'gl-matrix';
 
 export interface RulerScale {
@@ -27,12 +26,14 @@ export type CoordinatePluginOpts = {
 };
 
 export class CoordinatePlugin implements IRenderingPlugin {
+  name = 'Coordinate';
+
   cellSize: vec2 = [32, 32];
 
   minstep = 0.05 * 16;
   maxStep = 100 * 16;
 
-  rulerTextOffset: number;
+  rulerTextOffset: vec2;
 
   /** style */
   lineWidth = 1;
@@ -59,7 +60,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       opts.gridKeyColor && (this.gridKeyColor = opts.gridKeyColor);
     }
 
-    this.rulerTextOffset = this.cellSize[0] - 2;
+    this.rulerTextOffset = [this.cellSize[0] - 2, this.cellSize[1] - 2];
   }
 
   apply = (context: CanvasContext) => {
@@ -72,12 +73,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       renderingContext.root.transform.setLocalScale(this.cellSize[0], this.cellSize[1]);
     });
 
-    renderingSystem.hooks.init.tap(() => {
-      const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();
-      ctx.clearRect(0, 0, config.width, config.height);
-    });
-
-    renderingSystem.hooks.afterRender.tap(() => {
+    renderingSystem.hooks.beforeRender.tap(() => {
       const { width, height } = config;
       const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();
 
@@ -90,6 +86,8 @@ export class CoordinatePlugin implements IRenderingPlugin {
       const xList = this.calculateRulerScale(width, viewOffset[0], viewScaleX, false);
       const yList = this.calculateRulerScale(height, viewOffset[1], viewScaleY, true);
       ctx.save();
+      ctx.scale(this.dpr, this.dpr);
+      ctx.clearRect(0, 0, width, height);
       this.drawXRulerScale(ctx, xList, height);
       this.drawYRulerScale(ctx, yList);
 
@@ -106,7 +104,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
   /**
    * @param offset offset of origin
    */
-  calculateRulerScale(length: number, offset: number, scale: number, flip: boolean): RulerScale[] {
+  private calculateRulerScale(length: number, offset: number, scale: number, flip: boolean): RulerScale[] {
     const list: RulerScale[] = [];
 
     //  const step = clamp(scale, this.minstep, this.maxStep);
@@ -131,7 +129,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
     return list;
   }
 
-  drawXRulerScale(ctx: CanvasRenderingContext2D, rulerScale: RulerScale[], canvasHeight: number) {
+  private drawXRulerScale(ctx: CanvasRenderingContext2D, rulerScale: RulerScale[], canvasHeight: number) {
     rulerScale.forEach((r) => {
       if (!r.isPrimaryKey) return;
       ctx.fillStyle = this.textColor;
@@ -140,11 +138,11 @@ export class CoordinatePlugin implements IRenderingPlugin {
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
       });
-      ctx.fillText(r.num.toFixed(2), r.position, canvasHeight - this.rulerTextOffset + this.fontSize);
+      ctx.fillText(r.num.toFixed(2), r.position, canvasHeight - this.rulerTextOffset[0] + this.fontSize);
     });
   }
 
-  drawYRulerScale(ctx: CanvasRenderingContext2D, rulerScale: RulerScale[]) {
+  private drawYRulerScale(ctx: CanvasRenderingContext2D, rulerScale: RulerScale[]) {
     ctx.textAlign = 'right';
     rulerScale.forEach((r) => {
       if (!r.isPrimaryKey) return;
@@ -154,11 +152,11 @@ export class CoordinatePlugin implements IRenderingPlugin {
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
       });
-      ctx.fillText(r.num.toFixed(2), this.rulerTextOffset, r.position);
+      ctx.fillText(r.num.toFixed(2), this.rulerTextOffset[1], r.position);
     });
   }
 
-  drawGrid(
+  private drawGrid(
     ctx: CanvasRenderingContext2D,
     opts: {
       xRulerScale: RulerScale[];
@@ -200,7 +198,7 @@ function setFont(
   if (opts.fontWeight) {
     strList.push(`${opts.fontWeight}`);
   }
-  strList.push(`${(opts.fontSize || 12) * dpr}px`);
+  strList.push(`${opts.fontSize || 12}px`);
   strList.push(`${opts.fontFamily || 'sans-serif'}`);
   ctx.font = `${strList.join(' ')}`;
 }
