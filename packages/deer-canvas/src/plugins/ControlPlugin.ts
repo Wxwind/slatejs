@@ -1,5 +1,6 @@
+import { Point } from '@/util';
 import { CanvasContext, IRenderingPlugin } from '../interface';
-import { Gesture, FullGestureState } from '@use-gesture/vanilla';
+import { Gesture, FullGestureState, EventTypes } from '@use-gesture/vanilla';
 
 export class ControlPlugin implements IRenderingPlugin {
   private gesture: Gesture | undefined;
@@ -12,10 +13,31 @@ export class ControlPlugin implements IRenderingPlugin {
     context.renderingSystem.hooks.init.tap(() => {
       const el = context.contextSystem.getCanvasElement();
 
+      const { renderingContext } = context;
+      const { root } = renderingContext;
+
+      const isHitRoot = (e: PointerEvent | TouchEvent | MouseEvent | KeyboardEvent) => {
+        if (e instanceof TouchEvent || e instanceof KeyboardEvent) {
+          console.warn('Control Plugin is not support for TouchEvent or KeyboardEvent');
+          return false;
+        }
+        const a = root.ownerCanvas.client2Viewport(new Point(e.clientX, e.clientY));
+        const { x: canvasX, y: canvasY } = root.ownerCanvas.viewport2Canvas(a);
+        const hitResult = context.eventSystem.hitTest(canvasX, canvasY);
+        if (hitResult === root) {
+          return true;
+        }
+        return false;
+      };
+
       const gesture = new Gesture(el, {
-        onPinch: this.onPinch,
+        onPinch: (e) => {
+          if (isHitRoot(e.event)) this.onPinch(e);
+        },
         onScroll: this.onScroll,
-        onDrag: this.onDrag,
+        onDrag: (e) => {
+          if (isHitRoot(e.event)) this.onDrag(e);
+        },
       });
 
       this.gesture = gesture;

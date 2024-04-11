@@ -687,6 +687,7 @@ export class EventSystem {
       }
     }
 
+    // TODO convert location to parent space in here intend of in isPointHit
     if (currentTarget.isPointHit(location)) {
       return [currentTarget];
     }

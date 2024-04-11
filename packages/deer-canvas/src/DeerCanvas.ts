@@ -75,6 +75,8 @@ export class DeerCanvas implements ICanvas {
       throw new Error('need canvasEl or container');
     }
 
+    this.canvasEl.style.touchAction = 'none';
+
     let canvasWidth = width || -1;
     let canvasHeight = height || -1;
 

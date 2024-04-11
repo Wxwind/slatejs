@@ -35,7 +35,7 @@ export class Curve extends DisplayObject {
           x: key.time,
           y: key.value,
         },
-        radius: 0.2,
+        radius: 0.1,
       },
     });
     const handle = new Handle(circle);

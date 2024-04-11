@@ -71,7 +71,7 @@ export class CurveRenderer implements StyleRenderer {
 
         ctx.bezierCurveTo(p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
       }
-      ctx.lineWidth = 0.1;
+      ctx.lineWidth = 0.05;
       ctx.stroke();
     }
   };
