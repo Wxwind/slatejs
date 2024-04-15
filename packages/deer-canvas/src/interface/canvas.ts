@@ -4,10 +4,14 @@ import { DisplayObject } from '../core/DisplayObject';
 import { RenderingSystem, EventSystem, ContextSystem } from '../systems';
 import { ICamera } from '../camera';
 import { BaseStyleProps, DisplayObjectConfig } from './displayObject';
+import { EventEmitter } from '@/packages/eventEmitter';
+import { CanvasGlobalEventMap } from '@/types';
 
 export interface ICanvas {
   container: HTMLElement;
   root: Group;
+
+  eventEmitter: EventEmitter<CanvasGlobalEventMap>;
 
   createElement: <T extends DisplayObject, StyleProps extends BaseStyleProps>(
     ctor: new (config: DisplayObjectConfig<StyleProps>) => T,

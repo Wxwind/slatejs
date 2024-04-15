@@ -16,6 +16,8 @@ import { EventPlugin, Canvas2DRendererPlugin, CullingPlugin, CoordinatePlugin, C
 import { Camera, ClipSpaceNearZ, ICamera } from './camera';
 import { Canvas2DContextSystem } from './plugins/plugin-canvas2d-renderer/Canvas2dContextSystem';
 import { mat4, vec3 } from 'gl-matrix';
+import { EventEmitter } from './packages/eventEmitter';
+import { CanvasGlobalEventMap } from './types';
 
 const DEFAULT_CAMERA_Z = 500;
 const DEFAULT_CAMERA_NEAR = 0.1;
@@ -34,6 +36,8 @@ export class DeerCanvas implements ICanvas {
 
   private context = {} as CanvasContext;
   private animateID: number | undefined;
+
+  eventEmitter = new EventEmitter<CanvasGlobalEventMap>();
 
   constructor(options: CanvasConfig) {
     const {
@@ -130,6 +134,10 @@ export class DeerCanvas implements ICanvas {
       .setPosition(width / 2, height / 2, DEFAULT_CAMERA_Z)
       .setFocalPoint(width / 2, height / 2, 0)
       .setOrthographic(-width / 2, width / 2, height / 2, -height / 2, DEFAULT_CAMERA_NEAR, DEFAULT_CAMERA_FAR);
+    // camera
+    //   .setPosition(0, 0, DEFAULT_CAMERA_Z)
+    //   .setFocalPoint(0, 0, 0)
+    //   .setOrthographic(0, width, 0, height, DEFAULT_CAMERA_NEAR, DEFAULT_CAMERA_FAR);
     this.camera = camera;
 
     this.context.camera = camera;

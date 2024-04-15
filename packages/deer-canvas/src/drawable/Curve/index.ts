@@ -1,9 +1,9 @@
 import { AnimationCurve, Keyframe, Signal } from 'deer-engine';
 import { DisplayObject } from '../../core/DisplayObject';
-import { Vector2, isNil } from '../../util';
+import { Vector2, isCtrlKey, isNil } from '../../util';
 import { Handle } from './Handle';
 import { DisplayObjectConfig } from '../../interface';
-import { Shape } from '@/types';
+import { ContextMenuType, Shape } from '@/types';
 import { Circle } from '../Circle';
 
 export class Curve extends DisplayObject {
@@ -38,17 +38,20 @@ export class Curve extends DisplayObject {
         radius: 0.1,
       },
     });
-    const handle = new Handle(circle);
-    this.addChild(circle);
-
-    handle.setDragMoveHandler((pos) => {
-      const index = curve.keys.findIndex((a) => a === key);
-      key.time = pos.x;
-      key.value = pos.y;
-      curve.moveKey(index, key);
-      handle.setOptions({ center: pos });
-      this.signals.curvesChanged.emit();
+    const handle = new Handle(circle, {
+      onDrag: (pos) => {
+        const index = curve.keys.findIndex((a) => a === key);
+        key.time = pos.x;
+        key.value = pos.y;
+        curve.moveKey(index, key);
+        handle.setOptions({ center: pos });
+        this.signals.curvesChanged.emit();
+      },
+      onContextMenu: (e) => {
+        circle.ownerCanvas.eventEmitter.emit('DisplayObjectContextMenu', e, key, ContextMenuType.Handle);
+      },
     });
+    this.addChild(circle);
 
     return handle;
   };

@@ -3,23 +3,28 @@ import { FederatedPointerEvent } from '../../events';
 import { Vector2 } from '../../util';
 
 export class Handle {
-  private onDragMoveCallBack: ((localPos: Vector2) => void) | undefined = undefined;
+  private onDragMoveCallBack: (localPos: Vector2) => void;
 
-  constructor(private circle: Circle) {
+  constructor(
+    private circle: Circle,
+    opts: {
+      onDrag: (localPos: Vector2) => void;
+      onContextMenu: (e: FederatedPointerEvent) => void;
+    }
+  ) {
     circle.addEventListener('pointerdown', this.onDragStart);
     circle.addEventListener('pointerup', this.onDragEnd);
     circle.addEventListener('pointerupoutside', this.onDragEnd);
+    circle.addEventListener('click', opts.onContextMenu);
 
     circle.cursor = 'pointer';
+
+    this.onDragMoveCallBack = opts.onDrag;
   }
 
   setOptions(options: Partial<CircleStyleProps>) {
     this.circle.setOptions(options);
   }
-
-  setDragMoveHandler = (fn: (localPos: Vector2) => void) => {
-    this.onDragMoveCallBack = fn;
-  };
 
   onDragStart = () => {
     this.circle.ownerCanvas.root.addEventListener('pointermove', this.onDragMove);
@@ -27,7 +32,7 @@ export class Handle {
 
   onDragMove = (e: FederatedPointerEvent) => {
     const localP = this.circle.worldToLocal({ x: e.globalX, y: e.globalY });
-    this.onDragMoveCallBack?.(localP);
+    this.onDragMoveCallBack(localP);
   };
 
   onDragEnd = (e: FederatedPointerEvent) => {

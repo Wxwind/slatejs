@@ -65,12 +65,14 @@ export class CoordinatePlugin implements IRenderingPlugin {
 
   apply = (context: CanvasContext) => {
     const { renderingSystem, renderingContext, camera, config, contextSystem } = context;
-    const { devicePixelRatio } = config;
+    const { devicePixelRatio, width, height } = config;
     this.dpr = devicePixelRatio;
+    const rootTransfrom = renderingContext.root.transform;
 
     renderingSystem.hooks.init.tap(() => {
       camera.setFlipY(true);
-      renderingContext.root.transform.setLocalScale(this.cellSize[0], this.cellSize[1]);
+
+      rootTransfrom.setLocalScale(this.cellSize[0], this.cellSize[1]);
     });
 
     renderingSystem.hooks.beforeRender.tap(() => {
@@ -79,9 +81,9 @@ export class CoordinatePlugin implements IRenderingPlugin {
 
       const viewOffset = vec3.subtract(vec3.create(), camera.Position, vec3.fromValues(width / 2, height / 2, 0));
 
-      const cellSize = this.cellSize; // pixel per unit
-      const viewScaleX = cellSize[0] / camera.Zoom; // fixed pixel per unit
-      const viewScaleY = cellSize[1] / camera.Zoom;
+      const cellSize = rootTransfrom.getLocalScale(); // pixel per unit
+      const viewScaleX = cellSize[0] * camera.Zoom; // fixed pixel per unit
+      const viewScaleY = cellSize[1] * camera.Zoom;
 
       const xList = this.calculateRulerScale(width, viewOffset[0], viewScaleX, false);
       const yList = this.calculateRulerScale(height, viewOffset[1], viewScaleY, true);

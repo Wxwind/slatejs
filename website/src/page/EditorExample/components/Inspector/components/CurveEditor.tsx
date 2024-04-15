@@ -1,0 +1,109 @@
+import { ContextListItem, ProContextMenu } from '@/components';
+import { DeerCanvas, Curve, ContextMenuType } from 'deer-canvas';
+import { ActionClip, AnimationCurve, InterpMode, Keyframe } from 'deer-engine';
+import { useEffect, useState } from 'react';
+
+interface CurveEditorProps {
+  selectedClip: ActionClip | undefined;
+}
+
+export function CurveEditor(props: CurveEditorProps) {
+  const { selectedClip } = props;
+  const [curvesEditor, setCurvesEditor] = useState<DeerCanvas>();
+  const [contextList, setContextList] = useState<ContextListItem[]>([{ name: 'hello' }]);
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  console.log('contextList', contextList, isContextMenuOpen);
+  useEffect(() => {
+    //  if (isNil(selectedClip)) return;
+    const container = document.getElementById('curve-editor')!;
+    const curvesEditor = new DeerCanvas({ container, width: 300, height: 400, devicePixelRatio: 2 });
+    setCurvesEditor(curvesEditor);
+
+    curvesEditor.eventEmitter.addListener('DisplayObjectContextMenu', (e, key, type) => {
+      if (type === ContextMenuType.Handle) {
+        console.log('set context list');
+        setContextList([
+          {
+            name: 'set interp mode',
+            children: [
+              {
+                name: 'constant',
+                onSelect: () => {
+                  key.interpMode = InterpMode.Constant;
+                  console.log(curves);
+                },
+              },
+              {
+                name: 'linear',
+                onSelect: () => {
+                  key.interpMode = InterpMode.Linaer;
+                },
+              },
+              {
+                name: 'cubic',
+                onSelect: () => {
+                  key.interpMode = InterpMode.Cubic;
+                },
+              },
+            ],
+          },
+        ]);
+        setIsContextMenuOpen(true);
+      }
+    });
+
+    // const curves = selectedClip.animatedData.animatedParamArray.map((a) => a.curves).flat();
+    const curves: AnimationCurve[] = [];
+
+    const c1 = new AnimationCurve();
+    const k0 = new Keyframe();
+    k0.time = 1;
+    k0.value = 2;
+    c1.addKey(k0);
+    const k1 = new Keyframe();
+    k1.time = 3;
+    k1.value = 3;
+    c1.addKey(k1);
+    const k2 = new Keyframe();
+    k2.time = 5;
+    k2.value = 5;
+    c1.addKey(k2);
+    curves.push(c1);
+
+    const c2 = new AnimationCurve();
+    const k3 = new Keyframe();
+    k3.time = 2;
+    k3.value = 2;
+    c2.addKey(k3);
+    const k4 = new Keyframe();
+    k4.time = 3;
+    k4.value = 7;
+    c2.addKey(k4);
+    const k5 = new Keyframe();
+    k5.time = 5;
+    k5.value = 5;
+    c2.addKey(k5);
+    curves.push(c2);
+    curves.forEach((curve) => {
+      const c = curvesEditor.createElement(Curve, {});
+      curvesEditor.root.addChild(c);
+      c.signals.curvesChanged.addListener(() => {
+        selectedClip?.animatedData.signals.updated.emit();
+      });
+      c.setCurve(curve);
+    });
+
+    return () => {
+      curvesEditor.dispose();
+    };
+  }, [selectedClip]);
+
+  return (
+    <div>
+      <div>CurveEditor</div>
+      <ProContextMenu list={contextList} modal={true} onOpenChange={setIsContextMenuOpen} disabled={!isContextMenuOpen}>
+        <div style={{ width: 300, height: 400 }} id="curve-editor" />
+      </ProContextMenu>
+    </div>
+  );
+}

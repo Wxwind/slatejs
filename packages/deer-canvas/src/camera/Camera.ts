@@ -405,6 +405,8 @@ export class Camera implements ICamera {
 
   setZoomByViewportPoint = (zoom: number, viewportPoint: vec2) => {
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
+    // const x = 0;
+    // const y = 0;
     const roll = this.roll;
     this.rotate(0, 0, -roll);
     this._setPosition(x, y, this.position[2]);
@@ -483,6 +485,7 @@ export class Camera implements ICamera {
       top -= scaleH * this.view.offsetY;
       bottom = top - scaleH * this.view.height;
     }
+    console.log(left, right, top, bottom, near, far, this.zoom);
 
     makeOrthoGraphic(
       this.projectionMatrix,

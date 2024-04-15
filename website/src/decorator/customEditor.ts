@@ -14,7 +14,7 @@ export function customEditor<Class extends new () => Editor>(ctor: NoAbstractCto
 export function getEditorRenderer(ctor: NoAbstractCtor) {
   const renderFunc = globalEditorMap.get(ctor);
   if (!renderFunc) {
-    throw new Error(`the type ${ctor.name} hasn't be registered Editor class yet.`);
+    throw new Error(`the type ${ctor.name} hasn't be registered Ed–itor class yet.`);
   }
 
   return renderFunc;
