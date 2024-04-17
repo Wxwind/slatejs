@@ -134,8 +134,25 @@ export class Camera implements ICamera {
 
   isPerspective = () => this.projectionMode === CameraProjectionMode.PERSPECTIVE;
 
+  get BoxLeft() {
+    return this.boxLeft;
+  }
+  get BoxRight() {
+    return this.boxRight;
+  }
+  get BoxTop() {
+    return this.boxTop;
+  }
+  get BoxBottom() {
+    return this.boxBottom;
+  }
+
   get Type() {
     return this.type;
+  }
+
+  get FlipY() {
+    return this.flipY;
   }
 
   get ProjectionMode() {
@@ -403,16 +420,41 @@ export class Camera implements ICamera {
     return this;
   };
 
+  /** not make change of camera's viewbox */
   setZoomByViewportPoint = (zoom: number, viewportPoint: vec2) => {
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
-    // const x = 0;
-    // const y = 0;
     const roll = this.roll;
     this.rotate(0, 0, -roll);
     this._setPosition(x, y, this.position[2]);
     this.setFocalPoint(x, y, this.focalPoint[2]);
     this.setZoom(zoom);
     this.rotate(0, 0, roll);
+
+    return this;
+  };
+
+  /** change the viewbox to be focus to viewportPoint */
+  setZoomByScroll = (zoom: number, viewportPoint: vec2) => {
+    const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
+
+    const absl = this.position[0] + this.boxLeft;
+    const absr = this.position[0] + this.boxRight;
+    const abst = this.position[1] + this.boxTop;
+    const absb = this.position[1] + this.boxBottom;
+
+    const roll = this.roll;
+    this.rotate(0, 0, -roll);
+    this._setPosition(x, y, this.position[2]);
+    this.setFocalPoint(x, y, this.focalPoint[2]);
+    this.setZoom(zoom);
+    this.rotate(0, 0, roll);
+
+    const l = absl - this.position[0];
+    const r = absr - this.position[0];
+    const t = abst - this.position[1];
+    const b = absb - this.position[1];
+
+    this.setOrthographic(l, r, t, b, this.near, this.far);
 
     return this;
   };
@@ -449,8 +491,6 @@ export class Camera implements ICamera {
       far,
       this.clipSpaceNearZ === ClipSpaceNearZ.ZERO
     );
-    // flipY since the origin of OpenGL/WebGL is bottom-left compared with top-left in Canvas2D
-    mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, this.flipY ? 1 : -1, 1));
     mat4.invert(this.projectionMatrixInverse, this.projectionMatrix);
 
     this.triggerUpdate();
@@ -466,16 +506,14 @@ export class Camera implements ICamera {
     this.near = near;
     this.far = far;
 
-    const dx = (this.boxRight - this.boxLeft) / (2 * this.zoom);
-    const dy = (this.boxTop - this.boxBottom) / (2 * this.zoom);
-    const cx = (this.boxRight + this.boxLeft) / 2;
-    const cy = (this.boxTop + this.boxBottom) / 2;
+    let left = (this.boxLeft - this.position[0]) / this.zoom + this.position[0];
+    let right = (this.boxRight - this.position[0]) / this.zoom + this.position[0];
+    let top = (this.boxTop - this.position[1]) / this.zoom + this.position[1];
+    let bottom = (this.boxRight - this.position[1]) / this.zoom + this.position[1];
 
-    let left = cx - dx;
-    let right = cx + dx;
-    let top = cy + dy;
-    let bottom = cy - dy;
+    console.log('setOrthographic, left=%s, right=%s, top=%s bottom=%s', left, right, top, bottom);
 
+    // TODO: support view
     if (this.view?.enabled) {
       const scaleW = (this.boxRight - this.boxLeft) / this.view.fullWidth / this.zoom;
       const scaleH = (this.boxTop - this.boxBottom) / this.view.fullHeight / this.zoom;
@@ -485,7 +523,6 @@ export class Camera implements ICamera {
       top -= scaleH * this.view.offsetY;
       bottom = top - scaleH * this.view.height;
     }
-    console.log(left, right, top, bottom, near, far, this.zoom);
 
     makeOrthoGraphic(
       this.projectionMatrix,
@@ -497,9 +534,6 @@ export class Camera implements ICamera {
       far,
       this.clipSpaceNearZ === ClipSpaceNearZ.ZERO
     );
-
-    // flipY since the origin of OpenGL/WebGL is bottom-left compared with top-left in Canvas2D
-    mat4.scale(this.projectionMatrix, this.projectionMatrix, vec3.fromValues(1, this.flipY ? 1 : -1, 1));
     mat4.invert(this.projectionMatrixInverse, this.projectionMatrix);
 
     this._getOrthoMatrix();
@@ -929,24 +963,28 @@ export class Camera implements ICamera {
     }
   };
 
+  /** world pos to screen pos */
   private _getOrthoMatrix() {
     if (this.projectionMode !== CameraProjectionMode.ORTHOGRAPHIC) {
       return;
     }
 
-    const position = this.position;
-    const rotZ = quat.setAxisAngle(quat.create(), [0, 0, 1], -deg2rad(this.roll));
-    mat4.fromRotationTranslationScaleOrigin(
-      this.orthographicMatrix,
-      rotZ,
-      vec3.fromValues(
-        (this.boxRight - this.boxLeft) / 2 - position[0],
-        (this.boxTop - this.boxBottom) / 2 - position[1],
-        0
-      ),
-      vec3.fromValues(this.zoom, this.flipY ? -1 : 1 * this.zoom, 1),
-      position
-    );
+    const { width, height } = this.canvas.getConfig();
+
+    mat4.identity(this.orthographicMatrix);
+    if (!this.flipY) mat4.scale(this.orthographicMatrix, this.orthographicMatrix, [width / 2, height / 2, 1 / 2]);
+    else {
+      mat4.scale(this.orthographicMatrix, this.orthographicMatrix, [width, height, 1]);
+      mat4.translate(this.orthographicMatrix, this.orthographicMatrix, [0, 1, 0]);
+      mat4.scale(this.orthographicMatrix, this.orthographicMatrix, [1, -1, 1]);
+      mat4.scale(this.orthographicMatrix, this.orthographicMatrix, [1 / 2, 1 / 2, 1 / 2]);
+    }
+    mat4.translate(this.orthographicMatrix, this.orthographicMatrix, [1, 1, 1]);
+    mat4.multiply(this.orthographicMatrix, this.orthographicMatrix, this.projectionMatrix);
+    const matrixInverse = mat4.invert(mat4.create(), this.matrix);
+    mat4.multiply(this.orthographicMatrix, this.orthographicMatrix, matrixInverse);
+
+    //  mat4.invert(this.orthographicMatrix, this.orthographicMatrix);
   }
 
   private triggerUpdate() {

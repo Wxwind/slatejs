@@ -1,3 +1,4 @@
+import { Camera } from '@/camera';
 import { CanvasContext, IRenderingPlugin } from '@/interface';
 import { ContextSystem } from '@/systems';
 import { vec2, vec3 } from 'gl-matrix';
@@ -79,7 +80,12 @@ export class CoordinatePlugin implements IRenderingPlugin {
       const { width, height } = config;
       const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();
 
-      const viewOffset = vec3.subtract(vec3.create(), camera.Position, vec3.fromValues(width / 2, height / 2, 0));
+      const cam = camera as Camera;
+      const viewOffset = vec3.subtract(
+        vec3.create(),
+        [(cam.BoxLeft + cam.BoxRight) / 2 + cam.Position[0], (cam.BoxTop + cam.BoxBottom) / 2 + cam.Position[1], 0],
+        vec3.fromValues(width / 2, height / 2, 0)
+      );
 
       const cellSize = rootTransfrom.getLocalScale(); // pixel per unit
       const viewScaleX = cellSize[0] * camera.Zoom; // fixed pixel per unit

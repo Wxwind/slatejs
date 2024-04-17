@@ -38,9 +38,3 @@ export function distance(v1: Vector2, v2: Vector2) {
   const dy = v2.y - v1.y;
   return Math.sqrt(dx * dx + dy * dy);
 }
-
-export function distance2(v1: Vector2, v2: Vector2) {
-  const dx = v2.x - v1.x;
-  const dy = v2.y - v1.y;
-  return dx * dx + dy * dy;
-}

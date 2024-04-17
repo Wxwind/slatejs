@@ -34,7 +34,7 @@ export function createVec3(x: number | vec2 | vec3 | vec4, y = 0, z = 0) {
 }
 
 /**
- * assume z from -1 to 1
+ * assume z from -1 to 1, OpenGl (Y up, right hands,camera in +z look to -z)
   [
   (2n) / (r - l),      0,             (r + l) / (r - l),          0,
   0,               (2n) / (t - b),    (t + b) / (t - b),          0,

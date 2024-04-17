@@ -118,6 +118,7 @@ export interface ICamera {
   get View(): View;
 
   setFlipY: (bool: boolean) => void;
+  get FlipY(): boolean;
 
   isOrthographic: () => boolean;
   isPerspective: () => boolean;
@@ -139,6 +140,7 @@ export interface ICamera {
   clearViewOffset: () => this;
   setZoom: (zoom: number) => this;
   setZoomByViewportPoint: (zoom: number, viewportPoint: vec2) => this;
+  setZoomByScroll: (zoom: number, viewportPoint: vec2) => this;
   setPerspective: (near: number, far: number, fov: number, aspect: number) => this;
   setOrthographic: (l: number, r: number, t: number, b: number, near: number, far: number) => this;
   setPosition: (x: number | vec2 | vec3, y?: number, z?: number) => this;

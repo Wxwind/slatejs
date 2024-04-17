@@ -113,9 +113,7 @@ describe('Camera', () => {
     camera
       .setPosition(width / 2, height / 2, 500)
       .setFocalPoint(width / 2, height / 2, 0)
-      .setOrthographic(width / -2, width / 2, height / -2, height / 2, 0.1, 1000);
-
-    camera.setFlipY(true);
+      .setOrthographic(-width / 2, width / 2, height / 2, -height / 2, 0.1, 1000);
 
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.ORTHOGRAPHIC);
     expect(camera.Zoom).toBe(1);
@@ -135,10 +133,10 @@ describe('Camera', () => {
         0,
         0,
         0,
-        -0,
-        -0.004000000189989805,
-        -0,
-        -0,
+        0,
+        0.004000000189989805,
+        0,
+        0,
         0,
         0,
         -0.0020002000965178013,
@@ -176,10 +174,10 @@ describe('Camera', () => {
         0,
         0,
         0,
-        -0,
-        -2.4142136573791504,
-        -0,
-        -0,
+        0,
+        2.4142136573791504,
+        0,
+        0,
         0,
         0,
         -1.0002000331878662,
@@ -218,10 +216,10 @@ describe('Camera', () => {
         0,
         0,
         0,
-        -0,
-        -2.4142136573791504,
-        -0,
-        -0,
+        0,
+        2.4142136573791504,
+        0,
+        0,
         0,
         0,
         -1.0002000331878662,

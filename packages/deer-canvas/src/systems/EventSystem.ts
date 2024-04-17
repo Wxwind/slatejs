@@ -643,6 +643,7 @@ export class EventSystem {
     to.type = from.type;
     to.detail = from.detail;
     to.page.copyFrom(from.page);
+    to.viewport.copyFrom(from.viewport);
   }
 
   private trackingData(id: number): TrackingData {

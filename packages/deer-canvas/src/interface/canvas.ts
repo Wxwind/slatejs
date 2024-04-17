@@ -40,6 +40,9 @@ export interface ICanvas {
   client2Viewport: (client: Vector2) => Vector2;
 
   getEventSystem: () => EventSystem;
+  getContextSystem: () => ContextSystem;
+
+  getConfig: () => ResolvedCanvasConfig;
 }
 
 export interface CanvasContext {

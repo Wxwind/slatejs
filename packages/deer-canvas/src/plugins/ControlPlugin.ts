@@ -94,12 +94,9 @@ export class ControlPlugin implements IRenderingPlugin {
   };
 
   private onScroll = (e: FederatedWheelEvent) => {
-    // const { camera, config } = this.context;
-    // const newZoom = clamp(camera.Zoom + (e.deltaY * 1) / 100, 1, 50);
-    // camera.setZoom(newZoom);
-    const trans = this.context.renderingContext.root.transform;
-    const localScale = trans.getLocalScale();
-    const newZoom = clamp(localScale[0] + (e.deltaY * 1) / 50, 20, 100);
-    trans.setLocalScale(newZoom, newZoom);
+    const { camera, config } = this.context;
+    const newZoom = clamp(camera.Zoom + (e.deltaY * 1) / 100, 1, 50);
+    // camera.setZoomByScroll(newZoom, [e.viewportX, e.viewportY]);
+    camera.setZoom(newZoom);
   };
 }

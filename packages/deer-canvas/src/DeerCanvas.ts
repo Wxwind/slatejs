@@ -137,7 +137,7 @@ export class DeerCanvas implements ICanvas {
     // camera
     //   .setPosition(0, 0, DEFAULT_CAMERA_Z)
     //   .setFocalPoint(0, 0, 0)
-    //   .setOrthographic(0, width, 0, height, DEFAULT_CAMERA_NEAR, DEFAULT_CAMERA_FAR);
+    //   .setOrthographic(0, width, height, 0, DEFAULT_CAMERA_NEAR, DEFAULT_CAMERA_FAR);
     this.camera = camera;
 
     this.context.camera = camera;
@@ -208,13 +208,19 @@ export class DeerCanvas implements ICanvas {
   viewport2Canvas: (point: Vector2) => Vector2 = (point) => {
     const camera = this.camera;
     const { width, height } = this.context.config;
+    const flipY = camera.FlipY;
 
     const w = camera.WorldTransform;
     const pi = camera.ProjectionInverse;
     const piw = mat4.multiply(this.tmpMat4, w, pi);
 
     // viewport -> NDC -> clip. Flip Y.
-    const clip = vec3.set(this.tmpVec3, (point.x / width) * 2 - 1, (1 - point.y / height) * 2 - 1, 0);
+    const clip = vec3.set(
+      this.tmpVec3,
+      (point.x / width) * 2 - 1,
+      (flipY ? 1 - point.y / height : point.y / height) * 2 - 1,
+      0
+    );
     // clip -> view -> world
     const world = vec3.transformMat4(clip, clip, piw);
 
@@ -224,6 +230,7 @@ export class DeerCanvas implements ICanvas {
   canvas2Viewport: (point: Vector2) => Vector2 = (point) => {
     const camera = this.camera;
     const { width, height } = this.context.config;
+    const flipY = camera.FlipY;
 
     const v = camera.ViewTransform;
     const p = camera.ProjectionMatrix;
@@ -235,7 +242,7 @@ export class DeerCanvas implements ICanvas {
     // clip(-1 ~ 1) -> NDC -> viewport. Flip Y
     return {
       x: ((clip[0] + 1) / 2) * width,
-      y: (1 - (clip[1] + 1) / 2) * height,
+      y: (flipY ? 1 - (clip[1] + 1) / 2 : (clip[1] + 1) / 2) * height,
     };
   };
 

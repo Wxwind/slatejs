@@ -372,6 +372,7 @@ export class EventPlugin implements IRenderingPlugin {
     const { x, y } = this.getViewportXY(nativeEvent);
     event.viewport.x = x;
     event.viewport.y = y;
+
     const { x: canvasX, y: canvasY } = this.canvas.viewport2Canvas(event.viewport);
     event.canvas.x = canvasX;
     event.canvas.y = canvasY;

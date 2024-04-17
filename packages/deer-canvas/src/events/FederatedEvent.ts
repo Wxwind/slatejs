@@ -58,7 +58,7 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
   }
 
   /**
-   * relative to Canvas, origin is left-top
+   * relative to Viewport, account for Camera
    */
   canvas: Point = new Point();
   get canvasX(): number {
@@ -69,7 +69,7 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
   }
 
   /**
-   * relative to Viewport, account for Camera
+   * relative to HTMLCanvasElement, origin is left-top
    */
   viewport: Point = new Point();
   get viewportX(): number {
