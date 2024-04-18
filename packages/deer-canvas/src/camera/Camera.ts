@@ -506,12 +506,12 @@ export class Camera implements ICamera {
     this.near = near;
     this.far = far;
 
-    let left = (this.boxLeft - this.position[0]) / this.zoom + this.position[0];
-    let right = (this.boxRight - this.position[0]) / this.zoom + this.position[0];
-    let top = (this.boxTop - this.position[1]) / this.zoom + this.position[1];
-    let bottom = (this.boxRight - this.position[1]) / this.zoom + this.position[1];
+    let left = this.boxLeft / this.zoom;
+    let right = this.boxRight / this.zoom;
+    let top = this.boxTop / this.zoom;
+    let bottom = this.boxBottom / this.zoom;
 
-    console.log('setOrthographic, left=%s, right=%s, top=%s bottom=%s', left, right, top, bottom);
+    // console.log('setOrthographic, left=%s, right=%s, top=%s bottom=%s', left, right, top, bottom);
 
     // TODO: support view
     if (this.view?.enabled) {

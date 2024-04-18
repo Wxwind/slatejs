@@ -81,18 +81,20 @@ export class CoordinatePlugin implements IRenderingPlugin {
       const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();
 
       const cam = camera as Camera;
-      const viewOffset = vec3.subtract(
-        vec3.create(),
-        [(cam.BoxLeft + cam.BoxRight) / 2 + cam.Position[0], (cam.BoxTop + cam.BoxBottom) / 2 + cam.Position[1], 0],
-        vec3.fromValues(width / 2, height / 2, 0)
-      );
+      const zoom = cam.Zoom;
 
       const cellSize = rootTransfrom.getLocalScale(); // pixel per unit
-      const viewScaleX = cellSize[0] * camera.Zoom; // fixed pixel per unit
-      const viewScaleY = cellSize[1] * camera.Zoom;
+      const viewScaleX = cellSize[0] * zoom; // fixed pixel per unit
+      const viewScaleY = cellSize[1] * zoom;
 
-      const xList = this.calculateRulerScale(width, viewOffset[0], viewScaleX, false);
-      const yList = this.calculateRulerScale(height, viewOffset[1], viewScaleY, true);
+      const left = cam.BoxLeft / zoom + cam.Position[0];
+      const right = cam.BoxRight / zoom + cam.Position[0];
+      const top = cam.BoxTop / zoom + cam.Position[1];
+      const bottom = cam.BoxBottom / zoom + cam.Position[1];
+
+      const xList = this.calculateRulerScale(width, viewScaleX, false, left, right);
+
+      const yList = this.calculateRulerScale(height, viewScaleY, true, bottom, top);
       ctx.save();
       ctx.scale(this.dpr, this.dpr);
       ctx.clearRect(0, 0, width, height);
@@ -112,21 +114,41 @@ export class CoordinatePlugin implements IRenderingPlugin {
   /**
    * @param offset offset of origin
    */
-  private calculateRulerScale(length: number, offset: number, scale: number, flip: boolean): RulerScale[] {
+  private calculateRulerScale(
+    length: number,
+    scale: number,
+    flip: boolean,
+
+    begin: number,
+    end: number
+  ): RulerScale[] {
     const list: RulerScale[] = [];
 
     //  const step = clamp(scale, this.minstep, this.maxStep);
     const step = scale;
 
-    const begin = offset / step;
-    const end = (length + offset) / step;
+    const b = Math.floor(begin / 32); // begin num
+    const e = Math.ceil(end / 32); // end num
+    const offset = (begin / 32 - Math.floor(begin / 32)) * step; // offset of begin num
 
-    // console.log('begin: %s, end: %s, axis: %s', begin, end, flip ? 'y' : 'x', offset);
+    // console.log(
+    //   'axis: %s, number from %s to %s, offset from %s to %s, scale: %s',
+    //   flip ? 'y' : 'x',
+    //   b,
+    //   e,
+    //   begin,
+    //   end,
+    //   scale
+    // );
 
     const keyUnit = 1;
-    for (let i = Math.floor(begin); i <= Math.ceil(end); i += keyUnit) {
-      list.push({ num: i, position: flip ? length - (i * step - offset) : i * step - offset, isPrimaryKey: true });
-      const subi = i + keyUnit / 2;
+    for (let i = b, j = 0; i <= e; i += keyUnit, j++) {
+      list.push({
+        num: i,
+        position: flip ? length - (j * step - offset) : j * step - offset,
+        isPrimaryKey: true,
+      });
+      const subi = j + keyUnit / 2;
       list.push({
         num: subi,
         position: flip ? length - (subi * step - offset) : subi * step - offset,

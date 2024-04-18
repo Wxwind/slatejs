@@ -96,7 +96,6 @@ export class ControlPlugin implements IRenderingPlugin {
   private onScroll = (e: FederatedWheelEvent) => {
     const { camera, config } = this.context;
     const newZoom = clamp(camera.Zoom + (e.deltaY * 1) / 100, 1, 50);
-    // camera.setZoomByScroll(newZoom, [e.viewportX, e.viewportY]);
-    camera.setZoom(newZoom);
+    camera.setZoomByScroll(newZoom, [e.viewportX, e.viewportY]);
   };
 }
