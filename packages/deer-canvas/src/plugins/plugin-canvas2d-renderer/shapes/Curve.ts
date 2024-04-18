@@ -31,7 +31,8 @@ export class CurveRenderer implements StyleRenderer {
 
       switch (prevKey.interpMode) {
         case InterpMode.Constant:
-          ctx.lineTo(prevKey.time, prevKey.value);
+          ctx.lineTo(nowKey.time, prevKey.value);
+          ctx.lineTo(nowKey.time, nowKey.value);
           break;
         case InterpMode.Linaer:
           ctx.lineTo(nowKey.time, nowKey.value);

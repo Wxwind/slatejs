@@ -158,7 +158,7 @@ export class Cutscene {
       case 'loop':
         if (this.currentTime >= this.playTimeMax) {
           this.sample(this.playTimeMin);
-          // TODO: may the following code is better?
+          // FIXME: may the following code is better?
           // this.currentTime = this.playTimeMin + (this.currentTime - this.playTimeMax);
           this.currentTime = this.playTimeMin + dt;
         } else {
@@ -173,7 +173,7 @@ export class Cutscene {
       case 'pingPong':
         if (this.currentTime >= this.playTimeMax) {
           this.sample(this.playTimeMax);
-          // TODO: may the following code is better?
+          // FIXME: may the following code is better?
           // this.currentTime = this.playTimeMax - (this.currentTime - this.playTimeMax);
           this.currentTime = this.playTimeMax - dt;
           this._playDirection = this.playRate >= 0 ? 'backwards' : 'forwards';

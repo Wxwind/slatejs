@@ -22,7 +22,7 @@ export class Line extends DisplayObject<LineStyleProps> {
 
     this.begin = config.style?.begin || { x: 0, y: 0 };
     this.end = config.style?.end || { x: 2, y: 0 };
-    this.hitBias = config.style?.hitBias || 0.2;
+    this.hitBias = config.style?.hitBias || 0.1;
   }
 
   isPointHit = (point: Vector2) => {

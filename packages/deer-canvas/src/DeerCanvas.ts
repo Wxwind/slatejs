@@ -134,10 +134,6 @@ export class DeerCanvas implements ICanvas {
       .setPosition(width / 2, height / 2, DEFAULT_CAMERA_Z)
       .setFocalPoint(width / 2, height / 2, 0)
       .setOrthographic(-width / 2, width / 2, height / 2, -height / 2, DEFAULT_CAMERA_NEAR, DEFAULT_CAMERA_FAR);
-    // camera
-    //   .setPosition(0, 0, DEFAULT_CAMERA_Z)
-    //   .setFocalPoint(0, 0, 0)
-    //   .setOrthographic(0, width, height, 0, DEFAULT_CAMERA_NEAR, DEFAULT_CAMERA_FAR);
     this.camera = camera;
 
     this.context.camera = camera;
@@ -205,6 +201,7 @@ export class DeerCanvas implements ICanvas {
   private tmpMat4 = mat4.create();
   private tmpVec3 = vec3.create();
 
+  // TODO: support camera.zoom?
   viewport2Canvas: (point: Vector2) => Vector2 = (point) => {
     const camera = this.camera;
     const { width, height } = this.context.config;

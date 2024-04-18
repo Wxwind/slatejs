@@ -721,7 +721,7 @@ export class Camera implements ICamera {
    * Translate camera left to right and up to down.
    */
   pan = (tx: number, ty: number) => {
-    const coords = createVec3(tx, ty);
+    const coords = createVec3(tx / this.zoom, ty / this.zoom);
     const pos = vec3.clone(this.position);
 
     vec3.add(pos, pos, vec3.scale(vec3.create(), this.right, coords[0]));

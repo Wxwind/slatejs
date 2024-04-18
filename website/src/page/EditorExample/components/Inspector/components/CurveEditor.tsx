@@ -30,7 +30,6 @@ export function CurveEditor(props: CurveEditorProps) {
                 name: 'constant',
                 onSelect: () => {
                   key.interpMode = InterpMode.Constant;
-                  console.log(curves);
                 },
               },
               {

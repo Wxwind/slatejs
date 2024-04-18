@@ -36,7 +36,6 @@ export class Handle {
   };
 
   onDragEnd = (e: FederatedPointerEvent) => {
-    console.log('drag end', e.type);
     this.circle.ownerCanvas.root.removeEventListener('pointermove', this.onDragMove);
   };
 }

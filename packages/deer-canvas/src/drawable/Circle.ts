@@ -24,7 +24,7 @@ export class Circle extends DisplayObject<CircleStyleProps> {
 
     this.center = config.style?.center || { x: 0, y: 0 };
     this.radius = config.style?.radius || 5;
-    this.hitBias = config.style?.hitBias || 0.2;
+    this.hitBias = config.style?.hitBias || 0.1;
   }
 
   setOptions(options: Partial<CircleStyleProps>) {
