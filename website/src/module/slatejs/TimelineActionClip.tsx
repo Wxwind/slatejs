@@ -130,7 +130,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
   const contextList: ContextListItem[] = [
     {
       name: 'delete',
-      onSelect: (e) => {
+      onSelect: () => {
         (object.parent as CutsceneTrack).removeClip(object);
       },
     },

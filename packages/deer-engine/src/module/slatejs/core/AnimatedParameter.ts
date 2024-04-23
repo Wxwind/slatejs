@@ -71,7 +71,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
 
   static constructFromJson = (clip: ActionClip, data: AnimatedParameterJson) => {
     const { type, paramPath, keyableId, curves } = data;
-    const c: AnimationCurve[] = curves.map((curve) => AnimationCurve.from(curve.keys));
+    const c: AnimationCurve[] = curves.map((curve) => AnimationCurve.fromJSON(curve));
 
     const a = new AnimatedParameter();
     // FIXME read from keyableId

@@ -1,6 +1,6 @@
 import { isNil } from '@/util';
 import { IDirectable } from './IDirectable';
-import { ClipType, CreateActionClipDto } from './type';
+import { CreateActionClipDto } from './type';
 import { AnimationClip, PropertiesClip, TransformClip } from './clips';
 import { ActionClip } from './ActionClip';
 import { Signal } from '@/packages/signal';

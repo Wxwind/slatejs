@@ -86,6 +86,7 @@ export class EventPlugin implements IRenderingPlugin {
     el.addEventListener('pointerover', this.onPointerOverOut, true);
     window.addEventListener('pointerup', this.onPointerUp, true);
     window.addEventListener('pointercancel', this.onPointerCancel, true);
+    el.addEventListener('contextmenu', this.onContextMenu);
   }
 
   private removePointerEventListener(el: HTMLElement) {
@@ -95,6 +96,7 @@ export class EventPlugin implements IRenderingPlugin {
     el.removeEventListener('pointerover', this.onPointerOverOut, true);
     window.removeEventListener('pointerup', this.onPointerUp, true);
     window.removeEventListener('pointercancel', this.onPointerCancel, true);
+    el.removeEventListener('contextmenu', this.onContextMenu);
   }
 
   private addTouchEventListener(el: HTMLElement) {
@@ -192,7 +194,6 @@ export class EventPlugin implements IRenderingPlugin {
     const canvas = this.canvas;
     if (!canvas) return;
     if (this.config.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') return;
-
     const canvasEl = this.canvasEl;
 
     let outside = 'outside';
@@ -234,6 +235,10 @@ export class EventPlugin implements IRenderingPlugin {
       this.eventSystem.mapEvent(event);
     }
     this.setCursor(this.eventSystem.cursor);
+  };
+
+  private onContextMenu = (nativeEvent: MouseEvent) => {
+    nativeEvent.preventDefault();
   };
 
   /**

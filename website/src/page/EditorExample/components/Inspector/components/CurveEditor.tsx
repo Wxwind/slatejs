@@ -1,7 +1,8 @@
-import { ContextListItem, ProContextMenu } from '@/components';
+import { ContextListItem } from '@/components';
 import { DeerCanvas, Curve, ContextMenuType } from 'deer-canvas';
 import { ActionClip, AnimationCurve, InterpMode, Keyframe } from 'deer-engine';
 import { useEffect, useState } from 'react';
+import { Dropdown, Menu } from '@arco-design/web-react';
 
 interface CurveEditorProps {
   selectedClip: ActionClip | undefined;
@@ -12,9 +13,8 @@ export function CurveEditor(props: CurveEditorProps) {
   const [curvesEditor, setCurvesEditor] = useState<DeerCanvas>();
   const [contextList, setContextList] = useState<ContextListItem[]>([{ name: 'hello' }]);
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
-  console.log('contextList', contextList, isContextMenuOpen);
+
   useEffect(() => {
-    //  if (isNil(selectedClip)) return;
     const container = document.getElementById('curve-editor')!;
     const curvesEditor = new DeerCanvas({ container, width: 300, height: 400, devicePixelRatio: 2 });
     setCurvesEditor(curvesEditor);
@@ -97,12 +97,39 @@ export function CurveEditor(props: CurveEditorProps) {
     };
   }, [selectedClip]);
 
+  const renderDropList = (list: ContextListItem[]) => (
+    <>
+      {list.map((item) => {
+        if (item.children && item.children.length > 0) {
+          return (
+            <Menu.SubMenu key={item.name} title={item.name}>
+              {renderDropList(item.children)}
+            </Menu.SubMenu>
+          );
+        }
+        return (
+          <Menu.Item key={item.name} onClick={item.onSelect}>
+            {item.name}
+          </Menu.Item>
+        );
+      })}
+    </>
+  );
+
   return (
     <div>
       <div>CurveEditor</div>
-      <ProContextMenu list={contextList} modal={true} onOpenChange={setIsContextMenuOpen} disabled={!isContextMenuOpen}>
+      <Dropdown
+        trigger="contextMenu"
+        position="bl"
+        popupVisible={isContextMenuOpen}
+        onVisibleChange={(v) => {
+          !v && setIsContextMenuOpen(v);
+        }}
+        droplist={<Menu>{renderDropList(contextList)}</Menu>}
+      >
         <div style={{ width: 300, height: 400 }} id="curve-editor" />
-      </ProContextMenu>
+      </Dropdown>
     </div>
   );
 }

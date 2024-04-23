@@ -423,6 +423,7 @@ export class Camera implements ICamera {
   /** not make change of camera's viewbox */
   setZoomByViewportPoint = (zoom: number, viewportPoint: vec2) => {
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
+
     const roll = this.roll;
     this.rotate(0, 0, -roll);
     this._setPosition(x, y, this.position[2]);
@@ -436,7 +437,7 @@ export class Camera implements ICamera {
   /** change the viewbox to be focus to viewportPoint */
   setZoomByScroll = (zoom: number, viewportPoint: vec2) => {
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
-
+    console.log('mouse pos: %s, %s, world pos: %s, %s', viewportPoint[0], viewportPoint[1], x, y);
     const absl = this.position[0] + this.boxLeft;
     const absr = this.position[0] + this.boxRight;
     const abst = this.position[1] + this.boxTop;
@@ -511,7 +512,13 @@ export class Camera implements ICamera {
     let top = this.boxTop / this.zoom;
     let bottom = this.boxBottom / this.zoom;
 
-    // console.log('setOrthographic, left=%s, right=%s, top=%s bottom=%s', left, right, top, bottom);
+    console.log(
+      'before setOrthographic, left=%s, right=%s, top=%s bottom=%s',
+      l + this.position[0],
+      r + this.position[0],
+      t + this.position[1],
+      b + this.position[1]
+    );
 
     // TODO: support view
     if (this.view?.enabled) {

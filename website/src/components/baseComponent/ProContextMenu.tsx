@@ -3,7 +3,7 @@ import * as ContextMenu from '@radix-ui/react-context-menu';
 import { isNil } from '@/util';
 import { RxChevronRight } from 'react-icons/rx';
 
-export type ContextListItem = { name: string; onSelect?: (e: Event) => void; children?: ContextListItem[] };
+export type ContextListItem = { name: string; onSelect?: () => void; children?: ContextListItem[] };
 
 interface ProContextMenuProps {
   list: ContextListItem[];
@@ -23,7 +23,7 @@ export const ProContextMenu: FC<PropsWithChildren<ProContextMenuProps>> = (props
           className="group text-sm leading-none text-violet-400 rounded flex items-center h-6 px-2 relative select-none outline-none data-[disabled]:text-gray-300 data-[disabled]:pointer-events-none data-[highlighted]:bg-primary data-[highlighted]:text-violet-100 cursor-pointer"
           onSelect={(e) => {
             console.log('sth select3ed', item.onSelect);
-            item.onSelect?.(e);
+            item.onSelect?.();
           }}
         >
           {item.name}

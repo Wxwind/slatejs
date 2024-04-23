@@ -55,10 +55,12 @@ export class AnimationCurve {
     this.postExtrapolation = AnimationCurveExtrapolation.Constant;
   }
 
-  static from = (keys: Keyframe[]) => {
-    const curves = new AnimationCurve();
-    curves.keys.push(...keys);
-    return curves;
+  static fromJSON = (json: AnimationCurveJson) => {
+    const curve = new AnimationCurve();
+    curve.keys.push(...json.keys);
+    curve.postExtrapolation = json.postExtrapolation;
+    curve.preExtrapolation = json.preExtrapolation;
+    return curve;
   };
 
   addKey = (keyframe: Keyframe) => {
@@ -233,6 +235,7 @@ export class AnimationCurve {
           // p3 = q1
           // where: u0 = f(q0)' = key1.outTangent, u1 = f(q1)' = key2.inTangent
           // ps: we (unreal / cocos) use t directly as x which hermite(t) = (x,y)
+          // they are equivalent.
           // @see: https://math.stackexchange.com/questions/4128882/nonparametric-hermite-cubic-to-bezier-curve
           // @see: https://www.desmos.com/calculator/xab4fkksud
           const oneThird = 1 / 3;

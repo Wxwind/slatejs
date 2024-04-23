@@ -201,7 +201,6 @@ export class DeerCanvas implements ICanvas {
   private tmpMat4 = mat4.create();
   private tmpVec3 = vec3.create();
 
-  // TODO: support camera.zoom?
   viewport2Canvas: (point: Vector2) => Vector2 = (point) => {
     const camera = this.camera;
     const { width, height } = this.context.config;

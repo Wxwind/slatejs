@@ -15,7 +15,7 @@ export class Handle {
     circle.addEventListener('pointerdown', this.onDragStart);
     circle.addEventListener('pointerup', this.onDragEnd);
     circle.addEventListener('pointerupoutside', this.onDragEnd);
-    circle.addEventListener('click', opts.onContextMenu);
+    circle.addEventListener('rightclick', opts.onContextMenu);
 
     circle.cursor = 'pointer';
 

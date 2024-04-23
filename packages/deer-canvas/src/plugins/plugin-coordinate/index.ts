@@ -1,7 +1,7 @@
 import { Camera } from '@/camera';
 import { CanvasContext, IRenderingPlugin } from '@/interface';
 import { ContextSystem } from '@/systems';
-import { vec2, vec3 } from 'gl-matrix';
+import { vec2 } from 'gl-matrix';
 
 export interface RulerScale {
   num: number;
@@ -11,7 +11,7 @@ export interface RulerScale {
 }
 
 export type CoordinatePluginOpts = {
-  cellSize: vec2;
+  cellSize: number;
 
   minstep: number;
   maxStep: number;
@@ -29,7 +29,7 @@ export type CoordinatePluginOpts = {
 export class CoordinatePlugin implements IRenderingPlugin {
   name = 'Coordinate';
 
-  cellSize: vec2 = [32, 32];
+  cellSize = 32;
 
   minstep = 0.05 * 16;
   maxStep = 100 * 16;
@@ -61,19 +61,19 @@ export class CoordinatePlugin implements IRenderingPlugin {
       opts.gridKeyColor && (this.gridKeyColor = opts.gridKeyColor);
     }
 
-    this.rulerTextOffset = [this.cellSize[0] - 2, this.cellSize[1] - 2];
+    this.rulerTextOffset = [this.cellSize - 2, this.cellSize - 2];
   }
 
   apply = (context: CanvasContext) => {
     const { renderingSystem, renderingContext, camera, config, contextSystem } = context;
-    const { devicePixelRatio, width, height } = config;
+    const { devicePixelRatio } = config;
     this.dpr = devicePixelRatio;
     const rootTransfrom = renderingContext.root.transform;
 
     renderingSystem.hooks.init.tap(() => {
       camera.setFlipY(true);
 
-      rootTransfrom.setLocalScale(this.cellSize[0], this.cellSize[1]);
+      rootTransfrom.setLocalScale(this.cellSize, this.cellSize);
     });
 
     renderingSystem.hooks.beforeRender.tap(() => {
@@ -83,9 +83,9 @@ export class CoordinatePlugin implements IRenderingPlugin {
       const cam = camera as Camera;
       const zoom = cam.Zoom;
 
-      const cellSize = rootTransfrom.getLocalScale(); // pixel per unit
-      const viewScaleX = cellSize[0] * zoom; // fixed pixel per unit
-      const viewScaleY = cellSize[1] * zoom;
+      const cellSize = this.cellSize; // pixel per unit
+      const viewScaleX = cellSize * zoom; // fixed pixel per unit
+      const viewScaleY = cellSize * zoom;
 
       const left = cam.BoxLeft / zoom + cam.Position[0];
       const right = cam.BoxRight / zoom + cam.Position[0];
@@ -127,7 +127,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
     //  const step = clamp(scale, this.minstep, this.maxStep);
     const step = scale;
 
-    const b = Math.floor(begin / 32); // begin num
+    const b = Math.floor(begin / this.cellSize); // begin num
     const e = Math.ceil(end / 32); // end num
     const offset = (begin / 32 - Math.floor(begin / 32)) * step; // offset of begin num
 
