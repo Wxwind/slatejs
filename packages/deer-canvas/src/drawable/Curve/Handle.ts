@@ -1,41 +1,39 @@
 import { Circle, CircleStyleProps } from '../Circle';
 import { FederatedPointerEvent } from '../../events';
 import { Vector2 } from '../../util';
+import { Signal } from 'deer-engine';
 
 export class Handle {
-  private onDragMoveCallBack: (localPos: Vector2) => void;
+  onDrag = new Signal<[Vector2]>();
 
   constructor(
     private circle: Circle,
-    opts: {
-      onDrag: (localPos: Vector2) => void;
-      onContextMenu: (e: FederatedPointerEvent) => void;
+    opts?: {
+      onContextMenu?: (e: FederatedPointerEvent) => void;
     }
   ) {
     circle.addEventListener('pointerdown', this.onDragStart);
     circle.addEventListener('pointerup', this.onDragEnd);
     circle.addEventListener('pointerupoutside', this.onDragEnd);
-    circle.addEventListener('rightclick', opts.onContextMenu);
+    opts?.onContextMenu && circle.addEventListener('rightclick', opts.onContextMenu);
 
     circle.cursor = 'pointer';
-
-    this.onDragMoveCallBack = opts.onDrag;
   }
 
   setOptions(options: Partial<CircleStyleProps>) {
     this.circle.setOptions(options);
   }
 
-  onDragStart = () => {
+  private onDragStart = () => {
     this.circle.ownerCanvas.root.addEventListener('pointermove', this.onDragMove);
   };
 
-  onDragMove = (e: FederatedPointerEvent) => {
+  private onDragMove = (e: FederatedPointerEvent) => {
     const localP = this.circle.worldToLocal({ x: e.globalX, y: e.globalY });
-    this.onDragMoveCallBack(localP);
+    this.onDrag.emit(localP);
   };
 
-  onDragEnd = (e: FederatedPointerEvent) => {
+  private onDragEnd = (e: FederatedPointerEvent) => {
     this.circle.ownerCanvas.root.removeEventListener('pointermove', this.onDragMove);
   };
 }

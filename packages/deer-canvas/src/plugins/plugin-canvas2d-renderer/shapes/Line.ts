@@ -9,6 +9,6 @@ export class LineRenderer implements StyleRenderer {
     ctx.beginPath();
     ctx.moveTo(begin.x, begin.y);
     ctx.lineTo(end.x, end.y);
-    ctx.fill();
+    ctx.stroke();
   };
 }

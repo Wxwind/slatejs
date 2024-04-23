@@ -21,7 +21,6 @@ export function CurveEditor(props: CurveEditorProps) {
 
     curvesEditor.eventEmitter.addListener('DisplayObjectContextMenu', (e, key, type) => {
       if (type === ContextMenuType.Handle) {
-        console.log('set context list');
         setContextList([
           {
             name: 'set interp mode',

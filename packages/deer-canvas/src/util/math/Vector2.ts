@@ -29,8 +29,8 @@ export function isPointInShape(shape: Vector2[], point: Vector2): boolean {
   return res;
 }
 
-export function length(v: Vector2) {
-  return Math.sqrt(v.x * v.x + v.y * v.y);
+export function length(x: number, y: number) {
+  return Math.sqrt(x * x + y * y);
 }
 
 export function distance(v1: Vector2, v2: Vector2) {

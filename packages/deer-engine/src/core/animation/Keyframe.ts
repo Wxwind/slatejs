@@ -20,7 +20,7 @@ export enum TangentMode {
   Auto = 'Auto', // Automatically calculates tangents
   User = 'User', // inTangent == outTangent
   Break = 'Break', // allow inTangent != outTangent
-  None = 'None', // No tangents
+  None = 'None', // No tangents can be dragged.
 }
 
 @egclass()
@@ -38,19 +38,19 @@ export class Keyframe {
   outTangent: number = 0.3;
 
   @property({ type: Number })
-  inWeight: number = 0;
+  inWeight: number = 1;
 
   @property({ type: Number })
-  outWeight: number = 0;
+  outWeight: number = 1;
 
   @property({ type: String })
-  tangentMode: TangentMode = TangentMode.Auto;
+  tangentMode: TangentMode = TangentMode.User;
 
   @property({ type: String })
-  weightMode: WeightMode = WeightMode.None;
+  weightMode: WeightMode = WeightMode.Both;
 
   @property({ type: String })
-  interpMode: InterpMode = InterpMode.Linaer;
+  interpMode: InterpMode = InterpMode.Cubic;
 }
 
 export const isNotWeighted = (key1: Keyframe, key2: Keyframe) => {

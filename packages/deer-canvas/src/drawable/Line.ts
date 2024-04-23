@@ -25,6 +25,12 @@ export class Line extends DisplayObject<LineStyleProps> {
     this.hitBias = config.style?.hitBias || 0.1;
   }
 
+  setOptions(options: Partial<LineStyleProps>) {
+    this.begin = options.begin ?? this.begin;
+    this.end = options.end ?? this.end;
+    this.transform.dirtifyLocal();
+  }
+
   isPointHit = (point: Vector2) => {
     const localP = this.worldToLocal(point);
 
