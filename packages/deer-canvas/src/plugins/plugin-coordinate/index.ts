@@ -145,10 +145,10 @@ export class CoordinatePlugin implements IRenderingPlugin {
     for (let i = b, j = 0; i <= e; i += keyUnit, j++) {
       list.push({
         num: i,
-        position: flip ? length - (j * step - offset) : j * step - offset,
+        position: flip ? length - (j * step * keyUnit - offset) : j * step * keyUnit - offset,
         isPrimaryKey: true,
       });
-      const subi = j + keyUnit / 2;
+      const subi = j * keyUnit + keyUnit / 2;
       list.push({
         num: subi,
         position: flip ? length - (subi * step - offset) : subi * step - offset,
@@ -168,7 +168,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
       });
-      ctx.fillText(r.num.toFixed(2), r.position, canvasHeight - this.rulerTextOffset[0] + this.fontSize);
+      ctx.fillText(r.num.toString(), r.position, canvasHeight - this.rulerTextOffset[0] + this.fontSize);
     });
   }
 
@@ -182,7 +182,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
       });
-      ctx.fillText(r.num.toFixed(2), this.rulerTextOffset[1], r.position);
+      ctx.fillText(r.num.toString(), this.rulerTextOffset[1], r.position);
     });
   }
 

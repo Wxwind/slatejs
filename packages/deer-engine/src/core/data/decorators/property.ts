@@ -25,7 +25,7 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
       },
     };
 
-    // must clone metadata.__propertyCache__ before modified, otherwise metadata will be mixed by inheritance. May it be the babel's bug?
+    // FIXME must clone metadata.__propertyCache__ before modified, otherwise metadata will be mixed by inheritance. May it be the babel's bug?
     metadata.__propertyCache__ = { ...metadata.__propertyCache__ };
     metadata.__propertyCache__[context.name] = merge(originStash || {}, newStash);
 
