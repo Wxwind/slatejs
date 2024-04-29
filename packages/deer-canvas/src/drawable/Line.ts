@@ -1,7 +1,15 @@
 import { DisplayObject } from '../core/DisplayObject';
-import { Vector2, pointToSegment } from '../util';
+import { DeepPartial, ShapeCtor, Vector2, pointToSegment } from '../util';
 import { Shape } from '@/types';
 import { BaseStyleProps, DisplayObjectConfig } from '@/interface';
+import { merge } from '@/util';
+import { genUUID } from 'deer-engine';
+
+const DEFAULT_LINE_CONFIG: LineStyleProps = {
+  begin: { x: 0, y: 0 },
+  end: { x: 2, y: 0 },
+  hitBias: 0.1,
+};
 
 export interface LineStyleProps extends BaseStyleProps {
   begin: Vector2;
@@ -10,30 +18,20 @@ export interface LineStyleProps extends BaseStyleProps {
 }
 
 export class Line extends DisplayObject<LineStyleProps> {
-  begin: Vector2;
-  end: Vector2;
-  hitBias: number;
-
-  constructor(config: DisplayObjectConfig<LineStyleProps>) {
+  constructor(config: ShapeCtor<LineStyleProps>) {
+    const parsedConfig = merge({}, DEFAULT_LINE_CONFIG, config.style);
     super({
+      id: config.id || genUUID(''),
+      name: config.name || 'Line',
       type: Shape.Line,
-      ...config,
+      style: parsedConfig,
     });
-
-    this.begin = config.style?.begin || { x: 0, y: 0 };
-    this.end = config.style?.end || { x: 2, y: 0 };
-    this.hitBias = config.style?.hitBias || 0.1;
-  }
-
-  setOptions(options: Partial<LineStyleProps>) {
-    this.begin = options.begin ?? this.begin;
-    this.end = options.end ?? this.end;
-    this.transform.dirtifyLocal();
   }
 
   isPointHit = (point: Vector2) => {
     const localP = this.worldToLocal(point);
 
-    return pointToSegment(localP.x, localP.y, this.begin.x, this.begin.y, this.end.x, this.end.y) <= this.hitBias;
+    const { begin, end, hitBias } = this.style;
+    return pointToSegment(localP.x, localP.y, begin.x, begin.y, end.x, end.y) <= hitBias;
   };
 }

@@ -667,7 +667,8 @@ export class EventSystem {
     if (!currentTarget.visible) return null;
 
     if (currentTarget.children.length > 0) {
-      const children = currentTarget.children;
+      // TODO sort cache
+      const children = currentTarget.children.sort((a, b) => a.sortable.renderOrder - b.sortable.renderOrder);
       for (let i = children.length - 1; i >= 0; i--) {
         const child = children[i];
 

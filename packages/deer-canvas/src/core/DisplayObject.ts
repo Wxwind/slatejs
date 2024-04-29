@@ -6,6 +6,7 @@ import { Transform } from './components/Transform';
 import { Renderable, Sortable } from './components';
 import { Shape } from '@/types';
 import { vec3 } from 'gl-matrix';
+import { merge } from '@/util';
 
 export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyleProps>
   extends FederatedEventTarget
@@ -14,8 +15,7 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
   id: string;
   name: string;
   readonly type: Shape;
-  style: StyleProps;
-  readonly config: DisplayObjectConfig<StyleProps>;
+  readonly style: StyleProps;
 
   visible = true;
 
@@ -37,11 +37,24 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
 
   constructor(config: DisplayObjectConfig<StyleProps>) {
     super();
-    this.config = config;
-    this.id = config.id || '<not assigned>';
-    this.name = config.name || '<not assigned>';
-    this.type = config.type || Shape.Group;
-    this.style = config.style || (DEFAULT_STYLE_PROPS as StyleProps);
+    this.id = config.id;
+    this.name = config.name;
+    this.type = config.type;
+    this.style = config.style;
+  }
+
+  toJSON = () => {
+    return {
+      id: this.id,
+      name: this.name,
+      type: this.type,
+      style: this.style,
+    };
+  };
+
+  setOptions(options: Partial<StyleProps>) {
+    merge(this.style, options);
+    this.transform.dirtifyLocal();
   }
 
   abstract isPointHit: (point: Vector2) => boolean;
@@ -86,8 +99,3 @@ export abstract class DisplayObject<StyleProps extends BaseStyleProps = BaseStyl
     return { x: res[0], y: res[1] };
   };
 }
-
-const DEFAULT_STYLE_PROPS: BaseStyleProps = {
-  zIndex: 0,
-  visible: true,
-};

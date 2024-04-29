@@ -7,6 +7,7 @@ export enum Shape {
   Circle = 'circle',
   Curve = 'curve',
   Line = 'line',
+  Polygon = 'polygon',
 }
 
 export enum ContextMenuType {

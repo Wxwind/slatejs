@@ -1,7 +1,7 @@
 {
   "name": "deer-canvas",
   "version": "0.0.1",
-  "description": "2D canvas engine using canvaskit",
+  "description": "2D canvas engine",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
   "types": "dist/es/index.d.ts",

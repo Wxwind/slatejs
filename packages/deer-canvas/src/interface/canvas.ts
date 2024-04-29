@@ -1,9 +1,9 @@
 import { Group } from '..';
-import { Vector2 } from '../util';
+import { ShapeCtor, Vector2 } from '../util';
 import { DisplayObject } from '../core/DisplayObject';
 import { RenderingSystem, EventSystem, ContextSystem } from '../systems';
 import { ICamera } from '../camera';
-import { BaseStyleProps, DisplayObjectConfig } from './displayObject';
+import { BaseStyleProps } from './displayObject';
 import { EventEmitter } from '@/packages/eventEmitter';
 import { CanvasGlobalEventMap } from '@/types';
 
@@ -14,8 +14,8 @@ export interface ICanvas {
   eventEmitter: EventEmitter<CanvasGlobalEventMap>;
 
   createElement: <T extends DisplayObject, StyleProps extends BaseStyleProps>(
-    ctor: new (config: DisplayObjectConfig<StyleProps>) => T,
-    config: DisplayObjectConfig<StyleProps>
+    ctor: new (config: ShapeCtor<StyleProps>) => T,
+    config: ShapeCtor<StyleProps>
   ) => T;
 
   /**

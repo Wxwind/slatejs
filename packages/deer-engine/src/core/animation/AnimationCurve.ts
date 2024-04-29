@@ -21,6 +21,7 @@ export enum AnimationCurveExtrapolation {
 }
 
 export type AnimationCurveJson = {
+  type: 'AnimationCurve';
   keys: {
     time: number;
     value: number;
@@ -53,6 +54,15 @@ export class AnimationCurve {
     this.keys = [];
     this.preExtrapolation = AnimationCurveExtrapolation.Constant;
     this.postExtrapolation = AnimationCurveExtrapolation.Constant;
+  }
+
+  toJSON(): AnimationCurveJson {
+    return {
+      type: 'AnimationCurve',
+      keys: this.keys,
+      preExtrapolation: this.preExtrapolation,
+      postExtrapolation: this.postExtrapolation,
+    };
   }
 
   static fromJSON = (json: AnimationCurveJson) => {

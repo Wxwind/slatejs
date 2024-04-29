@@ -1,40 +1,37 @@
 import { DisplayObject } from '../core/DisplayObject';
-import { Vector2, distance } from '../util';
-import { BaseStyleProps, DisplayObjectConfig } from '../interface';
+import { ShapeCtor, Vector2, distance, merge } from '../util';
+import { BaseStyleProps } from '../interface';
 import { Shape } from '@/types';
+import { genUUID } from 'deer-engine';
+
+const DEFAULT_CIRCLE_CONFIG: CircleStyleProps = {
+  center: { x: 0, y: 0 },
+  radius: 5,
+  hitBias: 0.1,
+};
 
 export interface CircleStyleProps extends BaseStyleProps {
   center: Vector2;
   radius: number;
-  hitBias?: number;
+  hitBias: number;
 }
 
 export class Circle extends DisplayObject<CircleStyleProps> {
   type = Shape.Circle;
 
-  center: Vector2;
-  radius: number;
-  hitBias: number;
-
-  constructor(config: DisplayObjectConfig<CircleStyleProps>) {
+  constructor(config: ShapeCtor<CircleStyleProps>) {
+    const parsedConfig = merge({}, DEFAULT_CIRCLE_CONFIG, config.style);
     super({
+      id: config.id || genUUID(''),
+      name: config.name || 'Circle',
       type: Shape.Circle,
-      ...config,
+      style: parsedConfig,
     });
-
-    this.center = config.style?.center || { x: 0, y: 0 };
-    this.radius = config.style?.radius || 5;
-    this.hitBias = config.style?.hitBias || 0.1;
-  }
-
-  setOptions(options: Partial<CircleStyleProps>) {
-    this.center = options.center ?? this.center;
-    this.radius = options.radius ?? this.radius;
-    this.transform.dirtifyLocal();
   }
 
   isPointHit: (point: Vector2) => boolean = (point) => {
     const localP = this.worldToLocal(point);
-    return distance(localP, this.center) <= this.radius + this.hitBias;
+    const { center, radius, hitBias } = this.style;
+    return distance(localP, center) <= radius + hitBias;
   };
 }

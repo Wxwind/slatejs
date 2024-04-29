@@ -37,6 +37,7 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
       [Shape.Circle]: new CirleRenderer(),
       [Shape.Curve]: new CurveRenderer(),
       [Shape.Line]: new LineRenderer(),
+      [Shape.Polygon]: undefined,
     };
 
     this.styleRendererFactory = styleRendererFactory;

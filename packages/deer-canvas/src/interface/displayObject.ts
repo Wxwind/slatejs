@@ -11,8 +11,8 @@ export interface BaseStyleProps {
 }
 
 export interface DisplayObjectConfig<StyleProps extends BaseStyleProps = BaseStyleProps> {
-  id?: string;
-  name?: string;
-  type?: Shape;
-  style?: StyleProps;
+  id: string;
+  name: string;
+  type: Shape;
+  style: StyleProps;
 }

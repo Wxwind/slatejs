@@ -1,30 +1,65 @@
 import {
   AnimationCurve,
+  AnimationCurveJson,
   InterpMode,
   Keyframe,
   Signal,
   TangentMode,
+  genUUID,
   isInWeightEnabled,
   isOutWeightEnabled,
 } from 'deer-engine';
 import { DisplayObject } from '../../core/DisplayObject';
-import { Vector2, isNil, length } from '../../util';
+import { ShapeCtor, Vector2, isNil, length, merge } from '../../util';
 import { Handle } from './Handle';
-import { DisplayObjectConfig } from '../../interface';
 import { ContextMenuType, Shape } from '@/types';
-import { Circle } from '../Circle';
-import { Line } from '../Line';
+import { Circle, CircleStyleProps } from '../Circle';
+import { Line, LineStyleProps } from '../Line';
+import { BaseStyleProps } from '@/interface';
 
-export class Curve extends DisplayObject {
+const DEFAULT_CURVE_CONFIG: CurveStyleProps = {
+  disable: false,
+  lineStyle: {
+    hitBias: 0.1,
+    lineWidth: 0.05,
+    strokeStyle: '#757881',
+  },
+  handleStyle: {
+    fillStyle: '#7262fd',
+    radius: 0.1,
+  },
+  keyStyle: {
+    fillStyle: '#ffffff',
+    radius: 0.1,
+  },
+};
+
+export interface CurveStyleProps extends BaseStyleProps {
+  disable?: boolean;
+  lineStyle: Partial<LineStyleProps>;
+  handleStyle: Partial<CircleStyleProps>;
+  keyStyle: Partial<CircleStyleProps>;
+}
+
+export class Curve extends DisplayObject<CurveStyleProps> {
   type = Shape.Curve;
   curve: AnimationCurve | undefined;
 
   signals = {
     curvesChanged: new Signal(),
+    onDragEnd: new Signal<[AnimationCurveJson | undefined]>(),
   };
 
-  constructor(config: DisplayObjectConfig) {
-    super(config);
+  constructor(config: ShapeCtor<CurveStyleProps>) {
+    const parsedConfig = merge({}, DEFAULT_CURVE_CONFIG, config.style);
+    console.log('parsed curve config', parsedConfig);
+
+    super({
+      id: config.id || genUUID(''),
+      name: config.name || 'Line',
+      type: Shape.Curve,
+      style: parsedConfig,
+    });
   }
 
   setCurve = (curve: AnimationCurve | undefined) => {
@@ -42,23 +77,28 @@ export class Curve extends DisplayObject {
   };
 
   private createHandle = (curve: AnimationCurve, key: Keyframe) => {
+    const lineStyle = this.style.lineStyle;
+    const handleStyle = this.style.handleStyle;
+    const keyStyle = this.style.keyStyle;
+
     // draw key handle
     const keyCircle = this.ownerCanvas.createElement(Circle, {
       name: 'handle',
       style: {
+        ...keyStyle,
         center: {
           x: key.time,
           y: key.value,
         },
-        radius: 0.1,
       },
     });
+    keyCircle.sortable.renderOrder = 10; // 确保位于handle上方
     const keyHandle = new Handle(keyCircle, {
       onContextMenu: (e) => {
         keyCircle.ownerCanvas.eventEmitter.emit('DisplayObjectContextMenu', e, key, ContextMenuType.Handle);
       },
     });
-    keyHandle.onDrag.on((pos) => {
+    keyHandle.signals.onDrag.on((pos) => {
       const index = curve.keys.findIndex((a) => a === key);
       key.time = pos.x;
       key.value = pos.y;
@@ -66,6 +106,10 @@ export class Curve extends DisplayObject {
       keyHandle.setOptions({ center: pos });
       this.signals.curvesChanged.emit();
     });
+    keyHandle.signals.onDragEnd.on(() => {
+      this.signals.onDragEnd.emit(this.curve?.toJSON());
+    });
+
     this.addChild(keyCircle);
 
     if (this.isControlEnabled(key.tangentMode, key.interpMode)) {
@@ -81,40 +125,42 @@ export class Curve extends DisplayObject {
         const inLine = this.ownerCanvas.createElement(Line, {
           name: 'in line',
           style: {
+            ...lineStyle,
             begin: {
               x: cx,
               y: cy,
             },
             end: { x: time, y: value },
-            hitBias: 0.1,
-            lineWidth: 0.05,
           },
         });
 
         const circle = this.ownerCanvas.createElement(Circle, {
           name: 'in handle',
           style: {
+            ...handleStyle,
             center: {
               x: cx,
               y: cy,
             },
-            radius: 0.1,
           },
         });
 
-        keyHandle.onDrag.on((pos) => {
+        keyHandle.signals.onDrag.on((pos) => {
           const angle = Math.atan(key.inTangent);
           const x = pos.x - Math.cos(angle) * key.inWeight;
           const y = pos.y - Math.sin(angle) * key.inWeight;
           inLine.setOptions({ begin: { x, y }, end: pos });
           circle.setOptions({ center: { x, y } });
         });
+        keyHandle.signals.onDragEnd.on(() => {
+          this.signals.onDragEnd.emit(this.curve?.toJSON());
+        });
 
         this.addChild(inLine);
         this.addChild(circle);
 
         const inHandle = new Handle(circle);
-        inHandle.onDrag.on((pos) => {
+        inHandle.signals.onDrag.on((pos) => {
           const index = curve.keys.findIndex((a) => a === key);
           key.inTangent = (pos.y - key.value) / (pos.x - key.time);
           key.inWeight = length(pos.x - key.time, pos.y - key.value);
@@ -122,6 +168,9 @@ export class Curve extends DisplayObject {
           inHandle.setOptions({ center: pos });
           inLine.setOptions({ begin: pos });
           this.signals.curvesChanged.emit();
+        });
+        inHandle.signals.onDragEnd.on(() => {
+          this.signals.onDragEnd.emit(this.curve?.toJSON());
         });
       }
 
@@ -134,40 +183,42 @@ export class Curve extends DisplayObject {
         const outLine = this.ownerCanvas.createElement(Line, {
           name: 'out line',
           style: {
+            ...lineStyle,
             begin: {
               x: cx,
               y: cy,
             },
             end: { x: time, y: value },
-            hitBias: 0.1,
-            lineWidth: 0.05,
           },
         });
 
         const circle = this.ownerCanvas.createElement(Circle, {
           name: 'out handle',
           style: {
+            ...handleStyle,
             center: {
               x: cx,
               y: cy,
             },
-            radius: 0.1,
           },
         });
 
-        keyHandle.onDrag.on((pos) => {
+        keyHandle.signals.onDrag.on((pos) => {
           const angle = Math.atan(key.inTangent);
           const x = pos.x + Math.cos(angle) * key.outWeight;
           const y = pos.y + Math.sin(angle) * key.outTangent;
           outLine.setOptions({ begin: { x, y }, end: pos });
           circle.setOptions({ center: { x, y } });
         });
+        keyHandle.signals.onDragEnd.on(() => {
+          this.signals.onDragEnd.emit(this.curve?.toJSON());
+        });
 
         this.addChild(outLine);
         this.addChild(circle);
 
         const outHandle = new Handle(circle);
-        outHandle.onDrag.on((pos) => {
+        outHandle.signals.onDrag.on((pos) => {
           const index = curve.keys.findIndex((a) => a === key);
           key.outTangent = (pos.y - key.value) / (pos.x - key.time);
           key.outWeight = length(pos.x - key.time, pos.y - key.value);
@@ -175,6 +226,9 @@ export class Curve extends DisplayObject {
           outHandle.setOptions({ center: pos });
           outLine.setOptions({ begin: pos });
           this.signals.curvesChanged.emit();
+        });
+        outHandle.signals.onDragEnd.on(() => {
+          this.signals.onDragEnd.emit(this.curve?.toJSON());
         });
       }
     }

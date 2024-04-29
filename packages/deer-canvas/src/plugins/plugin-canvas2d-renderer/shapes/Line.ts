@@ -4,8 +4,7 @@ import { Line } from '@/drawable';
 
 export class LineRenderer implements StyleRenderer {
   render = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {
-    const { begin, end } = object as Line;
-    ctx.fillStyle = 'red';
+    const { begin, end } = (object as Line).style;
     ctx.beginPath();
     ctx.moveTo(begin.x, begin.y);
     ctx.lineTo(end.x, end.y);

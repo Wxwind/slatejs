@@ -4,7 +4,10 @@ import { Vector2 } from '../../util';
 import { Signal } from 'deer-engine';
 
 export class Handle {
-  onDrag = new Signal<[Vector2]>();
+  signals = {
+    onDrag: new Signal<[Vector2]>(),
+    onDragEnd: new Signal<[Vector2]>(),
+  };
 
   constructor(
     private circle: Circle,
@@ -30,10 +33,13 @@ export class Handle {
 
   private onDragMove = (e: FederatedPointerEvent) => {
     const localP = this.circle.worldToLocal({ x: e.globalX, y: e.globalY });
-    this.onDrag.emit(localP);
+    this.signals.onDrag.emit(localP);
   };
 
   private onDragEnd = (e: FederatedPointerEvent) => {
     this.circle.ownerCanvas.root.removeEventListener('pointermove', this.onDragMove);
+    const localP = this.circle.worldToLocal({ x: e.globalX, y: e.globalY });
+    this.signals.onDrag.emit(localP);
+    this.signals.onDragEnd.emit(localP);
   };
 }

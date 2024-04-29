@@ -17,6 +17,7 @@ export class CanvasKitRendererPlguin implements IRenderingPlugin {
       [Shape.Curve]: new CurveRenderer(),
       [Shape.Group]: undefined,
       [Shape.Line]: undefined,
+      [Shape.Polygon]: undefined,
     };
 
     this.styleRendererFactory = styleRendererFactory;

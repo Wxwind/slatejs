@@ -1,4 +1,4 @@
-import { debounce, isNil, isString } from '@/util';
+import { ShapeCtor, debounce, isNil, isString } from '@/util';
 import {
   CanvasConfig,
   CanvasContext,
@@ -189,8 +189,8 @@ export class DeerCanvas implements ICanvas {
   };
 
   createElement = <T extends DisplayObject, StyleProps extends BaseStyleProps>(
-    ctor: new (config: DisplayObjectConfig<StyleProps>) => T,
-    config: DisplayObjectConfig<StyleProps>
+    ctor: new (config: ShapeCtor<StyleProps>) => T,
+    config: ShapeCtor<StyleProps>
   ) => {
     const obj = new ctor(config);
     obj.ownerCanvas = this;
