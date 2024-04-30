@@ -33,6 +33,8 @@ const DEFAULT_CURVE_CONFIG: CurveStyleProps = {
   },
 };
 
+const EPSILON = 10e-4;
+
 export interface CurveStyleProps extends BaseStyleProps {
   disable?: boolean;
   lineStyle: Partial<LineStyleProps>;
@@ -161,6 +163,7 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         const inHandle = new Handle(circle);
         inHandle.signals.onDrag.on((pos) => {
           const index = curve.keys.findIndex((a) => a === key);
+          if (pos.x >= key.time) pos.x = key.time - EPSILON;
           key.inTangent = (pos.y - key.value) / (pos.x - key.time);
           key.inWeight = length(pos.x - key.time, pos.y - key.value);
           curve.moveKey(index, key);
@@ -203,9 +206,9 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         });
 
         keyHandle.signals.onDrag.on((pos) => {
-          const angle = Math.atan(key.inTangent);
+          const angle = Math.atan(key.outTangent);
           const x = pos.x + Math.cos(angle) * key.outWeight;
-          const y = pos.y + Math.sin(angle) * key.outTangent;
+          const y = pos.y + Math.sin(angle) * key.outWeight;
           outLine.setOptions({ begin: { x, y }, end: pos });
           circle.setOptions({ center: { x, y } });
         });
@@ -219,6 +222,7 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         const outHandle = new Handle(circle);
         outHandle.signals.onDrag.on((pos) => {
           const index = curve.keys.findIndex((a) => a === key);
+          if (pos.x <= key.time) pos.x = key.time + EPSILON;
           key.outTangent = (pos.y - key.value) / (pos.x - key.time);
           key.outWeight = length(pos.x - key.time, pos.y - key.value);
           curve.moveKey(index, key);
