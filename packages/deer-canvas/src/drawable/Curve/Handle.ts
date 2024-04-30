@@ -1,7 +1,7 @@
 import { Circle, CircleStyleProps } from '../Circle';
 import { FederatedPointerEvent } from '../../events';
 import { Vector2 } from '../../util';
-import { Signal } from 'deer-engine';
+import { Signal } from '@/packages/signal';
 
 export class Handle {
   signals = {

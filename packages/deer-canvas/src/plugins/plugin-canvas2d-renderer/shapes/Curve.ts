@@ -91,7 +91,6 @@ export class CurveRenderer implements StyleRenderer {
           break;
       }
 
-      ctx.lineWidth = 0.05;
       ctx.stroke();
     }
   };

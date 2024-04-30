@@ -1,8 +1,7 @@
 import { DisplayObject } from '../core/DisplayObject';
-import { ShapeCtor, Vector2, distance, merge } from '../util';
+import { ShapeCtor, Vector2, distance, merge, genUUID } from '../util';
 import { BaseStyleProps } from '../interface';
 import { Shape } from '@/types';
-import { genUUID } from 'deer-engine';
 
 const DEFAULT_CIRCLE_CONFIG: CircleStyleProps = {
   center: { x: 0, y: 0 },

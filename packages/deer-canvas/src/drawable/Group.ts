@@ -1,8 +1,7 @@
 import { DisplayObject } from '../core/DisplayObject';
-import { DeepPartial, ShapeCtor, Vector2, merge } from '../util';
+import { genUUID, ShapeCtor, Vector2, merge } from '../util';
 import { Shape } from '@/types';
-import { BaseStyleProps, DisplayObjectConfig } from '@/interface';
-import { genUUID } from 'deer-engine';
+import { BaseStyleProps } from '@/interface';
 
 const DEFAULT_GROUP_CONFIG = {
   center: { x: 0, y: 0 },

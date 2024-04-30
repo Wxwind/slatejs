@@ -41,7 +41,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
   fontSize = 8;
   fontFamily = 'monospace';
   fontWeight = 100;
-  textColor = '#00000080';
+  textColor = '#757881';
   gridSubkeyColor = '#CCCCCC20';
   gridKeyColor = '#CCCCCC40';
 

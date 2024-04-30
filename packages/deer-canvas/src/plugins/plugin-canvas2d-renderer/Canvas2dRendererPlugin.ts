@@ -8,6 +8,7 @@ import { CurveRenderer } from './shapes/Curve';
 import { isNil } from '@/util';
 
 export type Canvas2DRendererPluginOpts = {
+  /** temporary way to make compatibility with Coordinate plugin */
   forceSkipClear: boolean;
 };
 
@@ -130,11 +131,11 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
   };
 
   private applyStyle = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {
-    const { opacity, fillStyle, strokeStyle: stokeStyle, lineWidth } = object.style;
+    const { opacity, fillStyle, strokeStyle, lineWidth } = object.style;
 
     if (!isNil(opacity)) ctx.globalAlpha = opacity;
     if (!isNil(fillStyle)) ctx.fillStyle = fillStyle;
-    if (!isNil(stokeStyle)) ctx.strokeStyle = stokeStyle;
+    if (!isNil(strokeStyle)) ctx.strokeStyle = strokeStyle;
     if (!isNil(lineWidth)) ctx.lineWidth = lineWidth;
   };
 }

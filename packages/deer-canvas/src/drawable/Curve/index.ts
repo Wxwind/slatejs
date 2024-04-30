@@ -3,19 +3,18 @@ import {
   AnimationCurveJson,
   InterpMode,
   Keyframe,
-  Signal,
   TangentMode,
-  genUUID,
   isInWeightEnabled,
   isOutWeightEnabled,
 } from 'deer-engine';
-import { DisplayObject } from '../../core/DisplayObject';
-import { ShapeCtor, Vector2, isNil, length, merge } from '../../util';
+import { DisplayObject } from '@/core/DisplayObject';
+import { ShapeCtor, Vector2, isNil, length, merge, genUUID } from '@/util';
 import { Handle } from './Handle';
 import { ContextMenuType, Shape } from '@/types';
 import { Circle, CircleStyleProps } from '../Circle';
 import { Line, LineStyleProps } from '../Line';
 import { BaseStyleProps } from '@/interface';
+import { Signal } from '@/packages/signal';
 
 const DEFAULT_CURVE_CONFIG: CurveStyleProps = {
   disable: false,
@@ -68,7 +67,7 @@ export class Curve extends DisplayObject<CurveStyleProps> {
     if (isNil(curve)) return;
     for (let j = 0; j < curve.keys.length; j += 1) {
       const key = curve.keys[j];
-      this.createHandle(curve, key);
+      !this.style.disable && this.createHandle(curve, key);
     }
   };
 

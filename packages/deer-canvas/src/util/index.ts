@@ -5,3 +5,4 @@ export * from './platform';
 export * from './debounce';
 export * from './object';
 export * from './gymnastics';
+export * from './uuid';

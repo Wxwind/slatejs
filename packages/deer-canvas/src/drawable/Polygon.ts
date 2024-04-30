@@ -1,8 +1,7 @@
-import { ShapeCtor, merge } from '@/util';
+import { ShapeCtor, merge, genUUID } from '@/util';
 import { DisplayObject } from '../core/DisplayObject';
 import { Vector2, isPointInShape } from '../util/math';
 import { BaseStyleProps } from '@/interface';
-import { genUUID } from 'deer-engine';
 import { Shape } from '..';
 
 const DEFAULT_POLYGON_CONFIG: PolygonStyleProps = {

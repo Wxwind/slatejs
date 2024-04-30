@@ -512,13 +512,13 @@ export class Camera implements ICamera {
     let top = this.boxTop / this.zoom;
     let bottom = this.boxBottom / this.zoom;
 
-    console.log(
-      'before setOrthographic, left=%s, right=%s, top=%s bottom=%s',
-      l + this.position[0],
-      r + this.position[0],
-      t + this.position[1],
-      b + this.position[1]
-    );
+    // console.log(
+    //   'before setOrthographic, left=%s, right=%s, top=%s bottom=%s',
+    //   l + this.position[0],
+    //   r + this.position[0],
+    //   t + this.position[1],
+    //   b + this.position[1]
+    // );
 
     // TODO: support view
     if (this.view?.enabled) {
@@ -548,7 +548,7 @@ export class Camera implements ICamera {
     return this;
   };
 
-  setPosition = (x: number | vec2 | vec3, y?: number, z?: number) => {
+  setPosition = (x: number | vec2 | vec3, y?: number, z = this.position[2]) => {
     this._setPosition(x, y, z);
     this.setFocalPoint(this.focalPoint);
 
@@ -560,7 +560,7 @@ export class Camera implements ICamera {
    *
    * Note: If the camera is doing cinematic tracking, the up vector will be affected.
    */
-  setFocalPoint = (x: number | vec2 | vec3, y?: number, z?: number) => {
+  setFocalPoint = (x: number | vec2 | vec3, y?: number, z = this.focalPoint[2]) => {
     let up = vec3.fromValues(0, 1, 0);
     this.focalPoint = createVec3(x, y, z);
 

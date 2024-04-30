@@ -31,13 +31,13 @@
     "@rollup/plugin-babel": "^6.0.4",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
+    "@types/lodash": "^4.14.202",
+    "@types/three": "^0.157.2",
+    "@types/uuid": "^9.0.6",
     "eslint": "^8.52.0"
   },
   "dependencies": {
     "@babel/cli": "^7.23.4",
-    "@types/lodash": "^4.14.202",
-    "@types/three": "^0.157.2",
-    "@types/uuid": "^9.0.6",
     "fflate": "^0.8.1",
     "lodash": "^4.17.21",
     "three": "^0.157.0",

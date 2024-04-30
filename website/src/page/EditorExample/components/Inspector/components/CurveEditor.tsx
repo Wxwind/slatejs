@@ -2,7 +2,7 @@ import { ContextListItem } from '@/components';
 import { DeerCanvas, Curve, ContextMenuType } from 'deer-canvas';
 import { ActionClip, AnimationCurve, InterpMode, Keyframe } from 'deer-engine';
 import { useEffect, useState } from 'react';
-import { Dropdown, Menu } from '@arco-design/web-react';
+import { Dropdown, Menu, Trigger } from '@arco-design/web-react';
 
 interface CurveEditorProps {
   selectedClip: ActionClip | undefined;
@@ -18,7 +18,9 @@ export function CurveEditor(props: CurveEditorProps) {
     const container = document.getElementById('curve-editor')!;
     const curvesEditor = new DeerCanvas({ container, width: 300, height: 400, devicePixelRatio: 2 });
     setCurvesEditor(curvesEditor);
-
+    const camera = curvesEditor.camera;
+    // camera.setPosition(1 * 32, 1 * 32);
+    // camera.setFocalPoint(1 * 32, 1 * 32);
     curvesEditor.eventEmitter.addListener('DisplayObjectContextMenu', (e, key, type) => {
       if (type === ContextMenuType.Handle) {
         setContextList([
@@ -83,7 +85,11 @@ export function CurveEditor(props: CurveEditorProps) {
     c2.addKey(k5);
     curves.push(c2);
     curves.forEach((curve) => {
-      const c = curvesEditor.createElement(Curve, {});
+      const c = curvesEditor.createElement(Curve, {
+        style: {
+          lineWidth: 0.05,
+        },
+      });
       curvesEditor.root.addChild(c);
       c.signals.curvesChanged.addListener(() => {
         selectedClip?.animatedData.signals.updated.emit();

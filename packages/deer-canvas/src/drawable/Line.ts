@@ -1,9 +1,8 @@
 import { DisplayObject } from '../core/DisplayObject';
-import { DeepPartial, ShapeCtor, Vector2, pointToSegment } from '../util';
+import { genUUID, ShapeCtor, Vector2, pointToSegment } from '../util';
 import { Shape } from '@/types';
-import { BaseStyleProps, DisplayObjectConfig } from '@/interface';
+import { BaseStyleProps } from '@/interface';
 import { merge } from '@/util';
-import { genUUID } from 'deer-engine';
 
 const DEFAULT_LINE_CONFIG: LineStyleProps = {
   begin: { x: 0, y: 0 },
