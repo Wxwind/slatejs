@@ -319,7 +319,7 @@ export class AnimationCurve {
     const coeff0 = 0;
     const coeff1 = 3 * u1x;
     const coeff2 = 3 * u2x - 6 * u1x;
-    const coeff3 = 3 * (u2x - u1x) + 1;
+    const coeff3 = 3 * (u1x - u2x) + 1;
 
     const solutions: [number, number, number] = [0, 0, 0];
     // get the t of besizer value which cubic(t).x = t
