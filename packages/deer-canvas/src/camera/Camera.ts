@@ -437,11 +437,19 @@ export class Camera implements ICamera {
   /** change the viewbox to be focus to viewportPoint */
   setZoomByScroll = (zoom: number, viewportPoint: vec2) => {
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
-    console.log('mouse pos: %s, %s, world pos: %s, %s', viewportPoint[0], viewportPoint[1], x, y);
-    const absl = this.position[0] + this.boxLeft;
-    const absr = this.position[0] + this.boxRight;
-    const abst = this.position[1] + this.boxTop;
-    const absb = this.position[1] + this.boxBottom;
+    // console.log(
+    //   'zoom: %s, mouse pos: %s, %s, world pos: %s, %s',
+    //   zoom,
+    //   viewportPoint[0],
+    //   viewportPoint[1],
+    //   x / 32,
+    //   y / 32
+    // );
+
+    const absl = this.position[0] + this.boxLeft / zoom;
+    const absr = this.position[0] + this.boxRight / zoom;
+    const abst = this.position[1] + this.boxTop / zoom;
+    const absb = this.position[1] + this.boxBottom / zoom;
 
     const roll = this.roll;
     this.rotate(0, 0, -roll);
@@ -450,10 +458,10 @@ export class Camera implements ICamera {
     this.setZoom(zoom);
     this.rotate(0, 0, roll);
 
-    const l = absl - this.position[0];
-    const r = absr - this.position[0];
-    const t = abst - this.position[1];
-    const b = absb - this.position[1];
+    const l = (absl - this.position[0]) * zoom;
+    const r = (absr - this.position[0]) * zoom;
+    const t = (abst - this.position[1]) * zoom;
+    const b = (absb - this.position[1]) * zoom;
 
     this.setOrthographic(l, r, t, b, this.near, this.far);
 

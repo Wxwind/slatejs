@@ -11,6 +11,7 @@ import {
 } from './Keyframe';
 import { solveCubic } from './soleveCubic';
 import { egclass, property } from '../data';
+import { Signal } from '@/packages/signal';
 
 export enum AnimationCurveExtrapolation {
   Linaer = 'Linaer',
@@ -46,6 +47,10 @@ export class AnimationCurve {
   @property({ type: String })
   postExtrapolation: AnimationCurveExtrapolation;
 
+  signals = {
+    curveChanged: new Signal(),
+  };
+
   public get length() {
     return this.keys.length;
   }
@@ -77,6 +82,7 @@ export class AnimationCurve {
     let index: number = 0;
     for (; index < this.keys.length && keyframe.time > this.keys[index].time; index++);
     this.keys.splice(index, 0, keyframe);
+    this.signals.curveChanged.emit();
     return index;
   };
 
@@ -88,10 +94,12 @@ export class AnimationCurve {
   moveKey = (index: number, key: Keyframe) => {
     this.keys.splice(index, 1);
     this.addKey(key);
+    this.signals.curveChanged.emit();
   };
 
   removeKey = (index: number) => {
     this.keys.splice(index, 1);
+    this.signals.curveChanged.emit();
   };
 
   setKeyTangentMode = (index: number, mode: TangentMode) => {
@@ -237,6 +245,7 @@ export class AnimationCurve {
         const p0 = key1.value;
         const p3 = key2.value;
 
+        // use hermite curve if not weighted.
         if (isNotWeighted(key1, key2)) {
           // Hermite to Beizer
           // p0 = q0
@@ -247,7 +256,7 @@ export class AnimationCurve {
           // ps: we (unreal / cocos) use t directly as x which hermite(t) = (x,y)
           // they are equivalent.
           // @see: https://math.stackexchange.com/questions/4128882/nonparametric-hermite-cubic-to-bezier-curve
-          // @see: https://www.desmos.com/calculator/xab4fkksud
+          // @see: https://www.desmos.com/calculator/meiiosqvvt
           const oneThird = 1 / 3;
           // p1 = (key1.time + dt * oneThird, key1.value + key1.outTangent * dt * oneThird)
           const p1 = p0 + key1.outTangent * dt * oneThird;

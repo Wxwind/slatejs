@@ -47,7 +47,6 @@ export class Curve extends DisplayObject<CurveStyleProps> {
   curve: AnimationCurve | undefined;
 
   signals = {
-    curvesChanged: new Signal(),
     onDragEnd: new Signal<[AnimationCurveJson | undefined]>(),
   };
 
@@ -105,7 +104,6 @@ export class Curve extends DisplayObject<CurveStyleProps> {
       key.value = pos.y;
       curve.moveKey(index, key);
       keyHandle.setOptions({ center: pos });
-      this.signals.curvesChanged.emit();
     });
     keyHandle.signals.onDragEnd.on(() => {
       this.signals.onDragEnd.emit(this.curve?.toJSON());
@@ -169,7 +167,6 @@ export class Curve extends DisplayObject<CurveStyleProps> {
           curve.moveKey(index, key);
           inHandle.setOptions({ center: pos });
           inLine.setOptions({ begin: pos });
-          this.signals.curvesChanged.emit();
         });
         inHandle.signals.onDragEnd.on(() => {
           this.signals.onDragEnd.emit(this.curve?.toJSON());
@@ -228,7 +225,6 @@ export class Curve extends DisplayObject<CurveStyleProps> {
           curve.moveKey(index, key);
           outHandle.setOptions({ center: pos });
           outLine.setOptions({ begin: pos });
-          this.signals.curvesChanged.emit();
         });
         outHandle.signals.onDragEnd.on(() => {
           this.signals.onDragEnd.emit(this.curve?.toJSON());

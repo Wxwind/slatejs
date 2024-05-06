@@ -4,7 +4,7 @@ import { ContextSystem } from '@/systems';
 import { vec2 } from 'gl-matrix';
 
 export interface RulerScale {
-  num: number;
+  num: number | string;
 
   position: number;
   isPrimaryKey: boolean;
@@ -141,16 +141,22 @@ export class CoordinatePlugin implements IRenderingPlugin {
     //   scale
     // );
 
-    const keyUnit = 1;
+    const be = e - b;
+    let keyUnit = Math.pow(10, Math.ceil(Math.log10(be)) - 1);
+    if (be < 0.1) keyUnit = 0.01;
+    else if (be < 0.5) keyUnit = 0.05;
+    else if (be < 1) keyUnit = 0.1;
+
+    // console.log(flip ? 'y' : 'x', 'e-b', e - b, Math.log10(e - b), keyUnit);
     for (let i = b, j = 0; i <= e; i += keyUnit, j++) {
       list.push({
-        num: i,
+        num: keyUnit < 1 ? i.toFixed(2) : i,
         position: flip ? length - (j * step * keyUnit - offset) : j * step * keyUnit - offset,
         isPrimaryKey: true,
       });
       const subi = j * keyUnit + keyUnit / 2;
       list.push({
-        num: subi,
+        num: keyUnit < 1 ? subi.toFixed(2) : subi,
         position: flip ? length - (subi * step - offset) : subi * step - offset,
         isPrimaryKey: false,
       });

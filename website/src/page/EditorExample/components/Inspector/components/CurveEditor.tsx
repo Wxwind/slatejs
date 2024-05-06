@@ -91,7 +91,7 @@ export function CurveEditor(props: CurveEditorProps) {
         },
       });
       curvesEditor.root.addChild(c);
-      c.signals.curvesChanged.addListener(() => {
+      curve.signals.curveChanged.addListener(() => {
         selectedClip?.animatedData.signals.updated.emit();
       });
       c.setCurve(curve);

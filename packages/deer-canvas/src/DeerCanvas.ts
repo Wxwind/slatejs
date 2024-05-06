@@ -39,7 +39,7 @@ export class DeerCanvas implements ICanvas {
 
   eventEmitter = new EventEmitter<CanvasGlobalEventMap>();
 
-  constructor(options: CanvasConfig) {
+  constructor(options: CanvasConfig, plugins?: IRenderingPlugin[]) {
     const {
       container,
       canvasEl,
@@ -105,7 +105,7 @@ export class DeerCanvas implements ICanvas {
 
     this.initCamera(canvasWidth, canvasHeight, ClipSpaceNearZ.NEGATIVE_ONE);
 
-    this.initRenderer();
+    this.initRenderer(plugins || []);
 
     const debouncedResize = debounce(this.resize);
 
@@ -139,7 +139,7 @@ export class DeerCanvas implements ICanvas {
     this.context.camera = camera;
   };
 
-  private initRenderer = () => {
+  private initRenderer = (plugins: IRenderingPlugin[]) => {
     this.context.renderingSystem = new RenderingSystem(this.context);
     this.context.eventSystem = new EventSystem(this.context);
     this.context.contextSystem = new Canvas2DContextSystem(this.context);
@@ -148,24 +148,25 @@ export class DeerCanvas implements ICanvas {
 
     if (this.context.contextSystem.init) {
       this.context.contextSystem.init();
-      this.initRenderingSystem();
+      this.initRenderingSystem(plugins);
     } else if (this.context.contextSystem.initAsync) {
       this.context.contextSystem.initAsync().then(() => {
-        this.initRenderingSystem();
+        this.initRenderingSystem(plugins);
       });
     } else {
       throw new Error('contextSystem must has init() or initAsync()');
     }
   };
 
-  private initRenderingSystem = () => {
+  private initRenderingSystem = (plugins: IRenderingPlugin[]) => {
     // plugins.apply will hook to renderSystem.hooks
     this.plugins.push(
       new EventPlugin(),
       new CullingPlugin(),
       new Canvas2DRendererPlugin({ forceSkipClear: true }),
       new CoordinatePlugin(),
-      new ControlPlugin()
+      new ControlPlugin(),
+      ...plugins
     );
     this.plugins.forEach((a) => a.apply(this.context));
 
