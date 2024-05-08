@@ -1,6 +1,3 @@
-import { Vector2 } from 'canvaskit-wasm';
-import { distance } from './Vector2';
-
 export class Point {
   x = 0;
   y = 0;

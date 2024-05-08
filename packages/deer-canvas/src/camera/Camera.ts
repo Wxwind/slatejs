@@ -53,7 +53,8 @@ export class Camera implements ICamera {
   protected boxTop = 0;
   protected boxBottom = 0;
 
-  protected zoom = 1;
+  /** vec2 for othographic, number for perspective (vec2[0]). */
+  protected zoom: vec2 = [1, 1];
 
   // Axes (left hands)
   /**
@@ -410,7 +411,7 @@ export class Camera implements ICamera {
     return this;
   };
 
-  setZoom = (zoom: number) => {
+  setZoom = (zoom: vec2) => {
     this.zoom = zoom;
     if (this.projectionMode === CameraProjectionMode.PERSPECTIVE) {
       this.setPerspective(this.near, this.far, this.fov, this.aspect);
@@ -421,7 +422,7 @@ export class Camera implements ICamera {
   };
 
   /** not make change of camera's viewbox */
-  setZoomByViewportPoint = (zoom: number, viewportPoint: vec2) => {
+  setZoomByViewportPoint = (zoom: vec2, viewportPoint: vec2) => {
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
 
     const roll = this.roll;
@@ -435,21 +436,13 @@ export class Camera implements ICamera {
   };
 
   /** change the viewbox to be focus to viewportPoint */
-  setZoomByScroll = (zoom: number, viewportPoint: vec2) => {
+  setZoomByScroll = (zoom: vec2, viewportPoint: vec2) => {
     const { x, y } = this.canvas.viewport2Canvas({ x: viewportPoint[0], y: viewportPoint[1] });
-    // console.log(
-    //   'zoom: %s, mouse pos: %s, %s, world pos: %s, %s',
-    //   zoom,
-    //   viewportPoint[0],
-    //   viewportPoint[1],
-    //   x / 32,
-    //   y / 32
-    // );
 
-    const absl = this.position[0] + this.boxLeft / zoom;
-    const absr = this.position[0] + this.boxRight / zoom;
-    const abst = this.position[1] + this.boxTop / zoom;
-    const absb = this.position[1] + this.boxBottom / zoom;
+    const absl = this.position[0] + this.boxLeft / zoom[0];
+    const absr = this.position[0] + this.boxRight / zoom[0];
+    const abst = this.position[1] + this.boxTop / zoom[1];
+    const absb = this.position[1] + this.boxBottom / zoom[1];
 
     const roll = this.roll;
     this.rotate(0, 0, -roll);
@@ -458,10 +451,10 @@ export class Camera implements ICamera {
     this.setZoom(zoom);
     this.rotate(0, 0, roll);
 
-    const l = (absl - this.position[0]) * zoom;
-    const r = (absr - this.position[0]) * zoom;
-    const t = (abst - this.position[1]) * zoom;
-    const b = (absb - this.position[1]) * zoom;
+    const l = (absl - this.position[0]) * zoom[0];
+    const r = (absr - this.position[0]) * zoom[0];
+    const t = (abst - this.position[1]) * zoom[1];
+    const b = (absb - this.position[1]) * zoom[1];
 
     this.setOrthographic(l, r, t, b, this.near, this.far);
 
@@ -475,7 +468,7 @@ export class Camera implements ICamera {
     this.far = far;
     this.aspect = aspect;
 
-    let top = (this.near * Math.tan(deg2rad(0.5 * this.fov))) / this.zoom;
+    let top = (this.near * Math.tan(deg2rad(0.5 * this.fov))) / this.zoom[0];
     let height = 2 * top;
     let width = this.aspect * height;
     let left = -0.5 * width;
@@ -506,7 +499,7 @@ export class Camera implements ICamera {
     return this;
   };
 
-  setOrthographic = (l: number, r: number, t: number, b: number, near: number, far: number) => {
+  setOrthographic = (l: number, r: number, t: number, b: number, near = this.near, far = this.far) => {
     this.projectionMode = CameraProjectionMode.ORTHOGRAPHIC;
     this.boxRight = r;
     this.boxLeft = l;
@@ -515,23 +508,23 @@ export class Camera implements ICamera {
     this.near = near;
     this.far = far;
 
-    let left = this.boxLeft / this.zoom;
-    let right = this.boxRight / this.zoom;
-    let top = this.boxTop / this.zoom;
-    let bottom = this.boxBottom / this.zoom;
+    let left = this.boxLeft / this.zoom[0];
+    let right = this.boxRight / this.zoom[0];
+    let top = this.boxTop / this.zoom[1];
+    let bottom = this.boxBottom / this.zoom[1];
 
     // console.log(
     //   'before setOrthographic, left=%s, right=%s, top=%s bottom=%s',
     //   l + this.position[0],
     //   r + this.position[0],
     //   t + this.position[1],
-    //   b + this.position[1]
+    //   b + this.position[1],
     // );
 
     // TODO: support view
     if (this.view?.enabled) {
-      const scaleW = (this.boxRight - this.boxLeft) / this.view.fullWidth / this.zoom;
-      const scaleH = (this.boxTop - this.boxBottom) / this.view.fullHeight / this.zoom;
+      const scaleW = (this.boxRight - this.boxLeft) / this.view.fullWidth / this.zoom[0];
+      const scaleH = (this.boxTop - this.boxBottom) / this.view.fullHeight / this.zoom[1];
 
       left += scaleW * this.view.offsetX;
       right = left + scaleW * this.view.width;
@@ -736,7 +729,7 @@ export class Camera implements ICamera {
    * Translate camera left to right and up to down.
    */
   pan = (tx: number, ty: number) => {
-    const coords = createVec3(tx / this.zoom, ty / this.zoom);
+    const coords = createVec3(tx / this.zoom[0], ty / this.zoom[1]);
     const pos = vec3.clone(this.position);
 
     vec3.add(pos, pos, vec3.scale(vec3.create(), this.right, coords[0]));
@@ -792,7 +785,7 @@ export class Camera implements ICamera {
     params: Partial<{
       position: vec3 | vec2;
       focalPoint: vec3 | vec2;
-      zoom: number;
+      zoom: vec2;
       roll: number;
     }> = {}
   ) => {

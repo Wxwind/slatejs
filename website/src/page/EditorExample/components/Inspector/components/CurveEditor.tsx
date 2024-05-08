@@ -19,8 +19,9 @@ export function CurveEditor(props: CurveEditorProps) {
     const curvesEditor = new DeerCanvas({ container, width: 300, height: 400, devicePixelRatio: 2 });
     setCurvesEditor(curvesEditor);
     const camera = curvesEditor.camera;
-    // camera.setPosition(1 * 32, 1 * 32);
-    // camera.setFocalPoint(1 * 32, 1 * 32);
+    camera.setPosition(4, 5);
+    camera.setFocalPoint(4, 5);
+    camera.setZoom([32, 32]);
     curvesEditor.eventEmitter.addListener('DisplayObjectContextMenu', (e, key, type) => {
       if (type === ContextMenuType.Handle) {
         setContextList([

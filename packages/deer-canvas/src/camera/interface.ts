@@ -110,13 +110,14 @@ export interface ICamera {
   get DollyingStep(): number;
   get Near(): number;
   get Far(): number;
-  get Zoom(): number;
+  get Zoom(): vec2;
   get Azimuth(): number;
   get Elevation(): number;
   get Roll(): number;
 
   get View(): View;
 
+  /** Set true if want to set let-bottom to origin. Make sure viewport hasn't been stretched */
   setFlipY: (bool: boolean) => void;
   get FlipY(): boolean;
 
@@ -138,11 +139,11 @@ export interface ICamera {
   setFar: (far: number) => this;
   setViewOffset: (fullWidth: number, fullHeight: number, x: number, y: number, width: number, height: number) => this;
   clearViewOffset: () => this;
-  setZoom: (zoom: number) => this;
-  setZoomByViewportPoint: (zoom: number, viewportPoint: vec2) => this;
-  setZoomByScroll: (zoom: number, viewportPoint: vec2) => this;
+  setZoom: (zoom: vec2) => this;
+  setZoomByViewportPoint: (zoom: vec2, viewportPoint: vec2) => this;
+  setZoomByScroll: (zoom: vec2, viewportPoint: vec2) => this;
   setPerspective: (near: number, far: number, fov: number, aspect: number) => this;
-  setOrthographic: (l: number, r: number, t: number, b: number, near: number, far: number) => this;
+  setOrthographic: (l: number, r: number, t: number, b: number, near?: number, far?: number) => this;
   setPosition: (x: number | vec2 | vec3, y?: number, z?: number) => this;
   setFocalPoint: (x: number | vec2 | vec3, y?: number, z?: number) => this;
   setDistance: (d: number) => this;
@@ -161,7 +162,7 @@ export interface ICamera {
     params?: Partial<{
       position: vec3 | vec2;
       focalPoint: vec3 | vec2;
-      zoom: number;
+      zoom: vec2;
       roll: number;
     }>
   ) => Landmark;

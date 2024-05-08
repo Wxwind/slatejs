@@ -1,18 +1,16 @@
+import { vec2 } from 'gl-matrix';
 import { Camera } from '@/camera';
 import { CanvasContext, IRenderingPlugin } from '@/interface';
 import { ContextSystem } from '@/systems';
-import { vec2 } from 'gl-matrix';
 
 export interface RulerScale {
-  num: number | string;
+  num: number;
 
   position: number;
   isPrimaryKey: boolean;
 }
 
 export type CoordinatePluginOpts = {
-  cellSize: number;
-
   minstep: number;
   maxStep: number;
 
@@ -24,12 +22,12 @@ export type CoordinatePluginOpts = {
   textColor: string;
   gridSubkeyColor: string;
   gridKeyColor: string;
+
+  showCoordinate?: boolean;
 };
 
 export class CoordinatePlugin implements IRenderingPlugin {
   name = 'Coordinate';
-
-  cellSize = 32;
 
   minstep = 0.05 * 16;
   maxStep = 100 * 16;
@@ -46,10 +44,10 @@ export class CoordinatePlugin implements IRenderingPlugin {
   gridKeyColor = '#CCCCCC40';
 
   dpr = 1;
+  showCoordinate = true;
 
   constructor(opts?: Partial<CoordinatePluginOpts>) {
     if (opts) {
-      opts.cellSize && (this.cellSize = opts.cellSize);
       opts.minstep && (this.minstep = opts.minstep);
       opts.maxStep && (this.maxStep = opts.maxStep);
       opts.lineWidth && (this.lineWidth = opts.lineWidth);
@@ -59,38 +57,35 @@ export class CoordinatePlugin implements IRenderingPlugin {
       opts.textColor && (this.textColor = opts.textColor);
       opts.gridSubkeyColor && (this.gridSubkeyColor = opts.gridSubkeyColor);
       opts.gridKeyColor && (this.gridKeyColor = opts.gridKeyColor);
+      opts.showCoordinate && (this.showCoordinate = opts.showCoordinate);
     }
 
-    this.rulerTextOffset = [this.cellSize - 2, this.cellSize - 2];
+    this.rulerTextOffset = [32 - 2, 32 - 2];
   }
 
   apply = (context: CanvasContext) => {
     const { renderingSystem, renderingContext, camera, config, contextSystem } = context;
     const { devicePixelRatio } = config;
     this.dpr = devicePixelRatio;
-    const rootTransfrom = renderingContext.root.transform;
 
     renderingSystem.hooks.init.tap(() => {
       camera.setFlipY(true);
-
-      rootTransfrom.setLocalScale(this.cellSize, this.cellSize);
     });
 
-    renderingSystem.hooks.beforeRender.tap(() => {
+    const drawCoordinate = () => {
       const { width, height } = config;
       const ctx = (contextSystem as ContextSystem<CanvasRenderingContext2D>).getContext();
 
       const cam = camera as Camera;
       const zoom = cam.Zoom;
 
-      const cellSize = this.cellSize; // pixel per unit
-      const viewScaleX = cellSize * zoom; // fixed pixel per unit
-      const viewScaleY = cellSize * zoom;
+      const viewScaleX = zoom[0]; // fixed pixel per unit
+      const viewScaleY = zoom[1];
 
-      const left = cam.BoxLeft / zoom + cam.Position[0];
-      const right = cam.BoxRight / zoom + cam.Position[0];
-      const top = cam.BoxTop / zoom + cam.Position[1];
-      const bottom = cam.BoxBottom / zoom + cam.Position[1];
+      const left = cam.BoxLeft / zoom[0] + cam.Position[0];
+      const right = cam.BoxRight / zoom[0] + cam.Position[0];
+      const top = cam.BoxTop / zoom[1] + cam.Position[1];
+      const bottom = cam.BoxBottom / zoom[1] + cam.Position[1];
 
       const xList = this.calculateRulerScale(width, viewScaleX, false, left, right);
 
@@ -98,6 +93,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       ctx.save();
       ctx.scale(this.dpr, this.dpr);
       ctx.clearRect(0, 0, width, height);
+
       this.drawXRulerScale(ctx, xList, height);
       this.drawYRulerScale(ctx, yList);
 
@@ -108,6 +104,10 @@ export class CoordinatePlugin implements IRenderingPlugin {
         height,
       });
       ctx.restore();
+    };
+
+    renderingSystem.hooks.beforeRender.tap(() => {
+      this.showCoordinate && drawCoordinate();
     });
   };
 
@@ -127,9 +127,9 @@ export class CoordinatePlugin implements IRenderingPlugin {
     //  const step = clamp(scale, this.minstep, this.maxStep);
     const step = scale;
 
-    const b = Math.floor(begin / this.cellSize); // begin num
-    const e = Math.ceil(end / 32); // end num
-    const offset = (begin / 32 - Math.floor(begin / 32)) * step; // offset of begin num
+    const b = Math.floor(begin); // begin num
+    const e = Math.ceil(end); // end num
+    const offset = (begin - Math.floor(begin)) * step; // offset of begin num
 
     // console.log(
     //   'axis: %s, number from %s to %s, offset from %s to %s, scale: %s',
@@ -141,22 +141,16 @@ export class CoordinatePlugin implements IRenderingPlugin {
     //   scale
     // );
 
-    const be = e - b;
-    let keyUnit = Math.pow(10, Math.ceil(Math.log10(be)) - 1);
-    if (be < 0.1) keyUnit = 0.01;
-    else if (be < 0.5) keyUnit = 0.05;
-    else if (be < 1) keyUnit = 0.1;
-
-    // console.log(flip ? 'y' : 'x', 'e-b', e - b, Math.log10(e - b), keyUnit);
+    const keyUnit = 1;
     for (let i = b, j = 0; i <= e; i += keyUnit, j++) {
       list.push({
-        num: keyUnit < 1 ? i.toFixed(2) : i,
+        num: i,
         position: flip ? length - (j * step * keyUnit - offset) : j * step * keyUnit - offset,
         isPrimaryKey: true,
       });
       const subi = j * keyUnit + keyUnit / 2;
       list.push({
-        num: keyUnit < 1 ? subi.toFixed(2) : subi,
+        num: subi,
         position: flip ? length - (subi * step - offset) : subi * step - offset,
         isPrimaryKey: false,
       });

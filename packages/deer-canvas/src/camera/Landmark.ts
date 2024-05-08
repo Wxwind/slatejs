@@ -1,4 +1,4 @@
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec2, vec3 } from 'gl-matrix';
 
 export interface Landmark {
   name: string;
@@ -15,5 +15,5 @@ export interface Landmark {
   elevation: number;
   roll: number;
   dollyingStep: number;
-  zoom: number;
+  zoom: vec2;
 }
