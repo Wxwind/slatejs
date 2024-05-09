@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-
-import { FederatedPointerEvent } from '@/events';
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { FederatedMouseEvent } from '@/events';
+
 const getGlobalThis = () => {
   if (typeof self !== 'undefined') return self;
   if (typeof window !== 'undefined') return window;
@@ -31,7 +30,7 @@ export const ctrlKeyStr = isMac ? '⌘' : 'Ctrl';
 export const shiftKeyStr = isMac ? '⇧' : 'Shift';
 export const deleteKeyStr = isMac ? 'Backspace' : 'Delete';
 
-export const isCtrlKey = (e: KeyboardEvent | FederatedPointerEvent): boolean => (isMac ? e.metaKey : e.ctrlKey);
+export const isCtrlKey = (e: KeyboardEvent | FederatedMouseEvent): boolean => (isMac ? e.metaKey : e.ctrlKey);
 export const isDeleteKey = (e: KeyboardEvent): boolean => (isMac ? e.code === 'Backspace' : e.code === 'Delete');
 export const isInputTag = (el: HTMLElement): boolean => el.tagName === 'INPUT' || el.tagName === 'TEXTAREA';
 

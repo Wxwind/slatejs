@@ -1,4 +1,4 @@
-import { Point, clamp } from '@/util';
+import { Point, clamp, isCtrlKey } from '@/util';
 import { CanvasContext, IRenderingPlugin } from '../interface';
 import Hammer from 'hammerjs';
 import { FederatedWheelEvent } from '@/events/FederatedWheelEvent';
@@ -95,7 +95,12 @@ export class ControlPlugin implements IRenderingPlugin {
 
   private onScroll = (e: FederatedWheelEvent) => {
     const { camera, config } = this.context;
-    const newZoom = clamp(camera.Zoom[1] + (e.deltaY * 1) / 100, 0.2, 50);
-    camera.setZoomByScroll([camera.Zoom[0], newZoom], [e.viewportX, e.viewportY]);
+    if (isCtrlKey(e)) {
+      const newZoom = clamp(camera.Zoom[0] + e.deltaY / 3, 32, 500);
+      camera.setZoomByScroll([newZoom, camera.Zoom[1]], [e.viewportX, e.viewportY]);
+    } else {
+      const newZoom = clamp(camera.Zoom[1] + e.deltaY / 3, 32, 500);
+      camera.setZoomByScroll([camera.Zoom[0], newZoom], [e.viewportX, e.viewportY]);
+    }
   };
 }
