@@ -1,7 +1,12 @@
-import { Point, clamp, isCtrlKey } from '@/util';
+import { Point, Vector2, clamp, isCtrlKey, isNil } from '@/util';
 import { CanvasContext, IRenderingPlugin } from '../interface';
-import Hammer from 'hammerjs';
+import Hammer, { merge } from 'hammerjs';
 import { FederatedWheelEvent } from '@/events/FederatedWheelEvent';
+
+export interface ControlPluginConfig {
+  minZoom?: number;
+  maxZoom?: number;
+}
 
 export class ControlPlugin implements IRenderingPlugin {
   name = 'Control';
@@ -13,6 +18,12 @@ export class ControlPlugin implements IRenderingPlugin {
   lastX = 0;
   lastY = 0;
   isMoving = false;
+
+  private config: ControlPluginConfig = {} as ControlPluginConfig;
+
+  constructor(config: ControlPluginConfig) {
+    this.config = config;
+  }
 
   apply(context: CanvasContext): void {
     this.context = context;
@@ -95,11 +106,19 @@ export class ControlPlugin implements IRenderingPlugin {
   private onScroll = (e: FederatedWheelEvent) => {
     const { camera, config } = this.context;
     if (isCtrlKey(e)) {
-      const newZoom = clamp(camera.Zoom[0] + e.deltaY / 3, 32, 500);
+      const newZoom = this.clampZoom(camera.Zoom[0] + e.deltaY / 3);
       camera.setZoomByScroll([newZoom, camera.Zoom[1]], [e.viewportX, e.viewportY]);
     } else {
-      const newZoom = clamp(camera.Zoom[1] + e.deltaY / 3, 32, 500);
+      const newZoom = this.clampZoom(camera.Zoom[1] + e.deltaY / 3);
       camera.setZoomByScroll([camera.Zoom[0], newZoom], [e.viewportX, e.viewportY]);
     }
+  };
+
+  private clampZoom = (zoom: number) => {
+    const min = this.config.minZoom;
+    const max = this.config.maxZoom;
+    let a = !isNil(min) ? Math.max(min, zoom) : zoom;
+    a = !isNil(max) ? Math.min(max, a) : a;
+    return a;
   };
 }

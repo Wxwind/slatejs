@@ -86,11 +86,7 @@ export function CurveEditor(props: CurveEditorProps) {
     c2.addKey(k5);
     curves.push(c2);
     curves.forEach((curve) => {
-      const c = curvesEditor.createElement(Curve, {
-        style: {
-          lineWidth: 1,
-        },
-      });
+      const c = curvesEditor.createElement(Curve, {});
       curvesEditor.root.addChild(c);
       curve.signals.curveChanged.addListener(() => {
         selectedClip?.animatedData.signals.updated.emit();

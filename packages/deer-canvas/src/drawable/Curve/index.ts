@@ -36,17 +36,19 @@ const DEFAULT_CURVE_CONFIG: CurveStyleProps = {
     radius: 3,
     hitBias: 2,
   },
-  lineWidth: 20,
+  lineWidth: 1,
 };
 
 const EPSILON = 10e-4;
-const LENGTH_FACTOR = 15;
+const LENGTH_FACTOR = 20; // 5 is initial zoom
 
 export interface CurveStyleProps extends BaseStyleProps {
   disable?: boolean;
   lineStyle: Partial<LineStyleProps>;
   handleStyle: Partial<CircleStyleProps>;
   keyStyle: Partial<CircleStyleProps>;
+  minX?: number;
+  maxX?: number;
 }
 
 export class Curve extends DisplayObject<CurveStyleProps> {
@@ -101,13 +103,14 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         },
       },
     });
-    keyCircle.sortable.renderOrder = 10; // 确保位于handle上方
+    keyCircle.sortable.renderOrder = 10; // display above the handle
     const keyHandle = new Handle(keyCircle, {
       onContextMenu: (e) => {
         keyCircle.ownerCanvas.eventEmitter.emit('DisplayObjectContextMenu', e, key, ContextMenuType.Handle);
       },
     });
     keyHandle.signals.onDrag.on((pos) => {
+      pos = this.clampPos(pos);
       const index = curve.keys.findIndex((a) => a === key);
       key.time = pos.x;
       key.value = pos.y;
@@ -126,9 +129,9 @@ export class Curve extends DisplayObject<CurveStyleProps> {
       const index = curve.keys.findIndex((a) => a === key);
       // draw left control
       if (isInWeightEnabled(key) && index !== 0) {
-        const angle = Math.atan((inTangent / camera.Zoom[1]) * camera.Zoom[0]);
+        const angle = Math.atan((inTangent * camera.Zoom[1]) / camera.Zoom[0]);
         const cx = -Math.cos(angle) * inWeight;
-        const cy = -Math.sin(angle) * inWeight;
+        const cy = Math.sin(angle) * inWeight;
 
         const inLine = this.ownerCanvas.createElement(Line, {
           name: 'in line',
@@ -157,6 +160,7 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         });
 
         keyHandle.signals.onDrag.on((pos) => {
+          pos = this.clampPos(pos);
           inLine.setOptions({ origin: { x: pos.x, y: pos.y } });
           inControlCircle.setOptions({ origin: { x: pos.x, y: pos.y } });
         });
@@ -202,9 +206,9 @@ export class Curve extends DisplayObject<CurveStyleProps> {
 
       // draw right control
       if (isOutWeightEnabled(key) && index !== curve.length - 1) {
-        const angle = Math.atan(outTangent);
+        const angle = Math.atan((outTangent * camera.Zoom[1]) / camera.Zoom[0]);
         const cx = Math.cos(angle) * outWeight;
-        const cy = Math.sin(angle) * outWeight;
+        const cy = -Math.sin(angle) * outWeight;
 
         const outLine = this.ownerCanvas.createElement(Line, {
           name: 'out line',
@@ -233,6 +237,7 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         });
 
         keyHandle.signals.onDrag.on((pos) => {
+          pos = this.clampPos(pos);
           outLine.setOptions({ origin: { x: pos.x, y: pos.y } });
           outControlCircle.setOptions({ origin: { x: pos.x, y: pos.y } });
         });
@@ -247,13 +252,14 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         outHandle.signals.onDrag.on((pos) => {
           const index = curve.keys.findIndex((a) => a === key);
           const real = canvas.canvas2Viewport({ x: key.time, y: key.value });
-          if (pos.x <= real.x) pos.x = real.x - EPSILON;
+          if (pos.x <= real.x) pos.x = real.x + EPSILON;
           // tangent is modified by camera's zoom
           const deltaY = pos.y - real.y;
           const deltaX = pos.x - real.x;
           const cameraScale = camera.Zoom[1] / camera.Zoom[0];
           key.outTangent = -deltaY / deltaX / cameraScale;
           key.outWeight = length(deltaX / LENGTH_FACTOR, deltaY / LENGTH_FACTOR);
+          console.log('key:', key.outTangent);
 
           curve.moveKey(index, key);
           outHandle.setOptions({ centerOffset: { x: deltaX, y: deltaY } });
@@ -275,6 +281,12 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         });
       }
     }
+  };
+
+  private clampPos = (pos: Vector2) => {
+    let x = !isNil(this.style.minX) ? Math.max(this.style.minX, pos.x + EPSILON) : pos.x;
+    x = !isNil(this.style.maxX) ? Math.min(this.style.maxX - EPSILON, x) : x;
+    return { x, y: pos.y };
   };
 
   isPointHit: (point: Vector2) => boolean = () => false;
