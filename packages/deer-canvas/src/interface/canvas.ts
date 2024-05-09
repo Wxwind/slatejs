@@ -43,6 +43,8 @@ export interface ICanvas {
   getContextSystem: () => ContextSystem;
 
   getConfig: () => ResolvedCanvasConfig;
+
+  getCamera: () => ICamera;
 }
 
 export interface CanvasContext {

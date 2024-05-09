@@ -259,6 +259,8 @@ export class DeerCanvas implements ICanvas {
 
   getConfig = () => this.context.config;
 
+  getCamera = () => this.camera;
+
   dispose = () => {
     //  this.resizeObserver.unobserve(this.container);
     this.container.removeChild(this.canvasEl);

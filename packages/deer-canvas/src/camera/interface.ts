@@ -59,6 +59,7 @@ export enum CameraTrackingMode {
 
 export enum CameraEvent {
   UPDATED = 'updated',
+  ZOOMED = 'zoomed',
 }
 
 export type View = {

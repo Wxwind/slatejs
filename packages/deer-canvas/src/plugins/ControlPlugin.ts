@@ -27,8 +27,7 @@ export class ControlPlugin implements IRenderingPlugin {
         return false;
       }
       const a = root.ownerCanvas.client2Viewport(new Point(e.clientX, e.clientY));
-      const { x: canvasX, y: canvasY } = root.ownerCanvas.viewport2Canvas(a);
-      const hitResult = context.eventSystem.hitTest(canvasX, canvasY);
+      const hitResult = context.eventSystem.hitTest(a.x, a.y);
       if (hitResult === root) {
         return true;
       }

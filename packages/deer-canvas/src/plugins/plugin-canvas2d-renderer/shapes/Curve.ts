@@ -10,34 +10,46 @@ import {
   Keyframe,
 } from 'deer-engine';
 import { isNil } from '@/util';
+import { CanvasContext } from '@/interface';
 
 export class CurveRenderer implements StyleRenderer {
-  render = (ctx: CanvasRenderingContext2D, object: DisplayObject) => {
+  render = (ctx: CanvasRenderingContext2D, object: DisplayObject, context: CanvasContext) => {
     const { curve } = object as Curve;
-    this.drawBezierCurve(curve, ctx);
+    this.drawBezierCurve(curve, ctx, context);
   };
 
-  private drawBezierCurve = (curve: AnimationCurve | undefined, ctx: CanvasRenderingContext2D) => {
+  private drawBezierCurve = (
+    curve: AnimationCurve | undefined,
+    ctx: CanvasRenderingContext2D,
+    context: CanvasContext
+  ) => {
     if (isNil(curve)) return;
     if (curve.keys.length === 0) return;
+    const canvas = context.renderingContext.root.ownerCanvas;
 
     ctx.beginPath();
     const key0 = curve.keys[0];
-    ctx.moveTo(key0.time, key0.value);
+    const a = canvas.canvas2Viewport({ x: key0.time, y: key0.value });
+    ctx.moveTo(a.x, a.y);
     const keys = curve.keys;
     for (let j = 1; j < curve.keys.length; j++) {
       const prevKey = keys[j - 1];
       const nowKey = keys[j];
 
       switch (prevKey.interpMode) {
-        case InterpMode.Constant:
-          ctx.lineTo(nowKey.time, prevKey.value);
-          ctx.lineTo(nowKey.time, nowKey.value);
+        case InterpMode.Constant: {
+          const a = canvas.canvas2Viewport({ x: nowKey.time, y: prevKey.value });
+          ctx.lineTo(a.x, a.y);
+          const b = canvas.canvas2Viewport({ x: nowKey.time, y: nowKey.value });
+          ctx.lineTo(b.x, b.y);
           break;
-        case InterpMode.Linaer:
-          ctx.lineTo(nowKey.time, nowKey.value);
+        }
+        case InterpMode.Linaer: {
+          const a = canvas.canvas2Viewport({ x: nowKey.time, y: nowKey.value });
+          ctx.lineTo(a.x, a.y);
           break;
-        case InterpMode.Cubic:
+        }
+        case InterpMode.Cubic: {
           // not weighted curve
           if (isNotWeighted(prevKey, nowKey)) {
             const dt = nowKey.time - prevKey.time;
@@ -48,7 +60,10 @@ export class CurveRenderer implements StyleRenderer {
             const p1y = prevKey.value + prevKey.outTangent * dt * oneThird;
             const p2y = nowKey.value - nowKey.inTangent * dt * oneThird;
 
-            ctx.bezierCurveTo(p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
+            const p1 = canvas.canvas2Viewport({ x: p1x, y: p1y });
+            const p2 = canvas.canvas2Viewport({ x: p2x, y: p2y });
+            const a = canvas.canvas2Viewport({ x: nowKey.time, y: nowKey.value });
+            ctx.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, a.x, a.y);
           }
           // weighted curve
           else {
@@ -86,9 +101,13 @@ export class CurveRenderer implements StyleRenderer {
 
             const [p1x, p1y, p2x, p2y] = getp1p2(prevKey, nowKey);
 
-            ctx.bezierCurveTo(p1x, p1y, p2x, p2y, nowKey.time, nowKey.value);
+            const p1 = canvas.canvas2Viewport({ x: p1x, y: p1y });
+            const p2 = canvas.canvas2Viewport({ x: p2x, y: p2y });
+            const a = canvas.canvas2Viewport({ x: nowKey.time, y: nowKey.value });
+            ctx.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, a.x, a.y);
           }
           break;
+        }
       }
 
       ctx.stroke();

@@ -5,6 +5,7 @@ import { Keyframe } from 'deer-engine';
 export enum Shape {
   Group = 'group',
   Circle = 'circle',
+  ControlCircle = 'control_circle',
   Curve = 'curve',
   Line = 'line',
   Polygon = 'polygon',

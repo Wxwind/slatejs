@@ -5,14 +5,18 @@ import { BaseStyleProps } from '@/interface';
 import { merge } from '@/util';
 
 const DEFAULT_LINE_CONFIG: LineStyleProps = {
-  begin: { x: 0, y: 0 },
-  end: { x: 2, y: 0 },
+  beginOffset: { x: 0, y: 0 },
+  endOffset: { x: 2, y: 0 },
+  origin: { x: 0, y: 0 },
+  lengthFactor: 1,
   hitBias: 0.1,
 };
 
 export interface LineStyleProps extends BaseStyleProps {
-  begin: Vector2;
-  end: Vector2;
+  beginOffset: Vector2;
+  endOffset: Vector2;
+  origin: Vector2;
+  lengthFactor: number;
   hitBias: number;
 }
 
@@ -28,9 +32,10 @@ export class Line extends DisplayObject<LineStyleProps> {
   }
 
   isPointHit = (point: Vector2) => {
-    const localP = this.worldToLocal(point);
+    // const localP = this.worldToLocal(point);
 
-    const { begin, end, hitBias } = this.style;
-    return pointToSegment(localP.x, localP.y, begin.x, begin.y, end.x, end.y) <= hitBias;
+    // const { begin, end, hitBias } = this.style;
+    // return pointToSegment(localP.x, localP.y, begin.x, begin.y, end.x, end.y) <= hitBias;
+    return false;
   };
 }

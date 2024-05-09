@@ -418,6 +418,7 @@ export class Camera implements ICamera {
     } else {
       this.setOrthographic(this.boxLeft, this.boxRight, this.boxTop, this.boxBottom, this.near, this.far);
     }
+    this.eventEmitter.emit(CameraEvent.ZOOMED);
     return this;
   };
 

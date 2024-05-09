@@ -88,7 +88,7 @@ export function CurveEditor(props: CurveEditorProps) {
     curves.forEach((curve) => {
       const c = curvesEditor.createElement(Curve, {
         style: {
-          lineWidth: 0.05,
+          lineWidth: 1,
         },
       });
       curvesEditor.root.addChild(c);

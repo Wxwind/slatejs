@@ -560,7 +560,7 @@ export class EventSystem {
     event.nativeEvent = from.nativeEvent;
     event.originalEvent = from;
 
-    event.target = target ?? this.hitTest(event.global.x, event.global.y);
+    event.target = target ?? this.hitTest(event.viewport.x, event.viewport.y);
 
     if (typeof type === 'string') {
       event.type = type;
@@ -578,7 +578,7 @@ export class EventSystem {
 
     event.nativeEvent = from.nativeEvent;
     event.originalEvent = from;
-    event.target = this.hitTest(event.global.x, event.global.y);
+    event.target = this.hitTest(event.viewport.x, event.viewport.y);
 
     return event;
   }
