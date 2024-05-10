@@ -1,8 +1,9 @@
 import { ContextListItem } from '@/components';
 import { DeerCanvas, Curve, ContextMenuType } from 'deer-canvas';
 import { ActionClip, AnimationCurve, InterpMode, Keyframe } from 'deer-engine';
-import { useEffect, useState } from 'react';
-import { Dropdown, Menu, Trigger } from '@arco-design/web-react';
+import { useEffect, useRef, useState } from 'react';
+import { Dropdown, Menu } from '@arco-design/web-react';
+import { isNil } from 'lodash';
 
 interface CurveEditorProps {
   selectedClip: ActionClip | undefined;
@@ -13,10 +14,17 @@ export function CurveEditor(props: CurveEditorProps) {
   const [curvesEditor, setCurvesEditor] = useState<DeerCanvas>();
   const [contextList, setContextList] = useState<ContextListItem[]>([{ name: 'hello' }]);
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const container = document.getElementById('curve-editor')!;
-    const curvesEditor = new DeerCanvas({ container, width: 300, height: 400, devicePixelRatio: 2 });
+    if (isNil(containerRef.current)) return;
+
+    const curvesEditor = new DeerCanvas({
+      container: containerRef.current,
+      width: 300,
+      height: 400,
+      devicePixelRatio: 2,
+    });
     setCurvesEditor(curvesEditor);
     const camera = curvesEditor.camera;
     camera.setPosition(4, 5);
@@ -130,7 +138,7 @@ export function CurveEditor(props: CurveEditorProps) {
         }}
         droplist={<Menu>{renderDropList(contextList)}</Menu>}
       >
-        <div style={{ width: 300, height: 400 }} id="curve-editor" />
+        <div style={{ width: 300, height: 400 }} ref={containerRef} />
       </Dropdown>
     </div>
   );

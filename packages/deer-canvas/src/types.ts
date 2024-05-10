@@ -8,6 +8,7 @@ export enum Shape {
   ControlCircle = 'control_circle',
   Curve = 'curve',
   Line = 'line',
+  OffsetLine = 'offset_line',
   Polygon = 'polygon',
 }
 

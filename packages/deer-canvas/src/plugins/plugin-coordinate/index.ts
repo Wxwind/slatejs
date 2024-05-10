@@ -42,6 +42,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
   textColor = '#757881';
   gridSubkeyColor = '#CCCCCC20';
   gridKeyColor = '#CCCCCC40';
+  originColor = '#ffffff88';
 
   dpr = 1;
   showCoordinate = true;
@@ -60,7 +61,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       opts.showCoordinate && (this.showCoordinate = opts.showCoordinate);
     }
 
-    this.rulerTextOffset = [32 - 2, 32 - 2];
+    this.rulerTextOffset = [20, 20];
   }
 
   apply = (context: CanvasContext) => {
@@ -114,14 +115,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
   /**
    * @param offset offset of origin
    */
-  private calculateRulerScale(
-    length: number,
-    scale: number,
-    flip: boolean,
-
-    begin: number,
-    end: number
-  ): RulerScale[] {
+  private calculateRulerScale(length: number, scale: number, flip: boolean, begin: number, end: number): RulerScale[] {
     const list: RulerScale[] = [];
 
     //  const step = clamp(scale, this.minstep, this.maxStep);
@@ -200,7 +194,8 @@ export class CoordinatePlugin implements IRenderingPlugin {
       ctx.beginPath();
       ctx.moveTo(a.position, 0);
       ctx.lineTo(a.position, height);
-      ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubkeyColor;
+      if (a.num === 0) ctx.strokeStyle = this.originColor;
+      else ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubkeyColor;
       ctx.closePath();
       ctx.lineWidth = this.lineWidth;
       ctx.setLineDash([]);
@@ -210,7 +205,8 @@ export class CoordinatePlugin implements IRenderingPlugin {
       ctx.beginPath();
       ctx.moveTo(0, a.position);
       ctx.lineTo(width, a.position);
-      ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubkeyColor;
+      if (a.num === 0) ctx.strokeStyle = this.originColor;
+      else ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubkeyColor;
       ctx.closePath();
       ctx.lineWidth = this.lineWidth;
       ctx.setLineDash([]);

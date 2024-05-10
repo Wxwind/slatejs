@@ -1,3 +1,5 @@
+import { Keyframe, isInWeightEnabled, isOutWeightEnabled } from 'deer-engine';
+
 // https://stackoverflow.com/questions/2587751/an-algorithm-to-find-bounding-box-of-closed-bezier-curves
 const sqrt = Math.sqrt,
   min = Math.min,
@@ -103,6 +105,47 @@ function getBoundsOfCurve(
   };
 }
 
-// Usage:
-const bounds = getBoundsOfCurve(0.15, 0.81, 1.85, -1.63, 8.15, 7.05, 10.28, 4.8);
-console.log(JSON.stringify(bounds));
+export function getBoundsOfCurveByKeys(keys: Keyframe[]) {
+  let minx = Infinity,
+    miny = Infinity,
+    maxx = 0,
+    maxy = 0;
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    const p0 = keys[i];
+    const p3 = keys[i + 1];
+
+    let prevWeight = 0;
+    if (isOutWeightEnabled(p0)) {
+      prevWeight = p0.outWeight;
+    } else {
+      const x = p3.time - p0.time;
+      const y = x * p0.outTangent;
+      prevWeight = (Math.sqrt(x * x + y * y) * 1) / 3;
+    }
+    const angle1 = Math.atan(p0.outTangent);
+    const p1x = Math.cos(angle1) * prevWeight + p0.time;
+    const p1y = Math.sin(angle1) * prevWeight + p0.value;
+
+    let nextWeight = 0;
+    if (isInWeightEnabled(p3)) {
+      nextWeight = p3.inWeight;
+    } else {
+      const x = p3.time - p0.time;
+      const y = x * p3.inTangent;
+      nextWeight = (Math.sqrt(x * x + y * y) * 1) / 3;
+    }
+    const angle2 = Math.atan(p3.inTangent);
+    const p2x = p3.time - Math.cos(angle2) * nextWeight;
+    const p2y = p3.value - Math.sin(angle2) * nextWeight;
+
+    const { left, right, top, bottom } = getBoundsOfCurve(p0.time, p0.value, p1x, p1y, p2x, p2y, p3.time, p3.value);
+
+    if (left < minx) minx = left;
+    if (right > maxx) maxx = right;
+    if (top > maxy) maxy = top;
+    if (bottom < miny) miny = bottom;
+  }
+
+  return { minx, maxx, miny, maxy };
+}

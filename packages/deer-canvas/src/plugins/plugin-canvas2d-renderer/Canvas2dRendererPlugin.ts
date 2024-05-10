@@ -3,7 +3,7 @@ import { CanvasContext, IRenderingPlugin } from '@/interface';
 import { ContextSystem } from '@/systems';
 import { Shape } from '@/types';
 import { mat4 } from 'gl-matrix';
-import { CirleRenderer, LineRenderer, StyleRenderer } from './shapes';
+import { CirleRenderer, OffsetLineRenderer, StyleRenderer, LineRenderer } from './shapes';
 import { CurveRenderer } from './shapes/Curve';
 import { isNil } from '@/util';
 import { ControlCircleRender } from './shapes/ControlCircle';
@@ -37,6 +37,7 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
       [Shape.Circle]: new CirleRenderer(),
       [Shape.Curve]: new CurveRenderer(),
       [Shape.Line]: new LineRenderer(),
+      [Shape.OffsetLine]: new OffsetLineRenderer(),
       [Shape.ControlCircle]: new ControlCircleRender(),
       [Shape.Polygon]: undefined,
     };

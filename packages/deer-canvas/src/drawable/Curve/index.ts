@@ -12,12 +12,10 @@ import { ShapeCtor, Vector2, isNil, length, merge, genUUID } from '@/util';
 import { Handle } from './Handle';
 import { ContextMenuType, Shape } from '@/types';
 import { Circle, CircleStyleProps } from '../Circle';
-import { Line, LineStyleProps } from '../Line';
+import { OffsetLineStyleProps } from '../OffsetLine';
 import { BaseStyleProps } from '@/interface';
 import { Signal } from '@/packages/signal';
-import { ControlCircle } from '../ContorlCircle';
-import { ControlHandle } from './ControlHandle';
-import { CameraEvent } from '@/camera';
+import { Line } from '../Line';
 
 const DEFAULT_CURVE_CONFIG: CurveStyleProps = {
   disable: false,
@@ -40,11 +38,10 @@ const DEFAULT_CURVE_CONFIG: CurveStyleProps = {
 };
 
 const EPSILON = 10e-4;
-const LENGTH_FACTOR = 20; // 5 is initial zoom
 
 export interface CurveStyleProps extends BaseStyleProps {
   disable?: boolean;
-  lineStyle: Partial<LineStyleProps>;
+  lineStyle: Partial<OffsetLineStyleProps>;
   handleStyle: Partial<CircleStyleProps>;
   keyStyle: Partial<CircleStyleProps>;
   minX?: number;
@@ -61,7 +58,6 @@ export class Curve extends DisplayObject<CurveStyleProps> {
 
   constructor(config: ShapeCtor<CurveStyleProps>) {
     const parsedConfig = merge({}, DEFAULT_CURVE_CONFIG, config.style);
-    console.log('parsed curve config', parsedConfig);
 
     super({
       id: config.id || genUUID(''),
@@ -89,8 +85,6 @@ export class Curve extends DisplayObject<CurveStyleProps> {
     const lineStyle = this.style.lineStyle;
     const handleStyle = this.style.handleStyle;
     const keyStyle = this.style.keyStyle;
-    const camera = this.ownerCanvas.getCamera();
-    const canvas = this.ownerCanvas;
 
     // draw key handle
     const keyCircle = this.ownerCanvas.createElement(Circle, {
@@ -129,40 +123,40 @@ export class Curve extends DisplayObject<CurveStyleProps> {
       const index = curve.keys.findIndex((a) => a === key);
       // draw left control
       if (isInWeightEnabled(key) && index !== 0) {
-        const angle = Math.atan((inTangent * camera.Zoom[1]) / camera.Zoom[0]);
-        const cx = -Math.cos(angle) * inWeight;
-        const cy = Math.sin(angle) * inWeight;
+        const angle = Math.atan(inTangent);
+        const cx = time - Math.cos(angle) * inWeight;
+        const cy = value - Math.sin(angle) * inWeight;
 
         const inLine = this.ownerCanvas.createElement(Line, {
           name: 'in line',
           style: {
             ...lineStyle,
-            origin: { x: time, y: value },
-            beginOffset: {
-              x: cx * LENGTH_FACTOR,
-              y: cy * LENGTH_FACTOR,
+            begin: {
+              x: cx,
+              y: cy,
             },
-            endOffset: { x: 0, y: 0 },
-            lengthFactor: LENGTH_FACTOR,
+            end: { x: time, y: value },
           },
         });
 
-        const inControlCircle = this.ownerCanvas.createElement(ControlCircle, {
+        const inControlCircle = this.ownerCanvas.createElement(Circle, {
           name: 'in handle',
           style: {
             ...handleStyle,
-            centerOffset: {
-              x: cx * LENGTH_FACTOR,
-              y: cy * LENGTH_FACTOR,
+            center: {
+              x: cx,
+              y: cy,
             },
-            origin: { x: time, y: value },
           },
         });
 
         keyHandle.signals.onDrag.on((pos) => {
           pos = this.clampPos(pos);
-          inLine.setOptions({ origin: { x: pos.x, y: pos.y } });
-          inControlCircle.setOptions({ origin: { x: pos.x, y: pos.y } });
+          const angle = Math.atan(key.inTangent);
+          const x = pos.x - Math.cos(angle) * key.inWeight;
+          const y = pos.y - Math.sin(angle) * key.inWeight;
+          inLine.setOptions({ begin: { x, y }, end: pos });
+          inControlCircle.setOptions({ center: { x, y } });
         });
         keyHandle.signals.onDragEnd.on(() => {
           this.signals.onDragEnd.emit(this.curve?.toJSON());
@@ -171,75 +165,57 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         this.addChild(inLine);
         this.addChild(inControlCircle);
 
-        const inHandle = new ControlHandle(inControlCircle);
+        const inHandle = new Handle(inControlCircle);
         inHandle.signals.onDrag.on((pos) => {
           const index = curve.keys.findIndex((a) => a === key);
-          const real = canvas.canvas2Viewport({ x: key.time, y: key.value });
-          if (pos.x >= real.x) pos.x = real.x - EPSILON;
-          // tangent is modified by camera's zoom
-          const deltaY = pos.y - real.y;
-          const deltaX = pos.x - real.x;
-          const cameraScale = camera.Zoom[1] / camera.Zoom[0];
-          key.inTangent = -deltaY / deltaX / cameraScale;
-          key.inWeight = length(deltaX / LENGTH_FACTOR, deltaY / LENGTH_FACTOR);
-
+          if (pos.x >= key.time) pos.x = key.time - EPSILON;
+          key.inTangent = (pos.y - key.value) / (pos.x - key.time);
+          key.inWeight = length(pos.x - key.time, pos.y - key.value);
           curve.moveKey(index, key);
-          inHandle.setOptions({ centerOffset: { x: deltaX, y: deltaY } });
-          inLine.setOptions({ beginOffset: { x: deltaX, y: deltaY } });
+          inHandle.setOptions({ center: pos });
+          inLine.setOptions({ begin: pos });
         });
         inHandle.signals.onDragEnd.on(() => {
           this.signals.onDragEnd.emit(this.curve?.toJSON());
-        });
-
-        camera.eventEmitter.on(CameraEvent.ZOOMED, () => {
-          const inTangent = key.inTangent;
-          const inWeight = key.inWeight;
-          const angle = Math.atan((inTangent * camera.Zoom[1]) / camera.Zoom[0]);
-          const cx = -Math.cos(angle) * inWeight;
-          const cy = -Math.sin(angle) * inWeight;
-          const real = { x: cx * LENGTH_FACTOR, y: -cy * LENGTH_FACTOR };
-
-          inHandle.setOptions({ centerOffset: { x: real.x, y: real.y } });
-          inLine.setOptions({ beginOffset: { x: real.x, y: real.y } });
         });
       }
 
       // draw right control
       if (isOutWeightEnabled(key) && index !== curve.length - 1) {
-        const angle = Math.atan((outTangent * camera.Zoom[1]) / camera.Zoom[0]);
-        const cx = Math.cos(angle) * outWeight;
-        const cy = -Math.sin(angle) * outWeight;
+        const angle = Math.atan(outTangent);
+        const cx = time + Math.cos(angle) * outWeight;
+        const cy = value + Math.sin(angle) * outWeight;
 
         const outLine = this.ownerCanvas.createElement(Line, {
           name: 'out line',
           style: {
             ...lineStyle,
-            origin: { x: time, y: value },
-            beginOffset: {
-              x: cx * LENGTH_FACTOR,
-              y: cy * LENGTH_FACTOR,
+            begin: {
+              x: cx,
+              y: cy,
             },
-            endOffset: { x: 0, y: 0 },
-            lengthFactor: LENGTH_FACTOR,
+            end: { x: time, y: value },
           },
         });
 
-        const outControlCircle = this.ownerCanvas.createElement(ControlCircle, {
+        const outControlCircle = this.ownerCanvas.createElement(Circle, {
           name: 'out handle',
           style: {
             ...handleStyle,
-            centerOffset: {
-              x: cx * LENGTH_FACTOR,
-              y: cy * LENGTH_FACTOR,
+            center: {
+              x: cx,
+              y: cy,
             },
-            origin: { x: time, y: value },
           },
         });
 
         keyHandle.signals.onDrag.on((pos) => {
           pos = this.clampPos(pos);
-          outLine.setOptions({ origin: { x: pos.x, y: pos.y } });
-          outControlCircle.setOptions({ origin: { x: pos.x, y: pos.y } });
+          const angle = Math.atan(key.outTangent);
+          const x = pos.x + Math.cos(angle) * key.outWeight;
+          const y = pos.y + Math.sin(angle) * key.outWeight;
+          outLine.setOptions({ begin: { x, y }, end: pos });
+          outControlCircle.setOptions({ center: { x, y } });
         });
         keyHandle.signals.onDragEnd.on(() => {
           this.signals.onDragEnd.emit(this.curve?.toJSON());
@@ -248,36 +224,18 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         this.addChild(outLine);
         this.addChild(outControlCircle);
 
-        const outHandle = new ControlHandle(outControlCircle);
+        const outHandle = new Handle(outControlCircle);
         outHandle.signals.onDrag.on((pos) => {
           const index = curve.keys.findIndex((a) => a === key);
-          const real = canvas.canvas2Viewport({ x: key.time, y: key.value });
-          if (pos.x <= real.x) pos.x = real.x + EPSILON;
-          // tangent is modified by camera's zoom
-          const deltaY = pos.y - real.y;
-          const deltaX = pos.x - real.x;
-          const cameraScale = camera.Zoom[1] / camera.Zoom[0];
-          key.outTangent = -deltaY / deltaX / cameraScale;
-          key.outWeight = length(deltaX / LENGTH_FACTOR, deltaY / LENGTH_FACTOR);
-          console.log('key:', key.outTangent);
-
+          if (pos.x <= key.time) pos.x = key.time + EPSILON;
+          key.outTangent = (pos.y - key.value) / (pos.x - key.time);
+          key.outWeight = length(pos.x - key.time, pos.y - key.value);
           curve.moveKey(index, key);
-          outHandle.setOptions({ centerOffset: { x: deltaX, y: deltaY } });
-          outLine.setOptions({ beginOffset: { x: deltaX, y: deltaY } });
+          outHandle.setOptions({ center: pos });
+          outLine.setOptions({ begin: pos });
         });
         outHandle.signals.onDragEnd.on(() => {
           this.signals.onDragEnd.emit(this.curve?.toJSON());
-        });
-        camera.eventEmitter.on(CameraEvent.ZOOMED, () => {
-          const outTangent = key.outTangent;
-          const outWeight = key.outWeight;
-          const angle = Math.atan((outTangent * camera.Zoom[1]) / camera.Zoom[0]);
-          const cx = Math.cos(angle) * outWeight;
-          const cy = Math.sin(angle) * outWeight;
-          const real = { x: cx * LENGTH_FACTOR, y: -cy * LENGTH_FACTOR };
-
-          outHandle.setOptions({ centerOffset: { x: real.x, y: real.y } });
-          outLine.setOptions({ beginOffset: { x: real.x, y: real.y } });
         });
       }
     }

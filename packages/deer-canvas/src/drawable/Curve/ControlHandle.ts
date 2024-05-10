@@ -3,6 +3,7 @@ import { Vector2 } from '../../util';
 import { Signal } from '@/packages/signal';
 import { ControlCircle, ControlCircleStyleProps } from '../ContorlCircle';
 
+/** used only for key.tangentmode=auto, length(centerOffset) will be fixed in this case */
 export class ControlHandle {
   signals = {
     onDrag: new Signal<[Vector2]>(),

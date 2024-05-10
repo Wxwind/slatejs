@@ -5,16 +5,10 @@ import { CanvasContext } from '@/interface';
 
 export class LineRenderer implements StyleRenderer {
   render = (ctx: CanvasRenderingContext2D, object: DisplayObject, context: CanvasContext) => {
-    const { beginOffset, endOffset, origin } = (object as Line).style;
+    const { begin, end } = (object as Line).style;
     const canvas = context.renderingContext.root.ownerCanvas;
-    const lengthFactor = 1;
-    const realOrigin = canvas.canvas2Viewport(origin);
-    const realBegin = {
-      x: realOrigin.x + beginOffset.x * lengthFactor,
-      y: realOrigin.y + beginOffset.y * lengthFactor,
-    };
-    const realEnd = { x: realOrigin.x + endOffset.x * lengthFactor, y: realOrigin.y + endOffset.y * lengthFactor };
-
+    const realBegin = canvas.canvas2Viewport(begin);
+    const realEnd = canvas.canvas2Viewport(end);
     ctx.beginPath();
     ctx.moveTo(realBegin.x, realBegin.y);
     ctx.lineTo(realEnd.x, realEnd.y);

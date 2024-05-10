@@ -4,25 +4,29 @@ import { Shape } from '@/types';
 import { BaseStyleProps } from '@/interface';
 import { merge } from '@/util';
 
-const DEFAULT_LINE_CONFIG: LineStyleProps = {
-  begin: { x: 0, y: 0 },
-  end: { x: 2, y: 0 },
+const DEFAULT_OFFSET_LINE_CONFIG: OffsetLineStyleProps = {
+  beginOffset: { x: 0, y: 0 },
+  endOffset: { x: 2, y: 0 },
+  origin: { x: 0, y: 0 },
+  lengthFactor: 1,
   hitBias: 0.1,
 };
 
-export interface LineStyleProps extends BaseStyleProps {
-  begin: Vector2;
-  end: Vector2;
+export interface OffsetLineStyleProps extends BaseStyleProps {
+  beginOffset: Vector2;
+  endOffset: Vector2;
+  origin: Vector2;
+  lengthFactor: number;
   hitBias: number;
 }
 
-export class Line extends DisplayObject<LineStyleProps> {
-  constructor(config: ShapeCtor<LineStyleProps>) {
-    const parsedConfig = merge({}, DEFAULT_LINE_CONFIG, config.style);
+export class OffsetLine extends DisplayObject<OffsetLineStyleProps> {
+  constructor(config: ShapeCtor<OffsetLineStyleProps>) {
+    const parsedConfig = merge({}, DEFAULT_OFFSET_LINE_CONFIG, config.style);
     super({
       id: config.id || genUUID(''),
-      name: config.name || 'line',
-      type: Shape.Line,
+      name: config.name || 'OffsetLine',
+      type: Shape.OffsetLine,
       style: parsedConfig,
     });
   }
