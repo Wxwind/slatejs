@@ -91,6 +91,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       const xList = this.calculateRulerScale(width, viewScaleX, false, left, right);
 
       const yList = this.calculateRulerScale(height, viewScaleY, true, bottom, top);
+
       ctx.save();
       ctx.scale(this.dpr, this.dpr);
       ctx.clearRect(0, 0, width, height);
@@ -112,18 +113,11 @@ export class CoordinatePlugin implements IRenderingPlugin {
     });
   };
 
-  /**
-   * @param offset offset of origin
-   */
   private calculateRulerScale(length: number, scale: number, flip: boolean, begin: number, end: number): RulerScale[] {
     const list: RulerScale[] = [];
 
     //  const step = clamp(scale, this.minstep, this.maxStep);
     const step = scale;
-
-    const b = Math.floor(begin); // begin num
-    const e = Math.ceil(end); // end num
-    const offset = (begin - Math.floor(begin)) * step; // offset of begin num
 
     // console.log(
     //   'axis: %s, number from %s to %s, offset from %s to %s, scale: %s',
@@ -135,19 +129,29 @@ export class CoordinatePlugin implements IRenderingPlugin {
     //   scale
     // );
 
-    const keyUnit = 1;
-    for (let i = b, j = 0; i <= e; i += keyUnit, j++) {
+    const be = end - begin;
+
+    const keyUnit = Math.pow(10, Math.ceil(Math.log10(be)) - 1);
+    // find biggest lower bounds
+
+    const beginBounds = Math.floor(begin / keyUnit) * keyUnit;
+    const offsetOfZero = -begin * step;
+    const offset = beginBounds * step + offsetOfZero; // offset of begin num
+
+    for (let i = beginBounds; i <= end; i += keyUnit) {
       list.push({
         num: i,
-        position: flip ? length - (j * step * keyUnit - offset) : j * step * keyUnit - offset,
+        position: flip ? length - ((i - beginBounds) * step + offset) : (i - beginBounds) * step + offset,
         isPrimaryKey: true,
       });
-      const subi = j * keyUnit + keyUnit / 2;
-      list.push({
-        num: subi,
-        position: flip ? length - (subi * step - offset) : subi * step - offset,
-        isPrimaryKey: false,
-      });
+
+      for (let subi = i + keyUnit / 5; subi < i + keyUnit; subi += keyUnit / 5) {
+        list.push({
+          num: subi,
+          position: flip ? length - ((subi - beginBounds) * step + offset) : (subi - beginBounds) * step + offset,
+          isPrimaryKey: false,
+        });
+      }
     }
 
     return list;
@@ -162,7 +166,11 @@ export class CoordinatePlugin implements IRenderingPlugin {
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
       });
-      ctx.fillText(r.num.toString(), r.position, canvasHeight - this.rulerTextOffset[0] + this.fontSize);
+      ctx.fillText(
+        (Math.round(r.num * 1000) / 1000).toString(),
+        r.position,
+        canvasHeight - this.rulerTextOffset[0] + this.fontSize
+      );
     });
   }
 
@@ -176,7 +184,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
       });
-      ctx.fillText(r.num.toString(), this.rulerTextOffset[1], r.position);
+      ctx.fillText((Math.round(r.num * 1000) / 1000).toString(), this.rulerTextOffset[1], r.position);
     });
   }
 

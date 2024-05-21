@@ -165,7 +165,7 @@ export class DeerCanvas implements ICanvas {
       new CullingPlugin(),
       new Canvas2DRendererPlugin({ forceSkipClear: true }),
       new CoordinatePlugin(),
-      new ControlPlugin({ minZoom: 32, maxZoom: 500 }),
+      new ControlPlugin({ minZoom: 16, maxZoom: 1600 }),
       ...plugins
     );
     this.plugins.forEach((a) => a.apply(this.context));

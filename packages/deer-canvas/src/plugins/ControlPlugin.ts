@@ -106,11 +106,12 @@ export class ControlPlugin implements IRenderingPlugin {
   private onScroll = (e: FederatedWheelEvent) => {
     const { camera, config } = this.context;
     if (isCtrlKey(e)) {
-      const newZoom = this.clampZoom(camera.Zoom[0] + e.deltaY / 3);
-      camera.setZoomByScroll([newZoom, camera.Zoom[1]], [e.viewportX, e.viewportY]);
+      const newX = this.clampZoom(camera.Zoom[0] + e.deltaY / 3);
+      camera.setZoomByScroll([newX, camera.Zoom[1]], [e.viewportX, e.viewportY]);
     } else {
-      const newZoom = this.clampZoom(camera.Zoom[1] + e.deltaY / 3);
-      camera.setZoomByScroll([camera.Zoom[0], newZoom], [e.viewportX, e.viewportY]);
+      const newX = this.clampZoom(camera.Zoom[0] + e.deltaY / 3);
+      const newY = this.clampZoom(camera.Zoom[1] + e.deltaY / 3);
+      camera.setZoomByScroll([newX, newY], [e.viewportX, e.viewportY]);
     }
   };
 

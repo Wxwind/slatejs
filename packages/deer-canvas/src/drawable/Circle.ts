@@ -27,9 +27,8 @@ export class Circle extends DisplayObject<CircleStyleProps> {
   }
 
   isPointHit: (point: Vector2) => boolean = (point) => {
-    const localP = this.worldToLocal(point);
     const { center, radius, hitBias } = this.style;
     const realCenter = this.ownerCanvas.canvas2Viewport(center);
-    return distance(localP, realCenter) <= radius + hitBias;
+    return distance(point, realCenter) <= radius + hitBias;
   };
 }

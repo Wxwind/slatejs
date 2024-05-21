@@ -29,10 +29,9 @@ export class ControlCircle extends DisplayObject<ControlCircleStyleProps> {
   }
 
   isPointHit: (point: Vector2) => boolean = (point) => {
-    const localP = this.worldToLocal(point);
     const { centerOffset, radius, hitBias, origin } = this.style;
     const realOrigin = this.ownerCanvas.canvas2Viewport(origin);
     const realCenter = { x: realOrigin.x + centerOffset.x, y: realOrigin.y + centerOffset.y };
-    return distance(localP, realCenter) <= radius + hitBias;
+    return distance(point, realCenter) <= radius + hitBias;
   };
 }
