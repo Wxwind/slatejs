@@ -1,5 +1,12 @@
 import { ContextListItem } from '@/components';
-import { DeerCanvas, Curve, ContextMenuType } from 'deer-canvas';
+import {
+  DeerCanvas,
+  Curve,
+  ContextMenuType,
+  Canvas2DRendererPlugin,
+  ControlPlugin,
+  CoordinatePlugin,
+} from 'deer-canvas';
 import { ActionClip, AnimationCurve, InterpMode, Keyframe } from 'deer-engine';
 import { useEffect, useRef, useState } from 'react';
 import { Dropdown, Menu } from '@arco-design/web-react';
@@ -19,12 +26,19 @@ export function CurveEditor(props: CurveEditorProps) {
   useEffect(() => {
     if (isNil(containerRef.current)) return;
 
-    const curvesEditor = new DeerCanvas({
-      container: containerRef.current,
-      width: 300,
-      height: 400,
-      devicePixelRatio: 2,
-    });
+    const curvesEditor = new DeerCanvas(
+      {
+        container: containerRef.current,
+        width: 300,
+        height: 400,
+        devicePixelRatio: 2,
+      },
+      [
+        new Canvas2DRendererPlugin({ forceSkipClear: true }),
+        new ControlPlugin({ minZoom: 16, maxZoom: 1600 }),
+        new CoordinatePlugin(),
+      ]
+    );
     setCurvesEditor(curvesEditor);
     const camera = curvesEditor.camera;
     camera.setPosition(4, 5);

@@ -17,12 +17,20 @@ export function CurveEditor(props: CurveEditorProps) {
 
   useEffect(() => {
     if (isNil(containerRef.current)) return;
-    const curvesEditor = new DeerCanvas({
-      container: containerRef.current,
-      width: 208,
-      height: 200,
-      devicePixelRatio: 2,
-    });
+
+    const curvesEditor = new DeerCanvas(
+      {
+        container: containerRef.current,
+        width: 208,
+        height: 200,
+        devicePixelRatio: 2,
+      },
+      [
+        new Canvas2DRendererPlugin({ forceSkipClear: true }),
+        new ControlPlugin({ minZoom: 16, maxZoom: 1600 }),
+        new CoordinatePlugin(),
+      ]
+    );
 
     const c = curvesEditor.createElement(Curve, {
       style: {

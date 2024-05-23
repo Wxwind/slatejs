@@ -58,7 +58,7 @@ export class FederatedEvent<N extends UIEvent = UIEvent> {
   }
 
   /**
-   * relative to Viewport, account for Camera
+   * world space, account for Camera
    */
   canvas: Point = new Point();
   get canvasX(): number {

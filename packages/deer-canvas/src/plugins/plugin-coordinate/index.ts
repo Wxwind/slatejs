@@ -131,7 +131,17 @@ export class CoordinatePlugin implements IRenderingPlugin {
 
     const be = end - begin;
 
-    const keyUnit = Math.pow(10, Math.ceil(Math.log10(be)) - 1);
+    // be         keyunit
+    // 0 ~ 0.5 -   0.05
+    // 0.5 ~ 1 -   0.1
+    // 1 ~ 5   -   0.5
+    // 5 ~ 10  -   1
+    // 10 ~ 50 -   5
+    // 50 ~ 100-   10
+
+    let keyUnit = Math.pow(10, Math.ceil(Math.log10(be)) - 1);
+    const temp = Math.pow(10, Math.ceil(Math.log10(be)));
+    if (be < temp / 2) keyUnit /= 2;
     // find biggest lower bounds
 
     const beginBounds = Math.floor(begin / keyUnit) * keyUnit;

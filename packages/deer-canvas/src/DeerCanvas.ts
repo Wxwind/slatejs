@@ -160,14 +160,7 @@ export class DeerCanvas implements ICanvas {
 
   private initRenderingSystem = (plugins: IRenderingPlugin[]) => {
     // plugins.apply will hook to renderSystem.hooks
-    this.plugins.push(
-      new EventPlugin(),
-      new CullingPlugin(),
-      new Canvas2DRendererPlugin({ forceSkipClear: true }),
-      new CoordinatePlugin(),
-      new ControlPlugin({ minZoom: 16, maxZoom: 1600 }),
-      ...plugins
-    );
+    this.plugins.push(new EventPlugin(), new CullingPlugin(), ...plugins);
     this.plugins.forEach((a) => a.apply(this.context));
 
     this.context.renderingSystem.init();
