@@ -8,7 +8,7 @@ export type DebounceOptions = Partial<{
 }>;
 
 export function debounce<T extends Fn>(func: T, wait: number, options?: Partial<DebounceOptions>) {
-  let result: ReturnType<T>;
+  let result: ReturnType<T> | undefined;
   let timerId: number | undefined;
   let lastCallTime: number | undefined;
   let lastInvokeTime = 0;
@@ -47,6 +47,8 @@ export function debounce<T extends Fn>(func: T, wait: number, options?: Partial<
   };
 
   const remainingWait = (time: number) => {
+    // ilastCallTime is never be undefined.
+    if (lastCallTime === undefined) return 0;
     const timeSinceLastCall = time - lastCallTime;
     const timeSinceLastInvoke = time - lastInvokeTime;
     const timeWaiting = wait - timeSinceLastCall;
@@ -55,17 +57,16 @@ export function debounce<T extends Fn>(func: T, wait: number, options?: Partial<
   };
 
   const shouldInvoke = (time: number) => {
+    // this is the first call.
+    if (lastCallTime === undefined) return true;
     const timeSinceLastCall = time - lastCallTime;
     const timeSinceLastInvoke = time - lastInvokeTime;
 
-    // Either this is the first call, activity has stopped and we're at the
+    // Either activity has stopped and we're at the
     // trailing edge, the system time has gone backwards and we're treating
     // it as the trailing edge, or we've hit the `maxWait` limit.
     return (
-      lastCallTime === undefined ||
-      timeSinceLastCall >= wait ||
-      timeSinceLastCall < 0 ||
-      (maxWait !== undefined && timeSinceLastInvoke >= maxWait)
+      timeSinceLastCall >= wait || timeSinceLastCall < 0 || (maxWait !== undefined && timeSinceLastInvoke >= maxWait)
     );
   };
 
@@ -83,7 +84,7 @@ export function debounce<T extends Fn>(func: T, wait: number, options?: Partial<
     timerId = undefined;
 
     // Only invoke if we have `lastArgs` which means `func` has been
-    // debounced at least once.
+    // debounced at least once
     if (trailing && lastArgs) {
       return invokeFunc(time);
     }
@@ -126,6 +127,7 @@ export function debounce<T extends Fn>(func: T, wait: number, options?: Partial<
     }
     if (timerId === undefined) {
       timerId = startTimer(timerExpired, wait);
+      console.log('not invoking and timeid is null');
     }
     return result;
   };
