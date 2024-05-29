@@ -27,8 +27,6 @@ export class DeerCanvas implements ICanvas {
   container: HTMLElement;
   canvasEl: HTMLCanvasElement;
 
-  // private resizeObserver: ResizeObserver;
-
   root: Group;
   camera!: ICamera;
 
@@ -106,17 +104,6 @@ export class DeerCanvas implements ICanvas {
     this.initCamera(canvasWidth, canvasHeight, ClipSpaceNearZ.NEGATIVE_ONE);
 
     this.initRenderer(plugins || []);
-
-    const debouncedResize = debounce(this.resize);
-
-    // observe container's resize event
-    // const resizeObserver = new ResizeObserver((entries) => {
-    //   const { width, height } = entries[0].contentRect;
-    //   debouncedResize(width, height);
-    // });
-
-    // resizeObserver.observe(this.container);
-    // this.resizeObserver = resizeObserver;
   }
 
   private initRenderContext = () => {
@@ -173,13 +160,6 @@ export class DeerCanvas implements ICanvas {
       this.animateID = requestAnimationFrame(tick);
     };
     tick();
-  };
-
-  private resize = (width: number, height: number) => {
-    const config = this.context.config;
-    config.width = width;
-    config.height = height;
-    this.getContextSystem().resize(width, height);
   };
 
   createElement = <T extends DisplayObject, StyleProps extends BaseStyleProps>(
@@ -255,7 +235,6 @@ export class DeerCanvas implements ICanvas {
   getCamera = () => this.camera;
 
   dispose = () => {
-    //  this.resizeObserver.unobserve(this.container);
     this.container.removeChild(this.canvasEl);
     this.context.renderingSystem.dispose();
     this.animateID && cancelAnimationFrame(this.animateID);

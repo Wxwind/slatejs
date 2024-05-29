@@ -3,3 +3,4 @@ export * from './EventPlugin';
 export * from './CullingPlugin';
 export * from './ControlPlugin';
 export * from './plugin-coordinate';
+export * from './ResizePlugin';

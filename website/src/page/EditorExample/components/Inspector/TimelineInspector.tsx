@@ -15,6 +15,7 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
   const selectedClip = cutsceneEditor.selectedClip;
   const refresh = useDumbState();
   useBindSignal(cutsceneEditor.signals.selectedClipUpdated, refresh);
+  console.log('selectedClip', selectedClip);
 
   const getUICompFromType = (object: ActionClip | undefined) => {
     if (!object) return <div>not select any clip.</div>;
