@@ -1,10 +1,8 @@
-import { customEditor } from '@/decorator';
-import { JsonModule, TransformClip } from 'deer-engine';
-import { FC } from 'react';
-import { Editor, EditorProps } from './Editor';
+import { EditorComp, registerEditor } from '@/decorator';
+import { TransformClip } from 'deer-engine';
 import { useDumbState, useBindSignal } from '@/hooks';
 
-const TransformClipEditorComp: FC<EditorProps<TransformClip>> = (props) => {
+const TransformClipEditorComp: EditorComp<TransformClip> = (props) => {
   const { target } = props;
 
   const refresh = useDumbState();
@@ -14,7 +12,4 @@ const TransformClipEditorComp: FC<EditorProps<TransformClip>> = (props) => {
   return <div className="w-full">TransformClip</div>;
 };
 
-@customEditor(TransformClip)
-export class TransformClipditor extends Editor {
-  onEditorGUI = (props: EditorProps<TransformClip>) => <TransformClipEditorComp {...props} />;
-}
+registerEditor(TransformClip, TransformClipEditorComp);

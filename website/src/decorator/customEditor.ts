@@ -1,14 +1,17 @@
-import { Editor, EditorProps } from '@/components/editor/Editor';
-import { ClassClassDecorator, NoAbstractCtor } from 'deer-engine';
+import { NoAbstractCtor } from 'deer-engine';
 import { FC } from 'react';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface EditorProps<T = any> {
+  target: T;
+}
+
+export type EditorComp<T> = FC<EditorProps<T>>;
 
 export const globalEditorMap = new Map<NoAbstractCtor, FC<EditorProps>>();
 
-export function customEditor<Class extends new () => Editor>(ctor: NoAbstractCtor): ClassClassDecorator<Class> {
-  return (target: Class, context: ClassDecoratorContext<Class>) => {
-    const singleton = new target();
-    globalEditorMap.set(ctor, singleton.onEditorGUI);
-  };
+export function registerEditor(ctor: NoAbstractCtor, renderFunc: FC<EditorProps>) {
+  globalEditorMap.set(ctor, renderFunc);
 }
 
 export function getEditorRenderer(ctor: NoAbstractCtor) {
