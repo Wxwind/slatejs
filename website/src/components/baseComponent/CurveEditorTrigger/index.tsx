@@ -17,12 +17,11 @@ export function CurveEditorTrigger(props: CurveEditorTriggerProps) {
   const curve = useRef<Curve>();
   const curvesEditor = useRef<DeerCanvas>();
 
-  const width = 133;
-  const height = 26;
-
   useEffect(() => {
     if (isNil(container.current)) return;
 
+    const width = container.current.clientWidth;
+    const height = container.current.clientHeight;
     const editor = new DeerCanvas(
       {
         container: container.current,
@@ -49,11 +48,14 @@ export function CurveEditorTrigger(props: CurveEditorTriggerProps) {
   }, []);
 
   useEffect(() => {
-    if (!curve.current || !curvesEditor.current) return;
+    if (!curve.current || !curvesEditor.current || !container.current) return;
     const c = AnimationCurve.fromJSON(value || DEFAULT_CURVE_VALUE);
 
     const camera = curvesEditor.current.camera;
     const { minx, maxx, miny, maxy } = getBoundsOfCurveByKeys(c.keys);
+
+    const width = container.current.clientWidth;
+    const height = container.current.clientHeight;
 
     // remap curve value to fit content
     c.keys.forEach((key) => {

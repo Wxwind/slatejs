@@ -7,7 +7,6 @@ const TransformClipEditorComp: EditorComp<TransformClip> = (props) => {
 
   const refresh = useDumbState();
   useBindSignal(target.signals.clipUpdated, refresh);
-  useBindSignal(target.signals.keysChanged, refresh);
 
   return <div className="w-full">TransformClip</div>;
 };

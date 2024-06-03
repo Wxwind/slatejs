@@ -68,7 +68,6 @@ export abstract class ActionClip implements IDirectable, IKeyable {
 
   readonly signals = {
     clipUpdated: new Signal(),
-    keysChanged: new Signal(),
   };
 
   constructor(parent: IDirectable, id: string, name: string, start: number, end: number) {

@@ -19,7 +19,6 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
 
   const refresh = useDumbState();
   useBindSignal(object.signals.clipUpdated, refresh);
-  useBindSignal(object.signals.keysChanged, refresh);
 
   // emitted when curve updated in curve editor
   useBindSignal(object.animatedData.signals.updated, refresh);
