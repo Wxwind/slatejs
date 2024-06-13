@@ -15,7 +15,9 @@ export class ResizePlugin implements IRenderingPlugin {
       contextSystem.resize(width, height);
     };
 
-    const debouncedResize = throttle(resize);
+    const debouncedResize = throttle(resize, 50, {
+      trailing: true,
+    });
 
     renderingSystem.hooks.init.tap(() => {
       const resizeObserver = new ResizeObserver((entries) => {

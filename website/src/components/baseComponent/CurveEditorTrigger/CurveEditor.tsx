@@ -55,11 +55,6 @@ export function CurveEditor(props: CurveEditorProps) {
     });
     curvesEditor.root.addChild(c);
 
-    // const camera = curvesEditor.camera;
-    // camera.setPosition(0.457, 0.481);
-    // camera.setFocalPoint(0.457, 0.481);
-    // camera.setZoom([5 * 32, 5 * 32]);
-
     const v = value || DEFAULT_CURVE_VALUE;
     const { minx, maxx, miny, maxy } = getBoundsOfCurveByKeys(v.keys);
     const camera = curvesEditor.camera;
