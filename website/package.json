@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@arco-design/web-react": "^2.61.3",
-    "@babel/plugin-proposal-decorators": "^7.23.9",
     "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-context-menu": "^2.1.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
@@ -33,10 +32,11 @@
     "zustand": "^4.4.4"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.23.9",
     "@types/lodash": "^4.14.202",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^5.59.0",
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.16",

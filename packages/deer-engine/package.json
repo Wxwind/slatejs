@@ -29,11 +29,11 @@
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-typescript": "^7.23.3",
     "@rollup/plugin-babel": "^6.0.4",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
     "@types/lodash": "^4.14.202",
     "@types/three": "^0.157.2",
     "@types/uuid": "^9.0.6",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^6.9.0",
     "eslint": "^8.52.0"
   },
   "dependencies": {

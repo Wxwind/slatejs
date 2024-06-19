@@ -13,3 +13,10 @@ export function isObject(data: unknown) {
 export function isArray(arr: unknown): arr is unknown[] {
   return Array.isArray(arr);
 }
+
+export function isNumber(value: any): value is number {
+  if (typeof value === 'number') {
+    return !isNaN(value);
+  }
+  return false;
+}

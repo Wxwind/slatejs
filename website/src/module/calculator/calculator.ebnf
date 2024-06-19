@@ -1,0 +1,14 @@
+(* expr = expr, addop, term | term; *)
+(* term = term, multiop, factor | factor; *)
+expr = term, {addop, term}
+term = factor, {multiop, factor}
+factor = "(", expr, ")" | literial | addop, factor;
+literial = number, [unit];
+
+
+number = digit, {digit}, [".", {digit}], [exp];
+exp = ("e"|"E"), digit, {digit}
+digit = "0"-"9";
+addop = "+"|"-";
+multiop = "*"|"/";
+unit = "m"|"mm"|"cm"|"inch"|"in"|"foot"|"feet"|"ft";

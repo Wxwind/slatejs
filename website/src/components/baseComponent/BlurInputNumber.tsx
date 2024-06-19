@@ -1,36 +1,120 @@
-import React, { ChangeEvent, FC } from 'react';
-import { InputNumber } from './InputNumber';
-import { isNil } from '@/util';
+import React, { FC } from 'react';
+import { isNil, isNumber } from '@/util';
+import { Input, Message, InputProps } from '@arco-design/web-react';
+import { calc } from '@/module/calculator';
 
-interface BlurInputNumberProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface BlurInputNumberProps extends Omit<InputProps, 'onChange' | 'value' | 'onBlur'> {
   precision?: number;
-  onBlur?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  allowEmpty?: boolean;
+  precisionOnShow?: number;
+  precisionOnSave?: number;
+  name: string;
+  value: number | string;
+  min?: number;
+  max?: number;
+  onChange?: (name: string, exp: string) => void;
+  onBlur: (name: string, value: number | undefined) => void;
 }
 
 export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
-  const { precision = 2, value, onBlur, onChange, ...rest } = props;
+  const {
+    precision = 2,
+    value,
+    name,
+    min,
+    max,
+    allowEmpty,
+    precisionOnShow,
+    precisionOnSave,
+    onBlur,
+    onChange,
+    ...rest
+  } = props;
 
-  let num: number | undefined = Number(value);
+  const [showValue, setShowValue] = React.useState<string | undefined>(undefined);
 
-  if (isNaN(num)) num = undefined;
-  if (!isNil(num)) {
-    if (precision > 0) {
-      const h = 10 ** precision;
-      num = Math.round(num * h) / h;
+  React.useEffect(() => {
+    if (isNil(value)) {
+      setShowValue(undefined);
+      return;
     }
-  }
+    let num: number | undefined = Number(value);
+    if (isNaN(num)) num = allowEmpty ? undefined : 0;
+    if (!isNil(num)) {
+      if (precisionOnShow !== undefined && precisionOnShow >= 0) {
+        const h = 10 ** precisionOnShow;
+        num = Math.round(num * h) / h;
+      }
+    }
+    setShowValue(!isNil(num) ? num?.toString() : undefined);
+  }, [allowEmpty, precisionOnShow, value]);
+
+  const handleBlur = (value: string) => {
+    let num: number | undefined = 0;
+    if (typeof value === 'string') {
+      if (value === '' && allowEmpty) {
+        num = undefined;
+      } else {
+        try {
+          const res = calc(value);
+          num = res;
+        } catch (e) {
+          const msg = (e as Error).message;
+          console.log(msg);
+          Message.error('非法的计算表达式');
+          num = 0;
+        }
+      }
+    }
+    if (isNumber(num)) {
+      num = min === undefined ? num : Math.max(min, num);
+      num = max === undefined ? num : Math.min(max, num);
+
+      let showValue = num;
+      if (precisionOnShow !== undefined && precisionOnShow >= 0) {
+        const h = 10 ** precisionOnShow;
+        showValue = Math.round(showValue * h) / h;
+      }
+      setShowValue(showValue.toString());
+
+      let saveNum = num;
+      if (precisionOnSave !== undefined && precisionOnSave >= 0) {
+        const h = 10 ** precisionOnSave;
+        saveNum = Math.round(saveNum * h) / h;
+      }
+      onBlur?.(name, saveNum);
+    } else {
+      setShowValue(undefined);
+      onBlur?.(name, undefined);
+    }
+  };
 
   return (
-    <InputNumber
+    <Input
+      size="small"
       autoComplete="off"
-      value={num}
-      precision={precision}
-      onPressEnter={(e) => {
-        e.currentTarget.blur();
+      name={name}
+      value={showValue}
+      onPressEnter={(event) => {
+        const e = event as React.KeyboardEvent<HTMLElement>;
+        if (e.key === 'Enter') {
+          (e.target as HTMLElement).blur();
+        }
       }}
-      onBlur={onBlur}
-      onChange={onChange}
+      onBlur={(e) => {
+        handleBlur(e.target.value);
+      }}
+      onFocus={(e) => {
+        setShowValue(value?.toString());
+        // 如果setShowValue了新数字，则直接调用select()无效果
+        requestAnimationFrame(() => {
+          e.target.select();
+        });
+      }}
+      onChange={(exp) => {
+        setShowValue(exp);
+        onChange?.(name, exp);
+      }}
       {...rest}
     />
   );
