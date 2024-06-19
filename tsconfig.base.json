@@ -9,7 +9,7 @@
     "lib": ["dom", "ESNext"],
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "declarationMap": false,
