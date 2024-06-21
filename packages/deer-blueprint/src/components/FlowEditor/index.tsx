@@ -1,16 +1,45 @@
 import { Stage } from 'react-konva';
 import { SelectionLayer } from './SelectionLayer';
 import { useStageStore } from '@/store';
-import { useEffect, useRef } from 'react';
-import { isNil } from '@/util';
+import { useEffect, useRef, useState } from 'react';
+import { isCtrlKey, isNil } from '@/util';
+import Konva from 'konva';
+import { useKeyPress } from 'ahooks';
+import { ConnectionLayer } from './ConnectionLayer';
 
 interface FlowEditorProps {}
 
 export function FlowEditor(props: FlowEditorProps) {
   const {} = props;
 
-  const { width, height, setSize } = useStageStore();
+  const { width, height, position, scale, setSize, setPosition, setScale, viewportToWorldPosition } = useStageStore();
   const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<Konva.Stage>(null);
+  const [isDraggable, setIsDraggable] = useState(false);
+
+  const handleUpdateStagePos = (e: Konva.KonvaEventObject<DragEvent>) => {
+    setPosition(e.target.position());
+  };
+
+  const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
+    e.evt.preventDefault();
+    const stage = stageRef.current;
+    if (isNil(stage)) return;
+
+    const viewPos = stage.getPointerPosition() || { x: 0, y: 0 };
+    const worldPos = viewportToWorldPosition(viewPos);
+
+    const dir = e.evt.deltaY > 0 ? 1 : -1;
+    const oldScale = scale.x;
+    const newScale = dir > 0 ? oldScale * 1.05 : oldScale / 1.05;
+    setScale(newScale);
+
+    const newPos = {
+      x: viewPos.x - worldPos.x * newScale,
+      y: viewPos.y - worldPos.y * newScale,
+    };
+    setPosition(newPos);
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -28,10 +57,40 @@ export function FlowEditor(props: FlowEditorProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (isNil(stageRef.current)) return;
+
+    return () => {};
+  }, []);
+
+  useKeyPress(
+    (event) => isCtrlKey(event),
+    (event) => {
+      if (event.type === 'keydown') {
+        setIsDraggable(true);
+      } else if (event.type === 'keyup') {
+        setIsDraggable(false);
+      }
+    },
+    { events: ['keydown', 'keyup'] }
+  );
+
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
-      <Stage width={width} height={height} draggable={true}>
+      <Stage
+        ref={stageRef}
+        width={width}
+        height={height}
+        x={position.x}
+        y={position.y}
+        scale={scale}
+        draggable={isDraggable}
+        onWheel={handleWheel}
+        onDragMove={handleUpdateStagePos}
+        onDragEnd={handleUpdateStagePos}
+      >
         <SelectionLayer />
+        <ConnectionLayer />
       </Stage>
     </div>
   );

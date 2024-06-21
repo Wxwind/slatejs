@@ -13,11 +13,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "ahooks": "^3.8.0",
+    "immer": "^10.0.3",
     "konva": "^9.3.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-konva": "^18.2.10",
-    "immer": "^10.0.3",
     "use-immer": "^0.9.0",
     "zustand": "^4.4.4"
   },

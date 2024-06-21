@@ -1,6 +1,6 @@
 import Konva from 'konva';
+import { Stage } from 'konva/lib/Stage';
 import { create } from 'zustand';
-import { Draft, produce } from 'immer';
 
 interface StageStoreProps {
   draggable: boolean;
@@ -9,6 +9,10 @@ interface StageStoreProps {
   position: Konva.Vector2d;
   scale: Konva.Vector2d;
   setSize: (width: number, height: number) => void;
+  setPosition: (position: Konva.Vector2d) => void;
+  setScale: (scale: number) => void;
+  viewportToWorldPosition: (viewPos: Konva.Vector2d) => Konva.Vector2d;
+  getPointerWorldPosition: (stage: Stage) => Konva.Vector2d;
 }
 
 export const useStageStore = create<StageStoreProps>((set, get) => {
@@ -23,6 +27,20 @@ export const useStageStore = create<StageStoreProps>((set, get) => {
     },
     setPosition: (position: Konva.Vector2d) => {
       set({ position });
+    },
+    setScale: (scale: number) => {
+      set({ scale: { x: scale, y: scale } });
+    },
+    viewportToWorldPosition: (viewPos) => {
+      const { position, scale } = get();
+      return {
+        x: (viewPos.x - position.x) / scale.x,
+        y: (viewPos.y - position.y) / scale.y,
+      };
+    },
+    getPointerWorldPosition: (stage) => {
+      const viewPos = stage.getPointerPosition() || { x: 0, y: 0 };
+      return get().viewportToWorldPosition(viewPos);
     },
   };
 });
