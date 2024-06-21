@@ -6,6 +6,7 @@ import { isCtrlKey, isNil } from '@/util';
 import Konva from 'konva';
 import { useKeyPress } from 'ahooks';
 import { ConnectionLayer } from './ConnectionLayer';
+import { NodeLayer } from './NodeLayer';
 
 interface FlowEditorProps {}
 
@@ -89,8 +90,9 @@ export function FlowEditor(props: FlowEditorProps) {
         onDragMove={handleUpdateStagePos}
         onDragEnd={handleUpdateStagePos}
       >
-        <SelectionLayer />
+        <NodeLayer />
         <ConnectionLayer />
+        <SelectionLayer />
       </Stage>
     </div>
   );
