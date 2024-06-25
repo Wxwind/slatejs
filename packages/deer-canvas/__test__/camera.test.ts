@@ -30,7 +30,7 @@ describe('Camera', () => {
     camera.setFlipY(true);
 
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.ORTHOGRAPHIC);
-    expect(camera.Zoom).toBe(1);
+    expect(camera.Zoom).toBeDeepCloseTo([1, 1]);
     expect(camera.Near).toBe(0.1);
     expect(camera.Far).toBe(1000);
     expect(camera.Position).toStrictEqual(vec3.fromValues(300, 250, 500));
@@ -116,7 +116,7 @@ describe('Camera', () => {
       .setOrthographic(-width / 2, width / 2, height / 2, -height / 2, 0.1, 1000);
 
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.ORTHOGRAPHIC);
-    expect(camera.Zoom).toBe(1);
+    expect(camera.Zoom).toBeDeepCloseTo([1, 1]);
     expect(camera.Near).toBe(0.1);
     expect(camera.Far).toBe(1000);
     expect(camera.Position).toStrictEqual(vec3.fromValues(300, 250, 500));
@@ -157,7 +157,7 @@ describe('Camera', () => {
       .setPerspective(0.1, 1000, 45, width / height);
 
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.PERSPECTIVE);
-    expect(camera.Zoom).toBe(1);
+    expect(camera.Zoom).toBeDeepCloseTo([1, 1]);
     expect(camera.Near).toBe(0.1);
     expect(camera.Far).toBe(1000);
     expect(camera.Position).toStrictEqual(vec3.fromValues(300, 250, 500));
@@ -199,7 +199,7 @@ describe('Camera', () => {
       .setPerspective(0.1, 1000, 45, width / height);
 
     expect(camera.ProjectionMode).toBe(CameraProjectionMode.PERSPECTIVE);
-    expect(camera.Zoom).toBe(1);
+    expect(camera.Zoom).toBeDeepCloseTo([1, 1]);
     expect(camera.Near).toBe(0.1);
     expect(camera.Far).toBe(1000);
     expect(camera.Position).toStrictEqual(vec3.fromValues(300, 250, 500));

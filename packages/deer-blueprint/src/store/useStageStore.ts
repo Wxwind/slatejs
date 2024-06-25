@@ -2,7 +2,7 @@ import Konva from 'konva';
 import { Stage } from 'konva/lib/Stage';
 import { create } from 'zustand';
 
-interface StageStoreProps {
+interface StageState {
   draggable: boolean;
   width: number;
   height: number;
@@ -15,7 +15,7 @@ interface StageStoreProps {
   getPointerWorldPosition: (stage: Stage) => Konva.Vector2d;
 }
 
-export const useStageStore = create<StageStoreProps>((set, get) => {
+export const useStageStore = create<StageState>((set, get) => {
   return {
     draggable: false,
     width: 500,

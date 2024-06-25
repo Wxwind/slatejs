@@ -2,7 +2,7 @@ import { UUID_PREFIX_COMP } from '@/config';
 import { genUUID } from '@/util/utils';
 import { ComponentType, ComponentTypeToJsonObjMap } from './type';
 import { Entity } from '../entity';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 import { accessor, property } from '../data';
 
 export abstract class ComponentBase<T extends ComponentType = ComponentType> {

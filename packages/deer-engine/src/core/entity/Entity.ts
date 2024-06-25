@@ -1,5 +1,5 @@
 import { isNil } from '@/util';
-import { ComponentBase, TransformComponent } from '../component';
+import { TransformComponent } from '../component';
 import { genUUID } from '@/util/utils';
 import { UUID_PREFIX_ENTITY } from '@/config';
 import { DeerScene } from '../DeerScene';
@@ -16,7 +16,6 @@ export class Entity {
 
   private readonly compMap = new Map<string, Component>();
 
-  @property({})
   private readonly compArray: Component[] = [];
 
   public readonly rootComp: TransformComponent;

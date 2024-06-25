@@ -1,6 +1,5 @@
 import { useBindSignal, useDumbState } from '@/hooks';
-import { isNil } from '@/util';
-import { ActionClip, CutsceneEditor, globalTypeMap } from 'deer-engine';
+import { ActionClip, CutsceneEditor, NoAbstractCtor } from 'deer-engine';
 import { FC } from 'react';
 import { getEditorRenderer } from '@/decorator';
 import { CurveEditor } from './components';
@@ -19,15 +18,9 @@ export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
 
   const getUICompFromType = (object: ActionClip | undefined) => {
     if (!object) return <div>not select any clip.</div>;
-    const ctor = globalTypeMap.get(object.constructor.name);
-    if (isNil(ctor))
-      return (
-        <div>
-          {object?.type}----{object.constructor.name}
-        </div>
-      );
-    const comp = getEditorRenderer(ctor);
-    return <div>{comp({ target: object })}</div>;
+
+    const Comp = getEditorRenderer(object.constructor as NoAbstractCtor);
+    return <Comp target={object} />;
   };
 
   return (

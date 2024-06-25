@@ -1,4 +1,4 @@
-import { EventEmitter } from '@/packages/eventEmitter';
+import { EventEmitter } from 'eventtool';
 import {
   CameraEvent,
   CameraProjectionMode,

@@ -16,7 +16,7 @@ import {
 } from './type';
 import { DirectorGroup } from './groups/DirectorGroup';
 import { deerEngine } from '@/core';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 import { CutsceneEditor } from './CutsceneEditor';
 
 /**

@@ -1,22 +1,24 @@
-import { ConnectionInfo, NodeInfo } from '@/interface';
+import { BPConnection, BPNode } from '@/interface';
 
 export interface ConnectionsSlice {
-  connections: ConnectionInfo[];
+  connections: BPConnection[];
   startConnection: () => void;
   endConnection: () => void;
   removeConnection: (id: string) => void;
 }
 
 export interface NodesSlice {
-  nodeMap: Record<string, NodeInfo>;
-  addNode: (node: NodeInfo) => void;
+  nodeMap: Record<string, BPNode>;
+  addNode: (node: BPNode) => void;
   removeNode: (id: string) => void;
-  findNode: (id: string) => void;
+  findNode: (id: string) => BPNode | undefined;
+  moveNode: (id: string, deltaX: number, deltaY: number) => void;
+  updateNode: (id: string, nodeInfo: BPNode) => void;
 }
 
 export interface GraphInfo {
-  nodes: NodeInfo[];
-  connections: ConnectionInfo[];
+  nodes: BPNode[];
+  connections: BPConnection[];
 }
 
 export interface SharedSlice {

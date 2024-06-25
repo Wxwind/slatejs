@@ -32,6 +32,7 @@
     "deer-engine": "workspace:*",
     "gl-matrix": "^3.4.3",
     "hammerjs": "^2.0.8",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "eventtool": "workspace:*"
   }
 }

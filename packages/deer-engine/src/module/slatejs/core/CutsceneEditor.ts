@@ -1,5 +1,5 @@
 import { Cutscene } from './Cutscene';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 import { ActionClip } from './ActionClip';
 import { PlayState } from './type';
 

@@ -17,7 +17,7 @@ export function registerEditor(ctor: NoAbstractCtor, renderFunc: FC<EditorProps>
 export function getEditorRenderer(ctor: NoAbstractCtor) {
   const renderFunc = globalEditorMap.get(ctor);
   if (!renderFunc) {
-    throw new Error(`the type ${ctor.name} hasn't be registered Ed–itor class yet.`);
+    throw new Error(`the type '${ctor.name}' hasn't be registered any Editor yet.`);
   }
 
   return renderFunc;

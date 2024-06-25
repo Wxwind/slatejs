@@ -1,6 +1,6 @@
 import { CanvasContext, RenderingContext } from '../interface';
 import { DisplayObject } from '../core/DisplayObject';
-import { SyncHook } from '../packages/tapable';
+import { SyncHook } from 'eventtool';
 import { ICamera } from '../camera';
 
 export class RenderingSystem {

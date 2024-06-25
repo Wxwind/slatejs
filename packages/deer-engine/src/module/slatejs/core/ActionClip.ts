@@ -2,7 +2,7 @@ import { IDirectable } from './IDirectable';
 import { ClipType, UpdateActionClipDto } from './type';
 import { IKeyable } from './IKeyable';
 import { AnimatedParameterCollection } from './AnimatedParameterCollection';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 import { Entity, property } from '@/core';
 
 export type ActionClipBaseInitParam = {

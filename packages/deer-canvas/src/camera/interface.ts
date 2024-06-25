@@ -1,4 +1,4 @@
-import { EventEmitter } from '@/packages/eventEmitter';
+import { EventEmitter } from 'eventtool';
 import { mat4, vec2, vec3 } from 'gl-matrix';
 import { EaseType, EasingFunction } from '../easing';
 import { ICanvas } from '../interface';

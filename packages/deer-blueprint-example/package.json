@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@arco-design/web-react": "^2.61.3",
     "allotment": "^1.20.2",
     "deer-blueprint": "workspace:*",
     "react": "^18.2.0",

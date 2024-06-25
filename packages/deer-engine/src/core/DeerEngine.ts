@@ -1,7 +1,7 @@
 import { isNil } from '@/util';
 import { DeerScene } from './DeerScene';
 import { CommandManager } from './manager';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 
 export class DeerEngine {
   private _sceneMap = new Map<string, DeerScene>();

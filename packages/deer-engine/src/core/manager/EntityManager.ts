@@ -3,7 +3,7 @@ import { Entity } from '../entity';
 import { TransformComponent } from '../component';
 import { isNil } from '@/util';
 import { EntityForHierarchy } from '@/store/type';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 
 export class EntityManager {
   private readonly entityMap = new Map<string, Entity>();

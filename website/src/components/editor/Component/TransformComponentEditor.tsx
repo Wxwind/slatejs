@@ -5,13 +5,10 @@ import { useImmer } from 'use-immer';
 import set from 'lodash/set';
 import { BlurInputNumber } from '@/components/baseComponent/BlurInputNumber';
 import { useBindSignal } from '@/hooks';
+import { EditorComp, registerEditor } from '@/decorator';
 
-interface TransformCompProps {
-  comp: TransformComponent;
-}
-
-export const TransformComp: FC<TransformCompProps> = (props) => {
-  const { comp } = props;
+export const TransformComponentEditor: EditorComp<TransformComponent> = (props) => {
+  const { target } = props;
 
   const [data, setData] = useImmer<TransformCompJson>({
     position: { x: 0, y: 0, z: 0 },
@@ -19,19 +16,19 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
     scale: { x: 0, y: 0, z: 0 },
   });
 
-  useBindSignal(comp.signals.componentUpdated, () => {
-    const obj = JsonModule.toJsonObject(comp);
+  useBindSignal(target.signals.componentUpdated, () => {
+    const obj = JsonModule.toJsonObject(target);
     setData(obj);
   });
 
   useEffect(() => {
-    const obj = JsonModule.toJsonObject(comp);
+    const obj = JsonModule.toJsonObject(target);
     setData(obj);
-  }, [comp, setData]);
+  }, [target, setData]);
 
   const handleValueFinish = (name: string, value: number | undefined) => {
     set(data, name, value);
-    comp.updateByJson(data);
+    target.updateByJson(data);
   };
 
   return (
@@ -62,3 +59,5 @@ export const TransformComp: FC<TransformCompProps> = (props) => {
     </CollapseBox>
   );
 };
+
+registerEditor(TransformComponent, TransformComponentEditor);

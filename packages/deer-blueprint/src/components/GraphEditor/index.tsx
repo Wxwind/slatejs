@@ -1,22 +1,22 @@
 import { Stage } from 'react-konva';
 import { SelectionLayer } from './SelectionLayer';
-import { useStageStore } from '@/store';
+import { useSelectedInfoStore, useStageStore } from '@/store';
 import { useEffect, useRef, useState } from 'react';
-import { isCtrlKey, isNil } from '@/util';
+import { clearGraphEditorCursorStyle, isCtrlKey, isNil, setGraphEditorCursorStyle } from '@/util';
 import Konva from 'konva';
 import { useKeyPress } from 'ahooks';
 import { ConnectionLayer } from './ConnectionLayer';
 import { NodeLayer } from './NodeLayer';
+import { GRAPH_EIDTOR_ID } from '@/constants';
 
-interface FlowEditorProps {}
-
-export function FlowEditor(props: FlowEditorProps) {
-  const {} = props;
-
+export function GraphEditor() {
   const { width, height, position, scale, setSize, setPosition, setScale, viewportToWorldPosition } = useStageStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const [isDraggable, setIsDraggable] = useState(false);
+
+  const clearSelection = useSelectedInfoStore((state) => state.clearSelection);
+  const cancelConnection = useSelectedInfoStore((state) => state.cancelConnection);
 
   const handleUpdateStagePos = (e: Konva.KonvaEventObject<DragEvent>) => {
     setPosition(e.target.position());
@@ -42,6 +42,14 @@ export function FlowEditor(props: FlowEditorProps) {
     setPosition(newPos);
   };
 
+  const handleClick = () => {
+    clearSelection();
+  };
+
+  const handleMouseUp = () => {
+    cancelConnection();
+  };
+
   useEffect(() => {
     const container = containerRef.current;
     if (isNil(container)) return;
@@ -58,19 +66,15 @@ export function FlowEditor(props: FlowEditorProps) {
     };
   }, []);
 
-  useEffect(() => {
-    if (isNil(stageRef.current)) return;
-
-    return () => {};
-  }, []);
-
   useKeyPress(
-    (event) => isCtrlKey(event),
+    (event) => event.key === ' ',
     (event) => {
       if (event.type === 'keydown') {
         setIsDraggable(true);
+        setGraphEditorCursorStyle('drag');
       } else if (event.type === 'keyup') {
         setIsDraggable(false);
+        clearGraphEditorCursorStyle();
       }
     },
     { events: ['keydown', 'keyup'] }
@@ -79,6 +83,7 @@ export function FlowEditor(props: FlowEditorProps) {
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
       <Stage
+        id={GRAPH_EIDTOR_ID}
         ref={stageRef}
         width={width}
         height={height}
@@ -89,6 +94,8 @@ export function FlowEditor(props: FlowEditorProps) {
         onWheel={handleWheel}
         onDragMove={handleUpdateStagePos}
         onDragEnd={handleUpdateStagePos}
+        onClick={handleClick}
+        onMouseUp={handleMouseUp}
       >
         <NodeLayer />
         <ConnectionLayer />

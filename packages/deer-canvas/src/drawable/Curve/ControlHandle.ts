@@ -1,6 +1,6 @@
 import { FederatedPointerEvent } from '../../events';
 import { Vector2 } from '../../util';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 import { ControlCircle, ControlCircleStyleProps } from '../ContorlCircle';
 
 /** used only for key.tangentmode=auto, length(centerOffset) will be fixed in this case */

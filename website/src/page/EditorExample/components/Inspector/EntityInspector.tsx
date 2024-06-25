@@ -1,7 +1,7 @@
-import { Component, DeerScene, MeshComponent, TransformComponent, getMetadataFromCtor } from 'deer-engine';
+import { Component, DeerScene, NoAbstractCtor } from 'deer-engine';
 import { FC, ReactNode } from 'react';
-import { MeshComp, TransformComp } from './comps';
 import { useBindSignal, useDumbState } from '@/hooks';
+import { getEditorRenderer } from '@/decorator';
 
 interface EntityInspectorProps {
   scene: DeerScene | undefined;
@@ -15,17 +15,13 @@ export const EntityInspector: FC<EntityInspectorProps> = (props) => {
   useBindSignal(scene?.entityManager.signals.entitySelected, refresh);
 
   const TypeToComp: (comp: Component) => ReactNode = (comp) => {
-    switch (comp.type) {
-      case 'MeshComponent':
-        console.log('Mesh', getMetadataFromCtor(MeshComponent));
-        return <MeshComp comp={comp as MeshComponent} />;
-      case 'TransformComponent':
-        console.log('Transform', getMetadataFromCtor(TransformComponent));
-        return <TransformComp comp={comp as TransformComponent} />;
+    const Comp = getEditorRenderer(comp.constructor as NoAbstractCtor);
 
-      default:
-        return null;
-    }
+    return (
+      <div>
+        <Comp target={comp} />
+      </div>
+    );
   };
 
   return (

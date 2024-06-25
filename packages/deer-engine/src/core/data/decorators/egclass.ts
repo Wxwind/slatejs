@@ -4,6 +4,7 @@ import { isNil } from '@/util';
 import { globalTypeMap } from '../GlobalTypeMap';
 import { ClassClassDecorator } from '../type';
 import { DecoratorMetadataObjectForRF, getClassName, getClassStath, hasClassStash } from './util';
+import { Entity, ComponentBase } from '@/core';
 
 // FIXME fix with Class extends new () => any
 export function egclass<Class extends new (...args: any[]) => any>(name?: string): ClassClassDecorator<Class> {
@@ -43,6 +44,8 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
 
           // TODO: entity/component reference
           // if (ctor instanceof Entity || ctor instanceof ComponentBase) {
+          //   const prop = metaProp.get?.(thisObj) as Entity | ComponentBase;
+          //   obj[key] = prop.id;
           // }
           const prop = metaProp.get?.(thisObj);
 
@@ -85,6 +88,9 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
             const metaProp = stash[key];
             if (!(key in json)) {
               if (metaProp?.allowEmpty) {
+                return undefined;
+              } else {
+                console.warn(`key '${key}' is required but not found on json ${json}`);
                 return undefined;
               }
             }

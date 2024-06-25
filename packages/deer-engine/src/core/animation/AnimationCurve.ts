@@ -11,7 +11,7 @@ import {
 } from './Keyframe';
 import { solveCubic } from './soleveCubic';
 import { egclass, property } from '../data';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 
 export enum AnimationCurveExtrapolation {
   Linaer = 'Linaer',

@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import { GraphStoreState, SharedSlice } from './interface';
-import { NodeInfo } from '@/interface';
+import { BPNode } from '@/interface';
 
 export const createSharedSlice: StateCreator<GraphStoreState, [['zustand/immer', never]], [], SharedSlice> = (
   set,
@@ -17,7 +17,7 @@ export const createSharedSlice: StateCreator<GraphStoreState, [['zustand/immer',
           acc[node.id] = node;
           return acc;
         },
-        {} as Record<string, NodeInfo>
+        {} as Record<string, BPNode>
       ),
       connections: data.connections,
     });

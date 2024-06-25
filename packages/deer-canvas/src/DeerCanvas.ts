@@ -16,7 +16,7 @@ import { EventPlugin, Canvas2DRendererPlugin, CullingPlugin, CoordinatePlugin, C
 import { Camera, ClipSpaceNearZ, ICamera } from './camera';
 import { Canvas2DContextSystem } from './plugins/plugin-canvas2d-renderer/Canvas2dContextSystem';
 import { mat4, vec3 } from 'gl-matrix';
-import { EventEmitter } from './packages/eventEmitter';
+import { EventEmitter } from 'eventtool';
 import { CanvasGlobalEventMap } from './types';
 
 const DEFAULT_CAMERA_Z = 500;

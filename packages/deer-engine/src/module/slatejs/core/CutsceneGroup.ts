@@ -4,7 +4,7 @@ import { CutsceneTrack } from './CutsceneTrack';
 import { IDirectable } from './IDirectable';
 import { isNil } from '@/util';
 import { ActionTrack } from './tracks';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 import { AnimationTrack } from './tracks/AnimationTrack';
 
 export abstract class CutsceneGroup implements IDirectable {

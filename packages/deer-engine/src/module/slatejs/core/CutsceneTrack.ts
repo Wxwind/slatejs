@@ -3,7 +3,7 @@ import { IDirectable } from './IDirectable';
 import { CreateActionClipDto } from './type';
 import { AnimationClip, PropertiesClip, TransformClip } from './clips';
 import { ActionClip } from './ActionClip';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 import { accessor } from '@/core';
 
 export abstract class CutsceneTrack implements IDirectable {

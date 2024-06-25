@@ -16,7 +16,7 @@ import { ContextMenuType, Shape } from '@/types';
 import { Circle, CircleStyleProps } from '../Circle';
 import { OffsetLineStyleProps } from '../OffsetLine';
 import { BaseStyleProps, ICanvas } from '@/interface';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 import { Line } from '../Line';
 import { ContextSystem } from '@/systems';
 

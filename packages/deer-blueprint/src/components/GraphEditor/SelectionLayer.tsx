@@ -1,5 +1,6 @@
-import { useStageStore } from '@/store';
-import { isNil } from '@/util';
+import { NODE_NAME } from '@/constants';
+import { useSelectedInfoStore, useStageStore } from '@/store';
+import { isCtrlKeyHold, isNil, isShiftKeyHold } from '@/util';
 import Konva from 'konva';
 import { FC, useEffect, useRef, useState } from 'react';
 import { Layer, Rect } from 'react-konva';
@@ -9,7 +10,11 @@ export const SelectionLayer: FC = () => {
   const [visible, setVisible] = useState(false);
   const [rect, setRect] = useImmer({ x1: 0, y1: 0, x2: 0, y2: 0 });
   const layerRef = useRef<Konva.Layer>(null);
+  const selectionRectRef = useRef<Konva.Rect>(null);
+
   const { getPointerWorldPosition } = useStageStore();
+  const addSelectedNodes = useSelectedInfoStore((state) => state.addSelectedNodes);
+  const toggleSelectedNodes = useSelectedInfoStore((state) => state.toggleSelectedNodes);
 
   useEffect(() => {
     const layer = layerRef.current;
@@ -52,6 +57,22 @@ export const SelectionLayer: FC = () => {
 
       const handlePointerUpLeave = (e: Konva.KonvaEventObject<MouseEvent | TouchEvent>) => {
         setVisible(false);
+        const nodes = stage.find(`.${NODE_NAME}`);
+        const box = selectionRectRef.current?.getClientRect();
+        if (!box) return;
+
+        const selected = nodes
+          .filter((node) => Konva.Util.haveIntersection(box, node.getClientRect({ skipShadow: true })))
+          .map((node) => node.id());
+
+        if (isCtrlKeyHold(e.evt)) {
+          toggleSelectedNodes(selected);
+        } else if (isShiftKeyHold(e.evt)) {
+          addSelectedNodes(selected);
+        } else {
+          addSelectedNodes(selected, true);
+        }
+
         stage.off('mousemove touchmove', handlePointerMove);
         stage.off('mouseup touchend', handlePointerUpLeave);
         stage.off('mouseleave touchcancel', handlePointerUpLeave);
@@ -80,7 +101,7 @@ export const SelectionLayer: FC = () => {
         y={Math.min(rect.y1, rect.y2)}
         width={Math.abs(rect.x2 - rect.x1)}
         height={Math.abs(rect.y2 - rect.y1)}
-      ></Rect>
+      />
     </Layer>
   );
 };

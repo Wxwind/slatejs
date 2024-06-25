@@ -1,1 +1,1 @@
-export * from './FlowEditor';
+export * from './GraphEditor';

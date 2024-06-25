@@ -1,4 +1,4 @@
-import { EventEmitter } from '@/packages/eventEmitter';
+import { EventEmitter } from 'eventtool';
 import { FederatedEvent } from '.';
 import { Cursor } from './types';
 import { FederatedEventEmitterTypes, FederatedEventMap } from './FederatedEventMap';

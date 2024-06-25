@@ -1,4 +1,4 @@
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 
 export abstract class StoreBase<T = unknown> {
   private listeners = new Signal<[]>();

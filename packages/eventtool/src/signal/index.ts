@@ -1,8 +1,6 @@
 export class Signal<T extends unknown[] = []> {
   listeners: ((...args: T) => void)[] = [];
 
-  public active: boolean = true;
-
   on = (fn: (...args: T) => void) => {
     this.listeners.push(fn);
   };
@@ -10,9 +8,6 @@ export class Signal<T extends unknown[] = []> {
   addListener = this.on;
 
   emit = (...args: T) => {
-    if (!this.active) {
-      return;
-    }
     for (const fn of this.listeners) {
       fn.apply(this, args);
     }

@@ -6,13 +6,45 @@ export const createNodesSlice: StateCreator<GraphStoreState, [['zustand/immer', 
   get
 ) => ({
   nodeMap: {},
-  addNode: () => {},
+  addNode: (node) => {
+    set((draft) => {
+      draft.nodeMap[node.id] = node;
+    });
+  },
   removeNode: (id) => {
-    // delete connection
-    const { connections } = get();
-    delete get().nodeMap.id;
+    const { connections, removeConnection } = get();
+
+    set((draft) => {
+      const conns = connections.filter((conn) => conn.fromNodeId === id || conn.toNodeId === id);
+      conns.forEach((conn) => {
+        removeConnection(conn.id);
+      });
+      delete draft.nodeMap[id];
+    });
   },
   findNode: (id) => {
     return get().nodeMap[id];
+  },
+  moveNode: (id, dx, dy) => {
+    const node = get().findNode(id);
+    if (!node) return;
+
+    set((draft) => {
+      draft.nodeMap[id].position = {
+        x: node.position.x + dx,
+        y: node.position.y + dy,
+      };
+    });
+  },
+  updateNode: (id, data) => {
+    const node = get().findNode(id);
+    if (!node) return;
+
+    set((draft) => {
+      draft.nodeMap[id] = {
+        ...draft.nodeMap[id],
+        ...data,
+      };
+    });
   },
 });

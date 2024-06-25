@@ -4,7 +4,7 @@ import { DisplayObject } from '../core/DisplayObject';
 import { RenderingSystem, EventSystem, ContextSystem } from '../systems';
 import { ICamera } from '../camera';
 import { BaseStyleProps } from './displayObject';
-import { EventEmitter } from '@/packages/eventEmitter';
+import { EventEmitter } from 'eventtool';
 import { CanvasGlobalEventMap } from '@/types';
 
 export interface ICanvas {

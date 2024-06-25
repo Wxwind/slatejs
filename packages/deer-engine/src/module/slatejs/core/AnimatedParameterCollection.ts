@@ -3,7 +3,7 @@ import { ActionClip } from './ActionClip';
 import { AnimatedParameter, AnimatedParameterJson } from './AnimatedParameter';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';
-import { Signal } from '@/packages/signal';
+import { Signal } from 'eventtool';
 
 export type AnimatedParameterCollectionJson = {
   animatedParamArray: AnimatedParameterJson[];
