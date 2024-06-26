@@ -1,13 +1,19 @@
 import { StateCreator } from 'zustand';
 import { GraphStoreState, NodesSlice } from './interface';
+import { genUUID } from '@/util';
 
 export const createNodesSlice: StateCreator<GraphStoreState, [['zustand/immer', never]], [], NodesSlice> = (
   set,
   get
 ) => ({
   nodeMap: {},
-  addNode: (node) => {
+  addNode: (name, position) => {
     set((draft) => {
+      const node = {
+        id: genUUID(),
+        name,
+        position,
+      };
       draft.nodeMap[node.id] = node;
     });
   },

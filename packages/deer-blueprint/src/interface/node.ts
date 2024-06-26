@@ -1,9 +1,15 @@
 import Konva from 'konva';
 
+export type BPNodeType = 'begin' | 'end' | 'function';
+
 export interface BPNodeDefinition {
   name: string;
-  inputs: BPNodeDefinition[];
-  outputs: BPNodeDefinition[];
+  type: BPNodeType;
+  inputs: BPNodePinDefinition[];
+  outputs: BPNodePinDefinition[];
+
+  label: string;
+  category: string;
 }
 
 export interface BPNode {
@@ -13,11 +19,14 @@ export interface BPNode {
   data?: Record<string, unknown>;
 }
 
-export type BPConnectingPinDirection = 'in' | 'out';
+export type BPPinDirection = 'in' | 'out';
 export type BPPinType = 'exec' | 'data';
+export type BPPinDataType = 'number' | 'string' | 'boolean';
 
-export interface BPNodePinDefinition {
-  name: string;
-  type: BPPinType;
-  position: Konva.Vector2d;
-}
+export type BPNodePinDefinition =
+  | {
+      name: string;
+      label?: string;
+      type: 'exec';
+    }
+  | { name: string; label?: string; type: 'data'; dataType: BPPinDataType };

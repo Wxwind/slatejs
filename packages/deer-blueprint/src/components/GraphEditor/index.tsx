@@ -2,12 +2,15 @@ import { Stage } from 'react-konva';
 import { SelectionLayer } from './SelectionLayer';
 import { useSelectedInfoStore, useStageStore } from '@/store';
 import { useEffect, useRef, useState } from 'react';
-import { clearGraphEditorCursorStyle, isCtrlKey, isNil, setGraphEditorCursorStyle } from '@/util';
+import { clearGraphEditorCursorStyle, isNil, setGraphEditorCursorStyle } from '@/util';
 import Konva from 'konva';
 import { useKeyPress } from 'ahooks';
 import { ConnectionLayer } from './ConnectionLayer';
 import { NodeLayer } from './NodeLayer';
 import { GRAPH_EIDTOR_ID } from '@/constants';
+import { GraphEditorContextMenu } from './GraphEditorContextMenu';
+import { globalEventEmitter } from '@/event';
+import { ContextMenuType } from '@/event/globalEventMap';
 
 export function GraphEditor() {
   const { width, height, position, scale, setSize, setPosition, setScale, viewportToWorldPosition } = useStageStore();
@@ -50,6 +53,10 @@ export function GraphEditor() {
     cancelConnection();
   };
 
+  const handleContextMenu = () => {
+    globalEventEmitter.emit('contextmenu', ContextMenuType.CREATE_NODE, undefined);
+  };
+
   useEffect(() => {
     const container = containerRef.current;
     if (isNil(container)) return;
@@ -81,26 +88,29 @@ export function GraphEditor() {
   );
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
-      <Stage
-        id={GRAPH_EIDTOR_ID}
-        ref={stageRef}
-        width={width}
-        height={height}
-        x={position.x}
-        y={position.y}
-        scale={scale}
-        draggable={isDraggable}
-        onWheel={handleWheel}
-        onDragMove={handleUpdateStagePos}
-        onDragEnd={handleUpdateStagePos}
-        onClick={handleClick}
-        onMouseUp={handleMouseUp}
-      >
-        <NodeLayer />
-        <ConnectionLayer />
-        <SelectionLayer />
-      </Stage>
-    </div>
+    <GraphEditorContextMenu>
+      <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+        <Stage
+          id={GRAPH_EIDTOR_ID}
+          ref={stageRef}
+          width={width}
+          height={height}
+          x={position.x}
+          y={position.y}
+          scale={scale}
+          draggable={isDraggable}
+          onWheel={handleWheel}
+          onDragMove={handleUpdateStagePos}
+          onDragEnd={handleUpdateStagePos}
+          onClick={handleClick}
+          onMouseUp={handleMouseUp}
+          onContextMenu={handleContextMenu}
+        >
+          <NodeLayer />
+          <ConnectionLayer />
+          <SelectionLayer />
+        </Stage>
+      </div>
+    </GraphEditorContextMenu>
   );
 }

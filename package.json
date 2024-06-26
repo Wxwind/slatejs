@@ -6,7 +6,7 @@
   "packageManager": "pnpm@8.8.0",
   "scripts": {
     "dev": "concurrently -n engine,canvas,website \"pnpm --filter deer-engine watch\" \"pnpm --filter deer-canvas watch\" \"pnpm --filter website dev\"",
-    "dev:bp": "concurrently -n core,website \"pnpm --filter deer-blueprint watch\" \"pnpm --filter deer-blueprint-example dev\"",
+    "dev:bp": "concurrently -n bp,bp-website \"pnpm --filter deer-blueprint watch\" \"pnpm --filter deer-blueprint-example dev\"",
     "build": "pnpm --filter website... build",
     "build:website": "pnpm --filter website build",
     "build:eg": "pnpm --filter deer-engine build",

@@ -1,4 +1,5 @@
 import { BPConnection, BPNode } from '@/interface';
+import Konva from 'konva';
 
 export interface ConnectionsSlice {
   connections: BPConnection[];
@@ -9,7 +10,7 @@ export interface ConnectionsSlice {
 
 export interface NodesSlice {
   nodeMap: Record<string, BPNode>;
-  addNode: (node: BPNode) => void;
+  addNode: (name: string, position: Konva.Vector2d) => void;
   removeNode: (id: string) => void;
   findNode: (id: string) => BPNode | undefined;
   moveNode: (id: string, deltaX: number, deltaY: number) => void;

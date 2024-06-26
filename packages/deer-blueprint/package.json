@@ -15,18 +15,20 @@
   "dependencies": {
     "@arco-design/web-react": "^2.61.3",
     "ahooks": "^3.8.0",
+    "eventtool": "workspace:*",
     "immer": "^10.0.3",
     "konva": "^9.3.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-konva": "^18.2.10",
     "use-immer": "^0.9.0",
-    "zustand": "^4.4.4",
-    "eventtool": "workspace:*"
+    "uuid": "^9.0.1",
+    "zustand": "^4.4.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.2.0",
     "typescript": "^5.2.2"

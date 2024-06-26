@@ -1,3 +1,9 @@
+export enum ContextMenuType {
+  CREATE_NODE,
+  Node,
+  Pin,
+}
+
 export interface GlobalEventMap {
-  contextmenu: (type: string, target: any) => void;
+  contextmenu: (type: ContextMenuType, context: any) => void;
 }

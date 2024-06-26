@@ -3,7 +3,7 @@ import { BPNode } from '@/interface';
 import { isShiftKeyHold } from '@/util';
 import Konva from 'konva';
 import { Group, Rect } from 'react-konva';
-import { useGraphStore, useSelectedInfoStore } from '..';
+import { useGraphStore, useSelectedInfoStore } from '../store';
 import { useRef } from 'react';
 
 interface BaseNodeProps {
