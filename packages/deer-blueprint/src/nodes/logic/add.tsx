@@ -24,4 +24,4 @@ export const AddDefinition: BPNodeDefinition = {
   category: 'logic',
 };
 
-registerNodeDefinition(AddDefinition.name, AddDefinition);
+registerNodeDefinition(AddDefinition);

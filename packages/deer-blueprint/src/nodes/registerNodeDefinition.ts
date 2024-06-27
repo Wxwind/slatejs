@@ -1,11 +1,6 @@
 import { BPNodeDefinition } from '@/interface';
+import { useNodeDefinitionMapStore } from '..';
 
-const nodeDefinitionMap: Record<string, BPNodeDefinition> = {};
-
-export const registerNodeDefinition = (name: string, nodeDef: BPNodeDefinition) => {
-  nodeDefinitionMap[name] = nodeDef;
-};
-
-export const getNodeDefinition = (name: string) => {
-  return nodeDefinitionMap[name];
+export const registerNodeDefinition = (nodeDef: BPNodeDefinition) => {
+  useNodeDefinitionMapStore.getState().registerNodeDefinition(nodeDef);
 };

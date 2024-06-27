@@ -1,8 +1,15 @@
+import { BaseNode } from '@/nodes';
 import { useGraphStore } from '@/store';
-import { Layer, Rect } from 'react-konva';
+import { Layer } from 'react-konva';
 
 export function NodeLayer() {
   const nodes = useGraphStore((state) => state.nodeMap);
 
-  return <Layer></Layer>;
+  return (
+    <Layer>
+      {Object.values(nodes).map((node) => (
+        <BaseNode key={node.id} data={node} />
+      ))}
+    </Layer>
+  );
 }

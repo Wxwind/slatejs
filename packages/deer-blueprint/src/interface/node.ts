@@ -5,8 +5,8 @@ export type BPNodeType = 'begin' | 'end' | 'function';
 export interface BPNodeDefinition {
   name: string;
   type: BPNodeType;
-  inputs: BPNodePinDefinition[];
-  outputs: BPNodePinDefinition[];
+  inputs: BPPinDefinition[];
+  outputs: BPPinDefinition[];
 
   label: string;
   category: string;
@@ -23,7 +23,7 @@ export type BPPinDirection = 'in' | 'out';
 export type BPPinType = 'exec' | 'data';
 export type BPPinDataType = 'number' | 'string' | 'boolean';
 
-export type BPNodePinDefinition =
+export type BPPinDefinition =
   | {
       name: string;
       label?: string;

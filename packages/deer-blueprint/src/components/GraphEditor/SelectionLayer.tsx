@@ -1,4 +1,4 @@
-import { NODE_NAME } from '@/constants';
+import { NODE_NAME, ThemeStyle } from '@/constants';
 import { useSelectedInfoStore, useStageStore } from '@/store';
 import { isCtrlKeyHold, isNil, isShiftKeyHold } from '@/util';
 import Konva from 'konva';
@@ -94,9 +94,10 @@ export const SelectionLayer: FC = () => {
   return (
     <Layer ref={layerRef}>
       <Rect
+        ref={selectionRectRef}
         visible={visible}
-        stroke="rgba(255,255,0,0.8)"
-        fill="rgba(255,255,0,0.4)"
+        stroke={ThemeStyle.selection.stroke}
+        fill={ThemeStyle.selection.fill}
         x={Math.min(rect.x1, rect.x2)}
         y={Math.min(rect.y1, rect.y2)}
         width={Math.abs(rect.x2 - rect.x1)}

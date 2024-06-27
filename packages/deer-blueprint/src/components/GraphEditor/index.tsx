@@ -11,6 +11,7 @@ import { GRAPH_EIDTOR_ID } from '@/constants';
 import { GraphEditorContextMenu } from './GraphEditorContextMenu';
 import { globalEventEmitter } from '@/event';
 import { ContextMenuType } from '@/event/globalEventMap';
+import { KonvaEventObject } from 'konva/lib/Node';
 
 export function GraphEditor() {
   const { width, height, position, scale, setSize, setPosition, setScale, viewportToWorldPosition } = useStageStore();
@@ -20,6 +21,8 @@ export function GraphEditor() {
 
   const clearSelection = useSelectedInfoStore((state) => state.clearSelection);
   const cancelConnection = useSelectedInfoStore((state) => state.cancelConnection);
+
+  const getPointerWorldPosition = useStageStore((state) => state.getPointerWorldPosition);
 
   const handleUpdateStagePos = (e: Konva.KonvaEventObject<DragEvent>) => {
     setPosition(e.target.position());
@@ -53,8 +56,11 @@ export function GraphEditor() {
     cancelConnection();
   };
 
-  const handleContextMenu = () => {
-    globalEventEmitter.emit('contextmenu', ContextMenuType.CREATE_NODE, undefined);
+  const handleContextMenu = (evt: KonvaEventObject<PointerEvent>) => {
+    if (isNil(stageRef.current)) return;
+    globalEventEmitter.emit('contextmenu', ContextMenuType.CREATE_NODE, {
+      position: getPointerWorldPosition(stageRef.current),
+    });
   };
 
   useEffect(() => {

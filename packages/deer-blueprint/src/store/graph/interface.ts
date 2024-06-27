@@ -12,7 +12,6 @@ export interface NodesSlice {
   nodeMap: Record<string, BPNode>;
   addNode: (name: string, position: Konva.Vector2d) => void;
   removeNode: (id: string) => void;
-  findNode: (id: string) => BPNode | undefined;
   moveNode: (id: string, deltaX: number, deltaY: number) => void;
   updateNode: (id: string, nodeInfo: BPNode) => void;
 }

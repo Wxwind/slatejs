@@ -1,9 +1,13 @@
+import Konva from 'konva';
+
 export enum ContextMenuType {
   CREATE_NODE,
   Node,
   Pin,
 }
 
+export type ContextMenuContext = { position: Konva.Vector2d };
+
 export interface GlobalEventMap {
-  contextmenu: (type: ContextMenuType, context: any) => void;
+  contextmenu: (type: ContextMenuType, context: ContextMenuContext) => void;
 }

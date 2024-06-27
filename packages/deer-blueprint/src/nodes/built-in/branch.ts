@@ -1,5 +1,6 @@
 import { BPNodeDefinition } from '@/interface';
 import { buildExecNodePin } from '@/util/nodeBuilder';
+import { registerNodeDefinition } from '../registerNodeDefinition';
 
 export const branchDefinition: BPNodeDefinition = {
   name: 'if',
@@ -26,6 +27,8 @@ export const branchDefinition: BPNodeDefinition = {
       type: 'exec',
     },
   ],
-  label: '',
-  category: '',
+  label: 'branch',
+  category: 'built-in',
 };
+
+registerNodeDefinition(branchDefinition);

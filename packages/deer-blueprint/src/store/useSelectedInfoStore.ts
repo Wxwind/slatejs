@@ -17,17 +17,17 @@ export const useSelectedInfoStore = create<SelectedInfoState, [['zustand/immer',
       selectedNodes: [] as string[],
       selectedConnections: [] as string[],
       toggleSelectedNodes: (ids) => {
-        const { selectedNodes } = get();
-        for (const id of ids) {
-          const index = selectedNodes.findIndex((a) => {
-            a === id;
-          });
-          if (index === -1) {
-            selectedNodes.push(id);
-          } else {
-            selectedNodes.splice(index, 1);
+        set((draft) => {
+          const selectedNodes = draft.selectedNodes;
+          for (const id of ids) {
+            const index = selectedNodes.findIndex((a) => a === id);
+            if (index === -1) {
+              selectedNodes.push(id);
+            } else {
+              selectedNodes.splice(index, 1);
+            }
           }
-        }
+        });
       },
       addSelectedNodes: (ids, forceSet = false) => {
         set((draft) => {

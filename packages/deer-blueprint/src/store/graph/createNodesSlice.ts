@@ -28,11 +28,8 @@ export const createNodesSlice: StateCreator<GraphStoreState, [['zustand/immer', 
       delete draft.nodeMap[id];
     });
   },
-  findNode: (id) => {
-    return get().nodeMap[id];
-  },
   moveNode: (id, dx, dy) => {
-    const node = get().findNode(id);
+    const node = get().nodeMap[id];
     if (!node) return;
 
     set((draft) => {
@@ -43,7 +40,7 @@ export const createNodesSlice: StateCreator<GraphStoreState, [['zustand/immer', 
     });
   },
   updateNode: (id, data) => {
-    const node = get().findNode(id);
+    const node = get().nodeMap[id];
     if (!node) return;
 
     set((draft) => {

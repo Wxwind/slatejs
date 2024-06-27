@@ -18,9 +18,13 @@ export const GraphEditorContextMenu: FC<PropsWithChildren> = (props) => {
   useEffect(() => {
     const onContextMenu = (type: ContextMenuType, context: any) => {
       let a = undefined;
+      const handleClose = () => {
+        handleVisibleChange(false);
+      };
+
       switch (type) {
         case ContextMenuType.CREATE_NODE:
-          a = <CreateNodeContextMenu />;
+          a = <CreateNodeContextMenu context={context} onClose={handleClose} />;
           break;
 
         default:
