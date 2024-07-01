@@ -5,9 +5,13 @@ import App from './App.tsx';
 import '@/components/editor';
 import './index.css';
 import '@arco-design/web-react/dist/css/arco.css';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <DndProvider backend={HTML5Backend}>
+      <App />
+    </DndProvider>
   </React.StrictMode>
 );

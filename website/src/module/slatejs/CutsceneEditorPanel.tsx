@@ -6,6 +6,8 @@ import { CutsceneGroupPanel } from './CutsceneGroupPanel';
 import classNames from 'classnames';
 import { UUID_PREFIX_ENTITY } from 'deer-engine';
 import { useBindSignal, useDumbState } from '@/hooks';
+import { useDrop } from 'react-dnd';
+import { DndEntityDragObject, DragDropItemId } from '@/constants';
 
 export interface CutsceneEditorPanelProps {}
 
@@ -22,34 +24,33 @@ export const CutsceneEditorPanel: FC<CutsceneEditorPanelProps> = (props) => {
     cutsceneEditor.cutscene.addGroup(entityId, 'Actor');
   };
 
+  const [{ isOver }, drop] = useDrop({
+    accept: DragDropItemId.Entity,
+    canDrop: (dragObj) => {
+      const { entityId } = dragObj as DndEntityDragObject;
+      return entityId.startsWith(UUID_PREFIX_ENTITY);
+    },
+    drop: (dragObj) => {
+      const { entityId } = dragObj as DndEntityDragObject;
+      handleDropEntity(entityId);
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  });
+
   return (
     <div className="relative w-full h-full bg-[#333] flex">
       <div className="bg-[#555861] w-1/4 flex flex-col h-full">
         <Controls cutsceneEditor={cutsceneEditor} />
         <div
+          ref={drop}
           className={classNames(
             'flex-1',
             'cursor-pointer flex flex-col border border-solid rounded text-white',
-            isSthDraggedHover ? 'border-primary bg-red-300' : 'border-transparent'
+            isOver ? 'border-primary bg-red-300' : 'border-transparent'
           )}
-          onDrop={(ev) => {
-            setIsSthDraggedHover(false);
-            const entityId = ev.dataTransfer.getData('text');
-            if (entityId.startsWith(UUID_PREFIX_ENTITY)) {
-              handleDropEntity(entityId);
-            }
-          }}
-          onDragOver={(ev) => {
-            ev.preventDefault();
-          }}
-          onDragEnter={(ev) => {
-            if (!ev.dataTransfer.getData('text/plain').startsWith(UUID_PREFIX_ENTITY)) {
-              ev.dataTransfer.dropEffect = 'none';
-            } else setIsSthDraggedHover(true);
-          }}
-          onDragLeave={(ev) => {
-            setIsSthDraggedHover(false);
-          }}
         >
           {cutsceneEditor.cutscene.groups.map((a) => (
             <CutsceneGroupPanel key={a.id} object={a} depth={0} paddingLeft={18} />
