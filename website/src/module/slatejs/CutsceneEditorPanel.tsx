@@ -12,8 +12,6 @@ import { DndEntityDragObject, DragDropItemId } from '@/constants';
 export interface CutsceneEditorPanelProps {}
 
 export const CutsceneEditorPanel: FC<CutsceneEditorPanelProps> = (props) => {
-  const [isSthDraggedHover, setIsSthDraggedHover] = useState(false);
-
   const refresh = useDumbState();
   useBindSignal(cutsceneEditor.cutscene.signals.groupCountUpdated, refresh);
   useBindSignal(cutsceneEditor.signals.playStateUpdated, (playState) => {

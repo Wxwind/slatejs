@@ -1,16 +1,24 @@
-import { BPConnection, BPNode } from '@/interface';
-import Konva from 'konva';
+import { BPConnection, BPNode, BPPinDefinition, BPPinDirection, BPPinType } from '@/interface';
+
+export interface TempConnection {
+  fromNodeId: string;
+  fromPinDirection: BPPinDirection;
+  fromPin: BPPinDefinition;
+}
 
 export interface ConnectionsSlice {
   connections: BPConnection[];
-  startConnection: () => void;
-  endConnection: () => void;
+  tempConnection: TempConnection | undefined;
+  startConnecting: (fromNodeId: string, fromPinDirection: BPPinDirection, fromPin: BPPinDefinition) => void;
+  cancelConnecting: () => void;
+  endConnecting: (toNodeId: string, toPinDirection: BPPinDirection, toPin: BPPinDefinition) => void;
   removeConnection: (id: string) => void;
+  isPinConnected: (nodeId: string, pinName: string) => boolean;
 }
 
 export interface NodesSlice {
   nodeMap: Record<string, BPNode>;
-  addNode: (name: string, position: Konva.Vector2d) => void;
+  addNode: (node: BPNode) => void;
   removeNode: (id: string) => void;
   moveNode: (id: string, deltaX: number, deltaY: number) => void;
   updateNode: (id: string, nodeInfo: BPNode) => void;

@@ -1,6 +1,6 @@
 import { Stage } from 'react-konva';
 import { SelectionLayer } from './SelectionLayer';
-import { useSelectedInfoStore, useStageStore } from '@/store';
+import { useGraphStore, useSelectedInfoStore, useStageStore } from '@/store';
 import { useEffect, useRef, useState } from 'react';
 import { clearGraphEditorCursorStyle, isNil, setGraphEditorCursorStyle } from '@/util';
 import Konva from 'konva';
@@ -20,7 +20,7 @@ export function GraphEditor() {
   const [isDraggable, setIsDraggable] = useState(false);
 
   const clearSelection = useSelectedInfoStore((state) => state.clearSelection);
-  const cancelConnection = useSelectedInfoStore((state) => state.cancelConnection);
+  const cancelConnecting = useGraphStore((state) => state.cancelConnecting);
 
   const getPointerWorldPosition = useStageStore((state) => state.getPointerWorldPosition);
 
@@ -50,10 +50,12 @@ export function GraphEditor() {
 
   const handleClick = () => {
     clearSelection();
+    if (isNil(stageRef.current)) return;
+    globalEventEmitter.emit('stageClick', getPointerWorldPosition(stageRef.current));
   };
 
   const handleMouseUp = () => {
-    cancelConnection();
+    cancelConnecting();
   };
 
   const handleContextMenu = (evt: KonvaEventObject<PointerEvent>) => {
@@ -61,6 +63,11 @@ export function GraphEditor() {
     globalEventEmitter.emit('contextmenu', ContextMenuType.CREATE_NODE, {
       position: getPointerWorldPosition(stageRef.current),
     });
+  };
+
+  const handlePointerMove = (evt: KonvaEventObject<PointerEvent>) => {
+    if (isNil(stageRef.current)) return;
+    globalEventEmitter.emit('stageMove', getPointerWorldPosition(stageRef.current));
   };
 
   useEffect(() => {
@@ -110,6 +117,7 @@ export function GraphEditor() {
           onDragEnd={handleUpdateStagePos}
           onClick={handleClick}
           onMouseUp={handleMouseUp}
+          onMouseMove={handlePointerMove}
           onContextMenu={handleContextMenu}
         >
           <NodeLayer />

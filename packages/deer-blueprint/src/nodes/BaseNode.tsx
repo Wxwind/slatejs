@@ -1,20 +1,20 @@
 import {
   DEFAULT_NODE_WIDTH,
   NODE_NAME,
-  NODE_PIN_HEIGHT,
-  NODE_PIN_WIDTH,
   NODE_TITLE_FONT,
   NODE_TITLE_HEIGHT,
   ThemeStyle,
-  getNodeHeight,
+  calcOutputPinPos,
+  calcNodeHeight,
 } from '@/constants';
-import { BPNode, BPPinDefinition } from '@/interface';
+import { BPNode } from '@/interface';
 import { isShiftKeyHold } from '@/util';
 import Konva from 'konva';
 import { Group, Rect, Text } from 'react-konva';
-import { useGraphStore, useNodeDefinitionMapStore, useSelectedInfoStore } from '../store';
+import { useGraphStore, useSelectedInfoStore } from '../store';
 import { useRef } from 'react';
 import { Pin } from './components';
+import { calcInputPinPos } from '@/constants';
 
 interface BaseNodeProps {
   data: BPNode;
@@ -27,8 +27,8 @@ export function BaseNode(props: BaseNodeProps) {
   const addSelectedNodes = useSelectedInfoStore((state) => state.addSelectedNodes);
   const toggleSelectedNodes = useSelectedInfoStore((state) => state.toggleSelectedNodes);
   const moveNode = useGraphStore((state) => state.moveNode);
-
-  const bpNodeDef = useNodeDefinitionMapStore().nodeDefinitionMap[data.name];
+  const startConnecting = useGraphStore((state) => state.startConnecting);
+  const endConnecting = useGraphStore((state) => state.endConnecting);
 
   const prevPos = useRef<Konva.Vector2d>();
   const isSelected = selectedNodes.includes(data.id);
@@ -67,22 +67,8 @@ export function BaseNode(props: BaseNodeProps) {
     prevPos.current = nowPos;
   };
 
-  const width = DEFAULT_NODE_WIDTH;
-  const height = getNodeHeight(bpNodeDef);
-
-  const calcInputPinPos = (pin: BPPinDefinition, index: number) => {
-    const paddingLeft = 8;
-    const top = NODE_TITLE_HEIGHT + index * NODE_PIN_HEIGHT;
-
-    return { x: paddingLeft, y: top };
-  };
-
-  const calcOutputPinPos = (pin: BPPinDefinition, index: number) => {
-    const paddingLeft = width - 8 - NODE_PIN_WIDTH;
-    const top = NODE_TITLE_HEIGHT + index * NODE_PIN_HEIGHT;
-
-    return { x: paddingLeft, y: top };
-  };
+  const width = data.width;
+  const height = calcNodeHeight(data);
 
   return (
     <Group
@@ -121,11 +107,37 @@ export function BaseNode(props: BaseNodeProps) {
         fontSize={NODE_TITLE_FONT}
         fill="white"
       />
-      {bpNodeDef.inputs.map((pin, index) => (
-        <Pin data={pin} position={calcInputPinPos(pin, index)} />
+      {data.inputs.map((pin) => (
+        <Pin
+          key={pin.name}
+          data={pin}
+          nodeId={data.id}
+          position={calcInputPinPos(data.id, pin.name)}
+          onConnectionStart={(e) => {
+            e.cancelBubble = true;
+            startConnecting(data.id, 'in', pin);
+          }}
+          onConnectionEnd={(e) => {
+            e.cancelBubble = true;
+            endConnecting(data.id, 'in', pin);
+          }}
+        />
       ))}
-      {bpNodeDef.outputs.map((pin, index) => (
-        <Pin data={pin} position={calcOutputPinPos(pin, index)} />
+      {data.outputs.map((pin) => (
+        <Pin
+          key={pin.name}
+          data={pin}
+          nodeId={data.id}
+          position={calcOutputPinPos(data.id, pin.name)}
+          onConnectionStart={(e) => {
+            e.cancelBubble = true;
+            startConnecting(data.id, 'out', pin);
+          }}
+          onConnectionEnd={(e) => {
+            e.cancelBubble = true;
+            endConnecting(data.id, 'out', pin);
+          }}
+        />
       ))}
     </Group>
   );

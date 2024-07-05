@@ -1,9 +1,10 @@
-import { BPNodeDefinition } from '@/interface';
+import { BPNode } from '@/interface';
 import { buildExecNodePin } from '@/util/nodeBuilder';
-import { registerNodeDefinition } from '../registerNodeDefinition';
+import { registerNodeTemplate } from '../registerNodeDefinition';
+import { DEFAULT_NODE_WIDTH } from '@/constants';
 
-export const branchDefinition: BPNodeDefinition = {
-  name: 'if',
+export const branchDefinition: BPNode = {
+  name: 'branch',
   type: 'function',
   inputs: [
     buildExecNodePin('in'),
@@ -12,10 +13,11 @@ export const branchDefinition: BPNodeDefinition = {
       label: 'Condition',
       type: 'data',
       dataType: 'boolean',
+      defaultValue: false,
+      value: false,
     },
   ],
   outputs: [
-    buildExecNodePin('out'),
     {
       name: 'true',
       label: 'True',
@@ -27,8 +29,18 @@ export const branchDefinition: BPNodeDefinition = {
       type: 'exec',
     },
   ],
-  label: 'branch',
+  label: 'Branch',
   category: 'built-in',
+  id: '',
+  position: { x: 0, y: 0 },
+  width: DEFAULT_NODE_WIDTH,
+  output: ({ getInputValue, getOutputExec }) => {
+    return `if(${getInputValue('condition')}{
+    ${getInputValue('true')}
+    }else{
+    ${getOutputExec('false')}
+    }`;
+  },
 };
 
-registerNodeDefinition(branchDefinition);
+registerNodeTemplate(branchDefinition);

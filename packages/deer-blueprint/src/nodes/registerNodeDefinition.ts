@@ -1,6 +1,7 @@
-import { BPNodeDefinition } from '@/interface';
-import { useNodeDefinitionMapStore } from '..';
+import { BPNode } from '@/interface';
+import { useNodeTemplateMapStore } from '..';
 
-export const registerNodeDefinition = (nodeDef: BPNodeDefinition) => {
-  useNodeDefinitionMapStore.getState().registerNodeDefinition(nodeDef);
+export const registerNodeTemplate = (nodeTemp: BPNode) => {
+  console.log('register node', nodeTemp.name);
+  useNodeTemplateMapStore.getState().registerNodeTemplate(nodeTemp);
 };

@@ -6,3 +6,9 @@ export const pushUnique = <T>(array: T[], expand: T[]) => {
     }
   }
 };
+
+export const groupBy: <T>(array: T[], getKey: (el: T) => string) => Record<string, T[]> = (array, getKey) => {
+  const res: Record<string, any[]> = {};
+  array.forEach((a) => (res[getKey(a)] || (res[getKey(a)] = [] as unknown[])).push(a));
+  return res;
+};

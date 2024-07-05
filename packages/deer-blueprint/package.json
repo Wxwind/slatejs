@@ -16,6 +16,7 @@
     "@arco-design/web-react": "^2.61.3",
     "ahooks": "^3.8.0",
     "eventtool": "workspace:*",
+    "fuse.js": "^7.0.0",
     "immer": "^10.0.3",
     "konva": "^9.3.11",
     "react": "^18.2.0",
@@ -29,9 +30,11 @@
   "devDependencies": {
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/react-highlight-words": "^0.20.0",
     "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.2.0",
+    "react-highlight-words": "^0.20.0",
     "typescript": "^5.2.2"
   }
 }

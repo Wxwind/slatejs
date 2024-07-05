@@ -1,5 +1,4 @@
-import { globalEventEmitter } from '@/event';
-import { ContextMenuType } from '@/event/globalEventMap';
+import { globalEventEmitter, ContextMenuContext, ContextMenuType } from '@/event';
 import { Menu, Trigger } from '@arco-design/web-react';
 import { FC, PropsWithChildren, ReactNode, useEffect, useState } from 'react';
 import { CreateNodeContextMenu } from './CreateNodeContextMenu';
@@ -16,7 +15,7 @@ export const GraphEditorContextMenu: FC<PropsWithChildren> = (props) => {
   };
 
   useEffect(() => {
-    const onContextMenu = (type: ContextMenuType, context: any) => {
+    const onContextMenu = (type: ContextMenuType, context: ContextMenuContext) => {
       let a = undefined;
       const handleClose = () => {
         handleVisibleChange(false);
@@ -44,11 +43,7 @@ export const GraphEditorContextMenu: FC<PropsWithChildren> = (props) => {
     <Trigger
       popupVisible={isVisible}
       onVisibleChange={handleVisibleChange}
-      popup={() => (
-        <div style={{ borderRadius: 4, width: 240 }}>
-          <Menu>{contextMenu}</Menu>
-        </div>
-      )}
+      popup={() => <div style={{ borderRadius: 4, width: 240 }}>{contextMenu}</div>}
       trigger="contextMenu"
       position="bl"
       alignPoint

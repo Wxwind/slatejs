@@ -2,6 +2,8 @@ import { Entity, EntityForHierarchy, deerEngine } from 'deer-engine';
 import { FC, useState } from 'react';
 import { EntityTree } from './EntityTree';
 import classNames from 'classnames';
+import { useDrag } from 'react-dnd';
+import { DndEntityDragObject, DragDropItemId } from '@/constants';
 
 interface EntityProps {
   data: EntityForHierarchy;
@@ -12,22 +14,17 @@ interface EntityProps {
 
 export const EntityTreeNode: FC<EntityProps> = (props) => {
   const { data, selectedEntity, depth, onTreeNodeSelected } = props;
-  const [isDragging, setIsDragging] = useState(false);
 
   const isSelected = selectedEntity?.id === data.id;
 
+  const [, drag] = useDrag<DndEntityDragObject>({
+    type: DragDropItemId.Entity,
+    item: { entityId: data.id },
+    collect: (monitor) => ({ isDragging: monitor.isDragging() }),
+  });
+
   return (
-    <div
-      draggable
-      onDragStart={(e) => {
-        e.dataTransfer.setData('text/plain', data.id);
-        e.dataTransfer.setDragImage(e.currentTarget, 40, 40);
-        setIsDragging(true);
-      }}
-      onDragEnd={() => {
-        setIsDragging(false);
-      }}
-    >
+    <div draggable ref={drag}>
       <div
         className={classNames(
           `group pr-2 h-6 mt-[1px] flex gap-x-1 items-center w-full`,

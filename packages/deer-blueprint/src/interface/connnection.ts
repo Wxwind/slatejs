@@ -1,7 +1,7 @@
 export interface BPConnection {
   id: string;
   fromNodeId: string;
-  fromPinId: string;
+  fromPinName: string;
   toNodeId: string;
-  toPinId: string;
+  toPinName: string;
 }

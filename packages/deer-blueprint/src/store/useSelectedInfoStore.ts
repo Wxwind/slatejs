@@ -7,7 +7,6 @@ interface SelectedInfoState {
   selectedConnections: string[];
   addSelectedNodes: (ids: string[], forceSet?: boolean) => void;
   toggleSelectedNodes: (ids: string[]) => void;
-  cancelConnection: () => void;
   clearSelection: () => void;
 }
 
@@ -34,7 +33,6 @@ export const useSelectedInfoStore = create<SelectedInfoState, [['zustand/immer',
           forceSet ? (draft.selectedNodes = ids) : pushUnique(draft.selectedNodes, ids);
         });
       },
-      cancelConnection: () => {},
       clearSelection: () => {
         set({ selectedNodes: [], selectedConnections: [] });
       },
