@@ -12,10 +12,13 @@ export const SceneCanvas: FC = (props) => {
   });
 
   useEffect(() => {
-    const scene = deerEngine.createScene(DEER_ENGINE_SCENE, '/hdr/default.hdr');
-    deerEngine.activeScene = scene;
+    deerEngine.setContainerId(DEER_ENGINE_SCENE);
+    const scene = deerEngine.createScene('Empty Scene');
+    scene?.loadHDR('/hdr/default.hdr');
     return () => {
-      deerEngine.deleteScene(DEER_ENGINE_SCENE);
+      if (scene) {
+        deerEngine.deleteScene(scene.id);
+      }
     };
   }, []);
 

@@ -22,7 +22,7 @@ export function ConnectionLayer() {
   };
 
   const getConnectionPinPos = (conn: BPConnection, dir: BPPinDirection) => {
-    const nodePos = nodeMap[conn.fromNodeId]?.position || { x: 0, y: 0 };
+    const nodePos = (dir === 'out' ? nodeMap[conn.fromNodeId] : nodeMap[conn.toNodeId])?.position || { x: 0, y: 0 };
     const pinPos =
       dir === 'out'
         ? calcOutputPinPos(conn.fromNodeId, conn.fromPinName)

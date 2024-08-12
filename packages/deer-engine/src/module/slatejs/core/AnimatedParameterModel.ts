@@ -1,4 +1,4 @@
-import { ReflectionTool, isNearly } from '@/util';
+import { isNearly } from '@/util';
 import { FVector3, MetadataProp } from '@/core';
 
 export type AnimatedParameterType = number | boolean | FVector3;
@@ -30,11 +30,11 @@ export class AnimatedNumberModel implements IAnimatedParameterModel<number> {
     numbers
   ) => {
     const v = this.convertToObject(numbers);
-    ReflectionTool.setValue(target, metadataProp, v);
+    metadataProp.set?.(target, v);
   };
 
   getDirect: (target: object, metadataProp: MetadataProp) => number[] = (target, metadataProp) => {
-    const v = ReflectionTool.getValue(target, metadataProp) as number;
+    const v = metadataProp.get?.(target) as number;
     return this.convertToNumbers(v);
   };
 }
@@ -57,11 +57,11 @@ export class AnimatedBoolModel implements IAnimatedParameterModel<boolean> {
     metadataProp,
     numbers
   ) => {
-    ReflectionTool.setValue(target, metadataProp, numbers[0] >= 1);
+    metadataProp.set?.(target, numbers[0] >= 1);
   };
 
   getDirect: (target: object, metadataProp: MetadataProp) => number[] = (target, metadataProp) => {
-    const v = ReflectionTool.getValue(target, metadataProp) as boolean;
+    const v = metadataProp.get?.(target) as boolean;
     return this.convertToNumbers(v);
   };
 }
@@ -83,11 +83,11 @@ export class AnimatedVector3Model implements IAnimatedParameterModel<FVector3> {
     metadataProp,
     numbers
   ) => {
-    ReflectionTool.setValue(target, metadataProp, { x: numbers[0], y: numbers[1], z: numbers[2] });
+    metadataProp.set?.(target, { x: numbers[0], y: numbers[1], z: numbers[2] });
   };
 
   getDirect: (target: object, metadataProp: MetadataProp) => number[] = (target, metadataProp) => {
-    const v = ReflectionTool.getValue(target, metadataProp) as FVector3;
+    const v = metadataProp.get?.(target) as FVector3;
     return this.convertToNumbers(v);
   };
 }

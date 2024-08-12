@@ -1,14 +1,17 @@
+import { DebounceOptions, debounce } from './debounce';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type Fn = (...args: any[]) => void;
 
-export function throttle<T extends Fn>(fn: T, timeout = 200) {
-  let timer: number | null = null;
+export type ThrottleOptions = DebounceOptions;
 
-  return function (...args: Parameters<T>) {
-    if (timer) return;
+export function throttle<T extends Fn>(func: T, wait: number, options?: ThrottleOptions) {
+  const leading = !!options?.leading;
+  const trailing = !!options?.trailing;
 
-    timer = setTimeout(() => {
-      fn(...args);
-      timer = -1;
-    }, timeout);
-  };
+  return debounce(func, wait, {
+    leading,
+    trailing,
+    maxWait: wait,
+  });
 }

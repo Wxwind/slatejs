@@ -1,12 +1,15 @@
 import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { Loader } from './Loader';
 import { Control } from './Control';
 import { EntityManager } from './manager/EntityManager';
 import { TransformComponent } from './component';
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
 import { debounce } from '@/util';
+import { deerEngine } from './DeerEngine';
 
 export class DeerScene {
+  id: string;
+  name: string;
+
   scene: Scene;
   camera: PerspectiveCamera;
   renderer: WebGLRenderer;
@@ -17,14 +20,12 @@ export class DeerScene {
   parentEl: HTMLElement;
   resizeObserver: ResizeObserver;
 
-  loader: Loader = new Loader();
-
   private readonly clock = new Clock();
 
   // Manager
   readonly entityManager = new EntityManager(this);
 
-  constructor(containerId: string, defaulteHDRUrl: string) {
+  constructor(containerId: string) {
     const container = document.getElementById(containerId);
     if (container) {
       this.parentEl = container;
@@ -32,6 +33,8 @@ export class DeerScene {
       throw new Error(`找不到id为${containerId}的dom节点`);
     }
 
+    this.id = '0';
+    this.name = '';
     const scene = new Scene();
 
     const camera = new PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 10000);
@@ -42,14 +45,6 @@ export class DeerScene {
     container.appendChild(renderer.domElement);
 
     this.viewHelper = new ViewHelper(camera, container);
-
-    const load = async (url: string) => {
-      const t = await this.loader.loadTexture(url);
-      scene.environment = t;
-      scene.background = t;
-    };
-
-    load(defaulteHDRUrl);
 
     this.scene = scene;
     this.camera = camera;
@@ -86,12 +81,16 @@ export class DeerScene {
     this.renderer.autoClear = true;
   };
 
-  // load new scene from .egasset file
-  loadSceneAsync = async () => {
-    this.dispose();
+  loadHDR = async (fileId: string) => {
+    const t = (await deerEngine.assetManager.loadTextureAsync(fileId)) || null;
+    this.scene.environment = t;
+    this.scene.background = t;
   };
 
-  saveScene = () => {};
+  // TODO: load new scene from .egasset file
+  deserialize = (data: unknown) => {};
+
+  serialize = () => {};
 
   addChild = (trans: TransformComponent) => {
     this.scene.add(trans.rootObj);
@@ -101,7 +100,7 @@ export class DeerScene {
     this.scene.remove(trans.rootObj);
   };
 
-  dispose = () => {
+  destroy = () => {
     this.entityManager.onDestory();
     this.renderer.dispose();
     this.renderer.forceContextLoss();

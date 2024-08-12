@@ -23,6 +23,7 @@ export const createConnectionSlice: StateCreator<GraphStoreState, [['zustand/imm
 
   endConnecting: (toNodeId, toPinDirection, toPin) => {
     const { tempConnection, cancelConnecting } = get();
+    console.log('end conn', tempConnection);
     if (!tempConnection) return;
     const { fromNodeId, fromPinDirection, fromPin } = tempConnection;
     if (fromNodeId === toNodeId) {

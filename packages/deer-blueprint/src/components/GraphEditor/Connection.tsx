@@ -41,6 +41,7 @@ export const Connection: FC<ConnectionProps> = (props) => {
     const p2x = p3.x - dt * oneThird;
     const p2y = p3.y - u1 * dt * oneThird;
 
+    console.log(`conn from ${p0.x} ${p0.y} to ${p1x} ${p1y} to ${p2x} ${p2y} to ${p3.x} ${p3.y} `);
     return [p0.x, p0.y, p1x, p1y, p2x, p2y, p3.x, p3.y];
   })();
 
