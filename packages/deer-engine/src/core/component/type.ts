@@ -1,8 +1,10 @@
-import { egclass, property } from '../data';
+import { egclass, property } from '../decorator';
+import { CameraComponent } from './scene/CameraComponent';
 import { MeshComponent } from './MeshComponent';
 import { TransformComponent } from './TransformComponent';
-
-export type ComponentType = 'MeshComponent' | 'TransformComponent';
+import { RendererComponent } from './scene';
+import { ViewHelperComponent } from './scene/ViewHelperComponent';
+import { ControlComponent } from './scene/ControlComponent';
 
 @egclass()
 export class FVector2 {
@@ -34,19 +36,38 @@ export class FVector4 {
   w: number = 0;
 }
 
-export type MeshCompJson = {
+export type MeshComponentJson = {
   count: number;
 };
 
-export type TransformCompJson = {
+export type TransformComponentJson = {
   position: FVector3;
   rotation: FVector3;
   scale: FVector3;
 };
 
+export type CameraComponentJson = {
+  position: FVector3;
+  rotation: FVector3;
+  scale: FVector3;
+  near: number;
+  far: number;
+  fov: number;
+};
+
+export type ControlComponentJson = Record<string, never>;
+
+export type RendererComponentJson = Record<string, never>;
+
+export type ViewHelperComponentJson = Record<string, never>;
+
 export type ComponentTypeToJsonObjMap = {
-  MeshComponent: MeshCompJson;
-  TransformComponent: TransformCompJson;
+  MeshComponent: MeshComponentJson;
+  TransformComponent: TransformComponentJson;
+  CameraComponent: CameraComponentJson;
+  RendererComponent: RendererComponentJson;
+  ViewHelperComponent: ViewHelperComponentJson;
+  ControlComponent: ControlComponentJson;
 };
 
 type ComponentDataMap = {
@@ -57,7 +78,14 @@ type ComponentDataMap = {
   };
 };
 
-export type ComponentData<T extends ComponentType = ComponentType> = ComponentDataMap[T];
+export type ComponentType = keyof ComponentTypeToJsonObjMap;
+export type Component =
+  | MeshComponent
+  | TransformComponent
+  | CameraComponent
+  | RendererComponent
+  | ViewHelperComponent
+  | ControlComponent;
 
-export type Component = MeshComponent | TransformComponent;
-export type ComponentJson = MeshCompJson | TransformCompJson;
+export type ComponentData<T extends ComponentType = ComponentType> = ComponentDataMap[T];
+export type ComponentJson<T extends ComponentType = ComponentType> = ComponentTypeToJsonObjMap[T];

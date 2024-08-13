@@ -2,8 +2,9 @@ import { genUUID, isNil } from '@/util';
 import { DeerScene } from './DeerScene';
 import { CommandManager } from './manager';
 import { Signal } from 'eventtool';
-import { AssetManager } from './manager/AssetManager/AssetManager';
+import { AssetManager } from './manager/AssetManager';
 import { FileManager } from './manager/FileManager/FileManager';
+import { Clock } from 'three';
 
 export class DeerEngine {
   private _sceneMap = new Map<string, DeerScene>();
@@ -29,7 +30,7 @@ export class DeerEngine {
    */
   private readonly _commandManager = new CommandManager();
   private readonly _assetManager = new AssetManager();
-  private readonly _fileManager = new FileManager();
+  private readonly _fileManager;
 
   public get commandManager(): CommandManager {
     return this._commandManager;
@@ -43,12 +44,22 @@ export class DeerEngine {
     return this._fileManager;
   }
 
+  private animateID: number = -1;
+  private readonly clock = new Clock();
+
   constructor() {
+    this._fileManager = new FileManager();
     this._fileManager.awake();
     this._assetManager.setFileManager(this._fileManager);
+    this.update();
   }
 
   private containerId: string | undefined;
+
+  private update = () => {
+    this.animateID = requestAnimationFrame(this.update);
+    this._activeScene?.update(this.clock.getDelta());
+  };
 
   setContainerId = (containerId: string) => {
     this.containerId = containerId;
@@ -85,10 +96,12 @@ export class DeerEngine {
     this._sceneMap.forEach((scene) => scene.destroy());
     this._sceneMap.clear();
     this.activeScene = undefined;
+    cancelAnimationFrame(this.animateID);
   };
 
   exportScene = (scene: DeerScene) => {
     const sceneData = scene.serialize();
+    return sceneData;
   };
 
   importScene = async (file: File) => {

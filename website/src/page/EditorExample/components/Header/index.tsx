@@ -1,9 +1,10 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
-import { DeerScene, MeshComponent, TransformComponent, deerEngine } from 'deer-engine';
+import { DeerScene, MeshComponent, deerEngine } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
 import { cutsceneEditor } from 'deer-engine';
+import { Message } from '@arco-design/web-react';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -12,11 +13,20 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = (props) => {
   const { scene } = props;
 
-  const handleSave = () => {
-    // TODO: call Native file system api
+  const handleExport = () => {
+    if (deerEngine.activeScene) {
+      const data = deerEngine.exportScene(deerEngine.activeScene);
+      const json = JSON.stringify(data);
+      const file = new File([json], data.name + '.json', {
+        type: 'application/json',
+      });
+      downLoad(file);
+    } else {
+      Message.error('current scene is invalid');
+    }
   };
 
-  const handleSaveAs = () => {
+  const handleSave = () => {
     // TODO: save engine datas
     const json = cutsceneEditor.cutscene.toJson();
     const file = new File([json], 'cutScene.json', { type: 'text/plain' });
@@ -28,10 +38,7 @@ export const Header: FC<HeaderProps> = (props) => {
       console.error('create entity failed: no activated scene');
       return;
     }
-    const e = scene.entityManager.createEntity(
-      'Cube',
-      scene.entityManager.selectedEntity?.findComponentByType<TransformComponent>('TransformComponent')
-    );
+    const e = scene.entityManager.createEntity('Cube', scene.entityManager.selectedEntity);
     e.addComponentByNew(MeshComponent);
   };
 
@@ -72,9 +79,9 @@ export const Header: FC<HeaderProps> = (props) => {
             </Menubar.Item>
             <Menubar.Item
               className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
-              onSelect={handleSaveAs}
+              onSelect={handleExport}
             >
-              Save As... <div className="ml-auto pl-5">{transformKeymap('shift ctrl s')}</div>
+              Export <div className="ml-auto pl-5">{transformKeymap('shift ctrl s')}</div>
             </Menubar.Item>
           </Menubar.Content>
         </Menubar.Portal>

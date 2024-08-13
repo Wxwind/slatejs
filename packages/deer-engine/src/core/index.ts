@@ -7,4 +7,4 @@ export * from './manager';
 export * from './Control';
 export * from './assetLoader/AssetLoader';
 export * from './animation';
-export * from './data';
+export * from './decorator';

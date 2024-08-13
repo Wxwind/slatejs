@@ -1,6 +1,5 @@
 import { DeerScene } from '../DeerScene';
 import { Entity } from '../entity';
-import { TransformComponent } from '../component';
 import { isNil } from '@/util';
 import { EntityForHierarchy } from '@/store/type';
 import { Signal } from 'eventtool';
@@ -29,18 +28,19 @@ export class EntityManager {
     this.scene = scene;
   }
 
-  createEntity = (name: string, parent: TransformComponent | string | null | undefined) => {
+  createEntity = (name: string, parent: Entity | string | null | undefined) => {
     const p =
-      typeof parent === 'string'
-        ? this.findEntityById(parent)?.findComponentByType<TransformComponent>('TransformComponent') || this.scene
-        : isNil(parent)
-          ? this.scene
-          : parent;
+      typeof parent === 'string' ? this.findEntityById(parent) || this.scene : isNil(parent) ? this.scene : parent;
 
-    const e = new Entity(name, p);
+    const e = new Entity();
+    e.name = name;
+    e.parent = p;
+    e.root = this.scene;
     if (isNil(parent)) {
-      this.scene.addChild(e.rootComp);
+      this.scene.addChild(e);
     }
+    e.awake();
+
     this.entityMap.set(e.id, e);
     this.entityArray.push(e);
 
@@ -63,12 +63,12 @@ export class EntityManager {
     const entity = this.entityArray[index];
     this.entityMap.delete(id);
     this.entityArray.splice(index, 1);
-    entity.onDestory();
+    entity.destory();
     this.signals.entityTreeViewUpdated.emit();
   };
 
-  onDestory = () => {
-    this.entityArray.forEach((a) => a.onDestory());
+  destory = () => {
+    this.entityArray.forEach((a) => a.destory());
     this.entityMap.clear();
     this.entityArray.length = 0;
   };
@@ -79,14 +79,14 @@ export class EntityManager {
     return {
       id: entity.id,
       name: entity.name,
-      children: entity.rootComp.children.map((a) => {
-        return this.mapEntityForHierarchy(a.entity);
+      children: entity.children.map((a) => {
+        return this.mapEntityForHierarchy(a);
       }),
     };
   };
 
   toTree: () => EntityForHierarchy[] = () => {
-    const rootEntity = this.entityArray.filter((a) => a.rootComp.parent === this.scene);
+    const rootEntity = this.entityArray.filter((a) => a.parent === this.scene);
 
     const tree: EntityForHierarchy[] = rootEntity.map(this.mapEntityForHierarchy);
     return tree;

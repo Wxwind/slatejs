@@ -3,7 +3,7 @@ import { DeerScene } from '../DeerScene';
 import { CommandType } from './type';
 import { ComponentBase, ComponentData, ComponentJson } from '../component';
 import { isNil } from '@/util';
-import { JsonModule } from '../data';
+import { JsonModule } from '../decorator';
 
 export class UpdateComponentCommand implements ICommand {
   type: CommandType = 'UpdateComponent';

@@ -1,7 +1,7 @@
 import { Cutscene } from './Cutscene';
 import { Signal } from 'eventtool';
 import { ActionClip } from './ActionClip';
-import { PlayState } from './type';
+import { CutsceneData, PlayState } from './type';
 
 export class CutsceneEditor {
   private _lastStartPlayTime = 0;
@@ -131,11 +131,12 @@ export class CutsceneEditor {
   };
 
   toJson = () => {
-    return this.cutscene.toJson();
+    return this.cutscene.serialize();
   };
 
   parseJson = (json: string) => {
-    this.cutscene.loadFromJson(json);
+    const data = JSON.parse(json) as CutsceneData;
+    this.cutscene.deserialize(data);
   };
 }
 

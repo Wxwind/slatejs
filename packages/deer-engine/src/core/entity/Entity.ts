@@ -1,45 +1,73 @@
-import { isNil } from '@/util';
+import { isNil, deserializeComponent, genUUID } from '@/util';
 import { TransformComponent } from '../component';
-import { genUUID } from '@/util/utils';
 import { UUID_PREFIX_ENTITY } from '@/config';
+import { EntityJson } from './type';
+import { Component } from '../component/type';
+import { property } from '../decorator';
+import { ISerializable } from '@/interface';
+import { IBehaviour } from './interface';
 import { DeerScene } from '../DeerScene';
-import { EntityInfo } from './type';
-import { Component, ComponentData } from '../component/type';
-import { JsonModule, property } from '../data';
+import { Scene, Object3D } from 'three';
 
-export class Entity {
+export class Entity implements ISerializable<EntityJson>, IBehaviour {
   @property({ type: String })
-  id: string;
+  id: string = '0';
 
   @property({ type: String })
-  name: string;
+  name: string = '';
+
+  sceneObject: Object3D;
+
+  root: DeerScene | undefined;
+
+  private _parent: Entity | undefined;
+
+  public get parent(): Entity | undefined {
+    return this._parent;
+  }
+
+  public set parent(v: Entity | undefined) {
+    if (v! == this.parent) {
+      this._parent?.removeChild(this);
+    }
+    if (v !== undefined) {
+      v.addChild(this);
+      this._parent = v;
+      this.root = v.root;
+    }
+  }
+
+  public readonly transform: TransformComponent;
+
+  public readonly children: Entity[] = [];
 
   private readonly compMap = new Map<string, Component>();
 
   private readonly compArray: Component[] = [];
 
-  public readonly rootComp: TransformComponent;
-
-  constructor(name: string, parent: TransformComponent | DeerScene) {
+  constructor(isScene: boolean = false) {
     this.id = genUUID(UUID_PREFIX_ENTITY);
     const transformComp = new TransformComponent();
-    transformComp.entity = this;
-    transformComp.parent = parent;
+    transformComp.owner = this;
     this.addComponent(transformComp);
-    this.rootComp = transformComp;
-    this.name = name;
+    this.transform = transformComp;
+    isScene ? (this.sceneObject = new Scene()) : (this.sceneObject = new Object3D());
   }
 
   getCompArray = () => this.compArray;
 
   addComponentByNew = <T extends Component>(compCtor: new () => T) => {
     const comp = new compCtor();
-    comp.entity = this;
+    comp.owner = this;
+    comp.awake();
     this.compMap.set(comp.id, comp);
     this.compArray.push(comp);
+    return comp;
   };
 
   addComponent = (comp: Component) => {
+    comp.owner = this;
+    comp.awake();
     this.compMap.set(comp.id, comp);
     this.compArray.push(comp);
   };
@@ -74,7 +102,7 @@ export class Entity {
 
     this.compMap.delete(id);
     this.compArray.splice(index, 1);
-    comp.onDestory();
+    comp.destory();
   };
 
   removeComponent = (comp: Component) => {
@@ -91,36 +119,69 @@ export class Entity {
 
     this.compMap.delete(comp.id);
     this.compArray.splice(index, 1);
-    comp.onDestory();
+    comp.destory();
   };
 
-  onDestory = () => {
+  getChildren: () => Entity[] = () => {
+    return this.children;
+  };
+
+  addChild: (child: Entity) => void = (child) => {
+    this.children.push(child);
+    this.sceneObject.add(child.sceneObject);
+  };
+
+  removeChild: (child: Entity) => void = (child) => {
+    const a = this.children.findIndex((a) => a === child);
+    if (a === -1) {
+      return;
+    }
+    this.children.splice(a, 1);
+    this.sceneObject.remove(child.sceneObject);
+  };
+
+  awake: () => void = () => {};
+
+  update: (dt: number) => void = (dt) => {
+    for (const comp of this.compArray) {
+      comp.update(dt);
+    }
+    for (const children of this.children) {
+      children.update(dt);
+    }
+  };
+
+  destory = () => {
     for (const c of this.compArray) {
-      if (c === this.rootComp) {
+      if (c === this.transform) {
         continue;
       }
-      c.onDestory();
+      c.destory();
     }
-    this.rootComp.onDestory();
+    this.transform.destory();
 
     this.compMap.clear();
     this.compArray.length = 0;
   };
 
-  toJsonObject: () => EntityInfo = () => {
-    const comps = this.compArray.map((a) => {
-      return {
-        id: a.id,
-        type: a.type,
-        config: JsonModule.toJsonObject(a),
-      } as ComponentData;
-    });
+  serialize: () => EntityJson = () => {
+    const comps = this.compArray.map((a) => a.serialize());
 
-    const info: EntityInfo = {
+    const data: EntityJson = {
       id: this.id,
+      parent: this.parent?.id,
       name: this.name,
       components: comps,
     };
-    return info;
+    return data;
+  };
+
+  deserialize = (data: EntityJson) => {
+    this.id = data.id;
+    this.name = data.name;
+    for (const compData of data.components) {
+      const comp = deserializeComponent(compData);
+      this.addComponent(comp);
+    }
   };
 }

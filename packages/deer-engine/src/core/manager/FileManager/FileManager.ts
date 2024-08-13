@@ -4,16 +4,17 @@ const DBNAME = 'DeerEngine';
 const SHEETNAME = 'DeerScene';
 
 export class FileManager {
-  private _instance: FileManager | undefined;
-  public get Instance(): FileManager {
-    if (this._instance === undefined) {
-      this._instance = new FileManager();
-      return this._instance;
-    }
-    return this._instance;
+  private db: IDBDatabase | undefined;
+
+  private builtinAssetManifest: Record<string, string> = {};
+
+  addBuiltinFile(manifest: Record<string, string>) {
+    this.builtinAssetManifest = Object.assign({}, this.builtinAssetManifest, manifest);
   }
 
-  private db: IDBDatabase | undefined;
+  getBuiltinFile(name: string): string | undefined {
+    return this.builtinAssetManifest[name];
+  }
 
   awake = () => {
     return new Promise((resolve, reject) => {
@@ -44,7 +45,7 @@ export class FileManager {
     });
   };
 
-  getAsset: (uuid: string) => Promise<AssetFile> = (uuid: string) => {
+  getAsset: (uuid: string) => Promise<AssetFile | undefined> = (uuid: string) => {
     return new Promise((resolve, reject) => {
       if (!this.db) return;
       const transaction = this.db.transaction(SHEETNAME, 'readonly');
@@ -52,7 +53,7 @@ export class FileManager {
       const request = objStore.get(uuid);
       request.onsuccess = (event) => {
         console.log('indexdb: get asset success');
-        resolve(request.result as AssetFile);
+        resolve(request.result as AssetFile | undefined);
       };
       request.onerror = (event) => {
         console.error('indexdb: get asset failed');

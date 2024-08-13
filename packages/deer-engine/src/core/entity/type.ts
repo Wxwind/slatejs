@@ -1,7 +1,8 @@
 import { ComponentData } from '../component/type';
 
-export type EntityInfo = {
+export type EntityJson = {
   id: string;
   name: string;
+  parent: string | undefined;
   components: ComponentData[];
 };

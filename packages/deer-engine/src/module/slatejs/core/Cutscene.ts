@@ -18,11 +18,12 @@ import { DirectorGroup } from './groups/DirectorGroup';
 import { deerEngine } from '@/core';
 import { Signal } from 'eventtool';
 import { CutsceneEditor } from './CutsceneEditor';
+import { ISerializable } from '@/interface';
 
 /**
  * Play timeline in edit mode.
  */
-export class Cutscene {
+export class Cutscene implements ISerializable<CutsceneData> {
   private _currentTime = 0;
   private _previousTime = 0;
 
@@ -386,7 +387,7 @@ export class Cutscene {
     }
   };
 
-  toJsonObject: () => CutsceneData = () => {
+  serialize: () => CutsceneData = () => {
     // TODO: save and load json
     const groups: CutsceneGroupData[] = [];
 
@@ -435,12 +436,7 @@ export class Cutscene {
     return cutsceneData;
   };
 
-  toJson: () => string = () => {
-    return JSON.stringify(this.toJsonObject());
-  };
-
-  loadFromJson = (data: string) => {
-    const d = JSON.parse(data) as CutsceneData;
+  deserialize = (data: CutsceneData) => {
     // TODO: parse json
   };
 

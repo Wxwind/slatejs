@@ -3,7 +3,7 @@ import { isNil } from '@/util';
 import { DeerScene } from '../DeerScene';
 import { CommandType } from './type';
 import { Entity } from '../entity';
-import { MeshComponent, TransformComponent } from '../component';
+import { MeshComponent } from '../component';
 
 export class CreateEntityCommand implements ICommand {
   type: CommandType = 'CreateEntity';
@@ -12,7 +12,7 @@ export class CreateEntityCommand implements ICommand {
 
   constructor(
     private scene: DeerScene,
-    private parent: TransformComponent | string | null,
+    private parent: Entity | string | null,
     private name: string
   ) {}
 
@@ -28,7 +28,7 @@ export class CreateEntityCommand implements ICommand {
       console.warn("obj doesn't exist");
       return false;
     }
-    this.obj.onDestory();
+    this.obj.destory();
     return true;
   };
 
@@ -36,7 +36,7 @@ export class CreateEntityCommand implements ICommand {
     if (typeof this.parent === 'string') {
       return this.scene.entityManager.findEntityById(this.parent);
     }
-    return this.parent?.entity?.name;
+    return this.parent?.name;
   };
 
   toString: () => string = () => {

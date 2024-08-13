@@ -5,7 +5,10 @@ import { CommandType } from './type';
 export class DeleteEntityCommand implements ICommand {
   type: CommandType = 'DeleteEntity';
 
-  constructor(private scene: DeerScene, private entityId: string) {}
+  constructor(
+    private scene: DeerScene,
+    private entityId: string
+  ) {}
 
   execute: () => boolean = () => {
     this.scene.entityManager.removeEntityById(this.entityId);

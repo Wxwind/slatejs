@@ -1,4 +1,4 @@
-import { egclass, property } from '../data';
+import { egclass, property } from '../decorator';
 
 /** The tangent weight mode uesd for cubic interpolation  */
 export enum WeightMode {

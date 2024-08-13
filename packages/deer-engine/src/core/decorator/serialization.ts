@@ -5,7 +5,7 @@ import { globalTypeMap } from './GlobalTypeMap';
 
 export interface ISerializationCallbackReceiver {
   onBeforeSerialize(): void;
-  onAfterDeserialize(): void;
+  onAfterdeserialize(): void;
 }
 
 function toJson(obj: any): string {
@@ -63,8 +63,8 @@ function fromJson(json: string) {
   if ('fromJsonObject' in obj && typeof obj.fromJsonObject === 'function') {
     obj.fromJsonObject(jsonObj);
 
-    if ('onAfterDeserialize' in obj && typeof obj.onAfterDeserialize === 'function') {
-      obj.onAfterDeserialize();
+    if ('onAfterdeserialize' in obj && typeof obj.onAfterdeserialize === 'function') {
+      obj.onAfterdeserialize();
     }
   } else {
     console.error("fromJsonObject() function is not existed in obj %o, are you missing '@egclass'?", obj);
@@ -77,8 +77,8 @@ function fromJsonObject<T extends object>(jsonObj: any, classType: new () => T) 
   if ('fromJsonObject' in obj && typeof obj.fromJsonObject === 'function') {
     obj.fromJsonObject(jsonObj);
 
-    if ('onAfterDeserialize' in obj && typeof obj.onAfterDeserialize === 'function') {
-      obj.onAfterDeserialize();
+    if ('onAfterdeserialize' in obj && typeof obj.onAfterdeserialize === 'function') {
+      obj.onAfterdeserialize();
     }
   } else {
     console.error("fromJsonObject() function is not existed in obj %o, are you missing '@egclass'?", obj);

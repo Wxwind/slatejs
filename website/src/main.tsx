@@ -7,6 +7,11 @@ import './index.css';
 import '@arco-design/web-react/dist/css/arco.css';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { deerEngine } from 'deer-engine';
+
+deerEngine.fileManager.addBuiltinFile({
+  '/hdr/default.hdr': '/hdr/default.hdr',
+});
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

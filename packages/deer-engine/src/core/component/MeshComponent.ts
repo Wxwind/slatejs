@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
 import { Entity } from '../entity';
-import { MeshCompJson } from './type';
-import { accessor, egclass } from '../data';
+import { MeshComponentJson } from './type';
+import { accessor, egclass } from '../decorator';
 
 @egclass()
 export class MeshComponent extends ComponentBase<'MeshComponent'> {
@@ -15,9 +15,9 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     return true;
   }
 
-  public set entity(value: Entity | undefined) {
-    value?.rootComp.rootObj.add(this.mesh);
-    this._entity = value;
+  set owner(value: Entity) {
+    value?.sceneObject.add(this.mesh);
+    this._owner = value;
   }
 
   @accessor({ type: Number })
@@ -37,7 +37,11 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     this.mesh = cube;
   }
 
-  onDestory: () => void = () => {
+  awake: () => void = () => {};
+
+  update: (dt: number) => void = () => {};
+
+  destory: () => void = () => {
     if (isNil(this.mesh)) {
       console.warn("mesh doesn't exist");
       return;
@@ -50,5 +54,16 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     this.mesh.geometry.dispose();
   };
 
-  updateByJson: (data: MeshCompJson) => void = (data) => {};
+  updateByJson: (data: MeshComponentJson) => void = (data) => {};
+
+  onSerialize: () => MeshComponentJson = () => {
+    // TODO
+    return {
+      count: this.count,
+    };
+  };
+
+  onDeserialize: (data: MeshComponentJson) => void = (data) => {
+    // TODO
+  };
 }

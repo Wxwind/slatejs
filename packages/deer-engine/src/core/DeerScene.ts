@@ -1,56 +1,46 @@
-import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { Control } from './Control';
+import { Scene } from 'three';
 import { EntityManager } from './manager/EntityManager';
-import { TransformComponent } from './component';
-import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
+import { RendererComponent } from './component';
 import { debounce } from '@/util';
 import { deerEngine } from './DeerEngine';
+import { Entity, EntityJson } from './entity';
+import { CameraComponent } from './component/scene/CameraComponent';
+import { ViewHelperComponent } from './component/scene/ViewHelperComponent';
 
-export class DeerScene {
+export interface DeerSceneJson {
   id: string;
   name: string;
+  entities: EntityJson;
+}
+
+export class DeerScene extends Entity {
+  id: string = '0';
+  name: string = '';
 
   scene: Scene;
-  camera: PerspectiveCamera;
-  renderer: WebGLRenderer;
-  controls: Control;
-  viewHelper: ViewHelper;
-  animateID: number = -1;
 
   parentEl: HTMLElement;
   resizeObserver: ResizeObserver;
-
-  private readonly clock = new Clock();
 
   // Manager
   readonly entityManager = new EntityManager(this);
 
   constructor(containerId: string) {
+    super(true);
     const container = document.getElementById(containerId);
     if (container) {
       this.parentEl = container;
     } else {
-      throw new Error(`找不到id为${containerId}的dom节点`);
+      throw new Error(`cannot find dom with id '${containerId}'`);
     }
+    this.addComponentByNew(CameraComponent).camera;
+    this.addComponentByNew(RendererComponent);
+    this.addComponentByNew(ViewHelperComponent);
 
-    this.id = '0';
-    this.name = '';
-    const scene = new Scene();
+    this.root = this;
+    this.scene = this.sceneObject as Scene;
 
-    const camera = new PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 10000);
-    camera.position.set(20, 20, 0);
-
-    const renderer = new WebGLRenderer();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
-
-    this.viewHelper = new ViewHelper(camera, container);
-
-    this.scene = scene;
-    this.camera = camera;
-    this.renderer = renderer;
-    this.controls = new Control(camera, renderer.domElement);
-    this.update();
+    this.parent = undefined;
 
     const debouncedResize = debounce(this.resize);
 
@@ -65,20 +55,8 @@ export class DeerScene {
   }
 
   private resize = (width: number, height: number) => {
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();
-
-    this.renderer.setSize(width, height);
-  };
-
-  private update = () => {
-    this.animateID = requestAnimationFrame(this.update);
-    this.controls.update(this.clock.getDelta());
-    this.renderer.clear();
-    this.renderer.render(this.scene, this.camera);
-    this.renderer.autoClear = false;
-    this.viewHelper.render(this.renderer);
-    this.renderer.autoClear = true;
+    this.findComponentByType<CameraComponent>('CameraComponent')?.resize(width, height);
+    this.findComponentByType<RendererComponent>('RendererComponent')?.resize(width, height);
   };
 
   loadHDR = async (fileId: string) => {
@@ -87,27 +65,8 @@ export class DeerScene {
     this.scene.background = t;
   };
 
-  // TODO: load new scene from .egasset file
-  deserialize = (data: unknown) => {};
-
-  serialize = () => {};
-
-  addChild = (trans: TransformComponent) => {
-    this.scene.add(trans.rootObj);
-  };
-
-  removeChild = (trans: TransformComponent) => {
-    this.scene.remove(trans.rootObj);
-  };
-
   destroy = () => {
-    this.entityManager.onDestory();
-    this.renderer.dispose();
-    this.renderer.forceContextLoss();
-    this.viewHelper.dispose();
+    this.entityManager.destory();
     this.resizeObserver.unobserve(this.parentEl);
-    this.parentEl.removeChild(this.renderer.domElement);
-
-    cancelAnimationFrame(this.animateID);
   };
 }

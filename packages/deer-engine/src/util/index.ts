@@ -5,3 +5,4 @@ export * from './math';
 export * from './type';
 export * from './debounce';
 export * from './file';
+export * from './deserialize';

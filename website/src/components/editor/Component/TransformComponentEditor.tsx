@@ -1,5 +1,5 @@
 import { CollapseBox, FormItemsInRow, ImmerFormItem } from '@/components/baseComponent';
-import { JsonModule, TransformCompJson, TransformComponent } from 'deer-engine';
+import { JsonModule, TransformComponentJson, TransformComponent } from 'deer-engine';
 import { FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import set from 'lodash/set';
@@ -10,7 +10,7 @@ import { EditorComp, registerEditor } from '@/decorator';
 export const TransformComponentEditor: EditorComp<TransformComponent> = (props) => {
   const { target } = props;
 
-  const [data, setData] = useImmer<TransformCompJson>({
+  const [data, setData] = useImmer<TransformComponentJson>({
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0, y: 0, z: 0 },
