@@ -65,7 +65,7 @@ export class FileManager {
     if (!this.db) return;
     const transaction = this.db.transaction(SHEETNAME, 'readwrite');
     const objStore = transaction.objectStore(SHEETNAME);
-    const request = objStore.add(asset);
+    const request = objStore.put(asset);
     request.onsuccess = (event) => {
       console.log('indexdb: save asset success');
     };
