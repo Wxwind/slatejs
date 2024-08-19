@@ -9,6 +9,7 @@ export class Control {
     controls.listenToKeyEvents(window);
 
     controls.enableDamping = true;
+    controls.enableZoom = true;
 
     controls.dampingFactor = 0.05;
 

@@ -28,7 +28,7 @@ export class CreateEntityCommand implements ICommand {
       console.warn("obj doesn't exist");
       return false;
     }
-    this.obj.destory();
+    this.obj.destroy();
     return true;
   };
 

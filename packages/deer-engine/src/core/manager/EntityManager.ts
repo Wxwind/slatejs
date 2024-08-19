@@ -35,10 +35,6 @@ export class EntityManager {
     const e = new Entity();
     e.name = name;
     e.parent = p;
-    e.root = this.scene;
-    if (isNil(parent)) {
-      this.scene.addChild(e);
-    }
     e.awake();
 
     this.entityMap.set(e.id, e);
@@ -63,12 +59,11 @@ export class EntityManager {
     const entity = this.entityArray[index];
     this.entityMap.delete(id);
     this.entityArray.splice(index, 1);
-    entity.destory();
+    entity.destroy();
     this.signals.entityTreeViewUpdated.emit();
   };
 
   destory = () => {
-    this.entityArray.forEach((a) => a.destory());
     this.entityMap.clear();
     this.entityArray.length = 0;
   };

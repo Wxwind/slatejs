@@ -54,7 +54,7 @@ export class RendererComponent extends ComponentBase<'RendererComponent'> {
 
   resize = (width: number, height: number) => {};
 
-  destory: () => void = () => {
+  destroy: () => void = () => {
     this.renderer.dispose();
     this.renderer.forceContextLoss();
     const scene = this.owner as DeerScene;

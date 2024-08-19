@@ -43,7 +43,7 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
 
   abstract awake: () => void;
 
-  abstract destory: () => void;
+  abstract destroy: () => void;
 
   abstract updateByJson: (data: ComponentTypeToJsonObjMap[T]) => void;
 

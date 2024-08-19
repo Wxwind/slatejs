@@ -5,6 +5,8 @@ import { TransformComponent } from './TransformComponent';
 import { RendererComponent } from './scene';
 import { ViewHelperComponent } from './scene/ViewHelperComponent';
 import { ControlComponent } from './scene/ControlComponent';
+import { GridHelper } from 'three';
+import { GridHelperComponent } from './scene/GridHelperComponent';
 
 @egclass()
 export class FVector2 {
@@ -61,6 +63,8 @@ export type RendererComponentJson = Record<string, never>;
 
 export type ViewHelperComponentJson = Record<string, never>;
 
+export type GridHelperComponentJson = Record<string, never>;
+
 export type ComponentTypeToJsonObjMap = {
   MeshComponent: MeshComponentJson;
   TransformComponent: TransformComponentJson;
@@ -68,6 +72,7 @@ export type ComponentTypeToJsonObjMap = {
   RendererComponent: RendererComponentJson;
   ViewHelperComponent: ViewHelperComponentJson;
   ControlComponent: ControlComponentJson;
+  GridHelperComponent: GridHelperComponentJson;
 };
 
 type ComponentDataMap = {
@@ -85,7 +90,8 @@ export type Component =
   | CameraComponent
   | RendererComponent
   | ViewHelperComponent
-  | ControlComponent;
+  | ControlComponent
+  | GridHelperComponent;
 
 export type ComponentData<T extends ComponentType = ComponentType> = ComponentDataMap[T];
 export type ComponentJson<T extends ComponentType = ComponentType> = ComponentTypeToJsonObjMap[T];

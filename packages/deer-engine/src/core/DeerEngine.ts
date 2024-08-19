@@ -1,10 +1,17 @@
 import { genUUID, isNil } from '@/util';
-import { DeerScene } from './DeerScene';
+import { DeerScene, DeerSceneMode } from './DeerScene';
 import { CommandManager } from './manager';
 import { Signal } from 'eventtool';
 import { AssetManager } from './manager/AssetManager';
 import { FileManager } from './manager/FileManager/FileManager';
 import { Clock } from 'three';
+import {
+  CameraComponent,
+  ControlComponent,
+  GridHelperComponent,
+  RendererComponent,
+  ViewHelperComponent,
+} from './component';
 
 export class DeerEngine {
   private _sceneMap = new Map<string, DeerScene>();
@@ -65,15 +72,21 @@ export class DeerEngine {
     this.containerId = containerId;
   };
 
-  createScene = (name: string) => {
+  createScene = (name: string, mode: DeerSceneMode) => {
     if (this.containerId === undefined) {
       console.error('containerId is nil');
       return;
     }
-    const scene = new DeerScene(this.containerId);
+    const scene = new DeerScene(this.containerId, mode);
+    // TODO: import template from json.
+    scene.addComponentByNew(CameraComponent);
+    scene.addComponentByNew(RendererComponent);
+    scene.addComponentByNew(ViewHelperComponent);
+    scene.addComponentByNew(ControlComponent);
+    scene.addComponentByNew(GridHelperComponent);
     scene.id = genUUID();
     scene.name = name;
-    this._sceneMap.set(this.containerId, scene);
+    this._sceneMap.set(scene.id, scene);
     this._activeScene = scene;
     return scene;
   };
@@ -104,7 +117,7 @@ export class DeerEngine {
     return sceneData;
   };
 
-  importScene = async (file: File) => {
+  importScene = async (file: File, mode: DeerSceneMode) => {
     if (this.containerId === undefined) {
       console.error('containerId is nil');
       return;
@@ -114,7 +127,7 @@ export class DeerEngine {
     const decodedString = String.fromCharCode.apply(uint8_msg);
     const data = JSON.parse(decodedString);
 
-    const scene = new DeerScene(this.containerId);
+    const scene = new DeerScene(this.containerId, mode);
     scene.deserialize(data);
     this._sceneMap.set(this.containerId, scene);
     this._activeScene = scene;

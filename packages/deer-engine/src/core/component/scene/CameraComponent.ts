@@ -59,6 +59,7 @@ export class CameraComponent extends ComponentBase<'CameraComponent'> {
     const container = (this.owner as DeerScene).parentEl;
     const camera = new PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 10000);
     camera.position.set(20, 20, 0);
+
     this._camera = camera;
   };
 
@@ -69,7 +70,7 @@ export class CameraComponent extends ComponentBase<'CameraComponent'> {
 
   update: (dt: number) => void = () => {};
 
-  destory: () => void = () => {};
+  destroy: () => void = () => {};
 
   updateByJson: (data: CameraComponentJson) => void = (data) => {
     this._camera.position.set(data.position.x, data.position.y, data.position.z);

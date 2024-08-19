@@ -48,7 +48,7 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
 
   update: (dt: number) => void = () => {};
 
-  destory: () => void = () => {};
+  destroy: () => void = () => {};
 
   updateByJson: (data: TransformComponentJson) => void = (data) => {
     this.sceneObject.position.set(data.position.x, data.position.y, data.position.z);
@@ -60,7 +60,11 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
   onSerialize: () => TransformComponentJson = () => {
     return {
       position: this.sceneObject.position.clone(),
-      rotation: this.sceneObject.rotation.clone(),
+      rotation: {
+        x: this.sceneObject.rotation.x,
+        y: this.sceneObject.rotation.y,
+        z: this.sceneObject.rotation.z,
+      },
       scale: this.sceneObject.scale.clone(),
     };
   };

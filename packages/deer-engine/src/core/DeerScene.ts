@@ -5,13 +5,14 @@ import { debounce } from '@/util';
 import { deerEngine } from './DeerEngine';
 import { Entity, EntityJson } from './entity';
 import { CameraComponent } from './component/scene/CameraComponent';
-import { ViewHelperComponent } from './component/scene/ViewHelperComponent';
 
 export interface DeerSceneJson {
   id: string;
   name: string;
   entities: EntityJson;
 }
+
+export type DeerSceneMode = 'editor' | 'preview';
 
 export class DeerScene extends Entity {
   id: string = '0';
@@ -22,20 +23,20 @@ export class DeerScene extends Entity {
   parentEl: HTMLElement;
   resizeObserver: ResizeObserver;
 
+  mode!: DeerSceneMode;
+
   // Manager
   readonly entityManager = new EntityManager(this);
 
-  constructor(containerId: string) {
+  constructor(containerId: string, mode: DeerSceneMode) {
     super(true);
+    this.mode = mode;
     const container = document.getElementById(containerId);
     if (container) {
       this.parentEl = container;
     } else {
       throw new Error(`cannot find dom with id '${containerId}'`);
     }
-    this.addComponentByNew(CameraComponent).camera;
-    this.addComponentByNew(RendererComponent);
-    this.addComponentByNew(ViewHelperComponent);
 
     this.root = this;
     this.scene = this.sceneObject as Scene;
@@ -65,8 +66,9 @@ export class DeerScene extends Entity {
     this.scene.background = t;
   };
 
-  destroy = () => {
+  onDestroy = () => {
     this.entityManager.destory();
+    // this.scene.clear();
     this.resizeObserver.unobserve(this.parentEl);
   };
 }

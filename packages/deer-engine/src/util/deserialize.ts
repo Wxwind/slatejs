@@ -1,7 +1,14 @@
-import { Component, ComponentData, MeshComponent, RendererComponent, TransformComponent } from '@/core';
-import { CameraComponent } from '@/core/component/scene/CameraComponent';
-import { ControlComponent } from '@/core/component/scene/ControlComponent';
-import { ViewHelperComponent } from '@/core/component/scene/ViewHelperComponent';
+import {
+  Component,
+  ComponentData,
+  GridHelperComponent,
+  MeshComponent,
+  RendererComponent,
+  TransformComponent,
+  CameraComponent,
+  ControlComponent,
+  ViewHelperComponent,
+} from '@/core';
 
 export function deserializeComponent(data: ComponentData): Component {
   switch (data.type) {
@@ -32,6 +39,11 @@ export function deserializeComponent(data: ComponentData): Component {
     }
     case 'ViewHelperComponent': {
       const comp = new ViewHelperComponent();
+      comp.deserialize(data);
+      return comp;
+    }
+    case 'GridHelperComponent': {
+      const comp = new GridHelperComponent();
       comp.deserialize(data);
       return comp;
     }

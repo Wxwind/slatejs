@@ -19,10 +19,6 @@ export class ControlComponent extends ComponentBase<'ControlComponent'> {
     return this._control;
   }
 
-  constructor() {
-    super();
-  }
-
   awake = () => {
     const cameraComp = this._owner.findComponentByType<CameraComponent>('CameraComponent');
     if (isNil(cameraComp)) {
@@ -34,14 +30,15 @@ export class ControlComponent extends ComponentBase<'ControlComponent'> {
       throw new Error('ControlComponent initialize failed, Camera Component is invalid.');
     }
 
-    this._control = new Control(cameraComp.camera, rendererComp.renderer.domElement);
+    const controls = new Control(cameraComp.camera, rendererComp.renderer.domElement);
+    this._control = controls;
   };
 
   update = (dt: number) => {
     this._control.update(dt);
   };
 
-  destory: () => void = () => {};
+  destroy: () => void = () => {};
 
   updateByJson: (data: RendererComponentJson) => void = (data) => {
     this.signals.componentUpdated.emit();

@@ -102,7 +102,7 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
 
     this.compMap.delete(id);
     this.compArray.splice(index, 1);
-    comp.destory();
+    comp.destroy();
   };
 
   removeComponent = (comp: Component) => {
@@ -119,7 +119,7 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
 
     this.compMap.delete(comp.id);
     this.compArray.splice(index, 1);
-    comp.destory();
+    comp.destroy();
   };
 
   getChildren: () => Entity[] = () => {
@@ -143,35 +143,41 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
   awake: () => void = () => {};
 
   update: (dt: number) => void = (dt) => {
-    for (const comp of this.compArray) {
+    const compArray = [...this.compArray];
+    for (const comp of compArray) {
       comp.update(dt);
     }
-    for (const children of this.children) {
-      children.update(dt);
+    const children = [...this.children];
+    for (const child of children) {
+      child.update(dt);
     }
   };
 
-  destory = () => {
+  destroy = () => {
     for (const c of this.compArray) {
       if (c === this.transform) {
         continue;
       }
-      c.destory();
+      c.destroy();
     }
-    this.transform.destory();
+    this.transform.destroy();
 
     this.compMap.clear();
     this.compArray.length = 0;
+    this.onDestroy();
   };
 
+  onDestroy = () => {};
+
   serialize: () => EntityJson = () => {
-    const comps = this.compArray.map((a) => a.serialize());
+    const components = this.compArray.map((a) => a.serialize());
+    const children = this.children.map((a) => a.serialize());
 
     const data: EntityJson = {
       id: this.id,
-      parent: this.parent?.id,
       name: this.name,
-      components: comps,
+      components,
+      children,
     };
     return data;
   };
@@ -182,6 +188,11 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
     for (const compData of data.components) {
       const comp = deserializeComponent(compData);
       this.addComponent(comp);
+    }
+    for (const childData of data.children) {
+      const entity = new Entity();
+      entity.deserialize(childData);
+      entity.parent = this;
     }
   };
 }

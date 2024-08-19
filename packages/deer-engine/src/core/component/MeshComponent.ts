@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
-import { Entity } from '../entity';
 import { MeshComponentJson } from './type';
 import { accessor, egclass } from '../decorator';
 
@@ -9,15 +8,23 @@ import { accessor, egclass } from '../decorator';
 export class MeshComponent extends ComponentBase<'MeshComponent'> {
   type = 'MeshComponent' as const;
 
-  private mesh: THREE.Mesh;
+  private _mesh!: THREE.Mesh;
+
+  private set mesh(value: THREE.Mesh) {
+    this._mesh = value;
+    if (isNil(this.owner)) {
+      console.warn('Mesh is created but owner is invalid, it wiil be dissociative');
+      return;
+    }
+    this._owner.sceneObject.add(this.mesh);
+  }
+
+  private get mesh(): THREE.Mesh {
+    return this._mesh;
+  }
 
   public get isCanBeRemoved(): boolean {
     return true;
-  }
-
-  set owner(value: Entity) {
-    value?.sceneObject.add(this.mesh);
-    this._owner = value;
   }
 
   @accessor({ type: Number })
@@ -28,6 +35,9 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
 
   constructor() {
     super();
+  }
+
+  awake: () => void = () => {
     const geometry = new THREE.BoxGeometry();
     const mat = new THREE.MeshStandardMaterial();
 
@@ -35,13 +45,11 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     cube.updateMatrix();
 
     this.mesh = cube;
-  }
-
-  awake: () => void = () => {};
+  };
 
   update: (dt: number) => void = () => {};
 
-  destory: () => void = () => {
+  destroy: () => void = () => {
     if (isNil(this.mesh)) {
       console.warn("mesh doesn't exist");
       return;

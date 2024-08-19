@@ -18,6 +18,8 @@ export class ViewHelperComponent extends ComponentBase<'ViewHelperComponent'> {
   private viewHelper: ViewHelper | undefined;
 
   awake = () => {
+    const deerScene = this.owner as DeerScene;
+    if (deerScene.mode !== 'editor') return;
     const container = (this.owner as DeerScene).parentEl;
     const cameraComp = this._owner.findComponentByType<CameraComponent>('CameraComponent');
     if (isNil(cameraComp)) {
@@ -36,7 +38,7 @@ export class ViewHelperComponent extends ComponentBase<'ViewHelperComponent'> {
 
   update: (dt: number) => void = () => {};
 
-  destory: () => void = () => {
+  destroy: () => void = () => {
     this.viewHelper?.dispose();
   };
 

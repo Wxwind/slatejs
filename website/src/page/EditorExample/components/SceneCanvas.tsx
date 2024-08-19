@@ -13,7 +13,7 @@ export const SceneCanvas: FC = (props) => {
 
   useEffect(() => {
     deerEngine.setContainerId(DEER_ENGINE_SCENE);
-    const scene = deerEngine.createScene('Empty Scene');
+    const scene = deerEngine.createScene('Empty Scene', 'editor');
     scene?.loadHDR('/hdr/default.hdr');
     return () => {
       if (scene) {
@@ -24,7 +24,12 @@ export const SceneCanvas: FC = (props) => {
 
   return (
     <div className="w-full h-full relative" id="eg-scene">
-      <div className={classNames('absolute w-full h-full', isInControlledMode && 'border-4 border-red-400')}></div>
+      <div
+        className={classNames(
+          'absolute w-full h-full pointer-events-none',
+          isInControlledMode && 'border-4 border-red-400'
+        )}
+      ></div>
     </div>
   );
 };
