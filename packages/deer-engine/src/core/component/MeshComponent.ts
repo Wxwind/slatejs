@@ -10,10 +10,12 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
 
   private _mesh!: THREE.Mesh;
 
+  private selectedMeshType: 'Box' | 'Sphere' = 'Box';
+
   private set mesh(value: THREE.Mesh) {
     this._mesh = value;
     if (isNil(this.owner)) {
-      console.warn('Mesh is created but owner is invalid, it wiil be dissociative');
+      console.warn('Mesh is created but owner is invalid, it will be dissociative');
       return;
     }
     this._owner.sceneObject.add(this.mesh);
@@ -67,11 +69,11 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
   onSerialize: () => MeshComponentJson = () => {
     // TODO
     return {
-      count: this.count,
+      type: this.selectedMeshType,
     };
   };
 
   onDeserialize: (data: MeshComponentJson) => void = (data) => {
-    // TODO
+    this.selectedMeshType = data.type;
   };
 }

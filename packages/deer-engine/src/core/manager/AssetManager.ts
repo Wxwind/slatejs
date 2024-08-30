@@ -11,6 +11,14 @@ export class AssetManager implements IAssetManager {
     this.fileManager = fileManager;
   }
 
+  uploadFileAsync = async (name: string, file: Blob) => {
+    if (!this.fileManager) {
+      console.error('file manager is invalid');
+      return;
+    }
+    return this.fileManager.uploadAsset(name, file);
+  };
+
   loadModelAsync = async (address: string, onProgress?: (event: ProgressEvent) => void) => {
     if (this.fileManager === undefined) throw new Error('fileManager is invalid');
     const builtinURL = this.fileManager.getBuiltinFile(address);

@@ -37,12 +37,8 @@ export class RendererComponent extends ComponentBase<'RendererComponent'> {
 
   update = (dt: number) => {
     const deerScene = this.owner as DeerScene;
-    const cameraComp = deerScene.findComponentByType<CameraComponent>('CameraComponent');
-    if (isNil(cameraComp)) {
-      throw new Error('RendererComponent initialize failed: Camera component is invalid');
-    }
     this._renderer.clear();
-    this._renderer.render(deerScene.scene, cameraComp.camera);
+    this._renderer.render(deerScene.scene, this.owner.root?.mainCamera);
 
     const viewHelperComponent = deerScene.findComponentByType<ViewHelperComponent>('ViewHelperComponent');
     if (!isNil(viewHelperComponent)) {
@@ -52,7 +48,9 @@ export class RendererComponent extends ComponentBase<'RendererComponent'> {
     }
   };
 
-  resize = (width: number, height: number) => {};
+  resize = (width: number, height: number) => {
+    this.renderer.setSize(width, height);
+  };
 
   destroy: () => void = () => {
     this.renderer.dispose();

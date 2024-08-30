@@ -9,6 +9,7 @@ import {
   ControlComponent,
   ViewHelperComponent,
 } from '@/core';
+import { ModelComponent } from '@/core/component/ModelComponent';
 
 export function deserializeComponent(data: ComponentData): Component {
   switch (data.type) {
@@ -44,6 +45,11 @@ export function deserializeComponent(data: ComponentData): Component {
     }
     case 'GridHelperComponent': {
       const comp = new GridHelperComponent();
+      comp.deserialize(data);
+      return comp;
+    }
+    case 'ModelComponent': {
+      const comp = new ModelComponent();
       comp.deserialize(data);
       return comp;
     }

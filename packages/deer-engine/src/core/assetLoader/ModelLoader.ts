@@ -24,6 +24,9 @@ export class ModelLoader implements IModelLoader {
 
   private loadGLTFAsync = async (url: string, onProgress?: (event: ProgressEvent) => void) => {
     const gltf = await this.gltfLoader.loadAsync(url, onProgress);
+    gltf.scene.traverse((obj) => {
+      obj.type;
+    });
     return gltf.scene;
   };
 

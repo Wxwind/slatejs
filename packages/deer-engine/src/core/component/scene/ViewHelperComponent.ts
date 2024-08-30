@@ -21,11 +21,7 @@ export class ViewHelperComponent extends ComponentBase<'ViewHelperComponent'> {
     const deerScene = this.owner as DeerScene;
     if (deerScene.mode !== 'editor') return;
     const container = (this.owner as DeerScene).parentEl;
-    const cameraComp = this._owner.findComponentByType<CameraComponent>('CameraComponent');
-    if (isNil(cameraComp)) {
-      throw new Error('ViewHelperComponent initialize failed, Camera Component is invalid.');
-    }
-    this.viewHelper = new ViewHelper(cameraComp.camera, container);
+    this.viewHelper = new ViewHelper(this._owner.root?.mainCamera, container);
   };
 
   constructor() {

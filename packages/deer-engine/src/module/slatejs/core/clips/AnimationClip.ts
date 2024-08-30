@@ -3,7 +3,7 @@ import { CreateActionClipByJsonDto, CreateActionClipDto, UpdateActionClipDto } f
 import { ActionClip } from '../ActionClip';
 import { CutsceneTrack } from '../CutsceneTrack';
 import { AnimatedParameterCollection } from '../AnimatedParameterCollection';
-import { Component, egclass } from '@/core';
+import { egclass } from '@/core';
 import { attachTrack } from '../decorators';
 
 @egclass()

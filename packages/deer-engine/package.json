@@ -7,7 +7,7 @@
   "types": "dist/es/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "rollup --config rollup.config.js",
+    "build": "rimraf dist && rollup --config rollup.config.js",
     "watch": "node scripts/watch.cjs",
     "lint:ts": "tsc -p ./tsconfig.json",
     "babel-run": "babel-node src/index -x .ts --config-file ./babel.config.json",
@@ -29,6 +29,7 @@
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-typescript": "^7.23.3",
     "@rollup/plugin-babel": "^6.0.4",
+    "@babel/cli": "^7.23.4",
     "@types/lodash": "^4.14.202",
     "@types/three": "^0.157.2",
     "@types/uuid": "^9.0.6",
@@ -37,11 +38,11 @@
     "eslint": "^8.52.0"
   },
   "dependencies": {
-    "@babel/cli": "^7.23.4",
+    "@tweenjs/tween.js": "^25.0.0",
+    "eventtool": "workspace:*",
     "fflate": "^0.8.1",
     "lodash": "^4.17.21",
     "three": "^0.157.0",
-    "uuid": "^9.0.1",
-    "eventtool": "workspace:*"
+    "uuid": "^9.0.1"
   }
 }

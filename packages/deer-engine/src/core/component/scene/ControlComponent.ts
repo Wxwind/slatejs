@@ -4,6 +4,7 @@ import { egclass } from '../../decorator';
 import { CameraComponent, RendererComponent } from '.';
 import { isNil } from 'lodash';
 import { Control } from '@/core/Control';
+import { DeerScene } from '@/core/DeerScene';
 
 @egclass()
 export class ControlComponent extends ComponentBase<'ControlComponent'> {
@@ -20,17 +21,15 @@ export class ControlComponent extends ComponentBase<'ControlComponent'> {
   }
 
   awake = () => {
-    const cameraComp = this._owner.findComponentByType<CameraComponent>('CameraComponent');
-    if (isNil(cameraComp)) {
-      throw new Error('ControlComponent initialize failed, Camera Component is invalid.');
-    }
-
     const rendererComp = this._owner.findComponentByType<RendererComponent>('RendererComponent');
     if (isNil(rendererComp)) {
       throw new Error('ControlComponent initialize failed, Camera Component is invalid.');
     }
+    if (isNil(this.owner.root)) {
+      throw new Error('root is invalid');
+    }
 
-    const controls = new Control(cameraComp.camera, rendererComp.renderer.domElement);
+    const controls = new Control(this.owner.root.mainCamera, rendererComp.renderer.domElement);
     this._control = controls;
   };
 

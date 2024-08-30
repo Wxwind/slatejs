@@ -1,4 +1,4 @@
-import { Scene } from 'three';
+import { PerspectiveCamera, Scene } from 'three';
 import { EntityManager } from './manager/EntityManager';
 import { RendererComponent } from './component';
 import { debounce } from '@/util';
@@ -25,6 +25,8 @@ export class DeerScene extends Entity {
 
   mode!: DeerSceneMode;
 
+  mainCamera: PerspectiveCamera;
+
   // Manager
   readonly entityManager = new EntityManager(this);
 
@@ -43,6 +45,11 @@ export class DeerScene extends Entity {
 
     this.parent = undefined;
 
+    const camera = new PerspectiveCamera(75, this.parentEl.clientWidth / this.parentEl.clientHeight, 0.1, 10000);
+    camera.position.set(20, 20, 0);
+
+    this.mainCamera = camera;
+
     const debouncedResize = debounce(this.resize);
 
     // observe resize
@@ -56,7 +63,8 @@ export class DeerScene extends Entity {
   }
 
   private resize = (width: number, height: number) => {
-    this.findComponentByType<CameraComponent>('CameraComponent')?.resize(width, height);
+    this.mainCamera.aspect = width / height;
+    this.mainCamera.updateProjectionMatrix();
     this.findComponentByType<RendererComponent>('RendererComponent')?.resize(width, height);
   };
 

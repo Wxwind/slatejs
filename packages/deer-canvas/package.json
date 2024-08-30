@@ -7,7 +7,7 @@
   "types": "dist/es/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "rollup --config rollup.config.js",
+    "build": "rimraf dist && rollup --config rollup.config.js",
     "watch": "node scripts/watch.cjs",
     "lint:ts": "tsc -p ./tsconfig.json",
     "test": "jest"

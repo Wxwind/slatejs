@@ -5,8 +5,8 @@ import { TransformComponent } from './TransformComponent';
 import { RendererComponent } from './scene';
 import { ViewHelperComponent } from './scene/ViewHelperComponent';
 import { ControlComponent } from './scene/ControlComponent';
-import { GridHelper } from 'three';
 import { GridHelperComponent } from './scene/GridHelperComponent';
+import { ModelComponent } from './ModelComponent';
 
 @egclass()
 export class FVector2 {
@@ -38,8 +38,12 @@ export class FVector4 {
   w: number = 0;
 }
 
+export type ModelComponentJson = {
+  assetAddress: string;
+};
+
 export type MeshComponentJson = {
-  count: number;
+  type: 'Box' | 'Sphere';
 };
 
 export type TransformComponentJson = {
@@ -73,6 +77,7 @@ export type ComponentTypeToJsonObjMap = {
   ViewHelperComponent: ViewHelperComponentJson;
   ControlComponent: ControlComponentJson;
   GridHelperComponent: GridHelperComponentJson;
+  ModelComponent: ModelComponentJson;
 };
 
 type ComponentDataMap = {
@@ -91,7 +96,8 @@ export type Component =
   | RendererComponent
   | ViewHelperComponent
   | ControlComponent
-  | GridHelperComponent;
+  | GridHelperComponent
+  | ModelComponent;
 
 export type ComponentData<T extends ComponentType = ComponentType> = ComponentDataMap[T];
 export type ComponentJson<T extends ComponentType = ComponentType> = ComponentTypeToJsonObjMap[T];

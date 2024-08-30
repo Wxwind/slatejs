@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
-import { DeerScene, MeshComponent, deerEngine } from 'deer-engine';
+import { DeerScene, MeshComponent, deerEngine, cutsceneEditor } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
-import { cutsceneEditor } from 'deer-engine';
 import { Message } from '@arco-design/web-react';
+import { FileUpload } from '@/components';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -12,6 +12,20 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = (props) => {
   const { scene } = props;
+
+  const handleUploadFile = async (fileList: FileList) => {
+    try {
+      const promises = [];
+      for (const file of fileList) {
+        promises.push(deerEngine.fileManager.uploadAsset(file.name, file));
+      }
+      await Promise.all(promises);
+      Message.success('upload success!');
+    } catch (error) {
+      Message.error(`upload failed, reason: ${(error as Error).message}`);
+      console.error(error);
+    }
+  };
 
   const handleExport = () => {
     if (deerEngine.activeScene) {
@@ -131,6 +145,27 @@ export const Header: FC<HeaderProps> = (props) => {
               onSelect={handleCreateEntity}
             >
               New Cube
+            </Menubar.Item>
+            <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
+          </Menubar.Content>
+        </Menubar.Portal>
+      </Menubar.Menu>
+
+      <Menubar.Menu>
+        <Menubar.Trigger className="text-sm py-2 px-3 outline-none select-none leading-none rounded  flex items-center justify-between">
+          Asset
+        </Menubar.Trigger>
+        <Menubar.Portal>
+          <Menubar.Content
+            className="min-w-[220px] bg-gray-300 rounded-md p-1"
+            align="start"
+            sideOffset={5}
+            alignOffset={-3}
+          >
+            <Menubar.Item className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400">
+              <FileUpload onFileSelected={handleUploadFile}>
+                <div>Select file</div>
+              </FileUpload>
             </Menubar.Item>
             <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
           </Menubar.Content>
