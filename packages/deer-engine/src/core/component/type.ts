@@ -1,10 +1,8 @@
 import { egclass, property } from '../decorator';
-import { CameraComponent } from './scene/CameraComponent';
+import { CameraComponent } from './CameraComponent';
 import { MeshComponent } from './MeshComponent';
 import { TransformComponent } from './TransformComponent';
-import { RendererComponent } from './scene';
 import { ViewHelperComponent } from './scene/ViewHelperComponent';
-import { ControlComponent } from './scene/ControlComponent';
 import { GridHelperComponent } from './scene/GridHelperComponent';
 import { ModelComponent } from './ModelComponent';
 
@@ -93,9 +91,7 @@ export type Component =
   | MeshComponent
   | TransformComponent
   | CameraComponent
-  | RendererComponent
   | ViewHelperComponent
-  | ControlComponent
   | GridHelperComponent
   | ModelComponent;
 

@@ -18,13 +18,6 @@ export type MetadataProp = Partial<{
   get: (object: any) => unknown;
   allowEmpty: boolean; // allow null or undefined when parse from json
   animatable: boolean; // can be animated in slatejs.
-  uiOptions: Partial<{
-    group: string | GroupOptions;
-    displayName: string;
-    tooltip: string;
-    min: number;
-    max: number;
-  }>;
 }>;
 9;
 export type AnyCtor = (new (...args: any[]) => any) | (abstract new (...args: any[]) => any);
@@ -85,11 +78,9 @@ export function getClassName(objOrCtor: AnyCtor | AnyCtor[] | Record<string, unk
       const str = objOrCtor.toString();
       if (str.charAt(0) === '[') {
         // str is "[object objectClass]"
-        // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
         arr = /\[\w+\s*(\w+)\]/.exec(str);
       } else {
         // str is function objectClass () {} for IE Firefox
-        // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
         arr = /function\s*(\w+)/.exec(str);
       }
       if (arr && arr.length === 2) {

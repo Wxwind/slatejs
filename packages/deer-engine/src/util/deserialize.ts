@@ -3,55 +3,46 @@ import {
   ComponentData,
   GridHelperComponent,
   MeshComponent,
-  RendererComponent,
   TransformComponent,
-  CameraComponent,
-  ControlComponent,
   ViewHelperComponent,
+  Entity,
 } from '@/core';
+import { CameraComponent } from '@/core/component/CameraComponent';
 import { ModelComponent } from '@/core/component/ModelComponent';
 
-export function deserializeComponent(data: ComponentData): Component {
+export function deserializeComponent(data: ComponentData, entity: Entity): Component {
   switch (data.type) {
     case 'MeshComponent': {
-      const comp = new MeshComponent();
+      const comp = new MeshComponent(entity);
       comp.deserialize(data);
       return comp;
     }
     case 'TransformComponent': {
-      const comp = new TransformComponent();
+      const comp = new TransformComponent(entity);
       comp.deserialize(data);
       return comp;
     }
     case 'CameraComponent': {
-      const comp = new CameraComponent();
-      comp.deserialize(data);
-      return comp;
-    }
-    case 'ControlComponent': {
-      const comp = new ControlComponent();
-      comp.deserialize(data);
-      return comp;
-    }
-    case 'RendererComponent': {
-      const comp = new RendererComponent();
+      const comp = new CameraComponent(entity);
       comp.deserialize(data);
       return comp;
     }
     case 'ViewHelperComponent': {
-      const comp = new ViewHelperComponent();
+      const comp = new ViewHelperComponent(entity);
       comp.deserialize(data);
       return comp;
     }
     case 'GridHelperComponent': {
-      const comp = new GridHelperComponent();
+      const comp = new GridHelperComponent(entity);
       comp.deserialize(data);
       return comp;
     }
     case 'ModelComponent': {
-      const comp = new ModelComponent();
+      const comp = new ModelComponent(entity);
       comp.deserialize(data);
       return comp;
     }
   }
+
+  throw new Error(`unknown type ${data.type}`);
 }

@@ -1,5 +1,7 @@
 export interface IBehaviour {
-  awake: () => void;
-  update: (dt: number) => void;
-  destroy: () => void;
+  awake(): void;
+  onEnabled(): void;
+  onDisabled(): void;
+  update(dt: number): void;
+  destroy(): void;
 }

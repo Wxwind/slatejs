@@ -19,11 +19,11 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
   private set model(value: THREE.Object3D | undefined) {
     this._model = value;
     if (!this._model) return;
-    if (isNil(this.owner)) {
+    if (isNil(this.entity)) {
       console.warn('Model is created but owner is invalid, it will be dissociative');
       return;
     }
-    this._owner.sceneObject.add(this._model);
+    this._entity.sceneObject.add(this._model);
   }
 
   private get model(): THREE.Object3D | undefined {
@@ -34,7 +34,7 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
     return true;
   }
 
-  awake: () => void = async () => {
+  onAwake: () => void = async () => {
     const model = await deerEngine.assetManager.loadModelAsync(this.assetAddress);
     const materials: THREE.Material[] = [];
     const geometries: THREE.BufferGeometry[] = [];
@@ -52,9 +52,13 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
     this.animations = model?.animations || [];
   };
 
+  onEnabled: () => void = () => {};
+
+  onDisabled: () => void = () => {};
+
   update: (dt: number) => void = () => {};
 
-  destroy: () => void = () => {
+  onDestroy: () => void = () => {
     if (isNil(this.model)) {
       console.warn("mesh doesn't exist");
       return;
@@ -65,7 +69,7 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
     this.geomatries.forEach((geo) => geo.dispose());
   };
 
-  updateByJson: (data: ModelComponentJson) => void = (data) => {};
+  updateByJson: (data: ModelComponentJson, sync: boolean) => void = (data, sync) => {};
 
   onSerialize: () => ModelComponentJson = () => {
     // TODO

@@ -10,6 +10,7 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
+    "experimentalDecorators": true,
     "resolvePackageJsonExports": true,
     "isolatedModules": true,
     "noEmit": true,

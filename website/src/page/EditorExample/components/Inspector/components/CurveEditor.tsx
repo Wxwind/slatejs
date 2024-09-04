@@ -10,7 +10,7 @@ import {
 import { ActionClip, AnimationCurve, InterpMode, Keyframe } from 'deer-engine';
 import { useEffect, useRef, useState } from 'react';
 import { Dropdown, Menu } from '@arco-design/web-react';
-import { isNil } from 'lodash';
+import { isNil } from '@/util';
 
 interface CurveEditorProps {
   selectedClip: ActionClip | undefined;

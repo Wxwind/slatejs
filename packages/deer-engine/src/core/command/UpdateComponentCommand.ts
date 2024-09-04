@@ -25,7 +25,7 @@ export class UpdateComponentCommand implements ICommand {
     if (comp.type === this.compInfo.type) {
       const c = comp as ComponentBase<typeof comp.type>;
       this.oldCompConfig = JsonModule.toJsonObject(c);
-      c.updateByJson(this.compInfo.config);
+      c.updateByJson(this.compInfo.config, true);
       return true;
     } else {
       throw new Error(`cannot assign config of <${this.compInfo.type}> to comp of <${comp.type}>`);
@@ -44,7 +44,7 @@ export class UpdateComponentCommand implements ICommand {
     }
     if (comp.type === this.compInfo.type) {
       const c = comp as ComponentBase<typeof comp.type>;
-      c.updateByJson(this.oldCompConfig);
+      c.updateByJson(this.oldCompConfig, true);
       return true;
     } else {
       throw new Error(`cannot assign config of <${this.oldCompConfig}> to comp of <${comp.type}>`);

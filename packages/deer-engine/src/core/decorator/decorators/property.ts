@@ -9,20 +9,16 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
     const classStash = getClassStathFromMetadata(metadata);
 
-    const { type, allowEmpty, animatable, ...uiOptions } = options;
+    const { type, animatable } = options;
     const typeName = type ? getClassName(type) : undefined;
 
     const originStash = classStash[context.name] ?? (classStash[context.name] = {});
     const newStash: MetadataProp = {
       type,
       typeName,
-      allowEmpty,
       animatable,
       set: context.access.set,
       get: context.access.get,
-      uiOptions: {
-        ...uiOptions,
-      },
     };
 
     // FIXME must clone metadata.__propertyCache__ before modified, otherwise metadata will be mixed by inheritance. May it be the babel's bug?
@@ -34,13 +30,6 @@ export function property<This, Value>(options: IPropertyOptions): ClassFieldDeco
 
   return decorator;
 }
-
-// TODO: support @property
-// export const property = <This, Value>(target: This, context: ClassFieldDecoratorContext<This, Value>) => {
-//   return (initialValue: Value) => {
-//     return initialValue;
-//   };
-// };
 
 // used for decorate get, set and autoAccessor
 export function accessor<This, Value>(
@@ -62,7 +51,7 @@ export function accessor<This, Value>(
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
     const classStash = getClassStathFromMetadata(metadata);
     const originStash = classStash[context.name];
-    const { type, allowEmpty, animatable, ...uiOptions } = options;
+    const { type, animatable } = options;
     const typeName = type ? getClassName(type) : undefined;
 
     let newStash: MetadataProp;
@@ -71,39 +60,27 @@ export function accessor<This, Value>(
         newStash = {
           type,
           typeName,
-          allowEmpty,
           animatable,
           get: context.access.get,
           set: context.access.set,
-          uiOptions: {
-            ...uiOptions,
-          },
         };
         break;
       case 'setter':
         newStash = {
           type,
           typeName,
-          allowEmpty,
           animatable,
           get: undefined,
           set: context.access.set,
-          uiOptions: {
-            ...uiOptions,
-          },
         };
         break;
       case 'getter':
         newStash = {
           type,
           typeName,
-          allowEmpty,
           animatable,
           get: context.access.get,
           set: undefined,
-          uiOptions: {
-            ...uiOptions,
-          },
         };
         break;
       default:

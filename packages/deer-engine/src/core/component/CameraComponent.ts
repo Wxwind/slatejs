@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
-import { ComponentBase } from '../ComponentBase';
-import { FVector3, CameraComponentJson } from '../type';
-import { accessor, egclass, property } from '../../decorator';
+import { ComponentBase } from './ComponentBase';
+import { FVector3, CameraComponentJson } from './type';
+import { accessor, egclass, property } from '../decorator';
 
 @egclass()
 export class CameraComponent extends ComponentBase<'CameraComponent'> {
@@ -53,22 +53,12 @@ export class CameraComponent extends ComponentBase<'CameraComponent'> {
     this.signals.componentUpdated.emit();
   }
 
-  constructor() {
-    super();
-  }
-
-  awake = () => {};
-
-  update: (dt: number) => void = () => {};
-
-  destroy: () => void = () => {};
-
-  updateByJson: (data: CameraComponentJson) => void = (data) => {
+  updateByJson(data: CameraComponentJson, sync: boolean) {
     this.position.set(data.position.x, data.position.y, data.position.z);
     this.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
     this.scale.set(data.scale.x, data.scale.y, data.scale.z);
     this.signals.componentUpdated.emit();
-  };
+  }
 
   onSerialize: () => CameraComponentJson = () => {
     return {

@@ -29,6 +29,7 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
 
   @accessor({ type: FVector3 })
   public set rotation(v: FVector3) {
+    console.log('set rotation');
     this.sceneObject.rotation.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
   }
@@ -44,18 +45,22 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
     this.signals.componentUpdated.emit();
   }
 
-  awake: () => void = () => {};
+  onAwake() {}
 
-  update: (dt: number) => void = () => {};
+  onEnabled() {}
 
-  destroy: () => void = () => {};
+  onDisabled() {}
 
-  updateByJson: (data: TransformComponentJson) => void = (data) => {
+  update(dt: number) {}
+
+  onDestroy() {}
+
+  updateByJson(data: TransformComponentJson, sync: boolean) {
     this.sceneObject.position.set(data.position.x, data.position.y, data.position.z);
     this.sceneObject.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
     this.sceneObject.scale.set(data.scale.x, data.scale.y, data.scale.z);
-    this.signals.componentUpdated.emit();
-  };
+    sync && this.signals.componentUpdated.emit();
+  }
 
   onSerialize: () => TransformComponentJson = () => {
     return {

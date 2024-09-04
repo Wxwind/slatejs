@@ -5,31 +5,18 @@ import { calc } from '@/module/calculator';
 
 interface BlurInputNumberProps extends Omit<InputProps, 'onChange' | 'value' | 'onBlur'> {
   precision?: number;
-  allowEmpty?: boolean;
   precisionOnShow?: number;
   precisionOnSave?: number;
   name: string;
   value: number | string;
   min?: number;
   max?: number;
-  onChange?: (name: string, exp: string) => void;
+  onChange?: (name: string, value: number | undefined) => void;
   onBlur: (name: string, value: number | undefined) => void;
 }
 
 export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
-  const {
-    precision = 2,
-    value,
-    name,
-    min,
-    max,
-    allowEmpty,
-    precisionOnShow,
-    precisionOnSave,
-    onBlur,
-    onChange,
-    ...rest
-  } = props;
+  const { precision = 2, value, name, min, max, precisionOnShow, precisionOnSave, onBlur, onChange, ...rest } = props;
 
   const [showValue, setShowValue] = React.useState<string | undefined>(undefined);
 
@@ -39,7 +26,7 @@ export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
       return;
     }
     let num: number | undefined = Number(value);
-    if (isNaN(num)) num = allowEmpty ? undefined : 0;
+    if (isNaN(num)) num = 0;
     if (!isNil(num)) {
       if (precisionOnShow !== undefined && precisionOnShow >= 0) {
         const h = 10 ** precisionOnShow;
@@ -47,25 +34,37 @@ export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
       }
     }
     setShowValue(!isNil(num) ? num?.toString() : undefined);
-  }, [allowEmpty, precisionOnShow, value]);
+  }, [precisionOnShow, value]);
 
-  const handleBlur = (value: string) => {
+  const inputExprToOutputNum = (expr: string) => {
     let num: number | undefined = 0;
-    if (typeof value === 'string') {
-      if (value === '' && allowEmpty) {
+
+    if (expr === '') {
+      num = undefined;
+    } else {
+      try {
+        const res = calc(expr);
+        num = res;
+      } catch (e) {
         num = undefined;
-      } else {
-        try {
-          const res = calc(value);
-          num = res;
-        } catch (e) {
-          const msg = (e as Error).message;
-          console.log(msg);
-          Message.error('非法的计算表达式');
-          num = 0;
-        }
       }
     }
+
+    if (isNumber(num)) {
+      num = min === undefined ? num : Math.max(min, num);
+      num = max === undefined ? num : Math.min(max, num);
+      if (precisionOnSave !== undefined && precisionOnSave >= 0) {
+        const h = 10 ** precisionOnSave;
+        num = Math.round(num * h) / h;
+      }
+    }
+
+    return num;
+  };
+
+  const handleBlur = (value: string) => {
+    let num = inputExprToOutputNum(value);
+    if (num === undefined) setShowValue(value);
     if (isNumber(num)) {
       num = min === undefined ? num : Math.max(min, num);
       num = max === undefined ? num : Math.min(max, num);
@@ -113,7 +112,8 @@ export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
       }}
       onChange={(exp) => {
         setShowValue(exp);
-        onChange?.(name, exp);
+        const value = inputExprToOutputNum(exp);
+        if (value !== undefined) onChange?.(name, value);
       }}
       {...rest}
     />

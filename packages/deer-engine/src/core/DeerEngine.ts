@@ -5,13 +5,6 @@ import { Signal } from 'eventtool';
 import { AssetManager } from './manager/AssetManager';
 import { FileManager } from './manager/FileManager/FileManager';
 import { Clock } from 'three';
-import {
-  CameraComponent,
-  ControlComponent,
-  GridHelperComponent,
-  RendererComponent,
-  ViewHelperComponent,
-} from './component';
 
 export class DeerEngine {
   private _sceneMap = new Map<string, DeerScene>();
@@ -77,13 +70,7 @@ export class DeerEngine {
       console.error('containerId is nil');
       return;
     }
-    const scene = new DeerScene(this.containerId, mode);
-    // TODO: import template from json.
-    scene.addComponentByNew(CameraComponent);
-    scene.addComponentByNew(RendererComponent);
-    scene.addComponentByNew(ViewHelperComponent);
-    scene.addComponentByNew(ControlComponent);
-    scene.addComponentByNew(GridHelperComponent);
+    const scene = new DeerScene(this, this.containerId, mode);
     scene.id = genUUID();
     scene.name = name;
     this._sceneMap.set(scene.id, scene);
@@ -98,7 +85,7 @@ export class DeerEngine {
   deleteScene = (id: string) => {
     const scene = this._sceneMap.get(id);
     if (isNil(scene)) return;
-    scene.destroy();
+    scene.onDestroy();
     if (scene === this.activeScene) {
       this.activeScene = undefined;
     }
@@ -106,7 +93,7 @@ export class DeerEngine {
   };
 
   destroy = () => {
-    this._sceneMap.forEach((scene) => scene.destroy());
+    this._sceneMap.forEach((scene) => scene.onDestroy());
     this._sceneMap.clear();
     this.activeScene = undefined;
     cancelAnimationFrame(this.animateID);
@@ -127,7 +114,7 @@ export class DeerEngine {
     const decodedString = String.fromCharCode.apply(uint8_msg);
     const data = JSON.parse(decodedString);
 
-    const scene = new DeerScene(this.containerId, mode);
+    const scene = new DeerScene(this, this.containerId, mode);
     scene.deserialize(data);
     this._sceneMap.set(this.containerId, scene);
     this._activeScene = scene;

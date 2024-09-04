@@ -3,18 +3,9 @@ import { isPlainObject } from '@/util';
 import { getClassName } from './decorators';
 import { globalTypeMap } from './GlobalTypeMap';
 
-export interface ISerializationCallbackReceiver {
-  onBeforeSerialize(): void;
-  onAfterdeserialize(): void;
-}
-
 function toJson(obj: any): string {
   if (isPlainObject(obj)) {
     return JSON.stringify(obj);
-  }
-
-  if ('onBeforeSerialize' in obj) {
-    obj.onBeforeSerialize();
   }
 
   if ('toJsonObject' in obj) {
@@ -33,10 +24,6 @@ function toJson(obj: any): string {
 function toJsonObject(obj: any) {
   if (isPlainObject(obj)) {
     return JSON.parse(JSON.stringify(obj));
-  }
-
-  if ('onBeforeSerialize' in obj) {
-    obj.onBeforeSerialize();
   }
 
   if ('toJsonObject' in obj) {
@@ -62,10 +49,6 @@ function fromJson(json: string) {
   const obj = new classType();
   if ('fromJsonObject' in obj && typeof obj.fromJsonObject === 'function') {
     obj.fromJsonObject(jsonObj);
-
-    if ('onAfterdeserialize' in obj && typeof obj.onAfterdeserialize === 'function') {
-      obj.onAfterdeserialize();
-    }
   } else {
     console.error("fromJsonObject() function is not existed in obj %o, are you missing '@egclass'?", obj);
   }
@@ -76,10 +59,6 @@ function fromJsonObject<T extends object>(jsonObj: any, classType: new () => T) 
   const obj = new classType();
   if ('fromJsonObject' in obj && typeof obj.fromJsonObject === 'function') {
     obj.fromJsonObject(jsonObj);
-
-    if ('onAfterdeserialize' in obj && typeof obj.onAfterdeserialize === 'function') {
-      obj.onAfterdeserialize();
-    }
   } else {
     console.error("fromJsonObject() function is not existed in obj %o, are you missing '@egclass'?", obj);
   }

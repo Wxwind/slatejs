@@ -23,7 +23,7 @@ export const SceneCanvas: FC = (props) => {
   }, []);
 
   return (
-    <div className="w-full h-full relative" id="eg-scene">
+    <div className="w-full h-full relative" id={DEER_ENGINE_SCENE}>
       <div
         className={classNames(
           'absolute w-full h-full pointer-events-none',

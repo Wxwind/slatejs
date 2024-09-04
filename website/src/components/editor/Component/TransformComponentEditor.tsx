@@ -28,7 +28,12 @@ export const TransformComponentEditor: EditorComp<TransformComponent> = (props) 
 
   const handleValueFinish = (name: string, value: number | undefined) => {
     set(data, name, value);
-    target.updateByJson(data);
+    target.updateByJson(data, true);
+  };
+
+  const handleValuePreview = (name: string, value: number | undefined) => {
+    set(data, name, value);
+    target.updateByJson(data, false);
   };
 
   return (
@@ -36,23 +41,68 @@ export const TransformComponentEditor: EditorComp<TransformComponent> = (props) 
       <div className="flex flex-col gap-y-4">
         <ImmerFormItem label="position">
           <FormItemsInRow>
-            <BlurInputNumber name="position.x" value={data.position.x} onBlur={handleValueFinish} />
-            <BlurInputNumber name="position.y" value={data.position.y} onBlur={handleValueFinish} />
-            <BlurInputNumber name="position.z" value={data.position.z} onBlur={handleValueFinish} />
+            <BlurInputNumber
+              name="position.x"
+              value={data.position.x}
+              onChange={handleValuePreview}
+              onBlur={handleValueFinish}
+            />
+            <BlurInputNumber
+              name="position.y"
+              value={data.position.y}
+              onChange={handleValuePreview}
+              onBlur={handleValueFinish}
+            />
+            <BlurInputNumber
+              name="position.z"
+              value={data.position.z}
+              onChange={handleValuePreview}
+              onBlur={handleValueFinish}
+            />
           </FormItemsInRow>
         </ImmerFormItem>
         <ImmerFormItem label="rotation">
           <FormItemsInRow>
-            <BlurInputNumber name="rotation.x" value={data.rotation.x} onBlur={handleValueFinish} />
-            <BlurInputNumber name="rotation.y" value={data.rotation.y} onBlur={handleValueFinish} />
-            <BlurInputNumber name="rotation.z" value={data.rotation.z} onBlur={handleValueFinish} />
+            <BlurInputNumber
+              name="rotation.x"
+              onChange={handleValuePreview}
+              value={data.rotation.x}
+              onBlur={handleValueFinish}
+            />
+            <BlurInputNumber
+              name="rotation.y"
+              onChange={handleValuePreview}
+              value={data.rotation.y}
+              onBlur={handleValueFinish}
+            />
+            <BlurInputNumber
+              name="rotation.z"
+              onChange={handleValuePreview}
+              value={data.rotation.z}
+              onBlur={handleValueFinish}
+            />
           </FormItemsInRow>
         </ImmerFormItem>
         <ImmerFormItem label="scale">
           <FormItemsInRow>
-            <BlurInputNumber name="scale.x" value={data.scale.x} onBlur={handleValueFinish} />
-            <BlurInputNumber name="scale.y" value={data.scale.y} onBlur={handleValueFinish} />
-            <BlurInputNumber name="scale.z" value={data.scale.z} onBlur={handleValueFinish} />
+            <BlurInputNumber
+              name="scale.x"
+              value={data.scale.x}
+              onChange={handleValuePreview}
+              onBlur={handleValueFinish}
+            />
+            <BlurInputNumber
+              name="scale.y"
+              value={data.scale.y}
+              onChange={handleValuePreview}
+              onBlur={handleValueFinish}
+            />
+            <BlurInputNumber
+              name="scale.z"
+              value={data.scale.z}
+              onChange={handleValuePreview}
+              onBlur={handleValueFinish}
+            />
           </FormItemsInRow>
         </ImmerFormItem>
       </div>

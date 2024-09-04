@@ -14,11 +14,11 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
 
   private set mesh(value: THREE.Mesh) {
     this._mesh = value;
-    if (isNil(this.owner)) {
+    if (isNil(this.entity)) {
       console.warn('Mesh is created but owner is invalid, it will be dissociative');
       return;
     }
-    this._owner.sceneObject.add(this.mesh);
+    this._entity.sceneObject.add(this.mesh);
   }
 
   private get mesh(): THREE.Mesh {
@@ -35,11 +35,7 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     return count;
   }
 
-  constructor() {
-    super();
-  }
-
-  awake: () => void = () => {
+  onAwake: () => void = () => {
     const geometry = new THREE.BoxGeometry();
     const mat = new THREE.MeshStandardMaterial();
 
@@ -49,9 +45,13 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     this.mesh = cube;
   };
 
+  onEnabled: () => void = () => {};
+
+  onDisabled: () => void = () => {};
+
   update: (dt: number) => void = () => {};
 
-  destroy: () => void = () => {
+  onDestroy: () => void = () => {
     if (isNil(this.mesh)) {
       console.warn("mesh doesn't exist");
       return;

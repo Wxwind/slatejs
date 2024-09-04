@@ -30,12 +30,13 @@ export class EntityManager {
 
   createEntity = (name: string, parent: Entity | string | null | undefined) => {
     const p =
-      typeof parent === 'string' ? this.findEntityById(parent) || this.scene : isNil(parent) ? this.scene : parent;
-
-    const e = new Entity();
+      typeof parent === 'string' ? this.findEntityById(parent) || undefined : isNil(parent) ? undefined : parent;
+    const e = new Entity(this.scene);
     e.name = name;
     e.parent = p;
-    e.awake();
+    if (e.parent === undefined) {
+      this.scene.addRootEntity(e);
+    }
 
     this.entityMap.set(e.id, e);
     this.entityArray.push(e);
@@ -81,8 +82,7 @@ export class EntityManager {
   };
 
   toTree: () => EntityForHierarchy[] = () => {
-    const rootEntity = this.entityArray.filter((a) => a.parent === this.scene);
-
+    const rootEntity = this.scene.rootEntities;
     const tree: EntityForHierarchy[] = rootEntity.map(this.mapEntityForHierarchy);
     return tree;
   };

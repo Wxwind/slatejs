@@ -1,13 +1,15 @@
 import { UUID_PREFIX_COMP } from '@/config';
-import { genUUID } from '@/util/utils';
+import { genUUID } from '@/util';
 import { ComponentData, ComponentType, ComponentTypeToJsonObjMap } from './type';
 import { Entity, IBehaviour } from '../entity';
 import { Signal } from 'eventtool';
 import { property } from '../decorator';
 import { ISerializable } from '@/interface';
 import { Object3D } from 'three';
+import { SceneObject } from '../base';
 
 export abstract class ComponentBase<T extends ComponentType = ComponentType>
+  extends SceneObject
   implements ISerializable<ComponentData<T>>, IBehaviour
 {
   @property({ type: String })
@@ -15,18 +17,32 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
 
   public abstract readonly type: T; // equals class' name
 
-  protected _owner!: Entity;
+  protected _entity: Entity;
 
-  get owner(): Entity {
-    return this._owner;
+  protected _enabled = true;
+
+  public get enabled() {
+    return this._enabled;
   }
 
-  set owner(value: Entity) {
-    this._owner = value;
+  public set enabled(value: boolean) {
+    if (this._enabled !== value) {
+      this._enabled = value;
+      value ? this.onEnabled() : this.onDisabled();
+      this.signals.componentUpdated.emit();
+    }
+  }
+
+  get entity(): Entity {
+    return this._entity;
+  }
+
+  set entity(value: Entity) {
+    this._entity = value;
   }
 
   get sceneObject(): Object3D {
-    return this._owner.sceneObject;
+    return this._entity.sceneObject;
   }
 
   public abstract get isCanBeRemoved(): boolean;
@@ -35,35 +51,53 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
     componentUpdated: new Signal(),
   };
 
-  constructor() {
+  constructor(entity: Entity) {
+    super(entity.scene);
+    this._entity = entity;
     this.id = genUUID(UUID_PREFIX_COMP);
   }
 
-  abstract update: (dt: number) => void;
+  awake(): void {
+    if (this.enabled) {
+      this.onEnabled();
+    }
+    this.onAwake();
+  }
 
-  abstract awake: () => void;
+  onAwake() {}
 
-  abstract destroy: () => void;
+  onEnabled() {}
 
-  abstract updateByJson: (data: ComponentTypeToJsonObjMap[T]) => void;
+  onDisabled() {}
 
-  abstract onSerialize: () => ComponentTypeToJsonObjMap[T];
+  update(dt: number) {}
 
-  abstract onDeserialize: (data: ComponentTypeToJsonObjMap[T]) => void;
+  destroy(): void {
+    this.enabled = false;
+    this.onDestroy();
+  }
 
-  serialize: () => ComponentData<T> = () => {
+  onDestroy() {}
+
+  abstract updateByJson(data: ComponentTypeToJsonObjMap[T], sync: boolean): void;
+
+  abstract onSerialize(): ComponentTypeToJsonObjMap[T];
+
+  abstract onDeserialize(data: ComponentTypeToJsonObjMap[T]): void;
+
+  serialize(): ComponentData<T> {
     return {
       id: this.id,
       type: this.type,
       config: this.onSerialize(),
     } as ComponentData<T>;
-  };
+  }
 
-  deserialize = (data: ComponentData<T>) => {
+  deserialize(data: ComponentData<T>) {
     if (data.type !== this.type) {
       throw new Error(`Parse component error, required ${this.type} but received ${data.type}`);
     }
     this.id = data.id;
     this.onDeserialize(data.config);
-  };
+  }
 }

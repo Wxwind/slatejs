@@ -1,4 +1,4 @@
-import { isNil } from 'lodash';
+import { isNil } from '@/util';
 import { AssetLoader, IAssetLoader } from '../assetLoader';
 import { FileManager } from './FileManager/FileManager';
 import { IAssetManager } from './interface';

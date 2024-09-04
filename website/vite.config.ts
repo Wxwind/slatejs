@@ -5,14 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react({
-      babel: {
-        plugins: [['@babel/plugin-proposal-decorators', { version: '2023-05' }]],
-      },
-    }),
-    visualizer(),
-  ],
+  plugins: [react(), visualizer()],
   server: {
     open: true,
   },

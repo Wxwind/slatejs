@@ -5,11 +5,11 @@ import { EntityJson } from './type';
 import { Component } from '../component/type';
 import { property } from '../decorator';
 import { ISerializable } from '@/interface';
-import { IBehaviour } from './interface';
 import { DeerScene } from '../DeerScene';
 import { Scene, Object3D } from 'three';
+import { SceneObject } from '../base';
 
-export class Entity implements ISerializable<EntityJson>, IBehaviour {
+export class Entity extends SceneObject implements ISerializable<EntityJson> {
   @property({ type: String })
   id: string = '0';
 
@@ -18,7 +18,10 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
 
   sceneObject: Object3D;
 
-  root: DeerScene | undefined;
+  isRoot = false;
+
+  @property({ type: Boolean })
+  active = false;
 
   private _parent: Entity | undefined;
 
@@ -27,13 +30,15 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
   }
 
   public set parent(v: Entity | undefined) {
-    if (v! == this.parent) {
-      this._parent?.removeChild(this);
-    }
+    if (v === this.parent) return;
+    this._parent?.removeChild(this);
+
     if (v !== undefined) {
       v.addChild(this);
       this._parent = v;
-      this.root = v.root;
+      this._scene = v._scene;
+    } else {
+      this.scene.addRootEntity(this);
     }
   }
 
@@ -45,20 +50,20 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
 
   private readonly compArray: Component[] = [];
 
-  constructor(isScene: boolean = false) {
+  constructor(scene: DeerScene) {
+    super(scene);
     this.id = genUUID(UUID_PREFIX_ENTITY);
-    const transformComp = new TransformComponent();
-    transformComp.owner = this;
+    const transformComp = new TransformComponent(this);
+    transformComp.entity = this;
     this.addComponent(transformComp);
     this.transform = transformComp;
-    isScene ? (this.sceneObject = new Scene()) : (this.sceneObject = new Object3D());
+    this.sceneObject = new Object3D();
   }
 
   getCompArray = () => this.compArray;
 
-  addComponentByNew = <T extends Component>(compCtor: new () => T) => {
-    const comp = new compCtor();
-    comp.owner = this;
+  addComponentByNew = <T extends Component>(compCtor: new (entity: Entity) => T) => {
+    const comp = new compCtor(this);
     comp.awake();
     this.compMap.set(comp.id, comp);
     this.compArray.push(comp);
@@ -66,7 +71,7 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
   };
 
   addComponent = (comp: Component) => {
-    comp.owner = this;
+    comp.entity = this;
     comp.awake();
     this.compMap.set(comp.id, comp);
     this.compArray.push(comp);
@@ -140,9 +145,8 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
     this.sceneObject.remove(child.sceneObject);
   };
 
-  awake: () => void = () => {};
-
   update: (dt: number) => void = (dt) => {
+    if (!this.active) return;
     const compArray = [...this.compArray];
     for (const comp of compArray) {
       comp.update(dt);
@@ -186,11 +190,11 @@ export class Entity implements ISerializable<EntityJson>, IBehaviour {
     this.id = data.id;
     this.name = data.name;
     for (const compData of data.components) {
-      const comp = deserializeComponent(compData);
+      const comp = deserializeComponent(compData, this);
       this.addComponent(comp);
     }
     for (const childData of data.children) {
-      const entity = new Entity();
+      const entity = new Entity(this.scene);
       entity.deserialize(childData);
       entity.parent = this;
     }

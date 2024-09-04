@@ -14,18 +14,22 @@ export class GridHelperComponent extends ComponentBase<'GridHelperComponent'> {
 
   private gridHelper: GridHelper | undefined;
 
-  awake = () => {
-    const deerScene = this.owner as DeerScene;
+  onAwake = () => {
+    const deerScene = this.scene;
     if (deerScene.mode !== 'editor') return;
     const gridHelper = new GridHelper(1000, 200, 0x2c2c2c, 0x888888);
     gridHelper.position.y = -1;
-    deerScene.scene.add(gridHelper);
+    deerScene.sceneObject.add(gridHelper);
     this.gridHelper = gridHelper;
   };
 
   update: (dt: number) => void = () => {};
 
-  destroy: () => void = () => {
+  onEnabled: () => void = () => {};
+
+  onDisabled: () => void = () => {};
+
+  onDestroy: () => void = () => {
     this.gridHelper?.dispose();
   };
 
