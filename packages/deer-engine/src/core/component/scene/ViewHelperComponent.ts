@@ -5,7 +5,7 @@ import { egclass } from '../../decorator';
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
 
 @egclass()
-export class ViewHelperviewModelComponent extends ComponentBase<'ViewHelperComponent'> {
+export class ViewHelperComponent extends ComponentBase<'ViewHelperComponent'> {
   type = 'ViewHelperComponent' as const;
 
   public get isCanBeRemoved(): boolean {

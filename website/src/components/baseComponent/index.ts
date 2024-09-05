@@ -5,3 +5,5 @@ export * from './CurveEditorTrigger';
 export * from './FormItemsInRow';
 export * from './ImmerFormItem';
 export * from './FileUpload';
+export * from './FormInputVector3';
+export * from './FormInputVector2';

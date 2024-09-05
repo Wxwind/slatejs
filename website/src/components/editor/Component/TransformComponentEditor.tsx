@@ -1,11 +1,12 @@
-import { CollapseBox, FormItemsInRow, ImmerFormItem } from '@/components/baseComponent';
+import { CollapseBox, FormItemsInRow, ImmerFormItem, ProInputVector3 } from '@/components/baseComponent';
 import { JsonModule, TransformComponentJson, TransformComponent } from 'deer-engine';
 import { FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import set from 'lodash/set';
-import { BlurInputNumber } from '@/components/baseComponent/BlurInputNumber';
+import { ProInputNumber } from '@/components/baseComponent/ProInputNumber';
 import { useBindSignal } from '@/hooks';
 import { EditorComp, registerEditor } from '@/decorator';
+import { deepClone } from '@/util';
 
 export const TransformComponentEditor: EditorComp<TransformComponent> = (props) => {
   const { target } = props;
@@ -26,85 +27,50 @@ export const TransformComponentEditor: EditorComp<TransformComponent> = (props) 
     setData(obj);
   }, [target, setData]);
 
-  const handleValueFinish = (name: string, value: number | undefined) => {
-    set(data, name, value);
-    target.updateByJson(data, true);
+  const handleValueFinish = (name: string, value: any) => {
+    const newData = deepClone(data);
+    set(newData, name, value);
+
+    target.updateByJson(newData, true);
   };
 
-  const handleValuePreview = (name: string, value: number | undefined) => {
-    set(data, name, value);
-    target.updateByJson(data, false);
+  const handleValuePreview = (name: string, value: any) => {
+    // neither change the data or notify component to sync data.
+    const newData = deepClone(data);
+    set(newData, name, value);
+    console.log('false');
+
+    target.updateByJson(newData, false);
   };
 
   return (
     <CollapseBox title="Transform">
       <div className="flex flex-col gap-y-4">
-        <ImmerFormItem label="position">
-          <FormItemsInRow>
-            <BlurInputNumber
-              name="position.x"
-              value={data.position.x}
-              onChange={handleValuePreview}
-              onBlur={handleValueFinish}
-            />
-            <BlurInputNumber
-              name="position.y"
-              value={data.position.y}
-              onChange={handleValuePreview}
-              onBlur={handleValueFinish}
-            />
-            <BlurInputNumber
-              name="position.z"
-              value={data.position.z}
-              onChange={handleValuePreview}
-              onBlur={handleValueFinish}
-            />
-          </FormItemsInRow>
-        </ImmerFormItem>
-        <ImmerFormItem label="rotation">
-          <FormItemsInRow>
-            <BlurInputNumber
-              name="rotation.x"
-              onChange={handleValuePreview}
-              value={data.rotation.x}
-              onBlur={handleValueFinish}
-            />
-            <BlurInputNumber
-              name="rotation.y"
-              onChange={handleValuePreview}
-              value={data.rotation.y}
-              onBlur={handleValueFinish}
-            />
-            <BlurInputNumber
-              name="rotation.z"
-              onChange={handleValuePreview}
-              value={data.rotation.z}
-              onBlur={handleValueFinish}
-            />
-          </FormItemsInRow>
-        </ImmerFormItem>
-        <ImmerFormItem label="scale">
-          <FormItemsInRow>
-            <BlurInputNumber
-              name="scale.x"
-              value={data.scale.x}
-              onChange={handleValuePreview}
-              onBlur={handleValueFinish}
-            />
-            <BlurInputNumber
-              name="scale.y"
-              value={data.scale.y}
-              onChange={handleValuePreview}
-              onBlur={handleValueFinish}
-            />
-            <BlurInputNumber
-              name="scale.z"
-              value={data.scale.z}
-              onChange={handleValuePreview}
-              onBlur={handleValueFinish}
-            />
-          </FormItemsInRow>
-        </ImmerFormItem>
+        <ProInputVector3
+          label="position"
+          value={data.position}
+          name="position"
+          suffix="m"
+          onChange={handleValuePreview}
+          onBlur={handleValueFinish}
+        />
+
+        <ProInputVector3
+          label="rotation"
+          value={data.rotation}
+          name="rotation"
+          onChange={handleValuePreview}
+          onBlur={handleValueFinish}
+        />
+
+        <ProInputVector3
+          constraintScale
+          label={'scale'}
+          value={data.scale}
+          name="scale"
+          onChange={handleValuePreview}
+          onBlur={handleValueFinish}
+        />
       </div>
     </CollapseBox>
   );

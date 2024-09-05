@@ -15,12 +15,12 @@ export const CollapseBox: FC<PropsWithChildren<CollapseBoxProps>> = (props) => {
   return (
     <Collapsible.Root className="w-full" open={open} onOpenChange={setOpen}>
       <div className="flex items-center">
-        <Collapsible.Trigger>
+        <Collapsible.Trigger className="bg-transparent flex items-center cursor-pointer">
           <RxChevronDown className={classNames('text-xs transition-transform', open ? 'rotate-0' : '-rotate-90')} />
         </Collapsible.Trigger>
         <div>{title}</div>
       </div>
-      <Collapsible.Content>{children}</Collapsible.Content>
+      <Collapsible.Content className="px-2">{children}</Collapsible.Content>
     </Collapsible.Root>
   );
 };

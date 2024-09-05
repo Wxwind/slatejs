@@ -27,7 +27,7 @@ export const EntityTreeNode: FC<EntityProps> = (props) => {
     <div draggable ref={drag}>
       <div
         className={classNames(
-          `group pr-2 h-6 mt-[1px] flex gap-x-1 items-center w-full`,
+          `group pr-2 h-6 mt-[1px] flex gap-x-1 items-center flex-1`,
           isSelected ? 'text-white bg-primary cursor-default' : 'cursor-pointer hover:bg-hover hover:text-white'
         )}
         style={{ paddingLeft: `${18 * depth}px` }}

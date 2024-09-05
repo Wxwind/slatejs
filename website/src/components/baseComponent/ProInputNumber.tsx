@@ -3,19 +3,19 @@ import { isNil, isNumber } from '@/util';
 import { Input, Message, InputProps } from '@arco-design/web-react';
 import { calc } from '@/module/calculator';
 
-interface BlurInputNumberProps extends Omit<InputProps, 'onChange' | 'value' | 'onBlur'> {
+export interface ProInputNumberProps extends Omit<InputProps, 'onChange' | 'value' | 'onBlur'> {
   precision?: number;
   precisionOnShow?: number;
   precisionOnSave?: number;
   name: string;
-  value: number | string;
+  value: number;
   min?: number;
   max?: number;
-  onChange?: (name: string, value: number | undefined) => void;
-  onBlur: (name: string, value: number | undefined) => void;
+  onChange?: (name: string, value: number) => void;
+  onBlur: (name: string, value: number) => void;
 }
 
-export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
+export const ProInputNumber: FC<ProInputNumberProps> = (props) => {
   const { precision = 2, value, name, min, max, precisionOnShow, precisionOnSave, onBlur, onChange, ...rest } = props;
 
   const [showValue, setShowValue] = React.useState<string | undefined>(undefined);
@@ -62,9 +62,8 @@ export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
     return num;
   };
 
-  const handleBlur = (value: string) => {
-    let num = inputExprToOutputNum(value);
-    if (num === undefined) setShowValue(value);
+  const handleBlur = (inputValue: string) => {
+    let num = inputExprToOutputNum(inputValue);
     if (isNumber(num)) {
       num = min === undefined ? num : Math.max(min, num);
       num = max === undefined ? num : Math.min(max, num);
@@ -83,8 +82,8 @@ export const BlurInputNumber: FC<BlurInputNumberProps> = (props) => {
       }
       onBlur?.(name, saveNum);
     } else {
-      setShowValue(undefined);
-      onBlur?.(name, undefined);
+      setShowValue(value.toString());
+      onBlur?.(name, value);
     }
   };
 
