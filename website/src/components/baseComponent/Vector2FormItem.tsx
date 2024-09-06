@@ -7,7 +7,7 @@ import { ImmerFormItem } from './ImmerFormItem';
 import { LockIcon } from './LockIcon';
 import { toScaledVec2 } from '@/util';
 
-interface ProInputVector2Props extends Omit<ProInputNumberProps, 'onChange' | 'value' | 'onBlur' | 'prefix'> {
+interface Vector2FormItemProps extends Omit<ProInputNumberProps, 'onChange' | 'value' | 'onBlur' | 'prefix'> {
   label: string;
   value: FVector2;
   constraintScale?: boolean;
@@ -16,7 +16,7 @@ interface ProInputVector2Props extends Omit<ProInputNumberProps, 'onChange' | 'v
   onBlur: (name: string, value: FVector2 | undefined) => void;
 }
 
-export const ProInputVector2: FC<ProInputVector2Props> = (props) => {
+export const Vector2FormItem: FC<Vector2FormItemProps> = (props) => {
   const { label, value, constraintScale, prefix, name, onBlur, onChange, ...rest } = props;
 
   const [isScaled, setIsScaled] = useState(false);

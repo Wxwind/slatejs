@@ -7,16 +7,16 @@ import { ImmerFormItem } from './ImmerFormItem';
 import { LockIcon } from './LockIcon';
 import { toScaledVec3 } from '@/util';
 
-interface ProInputVector3Props extends Omit<ProInputNumberProps, 'onChange' | 'value' | 'onBlur' | 'prefix'> {
+interface Vector3FormItemProps extends Omit<ProInputNumberProps, 'onChange' | 'value' | 'onBlur' | 'prefix'> {
   label: string;
   value: FVector3;
-  constraintScale?: boolean;
+  constrainable?: boolean;
   onChange?: (name: string, value: FVector3 | undefined) => void;
   onBlur: (name: string, value: FVector3 | undefined) => void;
 }
 
-export const ProInputVector3: FC<ProInputVector3Props> = (props) => {
-  const { label, value, constraintScale, name, onBlur, onChange, ...rest } = props;
+export const Vector3FormItem: FC<Vector3FormItemProps> = (props) => {
+  const { label, value, constrainable, name, onBlur, onChange, ...rest } = props;
 
   const [isScaled, setIsScaled] = useState(false);
 
@@ -35,7 +35,7 @@ export const ProInputVector3: FC<ProInputVector3Props> = (props) => {
   };
 
   return (
-    <ImmerFormItem label={label} nodeAfter={constraintScale && <LockIcon value={isScaled} onChange={setIsScaled} />}>
+    <ImmerFormItem label={label} nodeAfter={constrainable && <LockIcon value={isScaled} onChange={setIsScaled} />}>
       <FormItemsInRow>
         <ProInputNumber name="x" value={value.x} prefix="X" {...rest} onChange={handleChange} onBlur={handleBlur} />
         <ProInputNumber name="y" value={value.y} prefix="Y" {...rest} onChange={handleChange} onBlur={handleBlur} />

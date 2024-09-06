@@ -1,4 +1,4 @@
-import { CollapseBox, FormItemsInRow, ImmerFormItem, ProInputVector3 } from '@/components/baseComponent';
+import { CollapseBox, FormItemsInRow, ImmerFormItem, Vector3FormItem } from '@/components/baseComponent';
 import { JsonModule, TransformComponentJson, TransformComponent } from 'deer-engine';
 import { FC, useEffect } from 'react';
 import { useImmer } from 'use-immer';
@@ -46,7 +46,7 @@ export const TransformComponentEditor: EditorComp<TransformComponent> = (props) 
   return (
     <CollapseBox title="Transform">
       <div className="flex flex-col gap-y-4">
-        <ProInputVector3
+        <Vector3FormItem
           label="position"
           value={data.position}
           name="position"
@@ -55,7 +55,7 @@ export const TransformComponentEditor: EditorComp<TransformComponent> = (props) 
           onBlur={handleValueFinish}
         />
 
-        <ProInputVector3
+        <Vector3FormItem
           label="rotation"
           value={data.rotation}
           name="rotation"
@@ -63,8 +63,8 @@ export const TransformComponentEditor: EditorComp<TransformComponent> = (props) 
           onBlur={handleValueFinish}
         />
 
-        <ProInputVector3
-          constraintScale
+        <Vector3FormItem
+          constrainable
           label={'scale'}
           value={data.scale}
           name="scale"

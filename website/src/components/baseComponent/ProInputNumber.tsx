@@ -1,10 +1,9 @@
 import React, { FC } from 'react';
 import { isNil, isNumber } from '@/util';
-import { Input, Message, InputProps } from '@arco-design/web-react';
+import { Input, InputProps } from '@arco-design/web-react';
 import { calc } from '@/module/calculator';
 
 export interface ProInputNumberProps extends Omit<InputProps, 'onChange' | 'value' | 'onBlur'> {
-  precision?: number;
   precisionOnShow?: number;
   precisionOnSave?: number;
   name: string;
@@ -16,7 +15,7 @@ export interface ProInputNumberProps extends Omit<InputProps, 'onChange' | 'valu
 }
 
 export const ProInputNumber: FC<ProInputNumberProps> = (props) => {
-  const { precision = 2, value, name, min, max, precisionOnShow, precisionOnSave, onBlur, onChange, ...rest } = props;
+  const { value, name, min, max, precisionOnShow, precisionOnSave, onBlur, onChange, ...rest } = props;
 
   const [showValue, setShowValue] = React.useState<string | undefined>(undefined);
 
