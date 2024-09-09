@@ -1,9 +1,10 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { EntityManager } from './manager/EntityManager';
 import { debounce } from '@/util';
-import { DeerEngine, deerEngine } from './DeerEngine';
+import { DeerEngine } from './DeerEngine';
 import { Entity, EntityJson } from './entity';
 import { Control } from './Control';
+import { AssetManager } from './manager/AssetManager';
 
 export interface DeerSceneJson {
   id: string;
@@ -94,7 +95,8 @@ export class DeerScene {
   };
 
   loadHDR = async (fileId: string) => {
-    const t = (await this.engine.assetManager.loadTextureAsync(fileId)) || null;
+    const assetManager = this.engine.getManager(AssetManager);
+    const t = (await assetManager.loadTextureAsync(fileId)) || null;
     this.sceneObject.environment = t;
     this.sceneObject.background = t;
   };
@@ -144,5 +146,5 @@ export class DeerScene {
     };
   }
 
-  deserialize(data: any) {}
+  deserialize(data: unknown) {}
 }

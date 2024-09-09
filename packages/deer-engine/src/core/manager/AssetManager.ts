@@ -2,32 +2,27 @@ import { isNil } from '@/util';
 import { AssetLoader, IAssetLoader } from '../assetLoader';
 import { FileManager } from './FileManager/FileManager';
 import { IAssetManager } from './interface';
+import { AbstractManager } from '../interface';
 
-export class AssetManager implements IAssetManager {
+export class AssetManager extends AbstractManager implements IAssetManager {
   private readonly assetLoader: IAssetLoader = new AssetLoader();
-  private fileManager: FileManager | undefined;
 
-  setFileManager(fileManager: FileManager) {
-    this.fileManager = fileManager;
-  }
+  init(): void {}
 
   uploadFileAsync = async (name: string, file: Blob) => {
-    if (!this.fileManager) {
-      console.error('file manager is invalid');
-      return;
-    }
-    return this.fileManager.uploadAsset(name, file);
+    const fileManager = this.engine.getManager(FileManager);
+    return fileManager.uploadAsset(name, file);
   };
 
   loadModelAsync = async (address: string, onProgress?: (event: ProgressEvent) => void) => {
-    if (this.fileManager === undefined) throw new Error('fileManager is invalid');
-    const builtinURL = this.fileManager.getBuiltinFile(address);
+    const fileManager = this.engine.getManager(FileManager);
+    const builtinURL = fileManager.getBuiltinFile(address);
     if (!isNil(builtinURL)) {
       const asset = await this.assetLoader.loadModelAsync(builtinURL, onProgress);
       return asset;
     }
 
-    const assetFile = await this.fileManager.getAsset(address);
+    const assetFile = await fileManager.getAsset(address);
     if (isNil(assetFile)) {
       throw new Error(`cannot find model of uuid '${address}'`);
     }
@@ -38,14 +33,14 @@ export class AssetManager implements IAssetManager {
   };
 
   loadTextureAsync = async (address: string, onProgress?: (event: ProgressEvent) => void) => {
-    if (this.fileManager === undefined) throw new Error('fileManager is invalid');
-    const builtinURL = this.fileManager.getBuiltinFile(address);
+    const fileManager = this.engine.getManager(FileManager);
+    const builtinURL = fileManager.getBuiltinFile(address);
     if (!isNil(builtinURL)) {
       const asset = await this.assetLoader.loadTextureAsync(builtinURL, onProgress);
       return asset;
     }
 
-    const assetFile = await this.fileManager.getAsset(address);
+    const assetFile = await fileManager.getAsset(address);
     if (isNil(assetFile)) {
       throw new Error(`cannot find texture of uuid '${address}'`);
     }
@@ -54,4 +49,6 @@ export class AssetManager implements IAssetManager {
     URL.revokeObjectURL(url);
     return asset;
   };
+
+  destroy(): void {}
 }

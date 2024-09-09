@@ -1,10 +1,11 @@
 import { genUUID } from '@/util';
 import { AssetFile } from './interface';
+import { AbstractManager } from '@/core/interface';
 
 const DB_NAME = 'DeerEngine';
 const SHEET_NAME = 'DeerScene';
 
-export class FileManager {
+export class FileManager extends AbstractManager {
   private db: IDBDatabase | undefined;
 
   private builtinAssetManifest: Record<string, string> = {};
@@ -17,7 +18,7 @@ export class FileManager {
     return this.builtinAssetManifest[name];
   }
 
-  awake = () => {
+  init = () => {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME);
 
@@ -90,4 +91,6 @@ export class FileManager {
     await this.saveAsset(assetFile);
     return assetFile;
   };
+
+  destroy(): void {}
 }

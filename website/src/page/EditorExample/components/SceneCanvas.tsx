@@ -1,7 +1,7 @@
 import { useBindSignal } from '@/hooks';
 import { DEER_ENGINE_SCENE } from '@/hooks/config';
 import classNames from 'classnames';
-import { cutsceneEditor, deerEngine } from 'deer-engine';
+import { DeerEngine, SceneManager, cutsceneEditor } from 'deer-engine';
 import { FC, useEffect, useState } from 'react';
 
 export const SceneCanvas: FC = (props) => {
@@ -12,13 +12,13 @@ export const SceneCanvas: FC = (props) => {
   });
 
   useEffect(() => {
+    const deerEngine = new DeerEngine();
     deerEngine.setContainerId(DEER_ENGINE_SCENE);
-    const scene = deerEngine.createScene('Empty Scene', 'editor');
+    const sceneManager = deerEngine.getManager(SceneManager);
+    const scene = sceneManager.createScene('Empty Scene', 'editor');
     scene?.loadHDR('/hdr/default.hdr');
     return () => {
-      if (scene) {
-        deerEngine.deleteScene(scene.id);
-      }
+      deerEngine.destroy();
     };
   }, []);
 

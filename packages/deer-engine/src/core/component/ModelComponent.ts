@@ -4,6 +4,7 @@ import { isNil } from '@/util';
 import { ModelComponentJson } from './type';
 import { egclass } from '../decorator';
 import { deerEngine } from '../DeerEngine';
+import { AssetManager } from '../manager/AssetManager';
 
 @egclass()
 export class ModelComponent extends ComponentBase<'ModelComponent'> {
@@ -35,7 +36,8 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
   }
 
   onAwake: () => void = async () => {
-    const model = await deerEngine.assetManager.loadModelAsync(this.assetAddress);
+    const assetManager = this.engine.getManager(AssetManager);
+    const model = await assetManager.loadModelAsync(this.assetAddress);
     const materials: THREE.Material[] = [];
     const geometries: THREE.BufferGeometry[] = [];
 

@@ -1,7 +1,15 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
-import { DeerScene, MeshComponent, deerEngine, cutsceneEditor } from 'deer-engine';
+import {
+  DeerScene,
+  MeshComponent,
+  deerEngine,
+  cutsceneEditor,
+  CommandManager,
+  FileManager,
+  SceneManager,
+} from 'deer-engine';
 import { downLoad, isNil } from '@/util';
 import { Message } from '@arco-design/web-react';
 import { FileUpload } from '@/components';
@@ -14,10 +22,11 @@ export const Header: FC<HeaderProps> = (props) => {
   const { scene } = props;
 
   const handleUploadFile = async (fileList: FileList) => {
+    const fileManager = deerEngine.getManager(FileManager);
     try {
       const promises = [];
       for (const file of fileList) {
-        promises.push(deerEngine.fileManager.uploadAsset(file.name, file));
+        promises.push(fileManager.uploadAsset(file.name, file));
       }
       await Promise.all(promises);
       Message.success('upload success!');
@@ -28,8 +37,9 @@ export const Header: FC<HeaderProps> = (props) => {
   };
 
   const handleExport = () => {
-    if (deerEngine.activeScene) {
-      const data = deerEngine.exportScene(deerEngine.activeScene);
+    const sceneManager = deerEngine.getManager(SceneManager);
+    if (sceneManager.activeScene) {
+      const data = sceneManager.exportScene(sceneManager.activeScene);
       const json = JSON.stringify(data);
       const file = new File([json], data.name + '.json', {
         type: 'application/json',
@@ -57,11 +67,15 @@ export const Header: FC<HeaderProps> = (props) => {
   };
 
   const handleRedo = () => {
-    deerEngine.commandManager.redo();
+    const cmdMgr = deerEngine.getManager(CommandManager);
+    if (!cmdMgr) return;
+    cmdMgr.redo();
   };
 
   const handleUndo = () => {
-    deerEngine.commandManager.undo();
+    const cmdMgr = deerEngine.getManager(CommandManager);
+    if (!cmdMgr) return;
+    cmdMgr.undo();
   };
 
   return (

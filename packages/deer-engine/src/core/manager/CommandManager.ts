@@ -1,12 +1,11 @@
 import { CommandStack, ICommand } from '@/packages/command';
 import { isNil } from '@/util';
+import { AbstractManager } from '../interface';
 
-export class CommandManager {
-  private readonly commandStack: CommandStack;
+export class CommandManager extends AbstractManager {
+  private readonly commandStack = new CommandStack();
 
-  constructor() {
-    this.commandStack = new CommandStack();
-  }
+  init(): void {}
 
   execute = (cmd: ICommand) => {
     this.commandStack.execute(cmd);
@@ -23,4 +22,8 @@ export class CommandManager {
     if (isNil(cmd)) return;
     console.log(`redo the cmd ${cmd.type}`);
   };
+
+  destroy(): void {
+    this.commandStack.clear();
+  }
 }

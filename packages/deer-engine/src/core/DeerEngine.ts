@@ -1,124 +1,58 @@
-import { genUUID, isNil } from '@/util';
 import { DeerScene, DeerSceneMode } from './DeerScene';
-import { CommandManager } from './manager';
-import { Signal } from 'eventtool';
+import { CommandManager, SceneManager } from './manager';
 import { AssetManager } from './manager/AssetManager';
 import { FileManager } from './manager/FileManager/FileManager';
 import { Clock } from 'three';
+import { IManager } from './interface';
 
 export class DeerEngine {
-  private _sceneMap = new Map<string, DeerScene>();
-
-  private _activeScene: DeerScene | undefined;
-
-  public get activeScene(): DeerScene | undefined {
-    return this._activeScene;
-  }
-
-  public set activeScene(v: DeerScene | undefined) {
-    this._activeScene = v;
-    this.signals.activeSceneUpdated.emit();
-  }
-
-  signals = {
-    activeSceneUpdated: new Signal(),
-  };
-
+  public containerId: string | undefined;
   /**
    * CommandManager is the only entry if want to exec recordable action.
    * Used by both app and engine itself.
    */
-  private readonly _commandManager = new CommandManager();
-  private readonly _assetManager = new AssetManager();
-  private readonly _fileManager;
 
-  public get commandManager(): CommandManager {
-    return this._commandManager;
-  }
-
-  public get assetManager(): AssetManager {
-    return this._assetManager;
-  }
-
-  public get fileManager(): FileManager {
-    return this._fileManager;
-  }
+  private managerMap = new Map<new () => IManager, IManager>();
 
   private animateID: number = -1;
   private readonly clock = new Clock();
 
   constructor() {
-    this._fileManager = new FileManager();
-    this._fileManager.awake();
-    this._assetManager.setFileManager(this._fileManager);
+    this.registerManager(new FileManager());
+    this.registerManager(new AssetManager());
+    this.registerManager(new CommandManager());
+    this.registerManager(new SceneManager());
+
     this.update();
   }
 
-  private containerId: string | undefined;
+  private registerManager<T extends IManager>(manager: T) {
+    this.managerMap.set(manager.constructor as new () => IManager, manager);
+    manager.engine = this;
+    manager.init();
+  }
+
+  public getManager<T extends IManager>(manager: new () => T) {
+    return this.managerMap.get(manager) as T;
+  }
 
   private update = () => {
     this.animateID = requestAnimationFrame(this.update);
-    this._activeScene?.update(this.clock.getDelta());
+    this.getManager(SceneManager).updateScene(this.clock.getDelta());
   };
 
   setContainerId = (containerId: string) => {
     this.containerId = containerId;
   };
 
-  createScene = (name: string, mode: DeerSceneMode) => {
-    if (this.containerId === undefined) {
-      console.error('containerId is nil');
-      return;
-    }
-    const scene = new DeerScene(this, this.containerId, mode);
-    scene.id = genUUID();
-    scene.name = name;
-    this._sceneMap.set(scene.id, scene);
-    this._activeScene = scene;
-    return scene;
-  };
-
-  getScene = (id: string) => {
-    return this._sceneMap.get(id);
-  };
-
-  deleteScene = (id: string) => {
-    const scene = this._sceneMap.get(id);
-    if (isNil(scene)) return;
-    scene.onDestroy();
-    if (scene === this.activeScene) {
-      this.activeScene = undefined;
-    }
-    return this._sceneMap.delete(id);
-  };
-
   destroy = () => {
-    this._sceneMap.forEach((scene) => scene.onDestroy());
-    this._sceneMap.clear();
-    this.activeScene = undefined;
+    const mgrs = [...this.managerMap.values()];
+    for (let i = mgrs.length - 1; i >= 0; i--) {
+      const mgr = mgrs[i];
+      mgr.destroy();
+    }
+    this.managerMap.clear();
+
     cancelAnimationFrame(this.animateID);
   };
-
-  exportScene = (scene: DeerScene) => {
-    const sceneData = scene.serialize();
-    return sceneData;
-  };
-
-  importScene = async (file: File, mode: DeerSceneMode) => {
-    if (this.containerId === undefined) {
-      console.error('containerId is nil');
-      return;
-    }
-    const buffer = await file.arrayBuffer();
-    const uint8_msg = new Uint8Array(buffer);
-    const decodedString = String.fromCharCode.apply(uint8_msg);
-    const data = JSON.parse(decodedString);
-
-    const scene = new DeerScene(this, this.containerId, mode);
-    scene.deserialize(data);
-    this._sceneMap.set(this.containerId, scene);
-    this._activeScene = scene;
-  };
 }
-
-export const deerEngine = new DeerEngine();

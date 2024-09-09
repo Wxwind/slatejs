@@ -15,7 +15,7 @@ import {
   PlayWrapMode,
 } from './type';
 import { DirectorGroup } from './groups/DirectorGroup';
-import { deerEngine } from '@/core';
+import { SceneManager, deerEngine } from '@/core';
 import { Signal } from 'eventtool';
 import { CutsceneEditor } from './CutsceneEditor';
 import { ISerializable } from '@/interface';
@@ -445,10 +445,11 @@ export class Cutscene implements ISerializable<CutsceneData> {
   };
 
   addGroup = (entityId: string, type: CutsceneGroupType) => {
-    if (isNil(deerEngine.activeScene)) {
+    const sceneManager = deerEngine.getManager(SceneManager);
+    if (isNil(sceneManager.activeScene)) {
       throw new Error("couldn't find activeScene");
     }
-    const entity = deerEngine.activeScene.entityManager.findEntityById(entityId);
+    const entity = sceneManager.activeScene.entityManager.findEntityById(entityId);
     if (isNil(entity)) {
       throw new Error(`AddGroup: counldn't find entity (id= ${entityId})`);
     }
