@@ -192,7 +192,9 @@ export const Timeline: FC<TimelineProps> = (props) => {
       <div className="absolute top-8 bottom-0 w-full overflow-auto" ref={scrollerRef} onScroll={handleScrollerScroll}>
         <div style={{ width: `${timelineTrackWidth}px` }}>
           {cutsceneEditor.cutscene.groups.map((a) => {
-            return <TimelineGroupPanel key={a.id} width={timelineTrackWidth} object={a} />;
+            return (
+              <TimelineGroupPanel key={a.id} width={timelineTrackWidth} object={a} cutsceneEditor={cutsceneEditor} />
+            );
           })}
         </div>
       </div>

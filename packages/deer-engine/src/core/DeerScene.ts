@@ -23,7 +23,7 @@ export class DeerScene {
   parentEl: HTMLElement;
   resizeObserver: ResizeObserver;
 
-  mode!: DeerSceneMode;
+  mode: DeerSceneMode;
 
   mainCamera: PerspectiveCamera;
   engine: DeerEngine;
@@ -77,7 +77,6 @@ export class DeerScene {
     // update renderer
     this._renderer.clear();
     this._renderer.render(this.sceneObject, this.mainCamera);
-
     this.control.update(deltaTime);
 
     // const viewHelperComponent = deerScene.findComponentByType<ViewHelperComponent>('ViewHelperComponent');

@@ -3,7 +3,6 @@ import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
 import { ModelComponentJson } from './type';
 import { egclass } from '../decorator';
-import { deerEngine } from '../DeerEngine';
 import { AssetManager } from '../manager/AssetManager';
 
 @egclass()

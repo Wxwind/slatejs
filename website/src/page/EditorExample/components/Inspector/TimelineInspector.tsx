@@ -3,17 +3,14 @@ import { ActionClip, CutsceneEditor, NoAbstractCtor } from 'deer-engine';
 import { FC } from 'react';
 import { getEditorRenderer } from '@/decorator';
 import { CurveEditor } from './components';
+import { useCutsceneEditorStore } from '@/store';
 
-interface TimelineInspectorProps {
-  cutsceneEditor: CutsceneEditor;
-}
+export const TimelineInspector: FC = (props) => {
+  const { cutsceneEditor } = useCutsceneEditorStore();
 
-export const TimelineInspector: FC<TimelineInspectorProps> = (props) => {
-  const { cutsceneEditor } = props;
-
-  const selectedClip = cutsceneEditor.selectedClip;
+  const selectedClip = cutsceneEditor?.selectedClip;
   const refresh = useDumbState();
-  useBindSignal(cutsceneEditor.signals.selectedClipUpdated, refresh);
+  useBindSignal(cutsceneEditor?.signals.selectedClipUpdated, refresh);
   console.log('selectedClip', selectedClip);
 
   const getUICompFromType = (object: ActionClip | undefined) => {

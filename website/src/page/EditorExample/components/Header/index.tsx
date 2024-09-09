@@ -1,18 +1,11 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
-import {
-  DeerScene,
-  MeshComponent,
-  deerEngine,
-  cutsceneEditor,
-  CommandManager,
-  FileManager,
-  SceneManager,
-} from 'deer-engine';
+import { DeerScene, MeshComponent, CommandManager, FileManager, SceneManager } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
 import { Message } from '@arco-design/web-react';
 import { FileUpload } from '@/components';
+import { useCutsceneEditorStore, useEngineStore } from '@/store';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -21,7 +14,11 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = (props) => {
   const { scene } = props;
 
+  const { engine: deerEngine } = useEngineStore();
+  const { cutsceneEditor } = useCutsceneEditorStore();
+
   const handleUploadFile = async (fileList: FileList) => {
+    if (!deerEngine) return;
     const fileManager = deerEngine.getManager(FileManager);
     try {
       const promises = [];
@@ -37,6 +34,7 @@ export const Header: FC<HeaderProps> = (props) => {
   };
 
   const handleExport = () => {
+    if (!deerEngine) return;
     const sceneManager = deerEngine.getManager(SceneManager);
     if (sceneManager.activeScene) {
       const data = sceneManager.exportScene(sceneManager.activeScene);
@@ -52,6 +50,7 @@ export const Header: FC<HeaderProps> = (props) => {
 
   const handleSave = () => {
     // TODO: save engine datas
+    if (!cutsceneEditor) return;
     const json = JSON.stringify(cutsceneEditor.cutscene.serialize());
     const file = new File([json], 'cutScene.json', { type: 'text/plain' });
     downLoad(file);
@@ -67,12 +66,14 @@ export const Header: FC<HeaderProps> = (props) => {
   };
 
   const handleRedo = () => {
+    if (!deerEngine) return;
     const cmdMgr = deerEngine.getManager(CommandManager);
     if (!cmdMgr) return;
     cmdMgr.redo();
   };
 
   const handleUndo = () => {
+    if (!deerEngine) return;
     const cmdMgr = deerEngine.getManager(CommandManager);
     if (!cmdMgr) return;
     cmdMgr.undo();

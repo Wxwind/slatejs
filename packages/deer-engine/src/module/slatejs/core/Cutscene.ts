@@ -15,7 +15,7 @@ import {
   PlayWrapMode,
 } from './type';
 import { DirectorGroup } from './groups/DirectorGroup';
-import { SceneManager, deerEngine } from '@/core';
+import { DeerEngine, SceneManager } from '@/core';
 import { Signal } from 'eventtool';
 import { CutsceneEditor } from './CutsceneEditor';
 import { ISerializable } from '@/interface';
@@ -128,6 +128,8 @@ export class Cutscene implements ISerializable<CutsceneData> {
     lengthChanged: new Signal<[number]>(),
     settingsUpdated: new Signal(),
   };
+
+  constructor(public engine: DeerEngine) {}
 
   /** must call this if want to play cutscene by itself */
   update = (dt: number) => {
@@ -445,7 +447,7 @@ export class Cutscene implements ISerializable<CutsceneData> {
   };
 
   addGroup = (entityId: string, type: CutsceneGroupType) => {
-    const sceneManager = deerEngine.getManager(SceneManager);
+    const sceneManager = this.engine.getManager(SceneManager);
     if (isNil(sceneManager.activeScene)) {
       throw new Error("couldn't find activeScene");
     }

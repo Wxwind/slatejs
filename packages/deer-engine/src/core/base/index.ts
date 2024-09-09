@@ -1,1 +1,1 @@
-export * from './EngineObject';
+export * from './SceneObject';

@@ -1,4 +1,4 @@
-import { Entity, EntityForHierarchy, deerEngine } from 'deer-engine';
+import { Entity, EntityForHierarchy } from 'deer-engine';
 import { FC, useState } from 'react';
 import { EntityTree } from './EntityTree';
 import classNames from 'classnames';

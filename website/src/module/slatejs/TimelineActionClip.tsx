@@ -1,5 +1,5 @@
 import { FC, useCallback, useState } from 'react';
-import { ActionClip, CutsceneTrack, cutsceneEditor } from 'deer-engine';
+import { ActionClip, CutsceneEditor, CutsceneTrack } from 'deer-engine';
 import { useScaleStore } from './store';
 import { BsDiamond } from 'react-icons/bs';
 import { clamp } from 'deer-engine';
@@ -9,10 +9,11 @@ import { ContextListItem, ProContextMenu } from '@/components/baseComponent';
 
 interface TimelineActionClipProps {
   object: ActionClip;
+  cutsceneEditor: CutsceneEditor;
 }
 
 export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
-  const { object } = props;
+  const { object, cutsceneEditor } = props;
 
   const [offsetX, setOffsetX] = useState(0);
   const { scale } = useScaleStore();

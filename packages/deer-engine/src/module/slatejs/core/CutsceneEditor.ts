@@ -2,6 +2,7 @@ import { Cutscene } from './Cutscene';
 import { Signal } from 'eventtool';
 import { ActionClip } from './ActionClip';
 import { CutsceneData, PlayState } from './type';
+import { DeerEngine } from '@/core';
 
 export class CutsceneEditor {
   private _lastStartPlayTime = 0;
@@ -13,8 +14,6 @@ export class CutsceneEditor {
     cutSceneEditorSettingsUpdated: new Signal(),
     selectedClipUpdated: new Signal(),
   };
-
-  readonly cutscene = new Cutscene();
 
   private previousTime = 0;
 
@@ -62,7 +61,12 @@ export class CutsceneEditor {
     return this.cutscene.length;
   }
 
-  constructor() {
+  readonly cutscene: Cutscene;
+
+  private animateId = -1;
+
+  constructor(public engine: DeerEngine) {
+    this.cutscene = new Cutscene(engine);
     this.init();
   }
 
@@ -76,7 +80,7 @@ export class CutsceneEditor {
     const delta = ((time - this.previousTime) / 1000) * this.cutscene.playRate;
     this.tick(delta);
     this.previousTime = time;
-    requestAnimationFrame(this.animate);
+    this.animateId = requestAnimationFrame(this.animate);
   };
 
   play = () => {
@@ -138,6 +142,8 @@ export class CutsceneEditor {
     const data = JSON.parse(json) as CutsceneData;
     this.cutscene.deserialize(data);
   };
-}
 
-export const cutsceneEditor = new CutsceneEditor();
+  destroy = () => {
+    this.animateId !== -1 && cancelAnimationFrame(this.animateId);
+  };
+}

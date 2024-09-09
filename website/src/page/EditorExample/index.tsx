@@ -4,6 +4,7 @@ import { SceneCanvas, MainPanel, Header } from './components';
 import { useGetActiveScene } from '@/api';
 
 export const EditorExample: FC = () => {
+
   const scene = useGetActiveScene();
   return (
     <div className="w-screen h-screen relative flex flex-col">

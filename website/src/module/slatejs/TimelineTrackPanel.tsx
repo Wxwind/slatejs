@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { AnyCtor, CutsceneTrack, findAttachableClips, getMetadataFromCtor } from 'deer-engine';
+import { AnyCtor, CutsceneEditor, CutsceneTrack, findAttachableClips, getMetadataFromCtor } from 'deer-engine';
 import { TimelineActionClip } from './TimelineActionClip';
 import { useScaleStore } from './store';
 import { useBindSignal, useDumbState } from '@/hooks';
@@ -8,10 +8,11 @@ import { ContextListItem, ProContextMenu } from '@/components/baseComponent';
 interface TimelineTracksProps {
   width: number;
   object: CutsceneTrack;
+  cutsceneEditor: CutsceneEditor;
 }
 
-const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
-  const { width, object } = props;
+export const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
+  const { width, object, cutsceneEditor } = props;
   const { scale } = useScaleStore();
   const [offsetX, setOffsetX] = useState(0);
 
@@ -46,10 +47,8 @@ const TimelineTracksPanel: FC<TimelineTracksProps> = (props) => {
         </ProContextMenu>
       </div>
       {object.children.map((a) => (
-        <TimelineActionClip key={a.id} object={a} />
+        <TimelineActionClip key={a.id} object={a} cutsceneEditor={cutsceneEditor} />
       ))}
     </div>
   );
 };
-
-export default TimelineTracksPanel;

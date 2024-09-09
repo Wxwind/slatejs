@@ -1,4 +1,3 @@
-import { DeerScene, DeerSceneMode } from './DeerScene';
 import { CommandManager, SceneManager } from './manager';
 import { AssetManager } from './manager/AssetManager';
 import { FileManager } from './manager/FileManager/FileManager';
