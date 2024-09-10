@@ -448,10 +448,10 @@ export class Cutscene implements ISerializable<CutsceneData> {
 
   addGroup = (entityId: string, type: CutsceneGroupType) => {
     const sceneManager = this.engine.getManager(SceneManager);
-    if (isNil(sceneManager.activeScene)) {
+    if (isNil(sceneManager.mainScene)) {
       throw new Error("couldn't find activeScene");
     }
-    const entity = sceneManager.activeScene.entityManager.findEntityById(entityId);
+    const entity = sceneManager.mainScene.entityManager.findEntityById(entityId);
     if (isNil(entity)) {
       throw new Error(`AddGroup: counldn't find entity (id= ${entityId})`);
     }

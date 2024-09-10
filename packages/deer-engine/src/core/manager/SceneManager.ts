@@ -1,57 +1,72 @@
 import { Signal } from 'eventtool';
-import { DeerScene, DeerSceneMode } from '../DeerScene';
+import { DeerScene, DeerSceneJson, DeerSceneMode } from '../DeerScene';
 import { AbstractManager } from '../interface';
-import { genUUID, isNil } from '@/util';
+import { genUUID } from '@/util';
+import { SafeLoopArray } from '@/util/SafeLoopArray';
+
+export enum LoadSceneMode {
+  Single,
+  Additive,
+}
 
 export class SceneManager extends AbstractManager {
-  private _sceneMap = new Map<string, DeerScene>();
+  private _scenes = new SafeLoopArray<DeerScene>();
 
-  private _activeScene: DeerScene | undefined;
+  private _mainScene: DeerScene | undefined;
 
-  public get activeScene(): DeerScene | undefined {
-    return this._activeScene;
+  public get mainScene(): DeerScene | undefined {
+    return this._mainScene;
   }
 
-  public set activeScene(v: DeerScene | undefined) {
-    this._activeScene = v;
-    this.signals.activeSceneUpdated.emit();
+  public set mainScene(v: DeerScene | undefined) {
+    this._mainScene = v;
+    this.signals.sceneUpdated.emit();
   }
 
   signals = {
-    activeSceneUpdated: new Signal(),
+    sceneUpdated: new Signal(),
   };
 
   init(): void {}
 
   createScene = (name: string, mode: DeerSceneMode) => {
-    if (this.engine.containerId === undefined) {
-      console.error('containerId is nil');
-      return;
-    }
-    const scene = new DeerScene(this.engine, this.engine.containerId, mode);
+    const scene = new DeerScene(this.engine, this.engine.container, mode);
     scene.id = genUUID();
     scene.name = name;
-    this._sceneMap.set(scene.id, scene);
-    this._activeScene = scene;
+    this._scenes.push(scene);
     return scene;
   };
 
-  getScene = (id: string) => {
-    return this._sceneMap.get(id);
+  loadScene = (sceneJson: DeerSceneJson, mode: DeerSceneMode, loadSceneMode: LoadSceneMode) => {
+    const scene = new DeerScene(this.engine, this.engine.container, mode);
+    scene.deserialize(sceneJson);
+    if (loadSceneMode === LoadSceneMode.Single) {
+      for (const s of this._scenes.getLoopArray()) {
+        s.destroy();
+      }
+      this._scenes.clear();
+      this.mainScene = scene;
+      this._scenes.push(scene);
+    } else {
+      this._scenes.push(scene);
+    }
   };
 
   updateScene = (deltaTime: number) => {
-    this._activeScene?.update(deltaTime);
+    for (const scene of this._scenes.getLoopArray()) {
+      scene.update(deltaTime);
+    }
   };
 
-  deleteScene = (id: string) => {
-    const scene = this._sceneMap.get(id);
-    if (isNil(scene)) return;
-    scene.onDestroy();
-    if (scene === this.activeScene) {
-      this.activeScene = undefined;
+  deleteScene = (name: string) => {
+    const index = this._scenes.findIndex((a) => a.name === name);
+    if (index === -1) return;
+    const scene = this._scenes.removeByIndex(index);
+    if (scene === this.mainScene) {
+      throw new Error('can not unload main scene');
     }
-    return this._sceneMap.delete(id);
+    this._scenes.removeByIndex(index);
+    this.signals.sceneUpdated.emit();
   };
 
   exportScene = (scene: DeerScene) => {
@@ -59,25 +74,18 @@ export class SceneManager extends AbstractManager {
     return sceneData;
   };
 
-  importScene = async (file: File, mode: DeerSceneMode) => {
-    if (this.engine.containerId === undefined) {
-      console.error('containerId is nil');
-      return;
-    }
+  importScene = async (file: File, mode: DeerSceneMode, loadSceneMode: LoadSceneMode) => {
     const buffer = await file.arrayBuffer();
     const uint8_msg = new Uint8Array(buffer);
     const decodedString = String.fromCharCode.apply(uint8_msg);
     const data = JSON.parse(decodedString);
 
-    const scene = new DeerScene(this.engine, this.engine.containerId, mode);
-    scene.deserialize(data);
-    this._sceneMap.set(this.engine.containerId, scene);
-    this._activeScene = scene;
+    this.loadScene(data, mode, loadSceneMode);
   };
 
   destroy(): void {
-    this._sceneMap.forEach((scene) => scene.onDestroy());
-    this._sceneMap.clear();
-    this.activeScene = undefined;
+    this._scenes.getArray().forEach((scene) => scene.destroy());
+    this._scenes.clear();
+    this.mainScene = undefined;
   }
 }

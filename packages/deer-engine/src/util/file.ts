@@ -16,7 +16,8 @@ export const getFileNameAndExt = (file: File | string, length = 32) => {
 };
 
 export const getFileNameFromUrl = (url: string) => {
-  const index = url.lastIndexOf('/');
+  const path = url.split('?')[0];
+  const index = path.lastIndexOf('/');
   if (index === -1) return url;
   return url.substring(index + 1);
 };

@@ -3,7 +3,7 @@ import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
 import { ModelComponentJson } from './type';
 import { egclass } from '../decorator';
-import { AssetManager } from '../manager/AssetManager';
+import { ResourceManager } from '../manager/AssetManager';
 
 @egclass()
 export class ModelComponent extends ComponentBase<'ModelComponent'> {
@@ -35,7 +35,7 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
   }
 
   onAwake: () => void = async () => {
-    const assetManager = this.engine.getManager(AssetManager);
+    const assetManager = this.engine.getManager(ResourceManager);
     const model = await assetManager.loadModelAsync(this.assetAddress);
     const materials: THREE.Material[] = [];
     const geometries: THREE.BufferGeometry[] = [];

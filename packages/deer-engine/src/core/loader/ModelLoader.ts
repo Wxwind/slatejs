@@ -7,7 +7,7 @@ export class ModelLoader implements IModelLoader {
   private readonly gltfLoader = new GLTFLoader();
   private readonly fbxLoader = new FBXLoader();
 
-  loadModelAsync = async (url: string, onProgress?: (event: ProgressEvent) => void) => {
+  loadAsync = async (url: string, onProgress?: (event: ProgressEvent) => void) => {
     const assetName = getFileNameFromUrl(url);
     const { ext } = getFileNameAndExt(assetName);
     switch (ext.toLowerCase()) {

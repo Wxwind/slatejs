@@ -1,24 +1,34 @@
 import { CommandManager, SceneManager } from './manager';
-import { AssetManager } from './manager/AssetManager';
+import { ResourceManager } from './manager/AssetManager';
 import { FileManager } from './manager/FileManager/FileManager';
-import { Clock } from 'three';
 import { IManager } from './interface';
+import { Time } from './Time';
 
 export class DeerEngine {
-  public containerId: string | undefined;
-  /**
-   * CommandManager is the only entry if want to exec recordable action.
-   * Used by both app and engine itself.
-   */
+  private _time = new Time();
 
-  private managerMap = new Map<new () => IManager, IManager>();
+  public get time() {
+    return this._time;
+  }
 
-  private animateID: number = -1;
-  private readonly clock = new Clock();
+  private _managerMap = new Map<new () => IManager, IManager>();
 
-  constructor() {
+  private _animateID: number = -1;
+
+  static create(config: EngineConfiguration) {
+    const { containerId } = config;
+    const container = document.getElementById(containerId);
+    if (!container) {
+      throw new Error(`cannot find dom with id '${containerId}'`);
+    }
+
+    const engine = new DeerEngine(container);
+    return engine;
+  }
+
+  private constructor(public container: HTMLElement) {
     this.registerManager(new FileManager());
-    this.registerManager(new AssetManager());
+    this.registerManager(new ResourceManager());
     this.registerManager(new CommandManager());
     this.registerManager(new SceneManager());
 
@@ -26,32 +36,33 @@ export class DeerEngine {
   }
 
   private registerManager<T extends IManager>(manager: T) {
-    this.managerMap.set(manager.constructor as new () => IManager, manager);
+    this._managerMap.set(manager.constructor as new () => IManager, manager);
     manager.engine = this;
     manager.init();
   }
 
   public getManager<T extends IManager>(manager: new () => T) {
-    return this.managerMap.get(manager) as T;
+    return this._managerMap.get(manager) as T;
   }
 
   private update = () => {
-    this.animateID = requestAnimationFrame(this.update);
-    this.getManager(SceneManager).updateScene(this.clock.getDelta());
-  };
-
-  setContainerId = (containerId: string) => {
-    this.containerId = containerId;
+    this._time.update();
+    this._animateID = requestAnimationFrame(this.update);
+    this.getManager(SceneManager).updateScene(this._time.deltaTime);
   };
 
   destroy = () => {
-    const mgrs = [...this.managerMap.values()];
+    const mgrs = [...this._managerMap.values()];
     for (let i = mgrs.length - 1; i >= 0; i--) {
       const mgr = mgrs[i];
       mgr.destroy();
     }
-    this.managerMap.clear();
+    this._managerMap.clear();
 
-    cancelAnimationFrame(this.animateID);
+    cancelAnimationFrame(this._animateID);
   };
+}
+
+export interface EngineConfiguration {
+  containerId: string;
 }

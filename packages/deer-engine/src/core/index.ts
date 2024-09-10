@@ -5,6 +5,6 @@ export * from './component';
 export * from './command';
 export * from './manager';
 export * from './Control';
-export * from './assetLoader/AssetLoader';
+export * from './loader';
 export * from './animation';
 export * from './decorator';

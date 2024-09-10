@@ -1,6 +1,6 @@
 import { useGetActiveScene } from '@/api';
 import { useBindSignal } from '@/hooks';
-import { DEER_ENGINE_SCENE } from '@/hooks/config';
+import { DEER_ENGINE_CONTAINER } from '@/hooks/config';
 import { useCutsceneEditorStore, useEngineStore } from '@/store';
 import classNames from 'classnames';
 import { CutsceneEditor, DeerEngine, FileManager, SceneManager } from 'deer-engine';
@@ -17,13 +17,15 @@ export const SceneCanvas: FC = (props) => {
   });
 
   useEffect(() => {
-    const deerEngine = new DeerEngine();
-    deerEngine.setContainerId(DEER_ENGINE_SCENE);
+    const deerEngine = DeerEngine.create({
+      containerId: DEER_ENGINE_CONTAINER,
+    });
     deerEngine.getManager(FileManager).addBuiltinFile({
       '/hdr/default.hdr': '/hdr/default.hdr',
     });
     const sceneManager = deerEngine.getManager(SceneManager);
     const scene = sceneManager.createScene('Empty Scene', 'editor');
+    sceneManager.mainScene = scene;
     scene?.loadHDR('/hdr/default.hdr');
 
     const cutsceneEditor = new CutsceneEditor(deerEngine);
@@ -39,7 +41,7 @@ export const SceneCanvas: FC = (props) => {
   }, []);
 
   return (
-    <div className="w-full h-full relative" id={DEER_ENGINE_SCENE}>
+    <div className="w-full h-full relative" id={DEER_ENGINE_CONTAINER}>
       <div
         className={classNames(
           'absolute w-full h-full pointer-events-none',

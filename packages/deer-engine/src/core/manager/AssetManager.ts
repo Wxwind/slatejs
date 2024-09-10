@@ -1,11 +1,12 @@
 import { isNil } from '@/util';
-import { AssetLoader, IAssetLoader } from '../assetLoader';
+import { IModelLoader, ITextureLoader, TextureLoader } from '../loader';
 import { FileManager } from './FileManager/FileManager';
-import { IAssetManager } from './interface';
 import { AbstractManager } from '../interface';
+import { ModelLoader } from '../loader/ModelLoader';
 
-export class AssetManager extends AbstractManager implements IAssetManager {
-  private readonly assetLoader: IAssetLoader = new AssetLoader();
+export class ResourceManager extends AbstractManager {
+  private readonly modelLoader: IModelLoader = new ModelLoader();
+  private readonly textureLoader: ITextureLoader = new TextureLoader();
 
   init(): void {}
 
@@ -18,7 +19,7 @@ export class AssetManager extends AbstractManager implements IAssetManager {
     const fileManager = this.engine.getManager(FileManager);
     const builtinURL = fileManager.getBuiltinFile(address);
     if (!isNil(builtinURL)) {
-      const asset = await this.assetLoader.loadModelAsync(builtinURL, onProgress);
+      const asset = await this.modelLoader.loadAsync(builtinURL, onProgress);
       return asset;
     }
 
@@ -27,7 +28,7 @@ export class AssetManager extends AbstractManager implements IAssetManager {
       throw new Error(`cannot find model of uuid '${address}'`);
     }
     const url = URL.createObjectURL(assetFile.asset);
-    const asset = await this.assetLoader.loadModelAsync(url, onProgress);
+    const asset = await this.modelLoader.loadAsync(url, onProgress);
     URL.revokeObjectURL(url);
     return asset;
   };
@@ -36,7 +37,7 @@ export class AssetManager extends AbstractManager implements IAssetManager {
     const fileManager = this.engine.getManager(FileManager);
     const builtinURL = fileManager.getBuiltinFile(address);
     if (!isNil(builtinURL)) {
-      const asset = await this.assetLoader.loadTextureAsync(builtinURL, onProgress);
+      const asset = await this.textureLoader.loadAsync(builtinURL, onProgress);
       return asset;
     }
 
@@ -45,7 +46,7 @@ export class AssetManager extends AbstractManager implements IAssetManager {
       throw new Error(`cannot find texture of uuid '${address}'`);
     }
     const url = URL.createObjectURL(assetFile.asset);
-    const asset = await this.assetLoader.loadTextureAsync(url, onProgress);
+    const asset = await this.textureLoader.loadAsync(url, onProgress);
     URL.revokeObjectURL(url);
     return asset;
   };

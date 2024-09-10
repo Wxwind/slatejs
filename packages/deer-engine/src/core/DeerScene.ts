@@ -4,12 +4,12 @@ import { debounce } from '@/util';
 import { DeerEngine } from './DeerEngine';
 import { Entity, EntityJson } from './entity';
 import { Control } from './Control';
-import { AssetManager } from './manager/AssetManager';
+import { ResourceManager } from './manager/AssetManager';
 
 export interface DeerSceneJson {
   id: string;
   name: string;
-  entities: EntityJson;
+  entities: EntityJson[];
 }
 
 export type DeerSceneMode = 'editor' | 'preview';
@@ -36,15 +36,10 @@ export class DeerScene {
 
   private _renderer: WebGLRenderer;
 
-  constructor(engine: DeerEngine, containerId: string, mode: DeerSceneMode) {
+  constructor(engine: DeerEngine, container: HTMLElement, mode: DeerSceneMode) {
     this.engine = engine;
     this.mode = mode;
-    const container = document.getElementById(containerId);
-    if (container) {
-      this.parentEl = container;
-    } else {
-      throw new Error(`cannot find dom with id '${containerId}'`);
-    }
+    this.parentEl = container;
 
     this.sceneObject = new Scene();
 
@@ -61,7 +56,7 @@ export class DeerScene {
 
     this.control = new Control(this.mainCamera, this._renderer.domElement);
 
-    const debouncedResize = debounce(this.resize);
+    const debouncedResize = debounce(this.resize, 200);
 
     // observe resize
     const resizeObserver = new ResizeObserver((entries) => {
@@ -94,7 +89,7 @@ export class DeerScene {
   };
 
   loadHDR = async (fileId: string) => {
-    const assetManager = this.engine.getManager(AssetManager);
+    const assetManager = this.engine.getManager(ResourceManager);
     const t = (await assetManager.loadTextureAsync(fileId)) || null;
     this.sceneObject.environment = t;
     this.sceneObject.background = t;
@@ -126,7 +121,7 @@ export class DeerScene {
     this.rootEntities.filter((a) => a !== entity);
   };
 
-  onDestroy = () => {
+  destroy = () => {
     this.entityManager.destory();
     // this.scene.clear();
     this.resizeObserver.unobserve(this.parentEl);
@@ -138,12 +133,13 @@ export class DeerScene {
     container.removeChild(this._renderer.domElement);
   };
 
-  serialize() {
+  serialize(): DeerSceneJson {
     return {
       id: this.id,
       name: this.name,
+      entities: this.rootEntities.map((a) => a.serialize()),
     };
   }
 
-  deserialize(data: unknown) {}
+  deserialize(data: DeerSceneJson) {}
 }

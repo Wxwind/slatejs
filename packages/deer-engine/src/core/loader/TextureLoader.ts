@@ -9,7 +9,7 @@ export class TextureLoader implements ITextureLoader {
   private readonly rgbeLoader: RGBELoader = new RGBELoader();
   private readonly textureLoader: THREETextureLoader = new THREETextureLoader();
 
-  loadTextureAsync: (
+  loadAsync: (
     assetName: string,
     onProgress?: (event: ProgressEvent<EventTarget>) => void
   ) => Promise<Texture | undefined> = async (url, onProgress) => {
