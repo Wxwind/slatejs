@@ -31,14 +31,22 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
 
   public set parent(v: Entity | undefined) {
     if (v === this.parent) return;
-    this._parent?.removeChild(this);
+    if (this._parent !== undefined) {
+      if (v && this._parent.scene !== v.scene) {
+        console.warn('cannot move component between scenes');
+        return;
+      }
+      this._parent.removeChild(this);
+    }
 
     if (v !== undefined) {
       v.addChild(this);
       this._parent = v;
       this._scene = v._scene;
+      this.isRoot = false;
     } else {
       this.scene.addRootEntity(this);
+      this.isRoot === true;
     }
   }
 

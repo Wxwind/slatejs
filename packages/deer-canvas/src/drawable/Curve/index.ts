@@ -123,7 +123,7 @@ export class Curve extends DisplayObject<CurveStyleProps> {
         },
       },
     });
-    keyCircle.sortable.renderOrder = 10; // display above the handle
+
     const keyHandle = new Handle(keyCircle, {
       onContextMenu: (e) => {
         keyCircle.ownerCanvas.eventEmitter.emit('DisplayObjectContextMenu', e, key, ContextMenuType.Handle);

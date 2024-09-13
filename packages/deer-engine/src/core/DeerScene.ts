@@ -96,15 +96,7 @@ export class DeerScene {
   };
 
   addRootEntity = (entity: Entity) => {
-    const isRoot = entity.isRoot;
-    if (!isRoot) {
-      entity.isRoot = true;
-    }
-
-    const oldScene = entity.scene;
-    if (oldScene && oldScene !== this && isRoot) {
-      oldScene.removeRootEntity(entity);
-    }
+    entity.parent === undefined;
 
     this.rootEntities.push(entity);
     this.sceneObject.add(entity.sceneObject);
