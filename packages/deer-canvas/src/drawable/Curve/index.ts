@@ -165,6 +165,8 @@ export class Curve extends DisplayObject<CurveStyleProps> {
           },
         });
 
+        inLine.sortable.renderOrder = -1;
+
         const inControlCircle = this.ownerCanvas.createElement(Circle, {
           name: 'in handle',
           style: {
@@ -223,6 +225,8 @@ export class Curve extends DisplayObject<CurveStyleProps> {
             end: { x: time, y: value },
           },
         });
+
+        outLine.sortable.renderOrder = -1;
 
         const outControlCircle = this.ownerCanvas.createElement(Circle, {
           name: 'out handle',
