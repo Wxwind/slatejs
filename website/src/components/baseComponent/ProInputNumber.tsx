@@ -18,8 +18,11 @@ export const ProInputNumber: FC<ProInputNumberProps> = (props) => {
   const { value, name, min, max, precisionOnShow, precisionOnSave, onBlur, onChange, ...rest } = props;
 
   const [showValue, setShowValue] = React.useState<string | undefined>(undefined);
+  const [isInputing, setIsInputing] = React.useState(false);
 
   React.useEffect(() => {
+    // 如果正在输入框输入,则不受引擎数据变化影响
+    if (isInputing) return;
     if (isNil(value)) {
       setShowValue(undefined);
       return;
@@ -42,8 +45,7 @@ export const ProInputNumber: FC<ProInputNumberProps> = (props) => {
       num = undefined;
     } else {
       try {
-        const res = calc(expr);
-        num = res;
+        num = calc(expr);
       } catch (e) {
         num = undefined;
       }
@@ -100,8 +102,10 @@ export const ProInputNumber: FC<ProInputNumberProps> = (props) => {
       }}
       onBlur={(e) => {
         handleBlur(e.target.value);
+        setIsInputing(false);
       }}
       onFocus={(e) => {
+        setIsInputing(true);
         setShowValue(value?.toString());
         // 如果setShowValue了新数字，则直接调用select()无效果
         requestAnimationFrame(() => {

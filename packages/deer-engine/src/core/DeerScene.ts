@@ -1,4 +1,4 @@
-import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import THREE, { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { EntityManager } from './manager/EntityManager';
 import { debounce } from '@/util';
 import { DeerEngine } from './DeerEngine';
@@ -21,7 +21,7 @@ export class DeerScene {
   sceneObject: Scene;
 
   parentEl: HTMLElement;
-  resizeObserver: ResizeObserver;
+  // resizeObserver: ResizeObserver;
 
   mode: DeerSceneMode;
 
@@ -56,16 +56,16 @@ export class DeerScene {
 
     this.control = new Control(this.mainCamera, this._renderer.domElement);
 
-    const debouncedResize = debounce(this.resize, 200);
+    // const debouncedResize = debounce(this.resize, 200);
 
-    // observe resize
-    const resizeObserver = new ResizeObserver((entries) => {
-      const { width, height } = entries[0].contentRect;
-      debouncedResize(width, height);
-    });
+    // // observe resize
+    // const resizeObserver = new ResizeObserver((entries) => {
+    //   const { width, height } = entries[0].contentRect;
+    //   debouncedResize(width, height);
+    // });
 
-    resizeObserver.observe(this.parentEl);
-    this.resizeObserver = resizeObserver;
+    // resizeObserver.observe(this.parentEl);
+    // this.resizeObserver = resizeObserver;
   }
 
   update = (deltaTime: number) => {
@@ -73,6 +73,15 @@ export class DeerScene {
     this._renderer.clear();
     this._renderer.render(this.sceneObject, this.mainCamera);
     this.control.update(deltaTime);
+
+    // 用resizeobserver会闪黑屏,所以放在update里更新
+    const size = new THREE.Vector2(0, 0);
+    this._renderer.getSize(size);
+
+    const parentSize = this.parentEl.getBoundingClientRect();
+    if (parentSize.width !== size.x || parentSize.height !== size.y) {
+      this.resize(parentSize.width, parentSize.height);
+    }
 
     // const viewHelperComponent = deerScene.findComponentByType<ViewHelperComponent>('ViewHelperComponent');
     // if (!isNil(viewHelperComponent)) {
@@ -116,7 +125,7 @@ export class DeerScene {
   destroy = () => {
     this.entityManager.destory();
     // this.scene.clear();
-    this.resizeObserver.unobserve(this.parentEl);
+    //  this.resizeObserver.unobserve(this.parentEl);
 
     // destroy renderer
     this._renderer.dispose();
