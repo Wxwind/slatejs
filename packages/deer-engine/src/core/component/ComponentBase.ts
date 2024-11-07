@@ -1,7 +1,7 @@
 import { UUID_PREFIX_COMP } from '@/config';
 import { genUUID } from '@/util';
 import { ComponentData, ComponentType, ComponentTypeToJsonObjMap } from './type';
-import { Entity, IBehaviour } from '../entity';
+import { Entity } from '../entity';
 import { Signal } from 'eventtool';
 import { property } from '../decorator';
 import { ISerializable } from '@/interface';
@@ -10,28 +10,29 @@ import { SceneObject } from '../base';
 
 export abstract class ComponentBase<T extends ComponentType = ComponentType>
   extends SceneObject
-  implements ISerializable<ComponentData<T>>, IBehaviour
+  implements ISerializable<ComponentData<T>>
 {
+  /** @internal */
+  _onStartIndex: number = -1;
+
+  /** @internal */
+  _onUpdateIndex: number = -1;
+
+  /** @internal */
+  _onFixedUpdateIndex: number = -1;
+
+  /** @internal */
+  _isDestroyed = false;
+
+  _isAwoken = false;
+  _isStarted = false;
+
   @property({ type: String })
   public id: string;
 
   public abstract readonly type: T; // equals class' name
 
   protected _entity: Entity;
-
-  protected _enabled = true;
-
-  public get enabled() {
-    return this._enabled;
-  }
-
-  public set enabled(value: boolean) {
-    if (this._enabled !== value) {
-      this._enabled = value;
-      value ? this.onEnabled() : this.onDisabled();
-      this.signals.componentUpdated.emit();
-    }
-  }
 
   get entity(): Entity {
     return this._entity;
@@ -45,7 +46,31 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
     return this._entity.sceneObject;
   }
 
-  public abstract get isCanBeRemoved(): boolean;
+  // actual active, only true when this._enabled && entity._activeInScene.
+  private _active = false;
+
+  /**
+   * Whether this component is enabled (like local active in entity).
+   */
+  @property({ type: Boolean })
+  private _enabled = false;
+
+  public get enabled() {
+    return this._enabled;
+  }
+
+  public set enabled(value: boolean) {
+    if (value !== this._enabled) {
+      this._enabled = value;
+      if (this._entity._activeInScene) {
+        // _active only depend on value because entity._activeInScene is true
+        if (value !== this._active) {
+          this._active = value;
+          value ? this._onEnable() : this._onDisable();
+        }
+      }
+    }
+  }
 
   signals = {
     componentUpdated: new Signal(),
@@ -57,27 +82,45 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
     this.id = genUUID(UUID_PREFIX_COMP);
   }
 
-  awake(): void {
-    if (this.enabled) {
-      this.onEnabled();
+  _setActive(value: boolean) {
+    if (value) {
+      if (!this._isAwoken && this.entity._activeInScene) {
+        this._isAwoken = true;
+        this._onAwake();
+      }
+
+      if (!this._active && this.entity._activeInScene && this._enabled) {
+        this._active = true;
+        this._onEnable();
+      }
+    } else {
+      if (this._active && !this.entity._activeInScene && !this._enabled) {
+        this._active = false;
+        this._onDisable();
+      }
     }
-    this.onAwake();
   }
 
-  onAwake() {}
+  /** called when created, only once */
+  _onAwake() {}
 
-  onEnabled() {}
+  /** called at the begin of frame rendering loop, only once */
+  _onStart() {}
 
-  onDisabled() {}
+  _onEnable() {}
 
-  update(dt: number) {}
+  _onDisable() {}
 
-  destroy(): void {
-    this.enabled = false;
-    this.onDestroy();
-  }
+  destroy = () => {
+    if (this._isDestroyed) return;
+    this._isDestroyed = true;
+    if (this._enabled) {
+      this.entity._activeInScene && this._onDisable();
+    }
+    this._onDestroy();
+  };
 
-  onDestroy() {}
+  _onDestroy() {}
 
   abstract updateByJson(data: ComponentTypeToJsonObjMap[T], sync: boolean): void;
 

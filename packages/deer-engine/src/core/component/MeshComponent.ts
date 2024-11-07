@@ -25,17 +25,13 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     return this._mesh;
   }
 
-  public get isCanBeRemoved(): boolean {
-    return true;
-  }
-
   @accessor({ type: Number })
   public get count() {
     const count = Array.isArray(this.mesh.material) ? this.mesh.material.length : 1;
     return count;
   }
 
-  onAwake: () => void = () => {
+  _onAwake: () => void = () => {
     const geometry = new THREE.BoxGeometry();
     const mat = new THREE.MeshStandardMaterial();
 
@@ -45,13 +41,13 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     this.mesh = cube;
   };
 
-  onEnabled: () => void = () => {};
+  _onEnable: () => void = () => {};
 
-  onDisabled: () => void = () => {};
+  _onDisable: () => void = () => {};
 
   update: (dt: number) => void = () => {};
 
-  onDestroy: () => void = () => {
+  _onDestroy: () => void = () => {
     if (isNil(this.mesh)) {
       console.warn("mesh doesn't exist");
       return;

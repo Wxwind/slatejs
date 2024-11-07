@@ -5,6 +5,9 @@ import { DeerEngine } from './DeerEngine';
 import { Entity, EntityJson } from './entity';
 import { Control } from './Control';
 import { ResourceManager } from './manager/AssetManager';
+import { ComponentManager } from './manager/ComponentManager';
+import { AbstractSceneManager } from './interface';
+import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
 
 export interface DeerSceneJson {
   id: string;
@@ -30,11 +33,19 @@ export class DeerScene {
 
   // Manager
   readonly entityManager = new EntityManager(this);
+
+  private _managerMap = new Map<new () => AbstractSceneManager, AbstractSceneManager>();
+
   readonly control: Control;
 
   rootEntities: Entity[] = [];
 
   private _renderer: WebGLRenderer;
+  private _viewHelper: ViewHelper;
+
+  isInited = false;
+
+  active = true;
 
   constructor(engine: DeerEngine, container: HTMLElement, mode: DeerSceneMode) {
     this.engine = engine;
@@ -56,6 +67,8 @@ export class DeerScene {
 
     this.control = new Control(this.mainCamera, this._renderer.domElement);
 
+    this._viewHelper = new ViewHelper(this.mainCamera, container);
+
     // const debouncedResize = debounce(this.resize, 200);
 
     // // observe resize
@@ -68,13 +81,15 @@ export class DeerScene {
     // this.resizeObserver = resizeObserver;
   }
 
-  update = (deltaTime: number) => {
-    // update renderer
-    this._renderer.clear();
-    this._renderer.render(this.sceneObject, this.mainCamera);
-    this.control.update(deltaTime);
+  init() {
+    this.registerManager(new ComponentManager());
+    this.isInited = true;
+  }
 
-    // 用resizeobserver会闪黑屏,所以放在update里更新
+  update = (deltaTime: number) => {
+    if (!this.isInited) return;
+
+    // resize on update to avoid flash
     const size = new THREE.Vector2(0, 0);
     this._renderer.getSize(size);
 
@@ -83,13 +98,29 @@ export class DeerScene {
       this.resize(parentSize.width, parentSize.height);
     }
 
-    // const viewHelperComponent = deerScene.findComponentByType<ViewHelperComponent>('ViewHelperComponent');
-    // if (!isNil(viewHelperComponent)) {
-    //   this._renderer.autoClear = false;
-    //   viewHelperComponent.render(this._renderer);
-    //   this._renderer.autoClear = true;
-    // }
+    // update renderer
+    this._renderer.clear();
+    this._renderer.render(this.sceneObject, this.mainCamera);
+    this._renderer.autoClear = false;
+    this._viewHelper.render(this._renderer);
+    this._renderer.autoClear = true;
+    this.control.update(deltaTime);
+
+    const componentManager = this.getManager(ComponentManager);
+    componentManager.callScriptOnStart();
+    componentManager.callScriptOnUpdate(deltaTime);
   };
+
+  private registerManager<T extends AbstractSceneManager>(manager: T) {
+    this._managerMap.set(manager.constructor as new () => AbstractSceneManager, manager);
+    manager.engine = this.engine;
+    manager.scene = this;
+    manager.init();
+  }
+
+  public getManager<T extends AbstractSceneManager>(manager: new (...args: any[]) => T) {
+    return this._managerMap.get(manager) as T;
+  }
 
   private resize = (width: number, height: number) => {
     this.mainCamera.aspect = width / height;

@@ -1,12 +1,4 @@
-import {
-  Component,
-  ComponentData,
-  GridHelperComponent,
-  MeshComponent,
-  TransformComponent,
-  ViewHelperComponent,
-  Entity,
-} from '@/core';
+import { Component, ComponentData, MeshComponent, TransformComponent, Entity } from '@/core';
 import { CameraComponent } from '@/core/component/CameraComponent';
 import { ModelComponent } from '@/core/component/ModelComponent';
 
@@ -24,16 +16,6 @@ export function deserializeComponent(data: ComponentData, entity: Entity): Compo
     }
     case 'CameraComponent': {
       const comp = new CameraComponent(entity);
-      comp.deserialize(data);
-      return comp;
-    }
-    case 'ViewHelperComponent': {
-      const comp = new ViewHelperComponent(entity);
-      comp.deserialize(data);
-      return comp;
-    }
-    case 'GridHelperComponent': {
-      const comp = new GridHelperComponent(entity);
       comp.deserialize(data);
       return comp;
     }

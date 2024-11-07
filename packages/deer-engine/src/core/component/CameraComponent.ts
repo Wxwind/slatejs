@@ -7,10 +7,6 @@ import { accessor, egclass, property } from '../decorator';
 export class CameraComponent extends ComponentBase<'CameraComponent'> {
   type = 'CameraComponent' as const;
 
-  public get isCanBeRemoved(): boolean {
-    return false;
-  }
-
   @property({ type: Number })
   fov = 90;
 

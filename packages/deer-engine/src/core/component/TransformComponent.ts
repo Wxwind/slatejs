@@ -7,10 +7,6 @@ import { accessor, egclass } from '../decorator';
 export class TransformComponent extends ComponentBase<'TransformComponent'> {
   type = 'TransformComponent' as const;
 
-  public get isCanBeRemoved(): boolean {
-    return false;
-  }
-
   @accessor({ type: FVector3 })
   public get position(): FVector3 {
     return this.sceneObject.position;
@@ -45,15 +41,15 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
     this.signals.componentUpdated.emit();
   }
 
-  onAwake() {}
+  _onAwake() {}
 
-  onEnabled() {}
+  _onEnable() {}
 
-  onDisabled() {}
+  _onDisable() {}
 
   update(dt: number) {}
 
-  onDestroy() {}
+  _onDestroy() {}
 
   updateByJson(data: TransformComponentJson, sync: boolean) {
     this.sceneObject.position.set(data.position.x, data.position.y, data.position.z);

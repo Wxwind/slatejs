@@ -1,4 +1,4 @@
-import { IDirectable, IDirectableGetLengh, IDirectableToLocalTime } from './IDirectable';
+import { IDirectable, IDirectableGetLengh as IDirectableGetLength, IDirectableToLocalTime } from './IDirectable';
 
 export interface IDirectableTimePointer {
   get target(): IDirectable;
@@ -11,7 +11,7 @@ export interface IDirectableTimePointer {
 export class StartTimePointer implements IDirectableTimePointer {
   private _target: IDirectable;
 
-  private _isTrigged: boolean;
+  private _isTriggered: boolean;
 
   get target(): IDirectable {
     return this._target;
@@ -23,16 +23,16 @@ export class StartTimePointer implements IDirectableTimePointer {
 
   constructor(target: IDirectable) {
     this._target = target;
-    this._isTrigged = false;
+    this._isTriggered = false;
   }
 
   triggerForward = (curTime: number, prevTime: number) => {
     // IDirectable's startTime-endTime means [startTime, endTime) when play forward and
     // [endTime, startTime) when play backward.
     if (curTime >= this.target.startTime) {
-      if (!this._isTrigged) {
+      if (!this._isTriggered) {
         console.log('startTimePointer: target Enter in TriggerForward');
-        this._isTrigged = true;
+        this._isTriggered = true;
         this.target.enter();
         this.target.update(IDirectableToLocalTime(this.target, curTime), 0);
       }
@@ -43,16 +43,16 @@ export class StartTimePointer implements IDirectableTimePointer {
     // curTime <= 0 means end play and exit cutscene controlled mode (will restore to its original state)
     // for CutsceneGroup when clicking stop btn by user or playReverse() to end.
     // Q: why need 'curTime <= 0' ? Why not just 'curTime <= this.target.startTime' ?
-    // A: curTime <= this.target.startTime will cause folling problems:
+    // A: curTime <= this.target.startTime will cause following problems:
     // 1. will causes onReverseExit() in triggerBackward() will be called immediately
     // after onEnter() in triggerForward() if curTime === this.target.startTime.
-    // 2. will be trigged accidently. For example, clip's time is 5~8s, but we play the Cutscene backward
+    // 2. will be triggered accidently. For example, clip's time is 5~8s, but we play the Cutscene backward
     // from 5s to 2s (means [5,2) exactly), onReverseExit() will be raised.
     // So we need <= 0 to make sure onReverseExit can be trigged for IDirectables whose start time = 0
     if (curTime < this.target.startTime || curTime <= 0) {
-      if (this._isTrigged) {
+      if (this._isTriggered) {
         console.log('startTimePointer: target ReverseExit in TriggerBackward');
-        this._isTrigged = false;
+        this._isTriggered = false;
         this.target.update(0, IDirectableToLocalTime(this.target, prevTime));
         this.target.reverseExit();
       }
@@ -86,7 +86,7 @@ export class EndTimePointer implements IDirectableTimePointer {
       if (!this._isTrigged) {
         this._isTrigged = true;
         console.log('entTimePointer: target Exit in TriggerForward');
-        this.target.update(IDirectableGetLengh(this.target), IDirectableToLocalTime(this.target, prevTime));
+        this.target.update(IDirectableGetLength(this.target), IDirectableToLocalTime(this.target, prevTime));
         this.target.exit();
       }
     }
@@ -98,7 +98,7 @@ export class EndTimePointer implements IDirectableTimePointer {
         this._isTrigged = false;
         console.log('endTimePointer: target ReverseEnter in TriggerBackward');
         this.target.reverseEnter();
-        this.target.update(IDirectableToLocalTime(this.target, curTime), IDirectableGetLengh(this.target));
+        this.target.update(IDirectableToLocalTime(this.target, curTime), IDirectableGetLength(this.target));
       }
     }
   };

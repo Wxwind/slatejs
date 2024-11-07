@@ -30,11 +30,7 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
     return this._model;
   }
 
-  public get isCanBeRemoved(): boolean {
-    return true;
-  }
-
-  onAwake: () => void = async () => {
+  _onAwake: () => void = async () => {
     const assetManager = this.engine.getManager(ResourceManager);
     const model = await assetManager.loadModelAsync(this.assetAddress);
     const materials: THREE.Material[] = [];
@@ -53,13 +49,13 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
     this.animations = model?.animations || [];
   };
 
-  onEnabled: () => void = () => {};
+  _onEnable: () => void = () => {};
 
-  onDisabled: () => void = () => {};
+  _onDisable: () => void = () => {};
 
   update: (dt: number) => void = () => {};
 
-  onDestroy: () => void = () => {
+  _onDestroy: () => void = () => {
     if (isNil(this.model)) {
       console.warn("mesh doesn't exist");
       return;

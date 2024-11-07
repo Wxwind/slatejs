@@ -293,7 +293,7 @@ export class Cutscene implements ISerializable<CutsceneData> {
       this.stop('hold');
     }
     this.currentTime = 0;
-    this._previousTime = this.currentTime; // allot no undop
+    this._previousTime = this.currentTime; // allow no undo
     this.sample();
   }
 

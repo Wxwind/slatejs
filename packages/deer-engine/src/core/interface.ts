@@ -1,4 +1,5 @@
 import { DeerEngine } from './DeerEngine';
+import { DeerScene } from './DeerScene';
 
 export interface ICanAccessEngine {
   get engine(): DeerEngine;
@@ -22,5 +23,31 @@ export abstract class AbstractManager implements IManager {
   }
 
   abstract init(): void;
+  abstract destroy(): void;
+}
+
+export abstract class AbstractSceneManager implements IManager {
+  private _engine!: DeerEngine;
+
+  get engine(): DeerEngine {
+    return this._engine;
+  }
+
+  set engine(value: DeerEngine) {
+    this._engine = value;
+  }
+
+  private _scene!: DeerScene;
+
+  get scene(): DeerScene {
+    return this._scene;
+  }
+
+  set scene(value: DeerScene) {
+    this._scene = value;
+  }
+
+  abstract init(): void;
+
   abstract destroy(): void;
 }

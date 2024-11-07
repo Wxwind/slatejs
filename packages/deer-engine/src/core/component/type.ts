@@ -2,8 +2,6 @@ import { egclass, property } from '../decorator';
 import { CameraComponent } from './CameraComponent';
 import { MeshComponent } from './MeshComponent';
 import { TransformComponent } from './TransformComponent';
-import { ViewHelperComponent } from './scene/ViewHelperComponent';
-import { GridHelperComponent } from './scene/GridHelperComponent';
 import { ModelComponent } from './ModelComponent';
 
 @egclass()
@@ -72,10 +70,8 @@ export type ComponentTypeToJsonObjMap = {
   TransformComponent: TransformComponentJson;
   CameraComponent: CameraComponentJson;
   RendererComponent: RendererComponentJson;
-  ViewHelperComponent: ViewHelperComponentJson;
-  ControlComponent: ControlComponentJson;
-  GridHelperComponent: GridHelperComponentJson;
   ModelComponent: ModelComponentJson;
+  Script: any;
 };
 
 type ComponentDataMap = {
@@ -87,13 +83,7 @@ type ComponentDataMap = {
 };
 
 export type ComponentType = keyof ComponentTypeToJsonObjMap;
-export type Component =
-  | MeshComponent
-  | TransformComponent
-  | CameraComponent
-  | ViewHelperComponent
-  | GridHelperComponent
-  | ModelComponent;
+export type Component = MeshComponent | TransformComponent | CameraComponent | ModelComponent;
 
 export type ComponentData<T extends ComponentType = ComponentType> = ComponentDataMap[T];
 export type ComponentJson<T extends ComponentType = ComponentType> = ComponentTypeToJsonObjMap[T];

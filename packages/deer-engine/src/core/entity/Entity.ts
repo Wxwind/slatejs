@@ -6,8 +6,10 @@ import { Component } from '../component/type';
 import { property } from '../decorator';
 import { ISerializable } from '@/interface';
 import { DeerScene } from '../DeerScene';
-import { Scene, Object3D } from 'three';
+import { Object3D } from 'three';
 import { SceneObject } from '../base';
+import { Script } from '../component/Script';
+import { DisorderedArray } from '../DisorderedMap';
 
 export class Entity extends SceneObject implements ISerializable<EntityJson> {
   @property({ type: String })
@@ -18,10 +20,43 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
 
   sceneObject: Object3D;
 
-  isRoot = false;
+  _isRoot = false;
 
+  /** local active */
   @property({ type: Boolean })
-  active = false;
+  _active = true;
+  /** global active (actual active) */
+  _activeInScene = false;
+
+  private _destroyed = false;
+
+  public get active() {
+    return this._active;
+  }
+
+  public set active(v: boolean) {
+    if (v !== this._active) {
+      this._active = v;
+      this.sceneObject.visible = v || false;
+      if (v) {
+        const parent = this.parent;
+        let activeInScene = false;
+        if (this._isRoot && this.scene.active) {
+          activeInScene = true;
+        } else {
+          // v is true so activeInScene depends on parent's global active.
+          activeInScene = parent?._activeInScene || false;
+        }
+        // process children's active since global active is trigged to true
+        activeInScene && this._processActive();
+      } else {
+        // process children's inactive since global active is trigged to false
+        this._activeInScene && this._processInActive();
+      }
+    }
+  }
+
+  _visible = true;
 
   private _parent: Entity | undefined;
 
@@ -29,24 +64,33 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     return this._parent;
   }
 
-  public set parent(v: Entity | undefined) {
-    if (v === this.parent) return;
+  public set parent(parent: Entity | undefined) {
+    if (parent === this.parent) return;
     if (this._parent !== undefined) {
-      if (v && this._parent.scene !== v.scene) {
-        console.warn('cannot move component between scenes');
+      if (parent && this._parent.scene !== parent.scene) {
+        console.warn('cannot move component between scenes.');
         return;
       }
-      this._parent.removeChild(this);
     }
 
-    if (v !== undefined) {
-      v.addChild(this);
-      this._parent = v;
-      this._scene = v._scene;
-      this.isRoot = false;
+    this._parent = parent;
+    if (parent) {
+      parent._addToChildren(this);
+
+      this._isRoot = false;
+      if (parent) {
+        // inactive if parent is inactive in global and this is active in global
+        if (!parent._activeInScene && this._activeInScene) {
+          this._processInActive();
+        }
+
+        // active if this is active in local but inactive in global, and new parent is active in global
+        if (parent._activeInScene && !this._activeInScene && this.active) {
+          this._processActive();
+        }
+      }
     } else {
-      this.scene.addRootEntity(this);
-      this.isRoot === true;
+      this._processInActive();
     }
   }
 
@@ -58,6 +102,10 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
 
   private readonly compArray: Component[] = [];
 
+  private _activeChangedComponents: Component[] = [];
+
+  _scripts: DisorderedArray<Script> = new DisorderedArray<Script>();
+
   constructor(scene: DeerScene) {
     super(scene);
     this.id = genUUID(UUID_PREFIX_ENTITY);
@@ -68,19 +116,80 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     this.sceneObject = new Object3D();
   }
 
+  _processActive() {
+    if (this._activeChangedComponents) {
+      throw new Error(
+        "Note: can't set the 'main inActive entity' active in hierarchy, if the operation is in main inActive entity or it's children script's onDisable Event."
+      );
+    }
+
+    // active all enabled components
+    this._activeChangedComponents = [];
+    this._setActiveInScene(this._activeChangedComponents);
+    this._setActiveComponents(true, this._activeChangedComponents);
+  }
+
+  private _setActiveInScene(activeChangedComponent: Component[]) {
+    this._activeInScene = true;
+    const components = this.compArray;
+    for (let i = 0, n = components.length; i < n; i++) {
+      const comp = components[i];
+      (comp.enabled || !comp._isAwoken) && activeChangedComponent.push(comp);
+    }
+
+    for (const child of this.children) {
+      // active the child which active in local but inactive in scene.
+      child._active && child._setActiveInScene(activeChangedComponent);
+    }
+  }
+
+  _processInActive() {
+    if (this._activeChangedComponents) {
+      throw new Error(
+        "Note: can't set the 'main inActive entity' active in hierarchy, if the operation is in main inActive entity or it's children script's onDisable Event."
+      );
+    }
+
+    // inactive all enabled components
+    this._activeChangedComponents = [];
+    this._setInActiveInScene(this._activeChangedComponents);
+    this._setActiveComponents(false, this._activeChangedComponents);
+  }
+
+  private _setInActiveInScene(activeChangedComponent: Component[]) {
+    this._activeInScene = false;
+    const components = this.compArray;
+    for (let i = 0, n = components.length; i < n; i++) {
+      const comp = components[i];
+      comp.enabled && activeChangedComponent.push(comp);
+    }
+
+    for (const child of this.children) {
+      // inActive the child which active in local (active in global too since this entity is trigged from global active to global inactive).
+      child._active && child._setInActiveInScene(activeChangedComponent);
+    }
+  }
+
+  private _setActiveComponents(active: boolean, components: Component[]) {
+    for (let i = 0, n = components.length; i < n; i++) {
+      const component = components[i];
+      component._setActive(active);
+    }
+  }
+
   getCompArray = () => this.compArray;
 
   addComponentByNew = <T extends Component>(compCtor: new (entity: Entity) => T) => {
     const comp = new compCtor(this);
-    comp.awake();
-    this.compMap.set(comp.id, comp);
+    comp._setActive(true);
+
     this.compArray.push(comp);
     return comp;
   };
 
   addComponent = (comp: Component) => {
     comp.entity = this;
-    comp.awake();
+    comp._setActive(true);
     this.compMap.set(comp.id, comp);
     this.compArray.push(comp);
   };
@@ -108,10 +217,6 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     }
 
     const comp = this.compArray[index];
-    if (!comp.isCanBeRemoved) {
-      console.log(`${comp.id} couldn't be removed`);
-      return;
-    }
 
     this.compMap.delete(id);
     this.compArray.splice(index, 1);
@@ -125,26 +230,40 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
       return;
     }
 
-    if (!comp.isCanBeRemoved) {
-      console.log(`${comp.id} couldn't be removed`);
-      return;
-    }
-
     this.compMap.delete(comp.id);
     this.compArray.splice(index, 1);
     comp.destroy();
   };
 
+  _addScript(script: Script) {
+    script._entityScriptsIndex = this._scripts.length;
+    this._scripts.add(script);
+  }
+
+  _removeScript(script: Script): void {
+    const replaced = this._scripts.deleteByIndex(script._entityScriptsIndex);
+    replaced && (replaced._entityScriptsIndex = script._entityScriptsIndex);
+    script._entityScriptsIndex = -1;
+  }
+
   getChildren: () => Entity[] = () => {
     return this.children;
   };
 
-  addChild: (child: Entity) => void = (child) => {
+  addChild = (child: Entity) => {
+    child.parent = this;
+  };
+
+  removeChild = (child: Entity) => {
+    child.parent = undefined;
+  };
+
+  _addToChildren: (child: Entity) => void = (child) => {
     this.children.push(child);
     this.sceneObject.add(child.sceneObject);
   };
 
-  removeChild: (child: Entity) => void = (child) => {
+  _removeFromChildren: (child: Entity) => void = (child) => {
     const a = this.children.findIndex((a) => a === child);
     if (a === -1) {
       return;
@@ -153,33 +272,28 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     this.sceneObject.remove(child.sceneObject);
   };
 
-  update: (dt: number) => void = (dt) => {
-    if (!this.active) return;
-    const compArray = [...this.compArray];
-    for (const comp of compArray) {
-      comp.update(dt);
-    }
-    const children = [...this.children];
-    for (const child of children) {
-      child.update(dt);
-    }
-  };
-
   destroy = () => {
+    if (this._destroyed) return;
+
     for (const c of this.compArray) {
-      if (c === this.transform) {
-        continue;
-      }
       c.destroy();
     }
-    this.transform.destroy();
-
     this.compMap.clear();
     this.compArray.length = 0;
-    this.onDestroy();
-  };
 
-  onDestroy = () => {};
+    const children = this.children;
+    while (children.length > 0) {
+      children[0].destroy();
+    }
+
+    if (this._isRoot) {
+      this._scene.removeRootEntity(this);
+    } else {
+      this.parent = undefined;
+    }
+
+    this.active = false;
+  };
 
   serialize: () => EntityJson = () => {
     const components = this.compArray.map((a) => a.serialize());
