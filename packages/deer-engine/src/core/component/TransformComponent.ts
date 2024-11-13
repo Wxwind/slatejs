@@ -1,4 +1,3 @@
-import { Quaternion } from 'three';
 import { ComponentBase } from './ComponentBase';
 import { accessor, egclass } from '../decorator';
 import { FVector3 } from '@/math';
@@ -54,7 +53,7 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
   }
 
   @accessor({ type: FVector3 })
-  public set scale(v: FVector3) {
+  public set scale(v: IVector3) {
     this.sceneObject.scale.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
     this._updateFlag = true;

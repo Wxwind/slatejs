@@ -19,6 +19,7 @@ export class PxPhysicsBoxCollider extends PxPhysicsCollider {
   }
 
   setSize(value: Vector3) {
-    this._pxGeometry.halfExtents = new this._px.PxVec3(value.x, value.y, value.z);
+    this._pxGeometry.halfExtents = new this._px.PxVec3(value.x / 2, value.y / 2, value.z / 2);
+    this._pxShape.setGeometry(this._pxGeometry);
   }
 }

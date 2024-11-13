@@ -1,8 +1,8 @@
 import { isNearly } from '@/util';
 import { MetadataProp } from '@/core';
-import { FVector3 } from '@/math';
+import { IVector3 } from '@/type';
 
-export type AnimatedParameterType = number | boolean | FVector3;
+export type AnimatedParameterType = number | boolean | IVector3;
 
 export interface IAnimatedParameterModel<T extends AnimatedParameterType = AnimatedParameterType> {
   readonly requiredCurveCount: number;
@@ -67,15 +67,15 @@ export class AnimatedBoolModel implements IAnimatedParameterModel<boolean> {
   };
 }
 
-export class AnimatedVector3Model implements IAnimatedParameterModel<FVector3> {
+export class AnimatedVector3Model implements IAnimatedParameterModel<IVector3> {
   requiredCurveCount: number = 3;
   isBool: boolean = false;
 
-  convertToNumbers: (value: FVector3) => number[] = (value) => {
+  convertToNumbers: (value: IVector3) => number[] = (value) => {
     return [value.x, value.y, value.z];
   };
 
-  convertToObject: (numbers: number[]) => FVector3 = (numbers: number[]) => {
+  convertToObject: (numbers: number[]) => IVector3 = (numbers: number[]) => {
     return { x: numbers[0], y: numbers[1], z: numbers[2] };
   };
 
@@ -88,7 +88,7 @@ export class AnimatedVector3Model implements IAnimatedParameterModel<FVector3> {
   };
 
   getDirect: (target: object, metadataProp: MetadataProp) => number[] = (target, metadataProp) => {
-    const v = metadataProp.get?.(target) as FVector3;
+    const v = metadataProp.get?.(target) as IVector3;
     return this.convertToNumbers(v);
   };
 }
@@ -97,5 +97,5 @@ export class AnimatedVector3Model implements IAnimatedParameterModel<FVector3> {
 export const TypeToAnimParamModelMapInstance: Record<string, new () => any> = {
   Number: AnimatedNumberModel,
   Bool: AnimatedBoolModel,
-  FVector3: AnimatedVector3Model,
+  IVector3: AnimatedVector3Model,
 };

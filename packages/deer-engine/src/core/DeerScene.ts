@@ -2,13 +2,13 @@ import { PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three';
 import { EntityManager } from './manager/EntityManager';
 import { DeerEngine } from './DeerEngine';
 import { Entity, EntityJson } from './entity';
-import { Control } from './Control';
 import { ResourceManager } from './manager/AssetManager';
 import { ComponentManager } from './manager/ComponentManager';
 import { AbstractSceneManager } from './interface';
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
 import { PhysicsScene } from './physics/PhysicsScene';
-import { deserializeComponent } from '..';
+import { deserializeComponent } from '@/util';
+import { Control } from './Control';
 
 export interface DeerSceneJson {
   id: string;
@@ -56,7 +56,9 @@ export class DeerScene {
     this.sceneObject = new Scene();
 
     const camera = new PerspectiveCamera(75, this.parentEl.clientWidth / this.parentEl.clientHeight, 0.1, 10000);
-    camera.position.set(20, 20, 0);
+    camera.position.set(25, 10, -25);
+    // camera.rotateY(deg2rad(45));
+    // camera.rotateX(deg2rad(-45));
 
     this.mainCamera = camera;
 

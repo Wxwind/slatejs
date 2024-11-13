@@ -26,4 +26,8 @@ export class Control {
   update = (dt: number) => {
     this.controls.update(dt);
   };
+
+  setPosition() {
+    this.controls;
+  }
 }

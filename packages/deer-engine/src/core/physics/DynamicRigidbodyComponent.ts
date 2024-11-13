@@ -4,7 +4,7 @@ import { Entity } from '../entity';
 import { PxPhysicsDynamicRigidBody } from '../../module/physics/PxPhysicsDynamicRigidBody';
 import { RigidbodyComponent } from './RigidbodyComponent';
 import { Vector3, Quaternion } from 'three';
-import { objectToLocalPosition, objectToLocalRotation } from '@/util';
+import { objectToLocalPosition, objectToLocalQuaternion } from '@/util';
 
 export class DynamicRigidbodyComponent extends RigidbodyComponent {
   type = 'DynamicRigidbodyComponent' as const;
@@ -28,9 +28,9 @@ export class DynamicRigidbodyComponent extends RigidbodyComponent {
 
     this.getTransform(this._tempPosition, this._tempRotation);
     const pos = objectToLocalPosition(obj, this._tempPosition);
-    const rot = objectToLocalRotation(obj, this._tempRotation);
+    const rot = objectToLocalQuaternion(obj, this._tempRotation);
     this.entity.transform.position = pos;
-    this.entity.transform.rotation = rot;
+    this.entity.transform.quaternion = rot;
     this.entity.transform._updateFlag = false;
   }
 

@@ -6,7 +6,7 @@ export function objectToLocalPosition(obj: Object3D, worldPos: Vector3) {
   return local;
 }
 
-export function objectToLocalRotation(obj: Object3D, worldRot: Quaternion) {
+export function objectToLocalQuaternion(obj: Object3D, worldRot: Quaternion) {
   if (!obj.parent) return worldRot;
   const rot = new Matrix4();
   rot.makeRotationFromQuaternion(worldRot);

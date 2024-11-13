@@ -57,3 +57,14 @@ export const upper_bound = (arr: number[], target: number) => {
 
   return left;
 };
+
+const DEG2RAD = Math.PI / 180;
+const RAD2DEG = 180 / Math.PI;
+
+export function deg2rad(deg: number) {
+  return deg * DEG2RAD;
+}
+
+export function rad2deg(rad: number) {
+  return rad * RAD2DEG;
+}
