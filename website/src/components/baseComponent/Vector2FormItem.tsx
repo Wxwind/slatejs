@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { ProInputNumber, ProInputNumberProps } from './ProInputNumber';
 import { FormItemsInRow } from './FormItemsInRow';
-import { FVector2 } from 'deer-engine';
+import { IVector2 } from 'deer-engine';
 import { set } from 'lodash';
 import { ImmerFormItem } from './ImmerFormItem';
 import { LockIcon } from './LockIcon';
@@ -9,11 +9,11 @@ import { toScaledVec2 } from '@/util';
 
 interface Vector2FormItemProps extends Omit<ProInputNumberProps, 'onChange' | 'value' | 'onBlur' | 'prefix'> {
   label: string;
-  value: FVector2;
+  value: IVector2;
   constraintScale?: boolean;
   prefix?: [string, string];
-  onChange?: (name: string, value: FVector2 | undefined) => void;
-  onBlur: (name: string, value: FVector2 | undefined) => void;
+  onChange?: (name: string, value: IVector2 | undefined) => void;
+  onBlur: (name: string, value: IVector2 | undefined) => void;
 }
 
 export const Vector2FormItem: FC<Vector2FormItemProps> = (props) => {

@@ -1,12 +1,12 @@
 import { UUID_PREFIX_COMP } from '@/config';
 import { genUUID } from '@/util';
-import { ComponentData, ComponentType, ComponentTypeToJsonObjMap } from './type';
 import { Entity } from '../entity';
 import { Signal } from 'eventtool';
 import { property } from '../decorator';
 import { ISerializable } from '@/interface';
 import { Object3D } from 'three';
 import { SceneObject } from '../base';
+import { ComponentType, ComponentData, ComponentTypeToJsonObjMap } from './type';
 
 export abstract class ComponentBase<T extends ComponentType = ComponentType>
   extends SceneObject
@@ -53,7 +53,7 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
    * Whether this component is enabled (like local active in entity).
    */
   @property({ type: Boolean })
-  private _enabled = false;
+  private _enabled = true;
 
   public get enabled() {
     return this._enabled;
@@ -103,9 +103,6 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
 
   /** called when created, only once */
   _onAwake() {}
-
-  /** called at the begin of frame rendering loop, only once */
-  _onStart() {}
 
   _onEnable() {}
 

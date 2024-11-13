@@ -1,5 +1,6 @@
 import { isNearly } from '@/util';
-import { FVector3, MetadataProp } from '@/core';
+import { MetadataProp } from '@/core';
+import { FVector3 } from '@/math';
 
 export type AnimatedParameterType = number | boolean | FVector3;
 

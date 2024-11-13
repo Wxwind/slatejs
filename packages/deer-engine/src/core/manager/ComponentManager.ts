@@ -53,7 +53,7 @@ export class ComponentManager extends AbstractSceneManager {
         (comp) => {
           comp._isStarted = true;
           this.removeOnStartScript(comp);
-          comp._onStart();
+          comp.onStart();
         },
         (element, index) => {
           element._onStartIndex = index;

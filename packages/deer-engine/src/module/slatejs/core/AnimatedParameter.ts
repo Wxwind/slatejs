@@ -3,7 +3,6 @@ import {
   AnimationCurveJson,
   Component,
   Entity,
-  FVector3,
   InterpMode,
   Keyframe,
   MetadataProp,
@@ -22,6 +21,7 @@ import {
   AnimatedParameterType,
 } from './AnimatedParameterModel';
 import { ActionClip } from './ActionClip';
+import { FVector3 } from '@/math';
 
 export type AnimatedParameterJson = {
   keyableId: string;

@@ -1,8 +1,8 @@
 import { isNil, deserializeComponent, genUUID } from '@/util';
-import { TransformComponent } from '../component';
+import { Component, TransformComponent } from '../component';
 import { UUID_PREFIX_ENTITY } from '@/config';
 import { EntityJson } from './type';
-import { Component } from '../component/type';
+
 import { property } from '../decorator';
 import { ISerializable } from '@/interface';
 import { DeerScene } from '../DeerScene';
@@ -102,7 +102,7 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
 
   private readonly compArray: Component[] = [];
 
-  private _activeChangedComponents: Component[] = [];
+  private _activeChangedComponents: Component[] | null = null;
 
   _scripts: DisorderedArray<Script> = new DisorderedArray<Script>();
 
@@ -175,6 +175,8 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
       const component = components[i];
       component._setActive(active);
     }
+
+    this._activeChangedComponents = null;
   }
 
   getCompArray = () => this.compArray;

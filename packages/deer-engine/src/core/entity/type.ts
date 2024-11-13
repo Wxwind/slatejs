@@ -1,4 +1,4 @@
-import { ComponentData } from '../component/type';
+import { ComponentData } from '../component';
 
 export type EntityJson = {
   id: string;

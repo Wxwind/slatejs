@@ -9,7 +9,16 @@ export default [
   {
     input: 'src/index.ts',
     plugins: [
-      resolve(),
+      resolve({
+        resolveOnly: (module) => {
+          const excludes = ['physx-js-webidl'];
+          const needInclue = !excludes.includes(module);
+          if (!needInclue) {
+            console.log(`module ${module} is excluded.`);
+          }
+          return needInclue;
+        },
+      }),
       commonjs(),
       babel({
         exclude: ['node_modules/**'],
@@ -44,7 +53,16 @@ export default [
   {
     input: 'src/index.ts',
     plugins: [
-      resolve(),
+      resolve({
+        resolveOnly: (module) => {
+          const excludes = ['physx-js-webidl'];
+          const needInclue = !excludes.includes(module);
+          if (!needInclue) {
+            console.log(`module ${module} is excluded.`);
+          }
+          return needInclue;
+        },
+      }),
       commonjs(),
       babel({
         exclude: ['node_modules/**'],

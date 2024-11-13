@@ -7,4 +7,5 @@ export * from './manager';
 export * from './Control';
 export * from './loader';
 export * from './animation';
+export * from './physics';
 export * from './decorator';

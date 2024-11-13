@@ -1,44 +1,63 @@
-import { Vector3 } from 'three';
+import { Quaternion } from 'three';
 import { ComponentBase } from './ComponentBase';
-import { TransformComponentJson, FVector3 } from './type';
 import { accessor, egclass } from '../decorator';
+import { FVector3 } from '@/math';
+import { TransformComponentJson } from './type';
+import { FVector4 } from '@/math/Vector4';
+import { IVector3, IVector4 } from '@/type';
 
 @egclass()
 export class TransformComponent extends ComponentBase<'TransformComponent'> {
   type = 'TransformComponent' as const;
 
+  _updateFlag = true;
+
   @accessor({ type: FVector3 })
   public get position(): FVector3 {
-    return this.sceneObject.position;
+    return new FVector3().copyFrom(this.sceneObject.position);
   }
 
   @accessor({ type: FVector3 })
-  public set position(v: FVector3) {
+  public set position(v: IVector3) {
     this.sceneObject.position.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
+    this._updateFlag = true;
   }
 
   @accessor({ type: FVector3 })
   public get rotation(): FVector3 {
-    return new Vector3(this.sceneObject.rotation.x, this.sceneObject.rotation.y, this.sceneObject.rotation.z);
+    return new FVector3().copyFrom(this.sceneObject.rotation);
   }
 
   @accessor({ type: FVector3 })
-  public set rotation(v: FVector3) {
-    console.log('set rotation');
+  public set rotation(v: IVector3) {
     this.sceneObject.rotation.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
+    this._updateFlag = true;
+  }
+
+  @accessor({ type: FVector4 })
+  public set quaternion(v: IVector4) {
+    this.sceneObject.quaternion.set(v.x, v.y, v.z, v.w);
+    this.signals.componentUpdated.emit();
+    this._updateFlag = true;
+  }
+
+  @accessor({ type: FVector4 })
+  public get quaternion(): FVector4 {
+    return new FVector4().copyFrom(this.sceneObject.quaternion);
   }
 
   @accessor({ type: FVector3 })
   public get scale(): FVector3 {
-    return this.sceneObject.scale;
+    return new FVector3().copyFrom(this.sceneObject.scale);
   }
 
   @accessor({ type: FVector3 })
   public set scale(v: FVector3) {
     this.sceneObject.scale.set(v.x, v.y, v.z);
     this.signals.componentUpdated.emit();
+    this._updateFlag = true;
   }
 
   _onAwake() {}
@@ -55,6 +74,7 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
     this.sceneObject.position.set(data.position.x, data.position.y, data.position.z);
     this.sceneObject.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
     this.sceneObject.scale.set(data.scale.x, data.scale.y, data.scale.z);
+    this._updateFlag = true;
     sync && this.signals.componentUpdated.emit();
   }
 

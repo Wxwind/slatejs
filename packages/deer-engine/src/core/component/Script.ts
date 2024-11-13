@@ -22,6 +22,10 @@ export class Script extends ComponentBase {
 
   onDestroy(): void {}
 
+  override _onAwake(): void {
+    this.onAwake();
+  }
+
   override _onDestroy(): void {
     this.onDestroy();
   }
@@ -57,7 +61,7 @@ export class Script extends ComponentBase {
       componentManger.removeOnFixedUpdateScript(this);
     }
 
-    this._onDisable();
+    this.onDisable();
   }
 
   updateByJson(): void {}

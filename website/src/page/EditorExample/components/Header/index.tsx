@@ -1,7 +1,17 @@
 import { FC } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
-import { DeerScene, MeshComponent, CommandManager, FileManager, SceneManager } from 'deer-engine';
+import {
+  DeerScene,
+  MeshComponent,
+  CommandManager,
+  FileManager,
+  SceneManager,
+  StaticRigidbodyComponent,
+  DynamicRigidbodyComponent,
+  BoxCollider,
+  THREE,
+} from 'deer-engine';
 import { downLoad, isNil } from '@/util';
 import { Message } from '@arco-design/web-react';
 import { FileUpload } from '@/components';
@@ -36,8 +46,8 @@ export const Header: FC<HeaderProps> = (props) => {
   const handleExport = () => {
     if (!deerEngine) return;
     const sceneManager = deerEngine.getManager(SceneManager);
-    if (sceneManager.activeScene) {
-      const data = sceneManager.exportScene(sceneManager.activeScene);
+    if (sceneManager.mainScene) {
+      const data = sceneManager.exportScene(sceneManager.mainScene);
       const json = JSON.stringify(data);
       const file = new File([json], data.name + '.json', {
         type: 'application/json',
@@ -62,7 +72,35 @@ export const Header: FC<HeaderProps> = (props) => {
       return;
     }
     const e = scene.entityManager.createEntity('Cube', scene.entityManager.selectedEntity);
+    e.transform.position = {
+      x: 0,
+      y: 5,
+      z: 0,
+    };
+    console.log('create cube');
     e.addComponentByNew(MeshComponent);
+    const rb = e.addComponentByNew(DynamicRigidbodyComponent);
+    const boxCollider = new BoxCollider();
+    boxCollider.size = new THREE.Vector3(1, 1, 1);
+    rb.addCollider(boxCollider);
+  };
+
+  const handleCreateFloor = () => {
+    if (isNil(scene)) {
+      console.error('create entity failed: no activated scene');
+      return;
+    }
+    const e = scene.entityManager.createEntity('Plane', scene.entityManager.selectedEntity);
+    e.transform.scale = {
+      x: 20,
+      y: 1,
+      z: 20,
+    };
+    e.addComponentByNew(MeshComponent);
+    const rb = e.addComponentByNew(StaticRigidbodyComponent);
+    const boxCollider = new BoxCollider();
+    boxCollider.size = new THREE.Vector3(20, 1, 20);
+    rb.addCollider(boxCollider);
   };
 
   const handleRedo = () => {
@@ -77,6 +115,11 @@ export const Header: FC<HeaderProps> = (props) => {
     const cmdMgr = deerEngine.getManager(CommandManager);
     if (!cmdMgr) return;
     cmdMgr.undo();
+  };
+
+  const logSceneNode = () => {
+    if (!deerEngine) return;
+    console.log(deerEngine.getManager(SceneManager).mainScene?.rootEntities);
   };
 
   return (
@@ -161,6 +204,12 @@ export const Header: FC<HeaderProps> = (props) => {
             >
               New Cube
             </Menubar.Item>
+            <Menubar.Item
+              className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
+              onSelect={handleCreateFloor}
+            >
+              New Floor
+            </Menubar.Item>
             <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
           </Menubar.Content>
         </Menubar.Portal>
@@ -183,6 +232,27 @@ export const Header: FC<HeaderProps> = (props) => {
               </FileUpload>
             </Menubar.Item>
             <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
+          </Menubar.Content>
+        </Menubar.Portal>
+      </Menubar.Menu>
+
+      <Menubar.Menu>
+        <Menubar.Trigger className="text-sm py-2 px-3 outline-none select-none leading-none rounded  flex items-center justify-between">
+          Debug
+        </Menubar.Trigger>
+        <Menubar.Portal>
+          <Menubar.Content
+            className="min-w-[220px] bg-gray-300 rounded-md p-1"
+            align="start"
+            sideOffset={5}
+            alignOffset={-3}
+          >
+            <Menubar.Item
+              className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
+              onSelect={logSceneNode}
+            >
+              LogSceneNode
+            </Menubar.Item>
           </Menubar.Content>
         </Menubar.Portal>
       </Menubar.Menu>

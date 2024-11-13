@@ -17,24 +17,30 @@ export const SceneCanvas: FC = (props) => {
   });
 
   useEffect(() => {
-    const deerEngine = DeerEngine.create({
-      containerId: DEER_ENGINE_CONTAINER,
-    });
-    deerEngine.getManager(FileManager).addBuiltinFile({
-      '/hdr/default.hdr': '/hdr/default.hdr',
-    });
-    const sceneManager = deerEngine.getManager(SceneManager);
-    const scene = sceneManager.createScene('Empty Scene', 'editor');
-    sceneManager.mainScene = scene;
-    scene?.loadHDR('/hdr/default.hdr');
+    let deerEngine: DeerEngine;
+    let cutsceneEditor: CutsceneEditor;
+    const initEngine = async () => {
+      deerEngine = await DeerEngine.create({
+        containerId: DEER_ENGINE_CONTAINER,
+      });
+      deerEngine.getManager(FileManager).addBuiltinFile({
+        '/hdr/default.hdr': '/hdr/default.hdr',
+      });
+      const sceneManager = deerEngine.getManager(SceneManager);
+      const scene = sceneManager.createScene('Empty Scene', 'editor');
+      sceneManager.mainScene = scene;
+      scene?.loadHDR('/hdr/default.hdr');
 
-    const cutsceneEditor = new CutsceneEditor(deerEngine);
+      cutsceneEditor = new CutsceneEditor(deerEngine);
 
-    setCutsceneEditor(cutsceneEditor);
-    setEngine(deerEngine);
+      setCutsceneEditor(cutsceneEditor);
+      setEngine(deerEngine);
+    };
+
+    initEngine();
     return () => {
-      deerEngine.destroy();
-      cutsceneEditor.destroy();
+      deerEngine?.destroy();
+      cutsceneEditor?.destroy();
       setEngine(undefined);
       setCutsceneEditor(undefined);
     };

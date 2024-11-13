@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { ProInputNumber, ProInputNumberProps } from './ProInputNumber';
 import { FormItemsInRow } from './FormItemsInRow';
-import { FVector3 } from 'deer-engine';
+import { IVector3 } from 'deer-engine';
 import { set } from 'lodash';
 import { ImmerFormItem } from './ImmerFormItem';
 import { LockIcon } from './LockIcon';
@@ -9,10 +9,10 @@ import { toScaledVec3 } from '@/util';
 
 interface Vector3FormItemProps extends Omit<ProInputNumberProps, 'onChange' | 'value' | 'onBlur' | 'prefix'> {
   label: string;
-  value: FVector3;
+  value: IVector3;
   constrainable?: boolean;
-  onChange?: (name: string, value: FVector3 | undefined) => void;
-  onBlur: (name: string, value: FVector3 | undefined) => void;
+  onChange?: (name: string, value: IVector3 | undefined) => void;
+  onBlur: (name: string, value: IVector3 | undefined) => void;
 }
 
 export const Vector3FormItem: FC<Vector3FormItemProps> = (props) => {

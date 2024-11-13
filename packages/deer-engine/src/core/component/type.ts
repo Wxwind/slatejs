@@ -1,38 +1,10 @@
-import { egclass, property } from '../decorator';
 import { CameraComponent } from './CameraComponent';
 import { MeshComponent } from './MeshComponent';
-import { TransformComponent } from './TransformComponent';
 import { ModelComponent } from './ModelComponent';
-
-@egclass()
-export class FVector2 {
-  @property({ type: Number })
-  x: number = 0;
-  @property({ type: Number })
-  y: number = 0;
-}
-
-@egclass()
-export class FVector3 {
-  @property({ type: Number })
-  x: number = 0;
-  @property({ type: Number })
-  y: number = 0;
-  @property({ type: Number })
-  z: number = 0;
-}
-
-@egclass()
-export class FVector4 {
-  @property({ type: Number })
-  x: number = 0;
-  @property({ type: Number })
-  y: number = 0;
-  @property({ type: Number })
-  z: number = 0;
-  @property({ type: Number })
-  w: number = 0;
-}
+import { TransformComponent } from './TransformComponent';
+import { StaticRigidbodyComponent } from '../physics/StaticRigidbodyComponent';
+import { DynamicRigidbodyComponent } from '../physics/DynamicRigidbodyComponent';
+import { IVector3 } from '@/type';
 
 export type ModelComponentJson = {
   assetAddress: string;
@@ -43,15 +15,15 @@ export type MeshComponentJson = {
 };
 
 export type TransformComponentJson = {
-  position: FVector3;
-  rotation: FVector3;
-  scale: FVector3;
+  position: IVector3;
+  rotation: IVector3;
+  scale: IVector3;
 };
 
 export type CameraComponentJson = {
-  position: FVector3;
-  rotation: FVector3;
-  scale: FVector3;
+  position: IVector3;
+  rotation: IVector3;
+  scale: IVector3;
   near: number;
   far: number;
   fov: number;
@@ -72,6 +44,8 @@ export type ComponentTypeToJsonObjMap = {
   RendererComponent: RendererComponentJson;
   ModelComponent: ModelComponentJson;
   Script: any;
+  StaticRigidbodyComponent: any;
+  DynamicRigidbodyComponent: any;
 };
 
 type ComponentDataMap = {
@@ -83,7 +57,13 @@ type ComponentDataMap = {
 };
 
 export type ComponentType = keyof ComponentTypeToJsonObjMap;
-export type Component = MeshComponent | TransformComponent | CameraComponent | ModelComponent;
+export type Component =
+  | MeshComponent
+  | TransformComponent
+  | CameraComponent
+  | ModelComponent
+  | StaticRigidbodyComponent
+  | DynamicRigidbodyComponent;
 
 export type ComponentData<T extends ComponentType = ComponentType> = ComponentDataMap[T];
 export type ComponentJson<T extends ComponentType = ComponentType> = ComponentTypeToJsonObjMap[T];

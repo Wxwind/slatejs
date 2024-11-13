@@ -3,6 +3,8 @@ import { ResourceManager } from './manager/AssetManager';
 import { FileManager } from './manager/FileManager/FileManager';
 import { IManager } from './interface';
 import { Time } from './Time';
+import { PhysicsScene } from './physics/PhysicsScene';
+import { PxPhysics } from '../module/physics';
 
 export class DeerEngine {
   private _time = new Time();
@@ -14,8 +16,9 @@ export class DeerEngine {
   private _managerMap = new Map<new () => IManager, IManager>();
 
   private _animateID: number = -1;
+  _physicsInitialized = false;
 
-  static create(config: EngineConfiguration) {
+  static async create(config: EngineConfiguration) {
     const { containerId } = config;
     const container = document.getElementById(containerId);
     if (!container) {
@@ -23,6 +26,7 @@ export class DeerEngine {
     }
 
     const engine = new DeerEngine(container);
+    await engine._initialize();
     return engine;
   }
 
@@ -33,6 +37,12 @@ export class DeerEngine {
     this.registerManager(new SceneManager());
 
     this.update();
+  }
+
+  async _initialize() {
+    PhysicsScene._physics = new PxPhysics();
+    await PhysicsScene._physics.initialize();
+    this._physicsInitialized = true;
   }
 
   private registerManager<T extends IManager>(manager: T) {

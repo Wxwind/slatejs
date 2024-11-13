@@ -1,7 +1,9 @@
 import { Vector3 } from 'three';
 import { ComponentBase } from './ComponentBase';
-import { FVector3, CameraComponentJson } from './type';
+
 import { accessor, egclass, property } from '../decorator';
+import { FVector3 } from '@/math';
+import { CameraComponentJson } from './type';
 
 @egclass()
 export class CameraComponent extends ComponentBase<'CameraComponent'> {

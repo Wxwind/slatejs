@@ -1,6 +1,6 @@
-import { FVector2, FVector3 } from 'deer-engine';
+import { IVector2, IVector3 } from 'deer-engine';
 
-export function toScaledVec3(newValue: FVector3, oldValue: FVector3): FVector3 {
+export function toScaledVec3(newValue: IVector3, oldValue: IVector3): IVector3 {
   let factor = 1;
   if (newValue.x !== oldValue.x) {
     oldValue.x !== 0 && (factor = newValue.x / oldValue.x);
@@ -17,7 +17,7 @@ export function toScaledVec3(newValue: FVector3, oldValue: FVector3): FVector3 {
   };
 }
 
-export function toScaledVec2(newValue: FVector2, oldValue: FVector2): FVector2 {
+export function toScaledVec2(newValue: IVector2, oldValue: IVector2): IVector2 {
   let factor = 1;
   if (newValue.x !== oldValue.x) {
     oldValue.x !== 0 && (factor = newValue.x / oldValue.x);

@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
-import { ModelComponentJson } from './type';
+
 import { egclass } from '../decorator';
 import { ResourceManager } from '../manager/AssetManager';
+import { ModelComponentJson } from './type';
 
 @egclass()
 export class ModelComponent extends ComponentBase<'ModelComponent'> {

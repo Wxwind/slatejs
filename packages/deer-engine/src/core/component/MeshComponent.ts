@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
-import { MeshComponentJson } from './type';
+
 import { accessor, egclass } from '../decorator';
+import { MeshComponentJson } from './type';
 
 @egclass()
 export class MeshComponent extends ComponentBase<'MeshComponent'> {
@@ -44,8 +45,6 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
   _onEnable: () => void = () => {};
 
   _onDisable: () => void = () => {};
-
-  update: (dt: number) => void = () => {};
 
   _onDestroy: () => void = () => {
     if (isNil(this.mesh)) {

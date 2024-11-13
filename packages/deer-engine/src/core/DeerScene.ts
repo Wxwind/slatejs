@@ -1,6 +1,5 @@
-import THREE, { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three';
 import { EntityManager } from './manager/EntityManager';
-import { debounce } from '@/util';
 import { DeerEngine } from './DeerEngine';
 import { Entity, EntityJson } from './entity';
 import { Control } from './Control';
@@ -8,6 +7,8 @@ import { ResourceManager } from './manager/AssetManager';
 import { ComponentManager } from './manager/ComponentManager';
 import { AbstractSceneManager } from './interface';
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
+import { PhysicsScene } from './physics/PhysicsScene';
+import { deserializeComponent } from '..';
 
 export interface DeerSceneJson {
   id: string;
@@ -24,14 +25,14 @@ export class DeerScene {
   sceneObject: Scene;
 
   parentEl: HTMLElement;
-  // resizeObserver: ResizeObserver;
 
   mode: DeerSceneMode;
 
   mainCamera: PerspectiveCamera;
   engine: DeerEngine;
 
-  // Manager
+  readonly physicsScene = new PhysicsScene(this);
+
   readonly entityManager = new EntityManager(this);
 
   private _managerMap = new Map<new () => AbstractSceneManager, AbstractSceneManager>();
@@ -43,7 +44,7 @@ export class DeerScene {
   private _renderer: WebGLRenderer;
   private _viewHelper: ViewHelper;
 
-  isInited = false;
+  isInitialized = false;
 
   active = true;
 
@@ -68,29 +69,18 @@ export class DeerScene {
     this.control = new Control(this.mainCamera, this._renderer.domElement);
 
     this._viewHelper = new ViewHelper(this.mainCamera, container);
-
-    // const debouncedResize = debounce(this.resize, 200);
-
-    // // observe resize
-    // const resizeObserver = new ResizeObserver((entries) => {
-    //   const { width, height } = entries[0].contentRect;
-    //   debouncedResize(width, height);
-    // });
-
-    // resizeObserver.observe(this.parentEl);
-    // this.resizeObserver = resizeObserver;
   }
 
   init() {
     this.registerManager(new ComponentManager());
-    this.isInited = true;
+    this.isInitialized = true;
   }
 
   update = (deltaTime: number) => {
-    if (!this.isInited) return;
+    if (!this.isInitialized) return;
 
     // resize on update to avoid flash
-    const size = new THREE.Vector2(0, 0);
+    const size = new Vector2(0, 0);
     this._renderer.getSize(size);
 
     const parentSize = this.parentEl.getBoundingClientRect();
@@ -108,6 +98,9 @@ export class DeerScene {
 
     const componentManager = this.getManager(ComponentManager);
     componentManager.callScriptOnStart();
+    if (this.engine._physicsInitialized) {
+      this.physicsScene.update(deltaTime);
+    }
     componentManager.callScriptOnUpdate(deltaTime);
   };
 
@@ -136,10 +129,9 @@ export class DeerScene {
   };
 
   addRootEntity = (entity: Entity) => {
-    entity.parent === undefined;
-
     this.rootEntities.push(entity);
     this.sceneObject.add(entity.sceneObject);
+    this.active ? entity._processActive() : entity._processInActive;
     console.log(this.sceneObject);
   };
 
@@ -156,13 +148,13 @@ export class DeerScene {
   destroy = () => {
     this.entityManager.destory();
     // this.scene.clear();
-    //  this.resizeObserver.unobserve(this.parentEl);
 
     // destroy renderer
     this._renderer.dispose();
     this._renderer.forceContextLoss();
     const container = this.parentEl;
     container.removeChild(this._renderer.domElement);
+    this.physicsScene.destroy();
   };
 
   serialize(): DeerSceneJson {
@@ -173,5 +165,22 @@ export class DeerScene {
     };
   }
 
-  deserialize(data: DeerSceneJson) {}
+  deserialize(data: DeerSceneJson) {
+    this.id = data.id;
+    this.name = data.name;
+    const deserializeEntity = (entityJson: EntityJson, parent: undefined | Entity) => {
+      const entity = this.entityManager.createEntity(entityJson.name, undefined);
+      entity.id = entityJson.id;
+      entityJson.components.forEach((comp) => deserializeComponent(comp, entity));
+
+      for (const child of entityJson.children) {
+        deserializeEntity(child, entity);
+      }
+
+      return entity;
+    };
+    for (const entityJson of data.entities) {
+      deserializeEntity(entityJson, undefined);
+    }
+  }
 }
