@@ -1,7 +1,7 @@
-import { IVector3 } from '@/type';
-import { Quaternion, Vector3 } from 'three';
+import { Quaternion } from 'three';
 import { PhysicsControllerNonWalkableModeEnum, PhysicsCombineMode, PhysicsControllerCollisionFlag } from './enum';
 import PhysX from 'physx-js-webidl';
+import { IVector3 } from '@/type';
 
 export interface IRigidbody {
   /**
@@ -18,12 +18,12 @@ export interface IRigidbody {
   /**
    * get world transform from native rigidbody
    */
-  getWorldTransform(outPosition: Vector3, outRotation: Quaternion): void;
+  getWorldTransform(outPosition: IVector3, outRotation: Quaternion): void;
 
   /**
    * set world transform to native rigidbody
    */
-  setWorldTransform(position: Vector3, rotation: Quaternion): void;
+  setWorldTransform(position: IVector3, rotation: Quaternion): void;
 
   /**
    * Deletes the collider.
@@ -41,7 +41,7 @@ export interface ICollider {
    * Set local position.
    * @param position - The local position
    */
-  setPosition(position: Vector3): void;
+  setPosition(position: IVector3): void;
 
   /**
    * Sets the contact offset.
@@ -119,17 +119,17 @@ export interface ICharacterController extends IRigidbody {
    * Sets controller's world position.
    * @param position The new (center) position for the controller.
    */
-  setWorldPosition(position: Vector3): void;
+  setWorldPosition(position: IVector3): void;
   /**
    * Retrieve the world position of the controller.
    * @param position The controller's center position
    */
-  getWorldPosition(outPosition: Vector3): void;
+  getWorldPosition(outPosition: IVector3): void;
   /**
    * Retrieve the world foot position of the controller/
    * @param outPosition The controller's foot position. the foot position takes the contact offset into account
    */
-  getFootPosition(outPosition: Vector3): void;
+  getFootPosition(outPosition: IVector3): void;
   /**
    * The step height.
    * @param offset The new step offset for the controller.
@@ -144,7 +144,7 @@ export interface ICharacterController extends IRigidbody {
    * Sets the 'up' direction.
    * @param up The up direction for the controller.
    */
-  setUpDirection(up: Vector3): void;
+  setUpDirection(up: IVector3): void;
   /**
    * Sets the slope limit.
    * @param slopeLimit The slope limit for the controller.
@@ -160,7 +160,7 @@ export interface IPhysicsScene {
    * Set gravity.
    * @param gravity - Physics gravity
    */
-  setGravity(gravity: Vector3): void;
+  setGravity(gravity: IVector3): void;
   /**
    * Add ICollider into the manager.
    * @param rigidbody - StaticRigidbody or DynamicRigidbody.
@@ -205,13 +205,13 @@ export interface IDynamicRigidbody extends IRigidbody {
    * @param position - The global position
    * @param rotation - The global rotation
    */
-  setWorldTransform(position: Vector3, rotation: Quaternion): void;
+  setWorldTransform(position: IVector3, rotation: Quaternion): void;
   /**
    * Get global transform of collider.
    * @param outPosition - The global position
    * @param outRotation - The global rotation
    */
-  getWorldTransform(outPosition: Vector3, outRotation: Quaternion): void;
+  getWorldTransform(outPosition: IVector3, outRotation: Quaternion): void;
   /**
    * Sets the linear damping coefficient.
    * @param value - Linear damping coefficient.
@@ -226,12 +226,12 @@ export interface IDynamicRigidbody extends IRigidbody {
    * Sets the linear velocity of the actor.
    * @param value - New linear velocity of actor.
    */
-  setLinearVelocity(value: Vector3): void;
+  setLinearVelocity(value: IVector3): void;
   /**
    * Sets the angular velocity of the actor.
    * @param value - New angular velocity of actor.
    */
-  setAngularVelocity(value: Vector3): void;
+  setAngularVelocity(value: IVector3): void;
   /**
    *  Sets the mass of a dynamic actor.
    * @param value - New mass value for the actor.
@@ -242,20 +242,20 @@ export interface IDynamicRigidbody extends IRigidbody {
    * @param position - Mass frame offset position relative to the actor frame.
    * @param rotation - Mass frame offset rotation relative to the actor frame.
    */
-  setCenterOfMass(position: Vector3, rotation: Quaternion): void;
+  setCenterOfMass(position: IVector3, rotation: Quaternion): void;
   /**
    * Sets the inertia tensor, using a parameter specified in mass space coordinates.
    * @param value - New mass space inertia tensor for the actor.
    */
-  setInertiaTensor(value: Vector3): void;
+  setInertiaTensor(value: IVector3): void;
   /**
    * Set the maximum angular velocity permitted for this actor.
    * @param value - Max allowable angular velocity for actor.
    */
   setMaxAngularVelocity(value: number): void;
   /**
-   * Sets the maximum depenetration velocity permitted to be introduced by the solver.
-   * @param value - The maximum velocity to de-penetrate
+   * Sets the maximum depenetration velocity permitted to be introduced by the solver (velocity that the solver can set to a body while trying to pull it out of overlap with the other bodies).
+   * @param value - The maximum velocity to de-penetrate (0, PX_MAX_F32]
    */
   setMaxDepenetrationVelocity(value: number): void;
   /**
@@ -282,23 +282,23 @@ export interface IDynamicRigidbody extends IRigidbody {
    * Raises or clears a particular rigid dynamic lock flag.
    * @param flags - the flag to raise(set) or clear.
    */
-  setLockFlags(flags: number): void;
+  setConstraints(flags: number): void;
   /**
    * Apply a force to the dynamic collider.
    * @param force - The force make the collider move
    */
-  addForce(force: Vector3): void;
+  addForce(force: IVector3): void;
   /**
    * Apply a torque to the dynamic collider.
    * @param torque - The force make the collider rotate
    */
-  addTorque(torque: Vector3): void;
+  addTorque(torque: IVector3): void;
   /**
    * Moves kinematically controlled dynamic actors through the game world.
    * @param positionOrRotation - The desired position or rotation for the kinematic actor
    * @param rotation - The desired rotation for the kinematic actor
    */
-  move(positionOrRotation: Vector3 | Quaternion, rotation?: Quaternion): void;
+  move(positionOrRotation: IVector3 | Quaternion, rotation?: Quaternion): void;
   /**
    * Forces a collider to sleep at least one frame.
    */

@@ -97,7 +97,7 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     }
   }
 
-  setLockFlags(flags: number): void {
+  setConstraints(flags: number): void {
     //  this._pxRigidBody.setRigidDynamicLockFlags();
     throw new Error("setLockFlags hasn't been implemented yet.");
   }

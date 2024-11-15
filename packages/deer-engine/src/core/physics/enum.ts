@@ -59,3 +59,23 @@ export enum CollisionDetectionMode {
   /** Speculative continuous collision detection is on for static and dynamic geometries */
   ContinuousSpeculative,
 }
+
+/**
+ * Use these flags to constrain motion of dynamic collider.
+ */
+export enum DynamicRigidbodyConstraints {
+  /** Not Freeze. */
+  None = 0,
+  /** Freeze motion along the X-axis. */
+  FreezePositionX = 1,
+  /** Freeze motion along the Y-axis. */
+  FreezePositionY = 2,
+  /** Freeze motion along the Z-axis. */
+  FreezePositionZ = 4,
+  /** Freeze rotation along the X-axis. */
+  FreezeRotationX = 8,
+  /** Freeze rotation along the Y-axis. */
+  FreezeRotationY = 16,
+  /** Freeze rotation along the Z-axis. */
+  FreezeRotationZ = 32,
+}
