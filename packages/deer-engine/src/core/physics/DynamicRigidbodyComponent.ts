@@ -180,6 +180,14 @@ export class DynamicRigidbodyComponent extends RigidbodyComponent {
     this._nativeRigidbody.addTorque(torque);
   }
 
+  sleep() {
+    this._nativeRigidbody.sleep();
+  }
+
+  wakeup() {
+    this._nativeRigidbody.wakeUp();
+  }
+
   _onDestroy(): void {
     this._nativeRigidbody.destroy();
   }

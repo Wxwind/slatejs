@@ -36,7 +36,6 @@ export class ControllerScript extends Script {
   _moveForce: number = 120;
 
   private _maxVelocity = new THREE.Vector3(1.5, 5, 1.5);
-  // FIXME: may true or false if on ground
   private _isOnGround = false;
   private _inputXZ = new THREE.Vector2();
   private _inputY: number = 0;
