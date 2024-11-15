@@ -50,4 +50,6 @@ export abstract class AbstractSceneManager implements IManager {
   abstract init(): void;
 
   abstract destroy(): void;
+
+  update(dt: number): void {}
 }

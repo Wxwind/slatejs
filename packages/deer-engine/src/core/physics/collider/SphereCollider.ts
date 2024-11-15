@@ -16,6 +16,9 @@ export class SphereCollider extends Collider {
 
   constructor() {
     super();
-    this._nativeCollider = PhysicsScene._physics.createSphereCollider(this.radius, this._material._nativeMaterial);
+    this._nativeCollider = PhysicsScene._nativePhysics.createSphereCollider(
+      this.radius,
+      this._material._nativeMaterial
+    );
   }
 }

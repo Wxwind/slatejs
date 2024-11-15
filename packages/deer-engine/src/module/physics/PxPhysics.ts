@@ -3,9 +3,10 @@ import { PxPhysicsScene } from './PxPhysicsScene';
 import { PxPhysicsStaticRigidBody } from './PxPhysicsStaticRigidBody';
 import { Quaternion, Vector3 } from 'three';
 import { PxPhysicsDynamicRigidBody } from './PxPhysicsDynamicRigidBody';
-import { PxCombineMode } from './enum';
+import { PhysicsCombineMode } from '../../core/physics/enum';
 import { PxPhysicsMaterial } from './PxPhysicsMaterial';
 import { PxPhysicsBoxCollider, PxPhysicsSphereCollider } from './collider';
+import { IVector3 } from '@/type';
 
 declare global {
   interface Window {
@@ -63,6 +64,7 @@ export class PxPhysics {
   }
 
   createScene(
+    gravity: IVector3,
     onContactBegin?: (obj1: number, obj2: number) => void,
     onContactEnd?: (obj1: number, obj2: number) => void,
     onContactStay?: (obj1: number, obj2: number) => void,
@@ -70,17 +72,17 @@ export class PxPhysics {
     onTriggerEnd?: (obj1: number, obj2: number) => void,
     onTriggerStay?: (obj1: number, obj2: number) => void
   ) {
-    const scene = new PxPhysicsScene(this);
+    const scene = new PxPhysicsScene(this, gravity);
     return scene;
   }
 
   createStaticRigidBody(position: Vector3, rotation: Quaternion) {
-    const rb = new PxPhysicsStaticRigidBody(this, position, rotation);
+    const rb = new PxPhysicsStaticRigidBody(this._physX, this._pxPhysics, position, rotation);
     return rb;
   }
 
   createDynamicRigidBody(position: Vector3, rotation: Quaternion) {
-    const rb = new PxPhysicsDynamicRigidBody(this, position, rotation);
+    const rb = new PxPhysicsDynamicRigidBody(this._physX, this._pxPhysics, position, rotation);
     return rb;
   }
 
@@ -88,8 +90,8 @@ export class PxPhysics {
     staticFriction: number,
     dynamicFriction: number,
     restitution: number,
-    frictionCombineMode: PxCombineMode,
-    restitutionCombineMode: PxCombineMode
+    frictionCombineMode: PhysicsCombineMode,
+    restitutionCombineMode: PhysicsCombineMode
   ) {
     return new PxPhysicsMaterial(
       this,

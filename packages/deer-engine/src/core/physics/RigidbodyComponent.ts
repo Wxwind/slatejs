@@ -2,9 +2,10 @@ import { ComponentBase } from '../component';
 import { PxPhysicsRigidBody } from '../../module/physics/PxPhysicsRigidBody';
 import { Collider } from './collider';
 import { Quaternion, Vector3 } from 'three';
+import { IRigidbody } from './interface';
 
 export abstract class RigidbodyComponent extends ComponentBase<any> {
-  abstract _nativeRigidbody: PxPhysicsRigidBody;
+  abstract _nativeRigidbody: IRigidbody;
 
   protected _colliders: Collider[] = [];
 
@@ -23,10 +24,10 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
 
   /** copy real scene to physical scene */
   _onColliderUpdate() {
-    if (this._entity.transform._updateFlag) {
+    if (this.entity.transform._updateFlag) {
       const obj = this.sceneObject;
-      this._nativeRigidbody.setTransform(obj.position, obj.quaternion);
-      this._entity.transform._updateFlag = false;
+      this._nativeRigidbody.setWorldTransform(obj.position, obj.quaternion);
+      this.entity.transform._updateFlag = false;
     }
   }
 
@@ -56,11 +57,11 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
   }
 
   getTransform(outPosition: Vector3, outRotation: Quaternion): void {
-    this._nativeRigidbody.getTransform(outPosition, outRotation);
+    this._nativeRigidbody.getWorldTransform(outPosition, outRotation);
   }
 
   setTransform(position: Vector3, rotation: Quaternion): void {
-    this._nativeRigidbody.setTransform(position, rotation);
+    this._nativeRigidbody.setWorldTransform(position, rotation);
   }
 
   removeAllShapes() {

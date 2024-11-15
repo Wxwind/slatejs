@@ -1,7 +1,7 @@
 import { PxPhysicsCollider } from '@/module/physics/collider';
 import { RigidbodyComponent } from '../RigidbodyComponent';
 import { Quaternion, Vector3 } from 'three';
-import { PhysicsMateral as PhysicsMaterial } from '../PhysicsMaterial';
+import { PhysicsMaterial as PhysicsMaterial } from '../PhysicsMaterial';
 
 export abstract class Collider {
   abstract _nativeCollider: PxPhysicsCollider;
@@ -17,7 +17,7 @@ export abstract class Collider {
   }
   public set isTrigger(v: boolean) {
     this._isTrigger = v;
-    this._nativeCollider.setTrigger(v);
+    this._nativeCollider.setIsTrigger(v);
   }
 
   private _position: Vector3 = new Vector3();

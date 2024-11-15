@@ -25,6 +25,7 @@ export const SceneCanvas: FC = (props) => {
       });
       deerEngine.getManager(FileManager).addBuiltinFile({
         '/hdr/default.hdr': '/hdr/default.hdr',
+        '/model/people.glb': '/model/people.glb',
       });
       const sceneManager = deerEngine.getManager(SceneManager);
       const scene = sceneManager.createScene('Empty Scene', 'editor');

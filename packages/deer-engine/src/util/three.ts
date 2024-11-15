@@ -10,7 +10,7 @@ export function objectToLocalQuaternion(obj: Object3D, worldRot: Quaternion) {
   if (!obj.parent) return worldRot;
   const rot = new Matrix4();
   rot.makeRotationFromQuaternion(worldRot);
-  const local = rot.premultiply(obj.parent.matrixWorld);
+  const local = rot.multiply(obj.parent.matrixWorld);
   const quaternion = new Quaternion().setFromRotationMatrix(local);
   return quaternion;
 }

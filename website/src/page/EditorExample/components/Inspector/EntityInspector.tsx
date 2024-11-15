@@ -2,6 +2,7 @@ import { Component, DeerScene, NoAbstractCtor } from 'deer-engine';
 import { FC, ReactNode } from 'react';
 import { useBindSignal, useDumbState } from '@/hooks';
 import { getEditorRenderer } from '@/decorator';
+import { DefaultEditor } from '@/components/editor/DefaultEditor';
 
 interface EntityInspectorProps {
   scene: DeerScene | undefined;

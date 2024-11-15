@@ -1,4 +1,4 @@
-import { ComponentManager } from '../manager';
+import { ComponentManager, Pointer } from '../manager';
 import { ComponentBase } from './ComponentBase';
 
 export class Script extends ComponentBase {
@@ -63,6 +63,18 @@ export class Script extends ComponentBase {
 
     this.onDisable();
   }
+
+  onPointerDown(pointer: Pointer): void {}
+
+  onPointerUp(pointer: Pointer): void {}
+
+  onPointerClick(pointer: Pointer): void {}
+
+  onPointerEnter(pointer: Pointer): void {}
+
+  onPointerExit(pointer: Pointer): void {}
+
+  onPointerDrag(pointer: Pointer): void {}
 
   updateByJson(): void {}
 

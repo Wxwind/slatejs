@@ -14,7 +14,7 @@ export class DynamicRigidbodyComponent extends RigidbodyComponent {
   constructor(entity: Entity) {
     super(entity);
 
-    this._nativeRigidbody = PhysicsScene._physics.createDynamicRigidBody(
+    this._nativeRigidbody = PhysicsScene._nativePhysics.createDynamicRigidBody(
       this.sceneObject.position,
       this.sceneObject.quaternion
     );
@@ -23,8 +23,17 @@ export class DynamicRigidbodyComponent extends RigidbodyComponent {
   _tempPosition = new Vector3();
   _tempRotation = new Quaternion();
 
+  private _mass: number = 1.0;
+  public get mass(): number {
+    return this._mass;
+  }
+  public set mass(v: number) {
+    this._nativeRigidbody.setMass(v);
+    this._mass = v;
+  }
+
   override _onColliderLateUpdate(): void {
-    const obj = this._entity.sceneObject;
+    const obj = this.entity.sceneObject;
 
     this.getTransform(this._tempPosition, this._tempRotation);
     const pos = objectToLocalPosition(obj, this._tempPosition);

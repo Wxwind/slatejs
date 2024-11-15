@@ -41,7 +41,7 @@ export const MainPanel: FC<MainPanelProps> = (props) => {
 
   return (
     <div className="relative flex flex-col bg-gray-400 h-full">
-      <div ref={hierarchyRef} className="absolute w-full" style={{ height: `${dragLineHeight}px` }}>
+      <div ref={hierarchyRef} className="absolute w-full overflow-auto" style={{ height: `${dragLineHeight}px` }}>
         <Hierarchy scene={scene} />
       </div>
       <div

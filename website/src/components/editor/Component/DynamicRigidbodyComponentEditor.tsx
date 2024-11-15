@@ -9,7 +9,7 @@ const DynamicRigidbodyComponentEditorComp: EditorComp<DynamicRigidbodyComponent>
   const refresh = useDumbState();
   useBindSignal(target.signals.componentUpdated, refresh);
 
-  return <div>aaa</div>;
+  return <div>DynamicRigidbodyComponent</div>;
 };
 
 registerEditor(DynamicRigidbodyComponent, DynamicRigidbodyComponentEditorComp);

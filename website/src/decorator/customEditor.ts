@@ -1,3 +1,4 @@
+import { DefaultEditor } from '@/components/editor/DefaultEditor';
 import { NoAbstractCtor } from 'deer-engine';
 import { FC } from 'react';
 
@@ -17,7 +18,7 @@ export function registerEditor(ctor: NoAbstractCtor, renderFunc: FC<EditorProps>
 export function getEditorRenderer(ctor: NoAbstractCtor) {
   const renderFunc = globalEditorMap.get(ctor);
   if (!renderFunc) {
-    throw new Error(`the type '${ctor.name}' hasn't be registered any Editor yet.`);
+    return DefaultEditor;
   }
 
   return renderFunc;

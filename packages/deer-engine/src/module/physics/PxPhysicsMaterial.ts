@@ -1,5 +1,5 @@
 import PhysX from 'physx-js-webidl';
-import { PxCombineMode } from './enum';
+import { PhysicsCombineMode } from '../../core/physics/enum';
 import { PxPhysics } from './PxPhysics';
 
 /** wrapper of PhysX.Material */
@@ -11,8 +11,8 @@ export class PxPhysicsMaterial {
     staticFriction: number,
     dynamicFriction: number,
     restitution: number,
-    frictionCombineMode: PxCombineMode,
-    restitutionCombineMode: PxCombineMode
+    frictionCombineMode: PhysicsCombineMode,
+    restitutionCombineMode: PhysicsCombineMode
   ) {
     const pxMaterial = pxPhysics._pxPhysics.createMaterial(staticFriction, dynamicFriction, restitution);
     pxMaterial.setFrictionCombineMode(frictionCombineMode as unknown as PhysX.PxCombineModeEnum);
@@ -44,11 +44,11 @@ export class PxPhysicsMaterial {
     this._pxMaterial.setDynamicFriction(value);
   }
 
-  setFrictionCombineMode(mode: PxCombineMode) {
+  setFrictionCombineMode(mode: PhysicsCombineMode) {
     this._pxMaterial.setFrictionCombineMode(mode as unknown as PhysX.PxCombineModeEnum);
   }
 
-  setRestitutionCombineMode(mode: PxCombineMode) {
+  setRestitutionCombineMode(mode: PhysicsCombineMode) {
     this._pxMaterial.setRestitutionCombineMode(mode as unknown as PhysX.PxCombineModeEnum);
   }
 

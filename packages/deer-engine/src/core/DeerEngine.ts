@@ -1,7 +1,7 @@
 import { CommandManager, SceneManager } from './manager';
-import { ResourceManager } from './manager/AssetManager';
+import { ResourceManager } from './manager/ResourceManager';
 import { FileManager } from './manager/FileManager/FileManager';
-import { IManager } from './interface';
+import { AbstractManager, IManager } from './interface';
 import { Time } from './Time';
 import { PhysicsScene } from './physics/PhysicsScene';
 import { PxPhysics } from '../module/physics';
@@ -13,7 +13,7 @@ export class DeerEngine {
     return this._time;
   }
 
-  private _managerMap = new Map<new () => IManager, IManager>();
+  private _managerMap = new Map<new () => AbstractManager, AbstractManager>();
 
   private _animateID: number = -1;
   _physicsInitialized = false;
@@ -40,18 +40,18 @@ export class DeerEngine {
   }
 
   async _initialize() {
-    PhysicsScene._physics = new PxPhysics();
-    await PhysicsScene._physics.initialize();
+    PhysicsScene._nativePhysics = new PxPhysics();
+    await PhysicsScene._nativePhysics.initialize();
     this._physicsInitialized = true;
   }
 
-  private registerManager<T extends IManager>(manager: T) {
-    this._managerMap.set(manager.constructor as new () => IManager, manager);
+  private registerManager<T extends AbstractManager>(manager: T) {
+    this._managerMap.set(manager.constructor as new () => AbstractManager, manager);
     manager.engine = this;
     manager.init();
   }
 
-  public getManager<T extends IManager>(manager: new () => T) {
+  public getManager<T extends AbstractManager>(manager: new () => T) {
     return this._managerMap.get(manager) as T;
   }
 

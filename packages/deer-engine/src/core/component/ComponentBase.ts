@@ -32,7 +32,7 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
 
   public abstract readonly type: T; // equals class' name
 
-  protected _entity: Entity;
+  private _entity: Entity;
 
   get entity(): Entity {
     return this._entity;

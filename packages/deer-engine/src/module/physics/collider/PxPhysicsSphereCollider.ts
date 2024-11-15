@@ -15,5 +15,6 @@ export class PxPhysicsSphereCollider extends PxPhysicsCollider {
 
   setRadius(radius: number) {
     this._pxGeometry.radius = radius;
+    this._pxShape.setGeometry(this._pxGeometry);
   }
 }

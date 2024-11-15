@@ -2,13 +2,15 @@ import { PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three';
 import { EntityManager } from './manager/EntityManager';
 import { DeerEngine } from './DeerEngine';
 import { Entity, EntityJson } from './entity';
-import { ResourceManager } from './manager/AssetManager';
+import { ResourceManager } from './manager/ResourceManager';
 import { ComponentManager } from './manager/ComponentManager';
 import { AbstractSceneManager } from './interface';
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
 import { PhysicsScene } from './physics/PhysicsScene';
 import { deserializeComponent } from '@/util';
 import { Control } from './Control';
+import { WebCanvas } from './WebCanvas';
+import { InputManager } from './manager';
 
 export interface DeerSceneJson {
   id: string;
@@ -29,7 +31,12 @@ export class DeerScene {
   mode: DeerSceneMode;
 
   mainCamera: PerspectiveCamera;
+
   engine: DeerEngine;
+
+  canvas: WebCanvas;
+
+  _isDestroyed = false;
 
   readonly physicsScene = new PhysicsScene(this);
 
@@ -47,6 +54,8 @@ export class DeerScene {
   isInitialized = false;
 
   active = true;
+
+  private _updateManagers: AbstractSceneManager[] = [];
 
   constructor(engine: DeerEngine, container: HTMLElement, mode: DeerSceneMode) {
     this.engine = engine;
@@ -66,6 +75,7 @@ export class DeerScene {
     const renderer = new WebGLRenderer();
     renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
+    this.canvas = new WebCanvas(renderer.domElement);
     this._renderer = renderer;
 
     this.control = new Control(this.mainCamera, this._renderer.domElement);
@@ -75,6 +85,7 @@ export class DeerScene {
 
   init() {
     this.registerManager(new ComponentManager());
+    this.registerManager(new InputManager());
     this.isInitialized = true;
   }
 
@@ -97,13 +108,27 @@ export class DeerScene {
     this._viewHelper.render(this._renderer);
     this._renderer.autoClear = true;
     this.control.update(deltaTime);
+    const inputManager = this.getManager(InputManager)!;
+    inputManager.update();
 
     const componentManager = this.getManager(ComponentManager);
+
+    // fire 'onStart'
     componentManager.callScriptOnStart();
+
+    // update physics and fire 'onFixedUpdate'
     if (this.engine._physicsInitialized) {
       this.physicsScene.update(deltaTime);
     }
+
+    // fire 'onPointerXXX'
+    this.engine._physicsInitialized && inputManager._firePointerScript(this);
+
+    // fire 'onUpdate'
     componentManager.callScriptOnUpdate(deltaTime);
+
+    // fire 'onPointerXXX'
+    inputManager._firePointerScript(this);
   };
 
   private registerManager<T extends AbstractSceneManager>(manager: T) {
@@ -111,6 +136,9 @@ export class DeerScene {
     manager.engine = this.engine;
     manager.scene = this;
     manager.init();
+    if (AbstractSceneManager.prototype.update !== manager.update) {
+      this._updateManagers.push(manager);
+    }
   }
 
   public getManager<T extends AbstractSceneManager>(manager: new (...args: any[]) => T) {
@@ -121,6 +149,8 @@ export class DeerScene {
     this.mainCamera.aspect = width / height;
     this.mainCamera.updateProjectionMatrix();
     this._renderer?.setSize(width, height);
+    this.canvas.width = width;
+    this.canvas.height = height;
   };
 
   loadHDR = async (fileId: string) => {
@@ -134,7 +164,6 @@ export class DeerScene {
     this.rootEntities.push(entity);
     this.sceneObject.add(entity.sceneObject);
     this.active ? entity._processActive() : entity._processInActive;
-    console.log(this.sceneObject);
   };
 
   createRootEntity = (name?: string) => {
@@ -148,6 +177,10 @@ export class DeerScene {
   };
 
   destroy = () => {
+    if (this._isDestroyed) {
+      return;
+    }
+    this._isDestroyed = true;
     this.entityManager.destory();
     // this.scene.clear();
 

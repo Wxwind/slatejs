@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
-
 import { accessor, egclass } from '../decorator';
 import { MeshComponentJson } from './type';
+import { Entity } from '../entity';
 
 @egclass()
 export class MeshComponent extends ComponentBase<'MeshComponent'> {
@@ -19,7 +19,7 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
       console.warn('Mesh is created but owner is invalid, it will be dissociative');
       return;
     }
-    this._entity.sceneObject.add(this.mesh);
+    this.entity.sceneObject.add(this.mesh);
   }
 
   private get mesh(): THREE.Mesh {
@@ -32,15 +32,21 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     return count;
   }
 
-  _onAwake: () => void = () => {
+  public set color(v: THREE.Color) {
+    (this.mesh.material as THREE.MeshStandardMaterial).color = v;
+  }
+
+  constructor(entity: Entity) {
+    super(entity);
     const geometry = new THREE.BoxGeometry();
     const mat = new THREE.MeshStandardMaterial();
-
     const cube = new THREE.Mesh(geometry, mat);
     cube.updateMatrix();
 
     this.mesh = cube;
-  };
+  }
+
+  _onAwake: () => void = () => {};
 
   _onEnable: () => void = () => {};
 

@@ -11,11 +11,16 @@ import {
   DynamicRigidbodyComponent,
   BoxCollider,
   THREE,
+  CharacterControllerComponent,
+  ResourceManager,
+  IVector3,
 } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
 import { Message } from '@arco-design/web-react';
 import { FileUpload } from '@/components';
 import { useCutsceneEditorStore, useEngineStore } from '@/store';
+import { ControllerScript } from '@/scripts/ControllerScript';
+import { ShootScript } from '@/scripts';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -66,23 +71,35 @@ export const Header: FC<HeaderProps> = (props) => {
     downLoad(file);
   };
 
-  const handleCreateEntity = () => {
+  const handleCreateCCT = () => {
     if (isNil(scene)) {
       console.error('create entity failed: no activated scene');
       return;
     }
-    const e = scene.entityManager.createEntity('Cube', scene.entityManager.selectedEntity);
+    const e = scene.entityManager.createEntity('Soldier', scene.entityManager.selectedEntity);
     e.transform.position = {
       x: 0,
-      y: 5,
+      y: 3,
       z: 0,
     };
-    console.log('create cube');
-    e.addComponentByNew(MeshComponent);
-    const rb = e.addComponentByNew(DynamicRigidbodyComponent);
+
+    const loadModel = async (address: string) => {
+      const obj = await e.engine.getManager(ResourceManager).loadModelAsync(address);
+      if (!obj) {
+        console.error(`load model failed: ${address}`);
+        return;
+      }
+      e.sceneObject.add(obj);
+    };
+    loadModel('/model/people.glb');
+
     const boxCollider = new BoxCollider();
     boxCollider.size = new THREE.Vector3(1, 1, 1);
-    rb.addCollider(boxCollider);
+
+    const cct = e.addComponentByNew(CharacterControllerComponent);
+    cct.addCollider(boxCollider);
+    const controllerScript = e.addComponentByNew(ControllerScript);
+    const shooter = e.addComponentByNew(ShootScript);
   };
 
   const handleCreateFloor = () => {
@@ -97,6 +114,36 @@ export const Header: FC<HeaderProps> = (props) => {
       z: 20,
     };
     e.addComponentByNew(MeshComponent);
+    const rb = e.addComponentByNew(StaticRigidbodyComponent);
+    const boxCollider = new BoxCollider();
+    boxCollider.size = new THREE.Vector3(20, 1, 20);
+    rb.addCollider(boxCollider);
+    handleCreateSlope();
+  };
+
+  const handleCreateSlope = () => {
+    if (isNil(scene)) {
+      console.error('create entity failed: no activated scene');
+      return;
+    }
+    const e = scene.entityManager.createEntity('Slope', scene.entityManager.selectedEntity);
+    e.transform.scale = {
+      x: 20,
+      y: 1,
+      z: 20,
+    };
+    e.transform.rotation = {
+      x: 20,
+      y: 0,
+      z: 0,
+    };
+    e.transform.position = {
+      x: 0,
+      y: 0,
+      z: -6,
+    };
+    const mesh = e.addComponentByNew(MeshComponent);
+    mesh.color = new THREE.Color(0xffff00);
     const rb = e.addComponentByNew(StaticRigidbodyComponent);
     const boxCollider = new BoxCollider();
     boxCollider.size = new THREE.Vector3(20, 1, 20);
@@ -200,9 +247,9 @@ export const Header: FC<HeaderProps> = (props) => {
           >
             <Menubar.Item
               className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
-              onSelect={handleCreateEntity}
+              onSelect={handleCreateCCT}
             >
-              New Cube
+              New Character
             </Menubar.Item>
             <Menubar.Item
               className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"

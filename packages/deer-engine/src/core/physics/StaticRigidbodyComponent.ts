@@ -11,7 +11,7 @@ export class StaticRigidbodyComponent extends RigidbodyComponent {
   constructor(entity: Entity) {
     super(entity);
 
-    this._nativeRigidbody = PhysicsScene._physics.createStaticRigidBody(
+    this._nativeRigidbody = PhysicsScene._nativePhysics.createStaticRigidBody(
       this.sceneObject.position,
       this.sceneObject.quaternion
     );

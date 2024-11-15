@@ -5,6 +5,8 @@ import { TransformComponent } from './TransformComponent';
 import { StaticRigidbodyComponent } from '../physics/StaticRigidbodyComponent';
 import { DynamicRigidbodyComponent } from '../physics/DynamicRigidbodyComponent';
 import { IVector3 } from '@/type';
+import { CharacterControllerComponent } from '../physics/CharacterControllerComponent';
+import { Script } from './Script';
 
 export type ModelComponentJson = {
   assetAddress: string;
@@ -46,6 +48,7 @@ export type ComponentTypeToJsonObjMap = {
   Script: any;
   StaticRigidbodyComponent: any;
   DynamicRigidbodyComponent: any;
+  CharacterControllerComponent: any;
 };
 
 type ComponentDataMap = {
@@ -58,12 +61,14 @@ type ComponentDataMap = {
 
 export type ComponentType = keyof ComponentTypeToJsonObjMap;
 export type Component =
+  | Script
   | MeshComponent
   | TransformComponent
   | CameraComponent
   | ModelComponent
   | StaticRigidbodyComponent
-  | DynamicRigidbodyComponent;
+  | DynamicRigidbodyComponent
+  | CharacterControllerComponent;
 
 export type ComponentData<T extends ComponentType = ComponentType> = ComponentDataMap[T];
 export type ComponentJson<T extends ComponentType = ComponentType> = ComponentTypeToJsonObjMap[T];

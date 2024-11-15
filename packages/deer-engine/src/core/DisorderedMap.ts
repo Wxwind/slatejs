@@ -53,6 +53,7 @@ export class DisorderedArray<T> {
   deleteByIndex(index: number): T | undefined {
     const elements = this._elements;
     let end: T | undefined;
+
     if (this._isLooping) {
       this._elements[index] = null as T;
       this._blankCount++;

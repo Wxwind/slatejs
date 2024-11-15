@@ -9,7 +9,7 @@ const StaticRigidbodyComponentEditorComp: EditorComp<StaticRigidbodyComponent> =
   const refresh = useDumbState();
   useBindSignal(target.signals.componentUpdated, refresh);
 
-  return <div>aaa</div>;
+  return <div>StaticRigidbodyComponent</div>;
 };
 
 registerEditor(StaticRigidbodyComponent, StaticRigidbodyComponentEditorComp);

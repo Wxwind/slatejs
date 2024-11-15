@@ -4,6 +4,7 @@ import { FVector3 } from '@/math';
 import { TransformComponentJson } from './type';
 import { FVector4 } from '@/math/Vector4';
 import { IVector3, IVector4 } from '@/type';
+import { deg2rad, rad2deg } from '@/util';
 
 @egclass()
 export class TransformComponent extends ComponentBase<'TransformComponent'> {
@@ -25,12 +26,13 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
 
   @accessor({ type: FVector3 })
   public get rotation(): FVector3 {
-    return new FVector3().copyFrom(this.sceneObject.rotation);
+    const euler = this.sceneObject.rotation;
+    return new FVector3().set(rad2deg(euler.x), rad2deg(euler.y), rad2deg(euler.z));
   }
 
   @accessor({ type: FVector3 })
   public set rotation(v: IVector3) {
-    this.sceneObject.rotation.set(v.x, v.y, v.z);
+    this.sceneObject.rotation.set(deg2rad(v.x), deg2rad(v.y), deg2rad(v.z));
     this.signals.componentUpdated.emit();
     this._updateFlag = true;
   }
@@ -71,7 +73,7 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
 
   updateByJson(data: TransformComponentJson, sync: boolean) {
     this.sceneObject.position.set(data.position.x, data.position.y, data.position.z);
-    this.sceneObject.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
+    this.sceneObject.rotation.set(deg2rad(data.rotation.x), deg2rad(data.rotation.y), deg2rad(data.rotation.z));
     this.sceneObject.scale.set(data.scale.x, data.scale.y, data.scale.z);
     this._updateFlag = true;
     sync && this.signals.componentUpdated.emit();

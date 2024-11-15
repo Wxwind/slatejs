@@ -1,20 +1,21 @@
 import { PxPhysicsMaterial } from '@/module/physics/PxPhysicsMaterial';
 import { PhysicsScene } from './PhysicsScene';
-import { PxCombineMode } from '@/module/physics/enum';
+import { PhysicsCombineMode } from '@/core/physics/enum';
+import { IPhysicsMaterial } from './interface';
 
-export class PhysicsMateral {
+export class PhysicsMaterial implements IPhysicsMaterial {
   _nativeMaterial: PxPhysicsMaterial;
 
   private _bounciness: number = 0.1;
   private _dynamicFriction: number = 0.1;
   private _staticFriction: number = 0.1;
-  private _bounceCombine: PxCombineMode = PxCombineMode.AVERAGE;
-  private _frictionCombine: PxCombineMode = PxCombineMode.AVERAGE;
+  private _bounceCombine: PhysicsCombineMode = PhysicsCombineMode.AVERAGE;
+  private _frictionCombine: PhysicsCombineMode = PhysicsCombineMode.AVERAGE;
 
   private _isDestroyed: boolean = false;
 
   constructor() {
-    this._nativeMaterial = PhysicsScene._physics.createPhysicMaterial(
+    this._nativeMaterial = PhysicsScene._nativePhysics.createPhysicMaterial(
       this._staticFriction,
       this._dynamicFriction,
       this._bounciness,
@@ -43,11 +44,11 @@ export class PhysicsMateral {
     this._nativeMaterial.setDynamicFriction(value);
   }
 
-  setFrictionCombineMode(mode: PxCombineMode) {
+  setFrictionCombineMode(mode: PhysicsCombineMode) {
     this._nativeMaterial.setFrictionCombineMode(mode);
   }
 
-  setBouncinessCombineMode(mode: PxCombineMode) {
+  setBouncinessCombineMode(mode: PhysicsCombineMode) {
     this._nativeMaterial.setRestitutionCombineMode(mode);
   }
 

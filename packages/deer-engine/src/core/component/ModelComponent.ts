@@ -3,7 +3,7 @@ import { ComponentBase } from './ComponentBase';
 import { isNil } from '@/util';
 
 import { egclass } from '../decorator';
-import { ResourceManager } from '../manager/AssetManager';
+import { ResourceManager } from '../manager/ResourceManager';
 import { ModelComponentJson } from './type';
 
 @egclass()
@@ -24,7 +24,7 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
       console.warn('Model is created but owner is invalid, it will be dissociative');
       return;
     }
-    this._entity.sceneObject.add(this._model);
+    this.entity.sceneObject.add(this._model);
   }
 
   private get model(): THREE.Object3D | undefined {

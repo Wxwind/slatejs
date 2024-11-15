@@ -9,6 +9,13 @@ export function toPxVec3(src: IVector3, out: PhysX.PxVec3) {
   return out;
 }
 
+export function toPxExtendVec3(src: IVector3, out: PhysX.PxExtendedVec3) {
+  out.x = src.x;
+  out.y = src.y;
+  out.z = src.z;
+  return out;
+}
+
 export function toPxQuat(src: Quaternion, out: PhysX.PxQuat) {
   out.x = src.x;
   out.y = src.y;

@@ -1,20 +1,20 @@
 import { PxPhysics } from '../PxPhysics';
 import PhysX from 'physx-js-webidl';
-import { PxShapeFlag } from '../enum';
+import { PhysicsShapeFlag } from '../../../core/physics/enum';
 import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
 import { Vector3, Quaternion } from 'three';
 import { toPxTransform } from '../utils';
+import { ICollider } from '@/core/physics/interface';
 
-export abstract class PxPhysicsCollider {
-  abstract _pxGeometry: PhysX.PxGeometry;
+export abstract class PxPhysicsCollider implements ICollider {
+  protected abstract _pxGeometry: PhysX.PxGeometry;
   _pxMaterial!: PhysX.PxMaterial;
   _pxShape!: PhysX.PxShape;
 
   protected _pxPhysics: PhysX.PxPhysics;
   protected _px: typeof PhysX & typeof PhysX.PxTopLevelFunctions;
 
-  /** @readonly */
-  _shapeFlag: PxShapeFlag = PxShapeFlag.SCENE_QUERY_SHAPE | PxShapeFlag.SIMULATION_SHAPE;
+  protected _shapeFlag: PhysicsShapeFlag = PhysicsShapeFlag.SCENE_QUERY_SHAPE | PhysicsShapeFlag.SIMULATION_SHAPE;
 
   protected _position = new Vector3();
   protected _rotation = new Quaternion();
@@ -41,17 +41,17 @@ export abstract class PxPhysicsCollider {
     this._pxShape.setSimulationFilterData(this._filterData);
   }
 
-  setTrigger(value: boolean) {
-    this.setShapeFlag(PxShapeFlag.SIMULATION_SHAPE, !value);
-    this.setShapeFlag(PxShapeFlag.TRIGGER_SHAPE, value);
+  setIsTrigger(value: boolean) {
+    this.setShapeFlag(PhysicsShapeFlag.SIMULATION_SHAPE, !value);
+    this.setShapeFlag(PhysicsShapeFlag.TRIGGER_SHAPE, value);
   }
 
-  setShapeFlags(flags: PxShapeFlag) {
+  setShapeFlags(flags: PhysicsShapeFlag) {
     this._shapeFlag = flags;
     this._pxShape.setFlags(new this._px.PxShapeFlags(flags));
   }
 
-  setShapeFlag(flag: PxShapeFlag, value: boolean) {
+  setShapeFlag(flag: PhysicsShapeFlag, value: boolean) {
     value ? (this._shapeFlag |= flag) : (this._shapeFlag ^= flag);
     this._pxShape.setFlag(flag as unknown as PhysX.PxShapeFlagEnum, value);
   }
