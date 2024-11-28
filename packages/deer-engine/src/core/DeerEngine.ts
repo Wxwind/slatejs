@@ -8,6 +8,7 @@ import { PxPhysics } from '../module/physics';
 
 export class DeerEngine {
   private _time = new Time();
+  private _isPaused = true;
 
   public get time() {
     return this._time;
@@ -35,8 +36,6 @@ export class DeerEngine {
     this.registerManager(new ResourceManager());
     this.registerManager(new CommandManager());
     this.registerManager(new SceneManager());
-
-    this.update();
   }
 
   async _initialize() {
@@ -53,6 +52,22 @@ export class DeerEngine {
 
   public getManager<T extends AbstractManager>(manager: new () => T) {
     return this._managerMap.get(manager) as T;
+  }
+
+  public run() {
+    this.resume();
+  }
+
+  public pause() {
+    if (this._isPaused) return;
+    this._isPaused = true;
+    cancelAnimationFrame(this._animateID);
+  }
+
+  public resume() {
+    if (!this._isPaused) return;
+    this._isPaused = false;
+    this._animateID = requestAnimationFrame(this.update);
   }
 
   private update = () => {

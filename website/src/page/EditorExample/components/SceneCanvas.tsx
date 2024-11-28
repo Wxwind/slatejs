@@ -31,6 +31,7 @@ export const SceneCanvas: FC = (props) => {
       const scene = sceneManager.createScene('Empty Scene', 'editor');
       sceneManager.mainScene = scene;
       scene?.loadHDR('/hdr/default.hdr');
+      deerEngine.run();
 
       cutsceneEditor = new CutsceneEditor(deerEngine);
 

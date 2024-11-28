@@ -1,9 +1,5 @@
 import { FederatedMouseEvent } from './FederatedMouseEvent';
 
-/**
- * A {@link PIXI.FederatedEvent} for wheel events.
- * @memberof PIXI
- */
 export class FederatedWheelEvent extends FederatedMouseEvent {
   /**
    * The units of `deltaX`, `deltaY`, and `deltaZ`. This is one of `DOM_DELTA_LINE`,

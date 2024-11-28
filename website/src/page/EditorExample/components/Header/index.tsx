@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { transformKeymap } from './keymap';
 import {
@@ -31,6 +31,7 @@ export const Header: FC<HeaderProps> = (props) => {
 
   const { engine: deerEngine } = useEngineStore();
   const { cutsceneEditor } = useCutsceneEditorStore();
+  const [isRunning, setIsRunning] = useState(false);
 
   const handleUploadFile = async (fileList: FileList) => {
     if (!deerEngine) return;
@@ -169,6 +170,18 @@ export const Header: FC<HeaderProps> = (props) => {
     console.log(deerEngine.getManager(SceneManager).mainScene?.rootEntities);
   };
 
+  const handleRunEngine = () => {
+    if (!deerEngine) return;
+    // deerEngine.resume();
+    setIsRunning(true);
+  };
+
+  const handlePauseEngine = () => {
+    if (!deerEngine) return;
+    // deerEngine.pause();
+    setIsRunning(false);
+  };
+
   return (
     <Menubar.Root className="flex p-1 bg-gray-300">
       <Menubar.Menu>
@@ -299,6 +312,35 @@ export const Header: FC<HeaderProps> = (props) => {
               onSelect={logSceneNode}
             >
               LogSceneNode
+            </Menubar.Item>
+          </Menubar.Content>
+        </Menubar.Portal>
+      </Menubar.Menu>
+
+      <Menubar.Menu>
+        <Menubar.Trigger className="text-sm py-2 px-3 outline-none select-none leading-none rounded  flex items-center justify-between">
+          Run
+        </Menubar.Trigger>
+        <Menubar.Portal>
+          <Menubar.Content
+            className="min-w-[220px] bg-gray-300 rounded-md p-1"
+            align="start"
+            sideOffset={5}
+            alignOffset={-3}
+          >
+            <Menubar.Item
+              className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
+              onSelect={handleRunEngine}
+              disabled={isRunning}
+            >
+              Play
+            </Menubar.Item>
+            <Menubar.Item
+              className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
+              onSelect={handlePauseEngine}
+              disabled={!isRunning}
+            >
+              Pause
             </Menubar.Item>
           </Menubar.Content>
         </Menubar.Portal>

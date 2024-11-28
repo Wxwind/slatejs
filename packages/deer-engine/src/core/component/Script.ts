@@ -43,6 +43,7 @@ export class Script extends ComponentBase {
     if (this.onFixedUpdate !== prototype.onFixedUpdate) {
       componentManger.addOnFixedUpdateScript(this);
     }
+    this.entity._addScript(this);
 
     this.onEnable();
   }
@@ -60,6 +61,7 @@ export class Script extends ComponentBase {
     if (this.onFixedUpdate !== prototype.onFixedUpdate) {
       componentManger.removeOnFixedUpdateScript(this);
     }
+    this.entity._removeScript(this);
 
     this.onDisable();
   }

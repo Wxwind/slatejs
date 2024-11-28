@@ -111,7 +111,7 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     this.id = genUUID(UUID_PREFIX_ENTITY);
     const transformComp = new TransformComponent(this);
     transformComp.entity = this;
-    this.addComponent(transformComp);
+    this._addComponent(transformComp);
     this.transform = transformComp;
     this.sceneObject = new Object3D();
   }
@@ -185,11 +185,12 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     const comp = new compCtor(this);
     comp._setActive(true);
 
+    this.compMap.set(comp.id, comp);
     this.compArray.push(comp);
     return comp;
   };
 
-  addComponent = (comp: Component) => {
+  _addComponent = (comp: Component) => {
     comp.entity = this;
     comp._setActive(true);
     this.compMap.set(comp.id, comp);
@@ -315,7 +316,7 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     this.name = data.name;
     for (const compData of data.components) {
       const comp = deserializeComponent(compData, this);
-      this.addComponent(comp);
+      this._addComponent(comp);
     }
     for (const childData of data.children) {
       const entity = new Entity(this.scene);

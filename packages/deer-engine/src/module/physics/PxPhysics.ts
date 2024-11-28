@@ -35,8 +35,7 @@ export class PxPhysics {
     // });
 
     //  await scriptPromise;
-
-    const physX = await PhysX();
+    const physX = await PhysX({});
     this._physX = physX;
     window.PhysX = physX;
     this._initialize(physX);

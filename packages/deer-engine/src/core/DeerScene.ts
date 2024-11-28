@@ -126,9 +126,6 @@ export class DeerScene {
 
     // fire 'onUpdate'
     componentManager.callScriptOnUpdate(deltaTime);
-
-    // fire 'onPointerXXX'
-    inputManager._firePointerScript(this);
   };
 
   private registerManager<T extends AbstractSceneManager>(manager: T) {
