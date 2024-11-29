@@ -1,5 +1,6 @@
 import type { JestConfigWithTsJest } from 'ts-jest';
 
+// global jest config for vscode to run jest automatically
 const config: JestConfigWithTsJest = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
