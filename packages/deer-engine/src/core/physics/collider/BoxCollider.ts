@@ -1,10 +1,10 @@
-import { PxPhysicsBoxCollider } from '@/module/physics/collider';
 import { Collider } from './Collider';
 import { PhysicsScene } from '@/core/physics/PhysicsScene';
 import { Vector3 } from 'three';
+import { IBoxCollider } from '../interface';
 
 export class BoxCollider extends Collider {
-  _nativeCollider: PxPhysicsBoxCollider;
+  _nativeCollider: IBoxCollider;
 
   private _size: Vector3 = new Vector3(1, 1, 1);
   public get size(): Vector3 {

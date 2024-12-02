@@ -2,8 +2,9 @@ import PhysX from 'physx-js-webidl';
 import { PxPhysicsCollider } from './PxPhysicsCollider';
 import { PxPhysics } from '../PxPhysics';
 import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
+import { IBoxCollider, ISphereCollider } from '@/core/physics/interface';
 
-export class PxPhysicsSphereCollider extends PxPhysicsCollider {
+export class PxPhysicsSphereCollider extends PxPhysicsCollider implements ISphereCollider {
   _pxGeometry: PhysX.PxSphereGeometry;
 
   constructor(pxPhysics: PxPhysics, radius: number, material: PxPhysicsMaterial) {

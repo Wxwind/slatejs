@@ -1,10 +1,10 @@
-import { PxPhysicsCollider } from '@/module/physics/collider';
 import { RigidbodyComponent } from '../RigidbodyComponent';
 import { Quaternion, Vector3 } from 'three';
 import { PhysicsMaterial as PhysicsMaterial } from '../PhysicsMaterial';
+import { ICollider } from '../interface';
 
 export abstract class Collider {
-  abstract _nativeCollider: PxPhysicsCollider;
+  abstract _nativeCollider: ICollider;
   _id: number;
 
   private static _idGenerator = 0;

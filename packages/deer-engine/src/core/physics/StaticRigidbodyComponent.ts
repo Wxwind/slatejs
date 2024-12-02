@@ -2,11 +2,12 @@ import { PhysicsScene } from './PhysicsScene';
 import { Entity } from '../entity';
 import { PxPhysicsStaticRigidBody } from '../../module/physics/PxPhysicsStaticRigidBody';
 import { RigidbodyComponent } from './RigidbodyComponent';
+import { IStaticRigidBody } from './interface';
 
 export class StaticRigidbodyComponent extends RigidbodyComponent {
   type = 'StaticRigidbodyComponent' as const;
 
-  _nativeRigidbody: PxPhysicsStaticRigidBody;
+  _nativeRigidbody: IStaticRigidBody;
 
   constructor(entity: Entity) {
     super(entity);

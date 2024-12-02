@@ -1,7 +1,23 @@
-import { Quaternion } from 'three';
-import { PhysicsControllerNonWalkableModeEnum, PhysicsCombineMode, PhysicsControllerCollisionFlag } from './enum';
+import { Quaternion, Vector3 } from 'three';
+import { PhysicsControllerNonWalkableModeEnum, PhysicsCombineMode, CollisionDetectionMode } from './enum';
 import PhysX from 'physx-js-webidl';
 import { IVector3 } from '@/type';
+
+export interface IPhysics {
+  initialize(): Promise<void>;
+  createScene(gravity: IVector3): IPhysicsScene;
+  createStaticRigidBody(position: Vector3, rotation: Quaternion): IStaticRigidBody;
+  createDynamicRigidBody(position: Vector3, rotation: Quaternion): IDynamicRigidbody;
+  createPhysicMaterial(
+    staticFriction: number,
+    dynamicFriction: number,
+    restitution: number,
+    frictionCombineMode: PhysicsCombineMode,
+    restitutionCombineMode: PhysicsCombineMode
+  ): IPhysicsMaterial;
+  createBoxCollider(size: Vector3, material: IPhysicsMaterial): IBoxCollider;
+  createSphereCollider(radius: number, material: IPhysicsMaterial): ISphereCollider;
+}
 
 export interface IRigidbody {
   /**
@@ -29,6 +45,30 @@ export interface IRigidbody {
    * Deletes the collider.
    */
   destroy(): void;
+}
+
+export interface IStaticRigidBody extends IRigidbody {}
+
+export interface IDynamicRigidbody extends IRigidbody {
+  setLinearDamping(value: number): void;
+  setAngularDamping(value: number): void;
+  setLinearVelocity(value: Vector3): void;
+  setAngularVelocity(value: Vector3): void;
+  setCenterOfMass(position: Vector3, rotation: Quaternion): void;
+  setInertiaTensor(value: Vector3): void;
+  setMaxAngularVelocity(value: number): void;
+  setMaxDepenetrationVelocity(value: number): void;
+  setSleepThreshold(value: number): void;
+  setSolverIterations(value: number): void;
+  setCollisionDetectionMode(value: CollisionDetectionMode): void;
+  setIsKinematic(value: boolean): void;
+  setConstraints(flags: number): void;
+  sleep(): void;
+  wakeUp(): void;
+  setMass(mass: number): void;
+  move(positionOrRotation: IVector3 | Quaternion, rotation?: Quaternion): void;
+  addForce(force: IVector3): void;
+  addTorque(torque: IVector3): void;
 }
 
 export interface ICollider {
@@ -66,10 +106,10 @@ export interface ICollider {
 
 export interface IPhysicsMaterial {
   /**
-   * Set the coefficient of bounciness.
+   * Set the coefficient of restitution.
    * @param value - The bounciness
    */
-  setBounciness(value: number): void;
+  setRestitution(value: number): void;
   /**
    * Set the coefficient of dynamic friction.
    * @param value - The dynamic friction
@@ -81,10 +121,10 @@ export interface IPhysicsMaterial {
    */
   setStaticFriction(value: number): void;
   /**
-   * Set the bounciness combine mode.
+   * Set the restitution combine mode.
    * @param value - The combine mode
    */
-  setBouncinessCombineMode(value: PhysicsCombineMode): void;
+  setRestitutionCombineMode(value: PhysicsCombineMode): void;
   /**
    * Set the friction combine mode.
    * @param value - The combine mode
@@ -307,4 +347,12 @@ export interface IDynamicRigidbody extends IRigidbody {
    * Forces a collider to wake up.
    */
   wakeUp(): void;
+}
+
+export interface IBoxCollider extends ICollider {
+  setSize(size: IVector3): void;
+}
+
+export interface ISphereCollider extends ICollider {
+  setRadius(radius: number): void;
 }

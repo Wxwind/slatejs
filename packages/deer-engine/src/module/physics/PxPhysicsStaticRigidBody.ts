@@ -1,10 +1,10 @@
 import PhysX from 'physx-js-webidl';
-import { PxPhysics } from './PxPhysics';
 import { PxPhysicsRigidBody } from './PxPhysicsRigidBody';
 import { Quaternion, Vector3 } from 'three';
+import { IStaticRigidBody } from '@/core/physics/interface';
 
 /** wrapper of PhysX.PxRigidStatic */
-export class PxPhysicsStaticRigidBody extends PxPhysicsRigidBody {
+export class PxPhysicsStaticRigidBody extends PxPhysicsRigidBody implements IStaticRigidBody {
   _pxRigidBody: PhysX.PxRigidStatic;
 
   constructor(

@@ -7,6 +7,15 @@ import { PhysicsCombineMode } from '../../core/physics/enum';
 import { PxPhysicsMaterial } from './PxPhysicsMaterial';
 import { PxPhysicsBoxCollider, PxPhysicsSphereCollider } from './collider';
 import { IVector3 } from '@/type';
+import {
+  IBoxCollider,
+  IDynamicRigidbody,
+  IPhysics,
+  IPhysicsMaterial,
+  IPhysicsScene,
+  ISphereCollider,
+  IStaticRigidBody,
+} from '@/core/physics/interface';
 
 declare global {
   interface Window {
@@ -15,7 +24,7 @@ declare global {
 }
 
 /** wrapper of PhysX.PxPhysics */
-export class PxPhysics {
+export class PxPhysics implements IPhysics {
   private _isInitialized = false;
 
   _pxPhysics!: PhysX.PxPhysics;
@@ -70,17 +79,17 @@ export class PxPhysics {
     onTriggerBegin?: (obj1: number, obj2: number) => void,
     onTriggerEnd?: (obj1: number, obj2: number) => void,
     onTriggerStay?: (obj1: number, obj2: number) => void
-  ) {
+  ): IPhysicsScene {
     const scene = new PxPhysicsScene(this, gravity);
     return scene;
   }
 
-  createStaticRigidBody(position: Vector3, rotation: Quaternion) {
+  createStaticRigidBody(position: Vector3, rotation: Quaternion): IStaticRigidBody {
     const rb = new PxPhysicsStaticRigidBody(this._physX, this._pxPhysics, position, rotation);
     return rb;
   }
 
-  createDynamicRigidBody(position: Vector3, rotation: Quaternion) {
+  createDynamicRigidBody(position: Vector3, rotation: Quaternion): IDynamicRigidbody {
     const rb = new PxPhysicsDynamicRigidBody(this._physX, this._pxPhysics, position, rotation);
     return rb;
   }
@@ -91,7 +100,7 @@ export class PxPhysics {
     restitution: number,
     frictionCombineMode: PhysicsCombineMode,
     restitutionCombineMode: PhysicsCombineMode
-  ) {
+  ): IPhysicsMaterial {
     return new PxPhysicsMaterial(
       this,
       staticFriction,
@@ -102,11 +111,11 @@ export class PxPhysics {
     );
   }
 
-  createBoxCollider(size: Vector3, material: PxPhysicsMaterial) {
+  createBoxCollider(size: Vector3, material: PxPhysicsMaterial): IBoxCollider {
     return new PxPhysicsBoxCollider(this, size, material);
   }
 
-  createSphereCollider(radius: number, material: PxPhysicsMaterial) {
+  createSphereCollider(radius: number, material: PxPhysicsMaterial): ISphereCollider {
     return new PxPhysicsSphereCollider(this, radius, material);
   }
 }

@@ -1,10 +1,9 @@
-import { PxPhysicsMaterial } from '@/module/physics/PxPhysicsMaterial';
 import { PhysicsScene } from './PhysicsScene';
 import { PhysicsCombineMode } from '@/core/physics/enum';
 import { IPhysicsMaterial } from './interface';
 
 export class PhysicsMaterial implements IPhysicsMaterial {
-  _nativeMaterial: PxPhysicsMaterial;
+  _nativeMaterial: IPhysicsMaterial;
 
   private _bounciness: number = 0.1;
   private _dynamicFriction: number = 0.1;
@@ -24,7 +23,7 @@ export class PhysicsMaterial implements IPhysicsMaterial {
     );
   }
 
-  setBounciness(value: number) {
+  setRestitution(value: number) {
     this._nativeMaterial.setRestitution(value);
   }
 
@@ -48,7 +47,7 @@ export class PhysicsMaterial implements IPhysicsMaterial {
     this._nativeMaterial.setFrictionCombineMode(mode);
   }
 
-  setBouncinessCombineMode(mode: PhysicsCombineMode) {
+  setRestitutionCombineMode(mode: PhysicsCombineMode) {
     this._nativeMaterial.setRestitutionCombineMode(mode);
   }
 

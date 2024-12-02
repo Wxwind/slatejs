@@ -1,9 +1,9 @@
-import { PxPhysicsSphereCollider } from '@/module/physics/collider';
 import { Collider } from './Collider';
 import { PhysicsScene } from '@/core/physics/PhysicsScene';
+import { ISphereCollider } from '../interface';
 
 export class SphereCollider extends Collider {
-  _nativeCollider: PxPhysicsSphereCollider;
+  _nativeCollider: ISphereCollider;
 
   private _radius: number = 0;
   public get radius(): number {

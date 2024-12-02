@@ -1,12 +1,9 @@
 import { DeerScene } from '../DeerScene';
 import { RigidbodyComponent } from './RigidbodyComponent';
-
 import { ComponentManager } from '../manager';
-import { PxPhysics } from '../../module/physics';
-import { PxPhysicsScene } from '../../module/physics/PxPhysicsScene';
 import { DisorderedArray } from '../DisorderedMap';
 import { Vector3 } from 'three';
-import { IPhysicsScene } from './interface';
+import { IPhysics, IPhysicsScene } from './interface';
 import { CharacterControllerComponent } from './CharacterControllerComponent';
 
 export class PhysicsScene {
@@ -21,7 +18,7 @@ export class PhysicsScene {
 
   private _scene: DeerScene;
 
-  static _nativePhysics: PxPhysics;
+  static _nativePhysics: IPhysics;
   _nativePhysicsScene: IPhysicsScene;
 
   private _rigidbodies = new DisorderedArray<RigidbodyComponent>();

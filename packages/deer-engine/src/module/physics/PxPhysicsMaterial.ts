@@ -1,9 +1,10 @@
 import PhysX from 'physx-js-webidl';
 import { PhysicsCombineMode } from '../../core/physics/enum';
 import { PxPhysics } from './PxPhysics';
+import { IPhysicsMaterial } from '@/core/physics/interface';
 
 /** wrapper of PhysX.Material */
-export class PxPhysicsMaterial {
+export class PxPhysicsMaterial implements IPhysicsMaterial {
   _pxMaterial: PhysX.PxMaterial;
 
   constructor(

@@ -110,11 +110,11 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     this._pxRigidBody.wakeUp();
   }
 
-  setMass(mass: number) {
+  setMass(mass: number): void {
     this._pxRigidBody.setMass(mass);
   }
 
-  move(positionOrRotation: IVector3 | Quaternion, rotation?: Quaternion) {
+  move(positionOrRotation: IVector3 | Quaternion, rotation?: Quaternion): void {
     if (rotation) {
       this._pxRigidBody.setKinematicTarget(toPxTransform(positionOrRotation, rotation));
       return;
@@ -130,7 +130,7 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     }
   }
 
-  addForce(force: IVector3) {
+  addForce(force: IVector3): void {
     const tempVec1 = this._tempVec1;
     tempVec1.x = force.x;
     tempVec1.y = force.y;
@@ -138,7 +138,7 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     this._pxRigidBody.addForce(tempVec1);
   }
 
-  addTorque(torque: IVector3) {
+  addTorque(torque: IVector3): void {
     const tempVec1 = this._tempVec1;
     tempVec1.x = torque.x;
     tempVec1.y = torque.y;
