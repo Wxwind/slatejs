@@ -2,8 +2,9 @@ import PhysX from 'physx-js-webidl';
 import { PxPhysicsCollider } from './PxPhysicsCollider';
 import { PxPhysics } from '../PxPhysics';
 import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
+import { ICapsuleCollider } from '@/core/physics/interface';
 
-export class PxPhysicsCapsuleCollider extends PxPhysicsCollider {
+export class PxPhysicsCapsuleCollider extends PxPhysicsCollider implements ICapsuleCollider {
   _pxGeometry: PhysX.PxCapsuleGeometry;
   _radius: number;
   _halfHeight: number;

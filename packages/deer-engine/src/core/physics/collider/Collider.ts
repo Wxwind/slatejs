@@ -38,6 +38,15 @@ export abstract class Collider {
     this._nativeCollider.setRotation(v);
   }
 
+  private _contactOffset: number = 0.02;
+  public get contactOffset(): number {
+    return this._contactOffset;
+  }
+  public set contactOffset(v: number) {
+    this._contactOffset = v;
+    this._nativeCollider.setContactOffset(v);
+  }
+
   /** @readonly */
   _attachedRigidbody: RigidbodyComponent | null = null;
 

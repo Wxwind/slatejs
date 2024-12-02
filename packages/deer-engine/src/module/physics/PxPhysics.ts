@@ -5,14 +5,21 @@ import { Quaternion, Vector3 } from 'three';
 import { PxPhysicsDynamicRigidBody } from './PxPhysicsDynamicRigidBody';
 import { PhysicsCombineMode } from '../../core/physics/enum';
 import { PxPhysicsMaterial } from './PxPhysicsMaterial';
-import { PxPhysicsBoxCollider, PxPhysicsSphereCollider } from './collider';
+import {
+  PxPhysicsBoxCollider,
+  PxPhysicsCapsuleCollider,
+  PxPhysicsPlaneCollider,
+  PxPhysicsSphereCollider,
+} from './collider';
 import { IVector3 } from '@/type';
 import {
   IBoxCollider,
+  ICapsuleCollider,
   IDynamicRigidbody,
   IPhysics,
   IPhysicsMaterial,
   IPhysicsScene,
+  IPlaneCollider,
   ISphereCollider,
   IStaticRigidBody,
 } from '@/core/physics/interface';
@@ -44,6 +51,7 @@ export class PxPhysics implements IPhysics {
     // });
 
     //  await scriptPromise;
+    // await PhysX({ locateFile: () => wasmUrl })
     const physX = await PhysX({});
     this._physX = physX;
     window.PhysX = physX;
@@ -117,5 +125,13 @@ export class PxPhysics implements IPhysics {
 
   createSphereCollider(radius: number, material: PxPhysicsMaterial): ISphereCollider {
     return new PxPhysicsSphereCollider(this, radius, material);
+  }
+
+  createCapsuleCollider(radius: number, height: number, material: PxPhysicsMaterial): ICapsuleCollider {
+    return new PxPhysicsCapsuleCollider(this, radius, height, material);
+  }
+
+  createPlaneCollider(material: PxPhysicsMaterial): IPlaneCollider {
+    return new PxPhysicsPlaneCollider(this, material);
   }
 }

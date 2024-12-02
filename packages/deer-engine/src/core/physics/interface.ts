@@ -17,6 +17,8 @@ export interface IPhysics {
   ): IPhysicsMaterial;
   createBoxCollider(size: Vector3, material: IPhysicsMaterial): IBoxCollider;
   createSphereCollider(radius: number, material: IPhysicsMaterial): ISphereCollider;
+  createCapsuleCollider(radius: number, height: number, material: IPhysicsMaterial): ICapsuleCollider;
+  createPlaneCollider(material: IPhysicsMaterial): IPlaneCollider;
 }
 
 export interface IRigidbody {
@@ -334,3 +336,10 @@ export interface IBoxCollider extends ICollider {
 export interface ISphereCollider extends ICollider {
   setRadius(radius: number): void;
 }
+
+export interface ICapsuleCollider extends ICollider {
+  setRadius(radius: number): void;
+  setHeight(height: number): void;
+}
+
+export interface IPlaneCollider extends ICollider {}
