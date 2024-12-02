@@ -2,7 +2,7 @@ import { PhysicsScene } from './PhysicsScene';
 import { PhysicsCombineMode } from '@/core/physics/enum';
 import { IPhysicsMaterial } from './interface';
 
-export class PhysicsMaterial implements IPhysicsMaterial {
+export class PhysicsMaterial {
   _nativeMaterial: IPhysicsMaterial;
 
   private _bounciness: number = 0.1;
