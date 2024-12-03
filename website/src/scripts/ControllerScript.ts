@@ -7,7 +7,7 @@ import {
   THREE,
   PhysicsControllerCollisionFlag,
   objectToLocalQuaternion,
-  FVector3,
+  IVector3,
 } from 'deer-engine';
 
 export class ControllerScript extends Script {
@@ -90,7 +90,7 @@ export class ControllerScript extends Script {
   private calculateDisplacement(deltaTime: number, gravity: number) {
     const mass = this._mass;
 
-    const lrVector3 = FVector3.scale(
+    const lrVector3 = IVector3.scale(
       this._right,
       (this._inputXZ.x * this._moveForce * deltaTime) / mass,
       this._lrVelocity
@@ -98,7 +98,7 @@ export class ControllerScript extends Script {
 
     const yForce = this._inputY > 0 ? this._inputY * this._jumpForce : gravity;
     const Vy = (yForce * deltaTime) / mass;
-    const fbVector3 = FVector3.scale(
+    const fbVector3 = IVector3.scale(
       this._forward,
       (this._inputXZ.y * this._moveForce * deltaTime) / mass,
       this._fbVelocity
@@ -110,7 +110,7 @@ export class ControllerScript extends Script {
     currentVelocity.x = newVelocity.x;
     currentVelocity.z = newVelocity.z;
     currentVelocity.y = this._inputY > 0 ? Vy : currentVelocity.y + Vy;
-    FVector3.clampVector3(currentVelocity, this._maxVelocity, currentVelocity);
+    IVector3.clampVector3(currentVelocity, this._maxVelocity, currentVelocity);
 
     this._tempVec3.copy(currentVelocity).multiplyScalar(deltaTime);
     this._displacement.copy(this._tempVec3);

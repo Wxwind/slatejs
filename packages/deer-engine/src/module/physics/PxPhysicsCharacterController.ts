@@ -4,11 +4,11 @@ import { PhysicsControllerNonWalkableModeEnum, PhysicsControllerCollisionFlag } 
 import { Quaternion, Vector3 } from 'three';
 import { toPxExtendVec3, toPxVec3 } from './utils';
 import { IVector3 } from '@/type';
-import { PxPhysicsBoxCollider, PxPhysicsCapsuleCollider, PxPhysicsCollider } from './collider';
+import { PxPhysicsCapsuleCollider, PxPhysicsCollider } from './collider';
 import { ICharacterController } from '@/core/physics/interface';
 
 export class PxPhysicsCharacterController implements ICharacterController {
-  _pxController: PhysX.PxController | undefined = undefined;
+  _pxController: PhysX.PxCapsuleController | undefined = undefined;
   _tempVec3: PhysX.PxVec3;
   _tempExtendedVec3: PhysX.PxExtendedVec3;
 
@@ -24,7 +24,15 @@ export class PxPhysicsCharacterController implements ICharacterController {
   }
 
   addCollider(collider: PxPhysicsCollider): boolean {
-    const controller = this._createPXController(this._pxScene, collider);
+    if (!(collider instanceof PxPhysicsCapsuleCollider)) {
+      throw new Error('only support PxPhysicsCollider');
+    }
+    const controller = this._createPXController(
+      this._pxScene,
+      collider._radius,
+      collider._halfHeight * 2,
+      collider._pxMaterial
+    );
     this._pxController = controller;
 
     return true;
@@ -32,6 +40,16 @@ export class PxPhysicsCharacterController implements ICharacterController {
 
   removeCollider(collider: PxPhysicsCollider, wakeOnLostTouch?: boolean): void {
     this._destroyController();
+  }
+
+  setRadius(radius: number): void {
+    if (!this._pxController) return;
+    this._pxController.setRadius(radius);
+  }
+
+  setHeight(height: number): void {
+    if (!this._pxController) return;
+    this._pxController.setHeight(height);
   }
 
   setStepOffset(offset: number): void {
@@ -61,25 +79,21 @@ export class PxPhysicsCharacterController implements ICharacterController {
     throw new Error('CharacterController can only set potation, use "setWorldPosition" instead.');
   }
 
-  private _createPXController(pxScene: PxPhysicsScene, collider: PxPhysicsCollider) {
+  private _createPXController(
+    pxScene: PxPhysicsScene,
+    radius: number,
+    height: number,
+    material: PhysX.PxMaterial
+  ): PhysX.PxCapsuleController {
     const { _px: px, _pxControllerManager: pxControllerManager } = pxScene;
-    let desc;
-    if (collider instanceof PxPhysicsBoxCollider) {
-      desc = new px.PxBoxControllerDesc();
-      desc.halfHeight = collider._halfSize.x;
-      desc.halfSideExtent = collider._halfSize.y;
-      desc.halfForwardExtent = collider._halfSize.z;
-    } else if (collider instanceof PxPhysicsCapsuleCollider) {
-      desc = new px.PxCapsuleControllerDesc();
-      desc.radius = collider._radius;
-      desc.height = collider._halfHeight * 2;
-      desc.climbingMode = 1; // eCONSTRAINED
-    } else {
-      throw 'unsupported collider type, only BoxCollider and CapsuleCollider) are supported';
-    }
 
-    desc.material = collider._pxMaterial;
-    return pxControllerManager.createController(desc);
+    const desc = new px.PxCapsuleControllerDesc();
+    desc.radius = radius;
+    desc.height = height;
+    desc.climbingMode = 1; // eCONSTRAINED
+
+    desc.material = material;
+    return pxControllerManager.createController(desc) as PhysX.PxCapsuleController;
   }
 
   /**

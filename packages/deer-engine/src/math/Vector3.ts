@@ -1,6 +1,5 @@
 import { egclass, property } from '@/core';
 import { IClone, ICopyFrom, IVector3 } from '@/type';
-import { clamp } from '@/util';
 
 @egclass()
 export class FVector3 implements IClone<FVector3>, ICopyFrom<IVector3, FVector3> {
@@ -33,33 +32,5 @@ export class FVector3 implements IClone<FVector3>, ICopyFrom<IVector3, FVector3>
     this.y = from.y;
     this.z = from.z;
     return this;
-  }
-
-  static scale<T extends IVector3 = IVector3>(a: T, b: number, out: T) {
-    out.x = a.x * b;
-    out.y = a.y * b;
-    out.z = a.z * b;
-    return out;
-  }
-
-  static scaleVector<T extends IVector3 = IVector3>(a: T, b: T, out: T) {
-    out.x = a.x * b.x;
-    out.y = a.y * b.y;
-    out.z = a.z * b.z;
-    return out;
-  }
-
-  static clamp<T extends IVector3 = IVector3>(src: T, min: number, max: number) {
-    src.x = clamp(src.x, min, max);
-    src.y = clamp(src.y, min, max);
-    src.z = clamp(src.z, min, max);
-    return src;
-  }
-
-  static clampVector3<T extends IVector3 = IVector3>(src: T, clampMinMax: T, out: T) {
-    out.x = clamp(src.x, -clampMinMax.x, clampMinMax.x);
-    out.y = clamp(src.y, -clampMinMax.y, clampMinMax.y);
-    out.z = clamp(src.z, -clampMinMax.z, clampMinMax.z);
-    return out;
   }
 }

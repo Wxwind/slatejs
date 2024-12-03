@@ -1,5 +1,4 @@
 import { ComponentBase } from '../component';
-import { PxPhysicsRigidBody } from '../../module/physics/PxPhysicsRigidBody';
 import { Collider } from './collider';
 import { Quaternion, Vector3 } from 'three';
 import { IRigidbody } from './interface';

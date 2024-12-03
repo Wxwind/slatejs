@@ -1,5 +1,5 @@
 import { SLATEJS_VERSION } from '@/config';
-import { clamp, isNil } from '@/util';
+import { MathUtil, isNil } from '@/util';
 import { CutsceneGroup } from './CutsceneGroup';
 import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
 import { ActorGroup } from './groups';
@@ -65,7 +65,7 @@ export class Cutscene implements ISerializable<CutsceneData> {
   }
 
   public set playTimeMin(v: number) {
-    this._playTimeMin = clamp(v, 0, this.playTimeMax);
+    this._playTimeMin = MathUtil.clamp(v, 0, this.playTimeMax);
     this.signals.settingsUpdated.emit();
   }
 
@@ -74,7 +74,7 @@ export class Cutscene implements ISerializable<CutsceneData> {
   }
 
   public set playTimeMax(v: number) {
-    this._playTimeMax = clamp(v, this.playTimeMin, this.length);
+    this._playTimeMax = MathUtil.clamp(v, this.playTimeMin, this.length);
     this.signals.settingsUpdated.emit();
   }
 

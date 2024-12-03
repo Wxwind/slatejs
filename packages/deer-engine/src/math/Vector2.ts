@@ -27,14 +27,4 @@ export class FVector2 implements IClone<FVector2>, ICopyFrom<IVector2, FVector2>
     this.y = from.y;
     return this;
   }
-
-  static scale(a: IVector2, b: number, out: IVector2) {
-    out.x = a.x * b;
-    out.y = a.y * b;
-  }
-
-  static scaleVector(a: IVector2, b: IVector2, out: IVector2) {
-    out.x = a.x * b.x;
-    out.y = a.y * b.y;
-  }
 }

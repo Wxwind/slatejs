@@ -234,6 +234,16 @@ export interface IPhysicsMaterial {
  */
 export interface ICharacterController extends IRigidbody {
   /**
+   * set radius of characterController's capsuleCollider.
+   * @param radius the capsuleCollider's radius
+   */
+  setRadius(radius: number): void;
+  /**
+   * set height of characterController's capsuleCollider.
+   * @param height the capsuleCollider's height
+   */
+  setHeight(height: number): void;
+  /**
    * Moves the character using a "collide-and-slide" algorithm.
    * @param disp the displacement vector for current frame. It is typically a combination of vertical motion due to gravity and lateral motion when your character is moving. Note that users are responsible for applying gravity to characters here.
    * @param minDist minimal length used to stop the recursive displacement algorithm early when remaining distance to travel goes below this limit.

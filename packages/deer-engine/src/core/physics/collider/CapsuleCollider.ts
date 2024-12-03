@@ -14,7 +14,7 @@ export class CapsuleCollider extends Collider {
     this._nativeCollider.setRadius(v);
   }
 
-  private _height: number = 0;
+  private _height: number = 2;
   public get height(): number {
     return this._height;
   }
