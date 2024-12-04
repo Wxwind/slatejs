@@ -6,6 +6,7 @@ import { toPxExtendVec3, toPxVec3 } from './utils';
 import { IVector3 } from '@/type';
 import { PxPhysicsCapsuleCollider, PxPhysicsCollider } from './collider';
 import { ICharacterController } from '@/core/physics/interface';
+import { castPxObject } from './pxExtensions';
 
 export class PxPhysicsCharacterController implements ICharacterController {
   _pxController: PhysX.PxCapsuleController | undefined = undefined;
@@ -93,7 +94,8 @@ export class PxPhysicsCharacterController implements ICharacterController {
     desc.climbingMode = 1; // eCONSTRAINED
 
     desc.material = material;
-    return pxControllerManager.createController(desc) as PhysX.PxCapsuleController;
+
+    return castPxObject(px, pxControllerManager.createController(desc), px.PxCapsuleController);
   }
 
   /**
