@@ -3,7 +3,7 @@ import { Hierarchy } from './Hierarchy';
 import { Inspector } from './Inspector';
 import { isNil } from '@/util';
 import { useWindowSize } from '@/hooks/useWindowSize';
-import { DeerScene, clamp } from 'deer-engine';
+import { DeerScene, MathUtil } from 'deer-engine';
 
 interface MainPanelProps {
   scene: DeerScene | undefined;
@@ -24,7 +24,7 @@ export const MainPanel: FC<MainPanelProps> = (props) => {
       const initialHeight = hierarchyRef.current.clientHeight;
       const handleMouseMove = (e: MouseEvent) => {
         const newHeight = initialHeight + (e.clientY - startY);
-        const a = clamp(newHeight, windowHeight * 0.2, windowHeight * 0.8);
+        const a = MathUtil.clamp(newHeight, windowHeight * 0.2, windowHeight * 0.8);
         setDragLineHeight(a);
       };
 

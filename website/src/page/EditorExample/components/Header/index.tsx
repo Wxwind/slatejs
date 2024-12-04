@@ -14,6 +14,7 @@ import {
   CharacterControllerComponent,
   ResourceManager,
   IVector3,
+  CapsuleCollider,
 } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
 import { Message } from '@arco-design/web-react';
@@ -94,8 +95,9 @@ export const Header: FC<HeaderProps> = (props) => {
     };
     loadModel('/model/people.glb');
 
-    const boxCollider = new BoxCollider();
-    boxCollider.size = new THREE.Vector3(1, 1, 1);
+    const boxCollider = new CapsuleCollider();
+    boxCollider.radius = 0.25;
+    boxCollider.height = 0.5;
 
     const cct = e.addComponentByNew(CharacterControllerComponent);
     cct.addCollider(boxCollider);

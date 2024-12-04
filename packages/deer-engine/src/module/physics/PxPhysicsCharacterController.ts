@@ -26,7 +26,7 @@ export class PxPhysicsCharacterController implements ICharacterController {
 
   addCollider(collider: PxPhysicsCollider): boolean {
     if (!(collider instanceof PxPhysicsCapsuleCollider)) {
-      throw new Error('only support PxPhysicsCollider');
+      throw new Error('only support PxPhysicsCapsuleCollider');
     }
     const controller = this._createPXController(
       this._pxScene,

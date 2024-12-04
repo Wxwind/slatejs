@@ -78,7 +78,7 @@ export class ControllerScript extends Script {
       if (inputManager.isKeyHeldDown(Keys.KeyD)) {
         lr += 1;
       }
-      inputXZ.set(lr, fb);
+      inputXZ.set(lr, fb).normalize();
       if (inputManager.isKeyDown(Keys.Space) && this._isOnGround) {
         this._inputY = 1;
       } else {
