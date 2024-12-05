@@ -78,16 +78,18 @@ export class PhysicsScene {
 
   _callColliderOnUpdate() {
     const rbs = Array.from(this._rigidbodies._elements);
-    rbs.forEach((comp) => {
+    for (let i = 0; i < this._rigidbodies.length; i++) {
+      const comp = rbs[i];
       comp._onColliderUpdate();
-    });
+    }
   }
 
   _callColliderOnLateUpdate() {
     const rbs = Array.from(this._rigidbodies._elements);
-    rbs.forEach((comp) => {
+    for (let i = 0; i < this._rigidbodies.length; i++) {
+      const comp = rbs[i];
       comp._onColliderLateUpdate();
-    });
+    }
   }
 
   _addRigidbody(rb: RigidbodyComponent) {
