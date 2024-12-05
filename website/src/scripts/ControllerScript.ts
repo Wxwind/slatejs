@@ -10,6 +10,12 @@ import {
   IVector3,
 } from 'deer-engine';
 
+export enum ForceMode {
+  Impulse,
+  Force,
+  Velocity,
+}
+
 export class ControllerScript extends Script {
   private _controller!: CharacterControllerComponent;
 
@@ -32,15 +38,18 @@ export class ControllerScript extends Script {
   private _rotMat = new THREE.Matrix4();
   private _tempQuaternion = new THREE.Quaternion();
   _mass: number = 1.0;
-  _jumpForce: number = 500;
-  _moveForce: number = 120;
+  _jumpForce: number = 10;
+  _moveForce: number = 2;
+  _forceMode: ForceMode = ForceMode.Velocity;
+  _runFactor: number = 1;
+  _maxFallVelocity: number = -20;
 
-  private _maxVelocity = new THREE.Vector3(1.5, 5, 1.5);
   private _isOnGround = false;
   private _inputXZ = new THREE.Vector2();
   private _inputY: number = 0;
   private _currentVelocity = new THREE.Vector3();
   private _tempVec3 = new THREE.Vector3();
+  private _isRunning = false;
 
   override onAwake(): void {
     const comp = this.entity.findComponentByType<CharacterControllerComponent>('CharacterControllerComponent');
@@ -78,6 +87,11 @@ export class ControllerScript extends Script {
       if (inputManager.isKeyHeldDown(Keys.KeyD)) {
         lr += 1;
       }
+      if (inputManager.isKeyHeldDown(Keys.ShiftLeft) || inputManager.isKeyHeldDown(Keys.ShiftRight)) {
+        this._isRunning = true;
+      } else {
+        this._isRunning = false;
+      }
       inputXZ.set(lr, fb).normalize();
       if (inputManager.isKeyDown(Keys.Space) && this._isOnGround) {
         this._inputY = 1;
@@ -87,30 +101,44 @@ export class ControllerScript extends Script {
     }
   }
 
-  private calculateDisplacement(deltaTime: number, gravity: number) {
-    const mass = this._mass;
+  private getVelocityFromForce(force: number, deltaTime: number, forceMode: ForceMode = this._forceMode) {
+    switch (forceMode) {
+      case ForceMode.Impulse:
+        return force / this._mass;
+      case ForceMode.Force:
+        return (force * deltaTime) / this._mass;
+      case ForceMode.Velocity:
+        return force;
+    }
+  }
 
+  private calculateDisplacement(deltaTime: number, gravity: number) {
     const lrVector3 = IVector3.scale(
       this._right,
-      (this._inputXZ.x * this._moveForce * deltaTime) / mass,
+      this._inputXZ.x * this.getVelocityFromForce(this._moveForce, deltaTime),
       this._lrVelocity
     );
 
-    const yForce = this._inputY > 0 ? this._inputY * this._jumpForce : gravity;
-    const Vy = (yForce * deltaTime) / mass;
+    const Vy =
+      this._inputY > 0
+        ? this.getVelocityFromForce(this._inputY * this._jumpForce, deltaTime)
+        : this._currentVelocity.y + this.getVelocityFromForce(gravity, deltaTime, ForceMode.Force);
+
     const fbVector3 = IVector3.scale(
       this._forward,
-      (this._inputXZ.y * this._moveForce * deltaTime) / mass,
+      this._inputXZ.y * this.getVelocityFromForce(this._moveForce, deltaTime),
       this._fbVelocity
     );
 
-    const newVelocity = this._tempVec3.addVectors(lrVector3, fbVector3);
+    const newVelocity = this._tempVec3
+      .addVectors(lrVector3, fbVector3)
+      .multiplyScalar(this._isRunning ? this._runFactor : 1);
     const currentVelocity = this._currentVelocity;
 
     currentVelocity.x = newVelocity.x;
     currentVelocity.z = newVelocity.z;
-    currentVelocity.y = this._inputY > 0 ? Vy : currentVelocity.y + Vy;
-    IVector3.clampVector3(currentVelocity, this._maxVelocity, currentVelocity);
+    currentVelocity.y = Vy;
+    if (currentVelocity.y < this._maxFallVelocity) currentVelocity.y = this._maxFallVelocity;
 
     this._tempVec3.copy(currentVelocity).multiplyScalar(deltaTime);
     this._displacement.copy(this._tempVec3);
