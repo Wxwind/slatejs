@@ -11,6 +11,7 @@ import { deserializeComponent } from '@/util';
 import { Control } from './Control';
 import { WebCanvas } from './WebCanvas';
 import { InputManager } from './manager';
+import { Camera } from './Camera';
 
 export interface DeerSceneJson {
   id: string;
@@ -30,7 +31,7 @@ export class DeerScene {
 
   mode: DeerSceneMode;
 
-  mainCamera: PerspectiveCamera;
+  camera: Camera;
 
   engine: DeerEngine;
 
@@ -69,7 +70,7 @@ export class DeerScene {
     // camera.rotateY(deg2rad(45));
     // camera.rotateX(deg2rad(-45));
 
-    this.mainCamera = camera;
+    this.camera = new Camera(camera);
 
     // init renderer
     const renderer = new WebGLRenderer();
@@ -78,9 +79,9 @@ export class DeerScene {
     this.canvas = new WebCanvas(renderer.domElement);
     this._renderer = renderer;
 
-    this.control = new Control(this.mainCamera, this._renderer.domElement);
+    this.control = new Control(camera, this._renderer.domElement);
 
-    this._viewHelper = new ViewHelper(this.mainCamera, container);
+    this._viewHelper = new ViewHelper(camera, container);
   }
 
   init() {
@@ -103,7 +104,7 @@ export class DeerScene {
 
     // update renderer
     this._renderer.clear();
-    this._renderer.render(this.sceneObject, this.mainCamera);
+    this._renderer.render(this.sceneObject, this.camera.main);
     this._renderer.autoClear = false;
     this._viewHelper.render(this._renderer);
     this._renderer.autoClear = true;
@@ -143,8 +144,8 @@ export class DeerScene {
   }
 
   private resize = (width: number, height: number) => {
-    this.mainCamera.aspect = width / height;
-    this.mainCamera.updateProjectionMatrix();
+    this.camera.main.aspect = width / height;
+    this.camera.main.updateProjectionMatrix();
     this._renderer?.setSize(width, height);
     this.canvas.width = width;
     this.canvas.height = height;

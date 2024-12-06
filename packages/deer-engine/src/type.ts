@@ -10,11 +10,13 @@ export namespace IVector2 {
   export function scale(a: IVector2, b: number, out: IVector2) {
     out.x = a.x * b;
     out.y = a.y * b;
+    return out;
   }
 
   export function scaleVector(a: IVector2, b: IVector2, out: IVector2) {
     out.x = a.x * b.x;
     out.y = a.y * b.y;
+    return out;
   }
 }
 

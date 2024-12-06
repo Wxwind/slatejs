@@ -1,2 +1,3 @@
-export * from './ControllerScript';
+export * from './CharacterControllerScript';
+export * from './FirstPersonCameraControllerScript';
 export * from './ShootScript';

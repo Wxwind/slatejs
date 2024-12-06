@@ -222,7 +222,7 @@ export class PointerManager implements IInput {
 
     point.set(normalizedX * 2 - 1, -normalizedY * 2 + 1);
     const ray = new THREE.Raycaster();
-    ray.setFromCamera(point, this._scene.mainCamera);
+    ray.setFromCamera(point, this._scene.camera.main);
 
     const intersects = ray.intersectObjects(this._scene.sceneObject.children);
 

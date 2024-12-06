@@ -16,14 +16,13 @@ export enum ForceMode {
   Velocity,
 }
 
-export class ControllerScript extends Script {
+export class CharacterControllerScript extends Script {
   private _controller!: CharacterControllerComponent;
 
   constructor(entity: Entity) {
     super(entity);
   }
 
-  private _camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
   private _displacement = new THREE.Vector3();
   private _up = new THREE.Vector3(0, 1, 0);
   private _forward = new THREE.Vector3();
@@ -51,6 +50,8 @@ export class ControllerScript extends Script {
   private _tempVec3 = new THREE.Vector3();
   private _isRunning = false;
 
+  _isFirstPerson = false;
+
   override onAwake(): void {
     const comp = this.entity.findComponentByType<CharacterControllerComponent>('CharacterControllerComponent');
     if (!comp) {
@@ -66,7 +67,8 @@ export class ControllerScript extends Script {
     inputXZ.set(0, 0);
 
     if (inputManager.isKeyHeldDown()) {
-      this.scene.mainCamera.getWorldDirection(this._forward);
+      const camera = this.scene.camera.main;
+      camera.getWorldDirection(this._forward);
 
       this._forward.y = 0;
       this._forward.normalize();
@@ -158,6 +160,8 @@ export class ControllerScript extends Script {
       this._isOnGround = false;
     }
 
+    // local rotation won't change in first person
+    if (this._isFirstPerson) return;
     if (this._displacement.x != 0 || this._displacement.z != 0) {
       sceneObj.getWorldPosition(this._worldPosition);
       this._predictPosition.addVectors(this._worldPosition, this._displacement);

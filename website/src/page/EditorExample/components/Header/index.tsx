@@ -20,8 +20,8 @@ import { downLoad, isNil } from '@/util';
 import { Message } from '@arco-design/web-react';
 import { FileUpload } from '@/components';
 import { useCutsceneEditorStore, useEngineStore } from '@/store';
-import { ControllerScript } from '@/scripts/ControllerScript';
-import { ShootScript } from '@/scripts';
+import { CharacterControllerScript } from '@/scripts/CharacterControllerScript';
+import { FirstPersonCameraControllerScript, ShootScript } from '@/scripts';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -101,7 +101,9 @@ export const Header: FC<HeaderProps> = (props) => {
 
     const cct = e.addComponentByNew(CharacterControllerComponent);
     cct.addCollider(boxCollider);
-    const controllerScript = e.addComponentByNew(ControllerScript);
+    const controller = e.addComponentByNew(CharacterControllerScript);
+    // const fpCameraController = e.addComponentByNew(FirstPersonCameraControllerScript);
+    // controller._isFirstPerson = true;
     const shooter = e.addComponentByNew(ShootScript);
   };
 

@@ -8,8 +8,9 @@ export class ShootScript extends Script {
 
   onUpdate(deltaTime: number): void {
     if (this.scene.getManager(InputManager).isKeyDown(Keys.KeyF)) {
-      const _forward = this.scene.mainCamera.getWorldDirection(this._tempVec31);
-      const _position = this.scene.mainCamera.getWorldPosition(this._tempVec32);
+      const camera = this.scene.camera.main;
+      const _forward = camera.getWorldDirection(this._tempVec31);
+      const _position = camera.getWorldPosition(this._tempVec32);
       _forward.y = 0;
       const bullet = this.createBullet(_position, this._bulletSize);
       bullet.addForce(_forward.multiplyScalar(this._shootVelocity));
