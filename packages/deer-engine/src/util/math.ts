@@ -1,5 +1,6 @@
 const DEG2RAD = Math.PI / 180;
 const RAD2DEG = 180 / Math.PI;
+const EPSILON = 10e-5;
 
 export class MathUtil {
   static clamp(num: number, min: number, max: number) {
@@ -46,19 +47,27 @@ export class MathUtil {
   }
 
   static isNearlyZero(v: number) {
-    return Math.abs(v) <= 10e-6;
+    return Math.abs(v) <= EPSILON;
   }
 
   static lerp(x: number, y: number, t: number) {
     return x * (1 - t) + y * t;
   }
 
+  /**
+   *
+   * @param t1 min
+   * @param t2 max
+   * @param x value between t1 ~ t2
+   * @returns smooth 0～1
+   */
   static smoothStep(t1: number, t2: number, x: number) {
+    if (t1 === t2) return t1;
     x = MathUtil.clamp((x - t1) / (t2 - t1), 0, 1);
     return x * x * (3 - 2 * x);
   }
 
-  static isNearly(value: number, other: number, tolerance: number = 10e-4) {
+  static isNearly(value: number, other: number, tolerance: number = EPSILON) {
     return Math.abs(value - other) <= tolerance;
   }
 

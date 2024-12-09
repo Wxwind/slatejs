@@ -8,6 +8,7 @@ import {
   PhysicsControllerCollisionFlag,
   objectToLocalQuaternion,
   IVector3,
+  MathUtil,
 } from 'deer-engine';
 
 export enum ForceMode {
@@ -39,6 +40,7 @@ export class CharacterControllerScript extends Script {
   _mass: number = 1.0;
   _jumpForce: number = 10;
   _moveForce: number = 2;
+  _moveDamping: number = 8;
   _forceMode: ForceMode = ForceMode.Velocity;
   _runFactor: number = 1;
   _maxFallVelocity: number = -20;
@@ -125,7 +127,6 @@ export class CharacterControllerScript extends Script {
       this._inputY > 0
         ? this.getVelocityFromForce(this._inputY * this._jumpForce, deltaTime)
         : this._currentVelocity.y + this.getVelocityFromForce(gravity, deltaTime, ForceMode.Force);
-
     const fbVector3 = IVector3.scale(
       this._forward,
       this._inputXZ.y * this.getVelocityFromForce(this._moveForce, deltaTime),
@@ -137,10 +138,23 @@ export class CharacterControllerScript extends Script {
       .multiplyScalar(this._isRunning ? this._runFactor : 1);
     const currentVelocity = this._currentVelocity;
 
-    currentVelocity.x = newVelocity.x;
-    currentVelocity.z = newVelocity.z;
     currentVelocity.y = Vy;
     if (currentVelocity.y < this._maxFallVelocity) currentVelocity.y = this._maxFallVelocity;
+
+    // 仅在没有操作输入即将停止时做damping
+    if (MathUtil.isNearly(newVelocity.x, 0)) {
+      currentVelocity.x = MathUtil.lerp(currentVelocity.x, 0, this._moveDamping * deltaTime);
+      if (MathUtil.isNearlyZero(currentVelocity.x)) currentVelocity.x = 0;
+    } else {
+      currentVelocity.x = newVelocity.x;
+    }
+
+    if (MathUtil.isNearly(newVelocity.z, 0)) {
+      currentVelocity.z = MathUtil.lerp(currentVelocity.z, 0, this._moveDamping * deltaTime);
+      if (MathUtil.isNearlyZero(currentVelocity.z)) currentVelocity.z = 0;
+    } else {
+      currentVelocity.z = newVelocity.z;
+    }
 
     this._tempVec3.copy(currentVelocity).multiplyScalar(deltaTime);
     this._displacement.copy(this._tempVec3);
