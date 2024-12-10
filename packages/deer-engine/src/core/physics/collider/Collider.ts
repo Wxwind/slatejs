@@ -1,7 +1,9 @@
 import { RigidbodyComponent } from '../RigidbodyComponent';
-import { Quaternion, Vector3 } from 'three';
+
 import { PhysicsMaterial as PhysicsMaterial } from '../PhysicsMaterial';
 import { ICollider } from '../interface';
+import { IVector3 } from '@/type';
+import { Quaternion, Vector3 } from 'three';
 
 export abstract class Collider {
   abstract _nativeCollider: ICollider;
@@ -38,13 +40,8 @@ export abstract class Collider {
     this._nativeCollider.setRotation(v);
   }
 
-  private _contactOffset: number = 0.02;
-  public get contactOffset(): number {
-    return this._contactOffset;
-  }
-  public set contactOffset(v: number) {
-    this._contactOffset = v;
-    this._nativeCollider.setContactOffset(v);
+  public set worldScale(v: IVector3) {
+    this._nativeCollider.setWorldScale(v);
   }
 
   /** @readonly */

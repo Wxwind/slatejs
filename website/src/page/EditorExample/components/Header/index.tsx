@@ -121,7 +121,6 @@ export const Header: FC<HeaderProps> = (props) => {
     e.addComponentByNew(MeshComponent);
     const rb = e.addComponentByNew(StaticRigidbodyComponent);
     const boxCollider = new BoxCollider();
-    boxCollider.size = new THREE.Vector3(20, 1, 20);
     rb.addCollider(boxCollider);
     handleCreateSlope();
   };
@@ -151,7 +150,6 @@ export const Header: FC<HeaderProps> = (props) => {
     mesh.color = new THREE.Color(0xffff00);
     const rb = e.addComponentByNew(StaticRigidbodyComponent);
     const boxCollider = new BoxCollider();
-    boxCollider.size = new THREE.Vector3(20, 1, 20);
     rb.addCollider(boxCollider);
   };
 

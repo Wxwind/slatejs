@@ -24,12 +24,6 @@ import {
   IStaticRigidBody,
 } from '@/core/physics/interface';
 
-declare global {
-  interface Window {
-    PhysX: typeof PhysX & typeof PhysX.PxTopLevelFunctions;
-  }
-}
-
 /** wrapper of PhysX.PxPhysics */
 export class PxPhysics implements IPhysics {
   private _isInitialized = false;
@@ -54,7 +48,6 @@ export class PxPhysics implements IPhysics {
     // await PhysX({ locateFile: () => wasmUrl })
     const physX = await PhysX({});
     this._physX = physX;
-    window.PhysX = physX;
     this._initialize(physX);
     this._isInitialized = true;
   }
@@ -92,12 +85,12 @@ export class PxPhysics implements IPhysics {
     return scene;
   }
 
-  createStaticRigidBody(position: Vector3, rotation: Quaternion): IStaticRigidBody {
+  createStaticRigidBody(position: IVector3, rotation: Quaternion): IStaticRigidBody {
     const rb = new PxPhysicsStaticRigidBody(this._physX, this._pxPhysics, position, rotation);
     return rb;
   }
 
-  createDynamicRigidBody(position: Vector3, rotation: Quaternion): IDynamicRigidbody {
+  createDynamicRigidBody(position: IVector3, rotation: Quaternion): IDynamicRigidbody {
     const rb = new PxPhysicsDynamicRigidBody(this._physX, this._pxPhysics, position, rotation);
     return rb;
   }

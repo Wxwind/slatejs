@@ -7,6 +7,8 @@ export class PlaneCollider extends Collider {
 
   constructor() {
     super();
-    this._nativeCollider = PhysicsScene._nativePhysics.createPlaneCollider(this._material._nativeMaterial);
+    this._nativeCollider = PhysicsScene._nativePhysics.createPlaneCollider(
+      this._material._nativeMaterial,
+    );
   }
 }

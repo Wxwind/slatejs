@@ -1,13 +1,13 @@
-import { Quaternion, Vector3 } from 'three';
-import { PhysicsControllerNonWalkableModeEnum, PhysicsCombineMode } from './enum';
 import PhysX from 'physx-js-webidl';
 import { IVector3 } from '@/type';
+import { PhysicsControllerNonWalkableModeEnum, PhysicsCombineMode } from './enum';
+import { Quaternion } from 'three';
 
 export interface IPhysics {
   initialize(): Promise<void>;
   createScene(gravity: IVector3): IPhysicsScene;
-  createStaticRigidBody(position: Vector3, rotation: Quaternion): IStaticRigidBody;
-  createDynamicRigidBody(position: Vector3, rotation: Quaternion): IDynamicRigidbody;
+  createStaticRigidBody(position: IVector3, rotation: Quaternion): IStaticRigidBody;
+  createDynamicRigidBody(position: IVector3, rotation: Quaternion): IDynamicRigidbody;
   createPhysicMaterial(
     staticFriction: number,
     dynamicFriction: number,
@@ -15,7 +15,7 @@ export interface IPhysics {
     frictionCombineMode: PhysicsCombineMode,
     restitutionCombineMode: PhysicsCombineMode
   ): IPhysicsMaterial;
-  createBoxCollider(size: Vector3, material: IPhysicsMaterial): IBoxCollider;
+  createBoxCollider(size: IVector3, material: IPhysicsMaterial): IBoxCollider;
   createSphereCollider(radius: number, material: IPhysicsMaterial): ISphereCollider;
   createCapsuleCollider(radius: number, height: number, material: IPhysicsMaterial): ICapsuleCollider;
   createPlaneCollider(material: IPhysicsMaterial): IPlaneCollider;
@@ -44,7 +44,7 @@ export interface IRigidbody {
   setWorldTransform(position: IVector3, rotation: Quaternion): void;
 
   /**
-   * Deletes the collider.
+   * Deletes the rigidbody.
    */
   destroy(): void;
 }
@@ -52,17 +52,17 @@ export interface IRigidbody {
 export interface IStaticRigidBody extends IRigidbody {}
 
 /**
- * Interface of physics dynamic collider.
+ * Interface of physics dynamic rigidbody.
  */
 export interface IDynamicRigidbody extends IRigidbody {
   /**
-   * Set global transform of collider.
+   * Set global transform of rigidbody.
    * @param position - The global position
    * @param rotation - The global rotation
    */
   setWorldTransform(position: IVector3, rotation: Quaternion): void;
   /**
-   * Get global transform of collider.
+   * Get global transform of position.
    * @param outPosition - The global position
    * @param outRotation - The global rotation
    */
@@ -175,6 +175,11 @@ export interface ICollider {
    * @param position - The local position
    */
   setPosition(position: IVector3): void;
+  /**
+   * Set world scale.
+   * @param scale - The world scale
+   */
+  setWorldScale(scale: IVector3): void;
 
   /**
    * Sets the contact offset.
@@ -289,7 +294,7 @@ export interface ICharacterController extends IRigidbody {
    */
   setUpDirection(up: IVector3): void;
   /**
-   * Sets the slope limit.
+   * Sets the slope limit (cosine of desired limit angle).
    * @param slopeLimit The slope limit for the controller.
    */
   setSlopeLimit(slopeLimit: number): void;

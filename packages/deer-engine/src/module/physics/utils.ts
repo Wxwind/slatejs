@@ -24,9 +24,8 @@ export function toPxQuat(src: Quaternion, out: PhysX.PxQuat) {
   return out;
 }
 
-export function toPxTransform(position: IVector3, rotation: Quaternion) {
-  const _tempTransform = new window.PhysX.PxTransform();
-  toPxVec3(position, _tempTransform.p);
-  toPxQuat(rotation, _tempTransform.q);
-  return _tempTransform;
+export function toPxTransform(position: IVector3, rotation: Quaternion, out: PhysX.PxTransform) {
+  toPxVec3(position, out.p);
+  toPxQuat(rotation, out.q);
+  return out;
 }

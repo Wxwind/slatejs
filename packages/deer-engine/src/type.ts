@@ -55,6 +55,13 @@ export namespace IVector3 {
     out.z = MathUtil.clamp(src.z, -clampMinMax.z, clampMinMax.z);
     return out;
   }
+
+  export function copy<T extends IVector3 = IVector3>(out: T, src: IVector3): T {
+    out.x = src.x;
+    out.y = src.y;
+    out.z = src.z;
+    return out;
+  }
 }
 
 export interface IVector4 {

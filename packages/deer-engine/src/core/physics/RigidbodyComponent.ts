@@ -21,11 +21,16 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
     physics._removeRigidbody(this);
   }
 
+  _tempVec3 = new Vector3();
   /** copy real scene to physical scene */
   _onColliderUpdate() {
     if (this.entity.transform._updateFlag) {
       const obj = this.sceneObject;
       this._nativeRigidbody.setWorldTransform(obj.position, obj.quaternion);
+      const scale = obj.getWorldScale(this._tempVec3);
+      for (const collider of this._colliders) {
+        collider._nativeCollider.setWorldScale(scale);
+      }
       this.entity.transform._updateFlag = false;
     }
   }

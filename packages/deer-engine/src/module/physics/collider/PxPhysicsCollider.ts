@@ -1,10 +1,13 @@
-import { PxPhysics } from '../PxPhysics';
 import PhysX from 'physx-js-webidl';
+import { ICollider } from '@/core/physics/interface';
+import { IVector3 } from '@/type';
+import { PxPhysics } from '../PxPhysics';
 import { PhysicsShapeFlag } from '../../../core/physics/enum';
 import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
-import { Vector3, Quaternion } from 'three';
 import { toPxTransform } from '../utils';
-import { ICollider } from '@/core/physics/interface';
+import { Vector3, Quaternion } from 'three';
+
+export const HALF_SQRT = 0.7071067811;
 
 export abstract class PxPhysicsCollider implements ICollider {
   protected abstract _pxGeometry: PhysX.PxGeometry;
@@ -18,6 +21,8 @@ export abstract class PxPhysicsCollider implements ICollider {
 
   protected _position = new Vector3();
   protected _rotation = new Quaternion();
+  protected _worldScale = new Vector3(1, 1, 1);
+  protected _tempPxTransform: PhysX.PxTransform;
 
   private _filterData: PhysX.PxFilterData;
 
@@ -25,6 +30,7 @@ export abstract class PxPhysicsCollider implements ICollider {
     this._pxPhysics = pxPhysics._pxPhysics;
     this._px = pxPhysics._physX;
     this._filterData = new this._px.PxFilterData(1, 1, 0, 0);
+    this._tempPxTransform = new pxPhysics._physX.PxTransform();
   }
 
   /**
@@ -56,13 +62,18 @@ export abstract class PxPhysicsCollider implements ICollider {
     this._pxShape.setFlag(flag as unknown as PhysX.PxShapeFlagEnum, value);
   }
 
-  setPosition(position: Vector3) {
-    this._position.copy(position);
+  setPosition(position: IVector3) {
+    IVector3.copy(this._position, position);
     this._setLocalPose();
   }
 
   setRotation(rotation: Quaternion) {
     this._rotation.copy(rotation);
+    this._setLocalPose();
+  }
+
+  setWorldScale(scale: IVector3): void {
+    IVector3.copy(this._worldScale, scale);
     this._setLocalPose();
   }
 
@@ -83,7 +94,8 @@ export abstract class PxPhysicsCollider implements ICollider {
   }
 
   protected _setLocalPose() {
-    this._pxShape.setLocalPose(toPxTransform(this._position, this._rotation));
+    this._position.multiply(this._worldScale);
+    this._pxShape.setLocalPose(toPxTransform(this._position, this._rotation, this._tempPxTransform));
   }
 
   destroy() {

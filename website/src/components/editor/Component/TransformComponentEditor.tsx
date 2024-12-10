@@ -38,7 +38,6 @@ export const TransformComponentEditor: EditorComp<TransformComponent> = (props) 
     // neither change the data or notify component to sync data.
     const newData = deepClone(data);
     set(newData, name, value);
-    console.log('false');
 
     target.updateByJson(newData, false);
   };

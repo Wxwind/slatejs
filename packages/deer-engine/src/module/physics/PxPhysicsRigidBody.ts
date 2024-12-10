@@ -2,14 +2,16 @@ import PhysX from 'physx-js-webidl';
 import { Quaternion, Vector3 } from 'three';
 import { toPxTransform } from './utils';
 import { PxPhysicsCollider } from './collider';
-import { PxPhysicsScene } from './PxPhysicsScene';
-import { ICollider, IRigidbody } from '@/core/physics/interface';
+import { IRigidbody } from '@/core/physics/interface';
 
 /** wrapper of PhysX.PxRigidActor */
 export abstract class PxPhysicsRigidBody implements IRigidbody {
   abstract _pxRigidBody: PhysX.PxRigidActor;
+  protected _tempPxTransform: PhysX.PxTransform;
 
-  constructor() {}
+  constructor(px: typeof PhysX & typeof PhysX.PxTopLevelFunctions) {
+    this._tempPxTransform = new px.PxTransform();
+  }
 
   getWorldTransform(outPosition: Vector3, outRotation: Quaternion): void {
     const pose = this._pxRigidBody.getGlobalPose();
@@ -18,7 +20,7 @@ export abstract class PxPhysicsRigidBody implements IRigidbody {
   }
 
   setWorldTransform(position: Vector3, rotation: Quaternion): void {
-    this._pxRigidBody.setGlobalPose(toPxTransform(position, rotation));
+    this._pxRigidBody.setGlobalPose(toPxTransform(position, rotation, this._tempPxTransform));
   }
 
   /**

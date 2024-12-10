@@ -20,7 +20,7 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     position: IVector3,
     rotation: Quaternion
   ) {
-    super();
+    super(px);
     const pos = new px.PxVec3(position.x, position.y, position.z);
     const rot = new px.PxQuat(rotation.x, rotation.y, rotation.z, rotation.w);
     const pose = new px.PxTransform(pos, rot);
@@ -46,7 +46,7 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
   }
 
   setCenterOfMass(position: Vector3, rotation: Quaternion): void {
-    this._pxRigidBody.setCMassLocalPose(toPxTransform(position, rotation));
+    this._pxRigidBody.setCMassLocalPose(toPxTransform(position, rotation, this._tempPxTransform));
   }
 
   setInertiaTensor(value: Vector3): void {
@@ -116,7 +116,7 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
 
   move(positionOrRotation: IVector3 | Quaternion, rotation?: Quaternion): void {
     if (rotation) {
-      this._pxRigidBody.setKinematicTarget(toPxTransform(positionOrRotation, rotation));
+      this._pxRigidBody.setKinematicTarget(toPxTransform(positionOrRotation, rotation, this._tempPxTransform));
       return;
     }
 
@@ -124,9 +124,9 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     const tempRotation = PxPhysicsDynamicRigidBody._tempRotation;
     this.getWorldTransform(tempPosition, tempRotation);
     if (positionOrRotation instanceof Vector3) {
-      this._pxRigidBody.setKinematicTarget(toPxTransform(positionOrRotation, tempRotation));
+      this._pxRigidBody.setKinematicTarget(toPxTransform(positionOrRotation, tempRotation, this._tempPxTransform));
     } else {
-      this._pxRigidBody.setKinematicTarget(toPxTransform(tempPosition, tempRotation));
+      this._pxRigidBody.setKinematicTarget(toPxTransform(tempPosition, tempRotation, this._tempPxTransform));
     }
   }
 
