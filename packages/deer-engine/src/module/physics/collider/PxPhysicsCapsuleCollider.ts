@@ -1,11 +1,10 @@
 import PhysX from 'physx-js-webidl';
-
+import { Quaternion, Vector3 } from 'three';
 import { IVector3 } from '@/type';
+import { ICapsuleCollider } from '@/core/physics/interface';
 import { PxPhysics } from '../PxPhysics';
 import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
 import { HALF_SQRT, PxPhysicsCollider } from './PxPhysicsCollider';
-import { Quaternion, Vector3 } from 'three';
-import { ICapsuleCollider } from '@/core/physics/interface';
 
 enum ColliderUpAxis {
   X,
@@ -20,7 +19,6 @@ export class PxPhysicsCapsuleCollider extends PxPhysicsCollider implements ICaps
 
   _scaleAbs = new Vector3(1, 1, 1);
   private _upAxis: ColliderUpAxis = ColliderUpAxis.Y;
-  _axis: Quaternion = new Quaternion(0, 0, HALF_SQRT, HALF_SQRT);
 
   constructor(pxPhysics: PxPhysics, radius: number, height: number, material: PxPhysicsMaterial) {
     super(pxPhysics);
@@ -28,8 +26,8 @@ export class PxPhysicsCapsuleCollider extends PxPhysicsCollider implements ICaps
     this._halfHeight = height / 2;
     const geo = new this._px.PxCapsuleGeometry(radius, height / 2);
     this._pxGeometry = geo;
-    this._rotation.copy(this._axis);
     this._initialize(material);
+    this.setUpAxis(this._upAxis);
     this._setLocalPose();
   }
 
@@ -78,22 +76,21 @@ export class PxPhysicsCapsuleCollider extends PxPhysicsCollider implements ICaps
   }
 
   setUpAxis(upAxis: ColliderUpAxis) {
-    const { _axis: axis, _rotation: rotation } = this;
     this._upAxis = upAxis;
+
+    const newAxis = new Quaternion();
 
     switch (this._upAxis) {
       case ColliderUpAxis.X:
-        axis.set(0, 0, 0, 1);
+        newAxis.set(0, 0, 0, 1);
         break;
       case ColliderUpAxis.Y:
-        axis.set(0, 0, HALF_SQRT, HALF_SQRT);
+        newAxis.set(0, 0, HALF_SQRT, HALF_SQRT);
         break;
       case ColliderUpAxis.Z:
-        axis.set(0, HALF_SQRT, 0, HALF_SQRT);
+        newAxis.set(0, HALF_SQRT, 0, HALF_SQRT);
         break;
     }
-
-    rotation.multiply(axis);
-    this._setLocalPose();
+    this.setAxis(newAxis);
   }
 }

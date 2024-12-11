@@ -1,11 +1,11 @@
 import PhysX from 'physx-js-webidl';
+import { Vector3, Quaternion } from 'three';
 import { ICollider } from '@/core/physics/interface';
 import { IVector3 } from '@/type';
 import { PxPhysics } from '../PxPhysics';
 import { PhysicsShapeFlag } from '../../../core/physics/enum';
 import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
 import { toPxTransform } from '../utils';
-import { Vector3, Quaternion } from 'three';
 
 export const HALF_SQRT = 0.7071067811;
 
@@ -16,6 +16,7 @@ export abstract class PxPhysicsCollider implements ICollider {
 
   protected _pxPhysics: PhysX.PxPhysics;
   protected _px: typeof PhysX & typeof PhysX.PxTopLevelFunctions;
+  protected _axis: Quaternion | null = null;
 
   protected _shapeFlag: PhysicsShapeFlag = PhysicsShapeFlag.SCENE_QUERY_SHAPE | PhysicsShapeFlag.SIMULATION_SHAPE;
 
@@ -67,8 +68,17 @@ export abstract class PxPhysicsCollider implements ICollider {
     this._setLocalPose();
   }
 
+  private _realRotation: Quaternion = new Quaternion();
   setRotation(rotation: Quaternion) {
     this._rotation.copy(rotation);
+    this._realRotation.copy(this._rotation);
+    this._axis && this._realRotation.multiplyQuaternions(this._rotation, this._axis);
+    this._setLocalPose();
+  }
+
+  setAxis(axis: Quaternion) {
+    this._axis = axis;
+    this._realRotation.multiplyQuaternions(this._rotation, this._axis);
     this._setLocalPose();
   }
 
@@ -95,8 +105,10 @@ export abstract class PxPhysicsCollider implements ICollider {
 
   protected _setLocalPose() {
     // this._position.multiply(this._worldScale);
-    // console.log('set pxCollider position', JSON.stringify(this._position));
-    this._pxShape.setLocalPose(toPxTransform(this._position, this._rotation, this._tempPxTransform));
+    // console.log(
+    //   `set pxCollider position ${JSON.stringify(this._position)}, rotation: ${JSON.stringify(this._realRotation)}`
+    // );
+    this._pxShape.setLocalPose(toPxTransform(this._position, this._realRotation, this._tempPxTransform));
   }
 
   destroy() {
