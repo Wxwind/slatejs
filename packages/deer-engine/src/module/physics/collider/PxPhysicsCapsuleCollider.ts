@@ -81,14 +81,17 @@ export class PxPhysicsCapsuleCollider extends PxPhysicsCollider implements ICaps
     const newAxis = new Quaternion();
 
     switch (this._upAxis) {
+      // 0, 0, 0
       case ColliderUpAxis.X:
         newAxis.set(0, 0, 0, 1);
         break;
+      // 0, 0, 90
       case ColliderUpAxis.Y:
         newAxis.set(0, 0, HALF_SQRT, HALF_SQRT);
         break;
+      //0, -90, 0,
       case ColliderUpAxis.Z:
-        newAxis.set(0, HALF_SQRT, 0, HALF_SQRT);
+        newAxis.set(0, -HALF_SQRT, 0, HALF_SQRT);
         break;
     }
     this.setAxis(newAxis);
