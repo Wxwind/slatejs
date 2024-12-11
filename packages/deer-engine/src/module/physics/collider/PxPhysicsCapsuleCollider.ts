@@ -5,6 +5,7 @@ import { PxPhysics } from '../PxPhysics';
 import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
 import { HALF_SQRT, PxPhysicsCollider } from './PxPhysicsCollider';
 import { Quaternion, Vector3 } from 'three';
+import { ICapsuleCollider } from '@/core/physics/interface';
 
 enum ColliderUpAxis {
   X,
@@ -12,7 +13,7 @@ enum ColliderUpAxis {
   Z,
 }
 
-export class PxPhysicsCapsuleCollider extends PxPhysicsCollider {
+export class PxPhysicsCapsuleCollider extends PxPhysicsCollider implements ICapsuleCollider {
   _pxGeometry: PhysX.PxCapsuleGeometry;
   _radius: number;
   _halfHeight: number;

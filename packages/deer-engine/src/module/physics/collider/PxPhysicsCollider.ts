@@ -94,7 +94,8 @@ export abstract class PxPhysicsCollider implements ICollider {
   }
 
   protected _setLocalPose() {
-    this._position.multiply(this._worldScale);
+    // this._position.multiply(this._worldScale);
+    // console.log('set pxCollider position', JSON.stringify(this._position));
     this._pxShape.setLocalPose(toPxTransform(this._position, this._rotation, this._tempPxTransform));
   }
 

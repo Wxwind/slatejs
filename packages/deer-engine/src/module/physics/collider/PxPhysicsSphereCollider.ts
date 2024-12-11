@@ -3,8 +3,9 @@ import { IVector3 } from '@/type';
 import { PxPhysics } from '../PxPhysics';
 import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
 import { PxPhysicsCollider } from './PxPhysicsCollider';
+import { ISphereCollider } from '@/core/physics/interface';
 
-export class PxPhysicsSphereCollider extends PxPhysicsCollider {
+export class PxPhysicsSphereCollider extends PxPhysicsCollider implements ISphereCollider {
   _pxGeometry: PhysX.PxSphereGeometry;
   _maxScale: number = 1;
   _radius: number;

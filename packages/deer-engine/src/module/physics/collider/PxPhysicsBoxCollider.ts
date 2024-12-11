@@ -6,8 +6,9 @@ import { PxPhysicsMaterial } from '../PxPhysicsMaterial';
 import { toPxVec3 } from '../utils';
 import { PxPhysicsCollider } from './PxPhysicsCollider';
 import { Vector3 } from 'three';
+import { IBoxCollider } from '@/core/physics/interface';
 
-export class PxPhysicsBoxCollider extends PxPhysicsCollider {
+export class PxPhysicsBoxCollider extends PxPhysicsCollider implements IBoxCollider {
   _pxGeometry: PhysX.PxBoxGeometry;
 
   _halfSize: Vector3;
