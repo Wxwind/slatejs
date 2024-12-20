@@ -3,8 +3,10 @@ import { RigidbodyComponent } from './RigidbodyComponent';
 import { ComponentManager } from '../manager';
 import { DisorderedArray } from '../DisorderedMap';
 import { Vector3 } from 'three';
-import { IPhysics, IPhysicsScene } from './interface';
+import { IPhysics, IPhysicsScene, PhysicsEventCallbacks } from './interface';
 import { CharacterControllerComponent } from './CharacterControllerComponent';
+import { Script } from '../component';
+import { Collider } from './collider';
 
 export class PhysicsScene {
   private _accumulator: number = 0;
@@ -24,6 +26,8 @@ export class PhysicsScene {
   private _rigidbodies = new DisorderedArray<RigidbodyComponent>();
 
   private _gravity: Vector3 = new Vector3(0, -9.81, 0);
+
+  private _nativeShapeMap: Record<number, Collider> = {};
 
   get gravity() {
     return this._gravity;
@@ -48,7 +52,15 @@ export class PhysicsScene {
 
   constructor(attachedScene: DeerScene) {
     this._scene = attachedScene;
-    this._nativePhysicsScene = PhysicsScene._nativePhysics.createScene(this.gravity);
+    const eventCallbacks: PhysicsEventCallbacks = {
+      onContactBegin: this._onContactBegin,
+      onContactEnd: this._onContactEnd,
+      onContactStay: this._onContactStay,
+      onTriggerBegin: this._onTriggerBegin,
+      onTriggerEnd: this._onTriggerEnd,
+      onTriggerStay: this._onTriggerStay,
+    };
+    this._nativePhysicsScene = PhysicsScene._nativePhysics.createScene(this.gravity, eventCallbacks);
   }
 
   update(deltaTime: number) {
@@ -75,6 +87,172 @@ export class PhysicsScene {
       this._accumulatedFrameCountPerSecond++;
     }
   }
+
+  ////// PhysicsEventCallbacks //////
+
+  _onContactBegin = (obj1: number, obj2: number) => {
+    const coll1 = this._nativeShapeMap[obj1];
+    const coll2 = this._nativeShapeMap[obj2];
+    if (!coll1 || !coll2) {
+      console.error(`native collider lost binding`);
+      return;
+    }
+
+    coll1.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onCollisionEnter(coll2);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+
+    coll2.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onCollisionEnter(coll1);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+  };
+
+  _onContactStay = (obj1: number, obj2: number) => {
+    const coll1 = this._nativeShapeMap[obj1];
+    const coll2 = this._nativeShapeMap[obj2];
+    if (!coll1 || !coll2) {
+      console.error(`native collider lost binding`);
+      return;
+    }
+
+    coll1.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onCollisionStay(coll2);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+
+    coll2.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onCollisionStay(coll1);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+  };
+
+  _onContactEnd = (obj1: number, obj2: number) => {
+    const coll1 = this._nativeShapeMap[obj1];
+    const coll2 = this._nativeShapeMap[obj2];
+    if (!coll1 || !coll2) {
+      console.error(`native collider lost binding`);
+      return;
+    }
+
+    coll1.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onCollisionExit(coll2);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+
+    coll2.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onCollisionExit(coll1);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+  };
+
+  _onTriggerBegin = (obj1: number, obj2: number) => {
+    const coll1 = this._nativeShapeMap[obj1];
+    const coll2 = this._nativeShapeMap[obj2];
+    if (!coll1 || !coll2) {
+      console.error(`native collider lost binding`);
+      return;
+    }
+
+    coll1.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onTriggerEnter(coll2);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+
+    coll2.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onTriggerEnter(coll1);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+  };
+
+  _onTriggerStay = (obj1: number, obj2: number) => {
+    const coll1 = this._nativeShapeMap[obj1];
+    const coll2 = this._nativeShapeMap[obj2];
+    if (!coll1 || !coll2) {
+      console.error(`native collider lost binding`);
+      return;
+    }
+
+    coll1.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onTriggerStay(coll2);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+
+    coll2.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onTriggerStay(coll1);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+  };
+
+  _onTriggerEnd = (obj1: number, obj2: number) => {
+    const coll1 = this._nativeShapeMap[obj1];
+    const coll2 = this._nativeShapeMap[obj2];
+    if (!coll1 || !coll2) {
+      console.error(`native collider lost binding`);
+      return;
+    }
+
+    coll1.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onTriggerExit(coll2);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+
+    coll2.rigidbody.entity._scripts.forEach(
+      (script) => {
+        script.onTriggerExit(coll1);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+  };
+
+  ///////////////////////////////////
 
   _callColliderOnUpdate() {
     const rbs = Array.from(this._rigidbodies._elements);

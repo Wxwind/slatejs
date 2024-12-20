@@ -184,7 +184,7 @@ export class DynamicRigidbodyComponent extends RigidbodyComponent {
     this._nativeRigidbody.sleep();
   }
 
-  wakeup() {
+  wakeUp() {
     this._nativeRigidbody.wakeUp();
   }
 

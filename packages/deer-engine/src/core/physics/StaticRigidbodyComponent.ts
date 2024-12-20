@@ -1,6 +1,5 @@
 import { PhysicsScene } from './PhysicsScene';
 import { Entity } from '../entity';
-import { PxPhysicsStaticRigidBody } from '../../module/physics/PxPhysicsStaticRigidBody';
 import { RigidbodyComponent } from './RigidbodyComponent';
 import { IStaticRigidBody } from './interface';
 

@@ -3,9 +3,18 @@ import { IVector3 } from '@/type';
 import { PhysicsControllerNonWalkableModeEnum, PhysicsCombineMode } from './enum';
 import { Quaternion } from 'three';
 
+export type PhysicsEventCallbacks = {
+  onContactBegin?: (obj1: number, obj2: number) => void;
+  onContactEnd?: (obj1: number, obj2: number) => void;
+  onContactStay?: (obj1: number, obj2: number) => void;
+  onTriggerBegin?: (obj1: number, obj2: number) => void;
+  onTriggerEnd?: (obj1: number, obj2: number) => void;
+  onTriggerStay?: (obj1: number, obj2: number) => void;
+};
+
 export interface IPhysics {
   initialize(): Promise<void>;
-  createScene(gravity: IVector3): IPhysicsScene;
+  createScene(gravity: IVector3, eventCallbacks?: PhysicsEventCallbacks): IPhysicsScene;
   createStaticRigidBody(position: IVector3, rotation: Quaternion): IStaticRigidBody;
   createDynamicRigidBody(position: IVector3, rotation: Quaternion): IDynamicRigidbody;
   createPhysicMaterial(
@@ -15,10 +24,10 @@ export interface IPhysics {
     frictionCombineMode: PhysicsCombineMode,
     restitutionCombineMode: PhysicsCombineMode
   ): IPhysicsMaterial;
-  createBoxCollider(size: IVector3, material: IPhysicsMaterial): IBoxCollider;
-  createSphereCollider(radius: number, material: IPhysicsMaterial): ISphereCollider;
-  createCapsuleCollider(radius: number, height: number, material: IPhysicsMaterial): ICapsuleCollider;
-  createPlaneCollider(material: IPhysicsMaterial): IPlaneCollider;
+  createBoxCollider(id: number, size: IVector3, material: IPhysicsMaterial): IBoxCollider;
+  createSphereCollider(id: number, radius: number, material: IPhysicsMaterial): ISphereCollider;
+  createCapsuleCollider(id: number, radius: number, height: number, material: IPhysicsMaterial): ICapsuleCollider;
+  createPlaneCollider(id: number, material: IPhysicsMaterial): IPlaneCollider;
 }
 
 export interface IRigidbody {

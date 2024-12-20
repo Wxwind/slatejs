@@ -26,9 +26,10 @@ export class CapsuleCollider extends Collider {
   constructor() {
     super();
     this._nativeCollider = PhysicsScene._nativePhysics.createCapsuleCollider(
+      this._id,
       this.radius,
       this.height,
-      this._material._nativeMaterial,
+      this._material._nativeMaterial
     );
   }
 }

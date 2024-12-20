@@ -8,8 +8,8 @@ import { Quaternion } from 'three';
 export class PxPhysicsPlaneCollider extends PxPhysicsCollider implements IPlaneCollider {
   _pxGeometry: PhysX.PxPlaneGeometry;
 
-  constructor(pxPhysics: PxPhysics, material: PxPhysicsMaterial) {
-    super(pxPhysics);
+  constructor(pxPhysics: PxPhysics, id: number, material: PxPhysicsMaterial) {
+    super(pxPhysics, id);
     const geo = new this._px.PxPlaneGeometry();
     this._pxGeometry = geo;
     this.setAxis(new Quaternion(0, 0, HALF_SQRT, HALF_SQRT));

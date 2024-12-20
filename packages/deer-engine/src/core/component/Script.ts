@@ -1,4 +1,6 @@
 import { ComponentManager, Pointer } from '../manager';
+import { Collider } from '../physics';
+import { RigidbodyComponent } from '../physics/RigidbodyComponent';
 import { ComponentBase } from './ComponentBase';
 
 export class Script extends ComponentBase {
@@ -77,6 +79,18 @@ export class Script extends ComponentBase {
   onPointerExit(pointer: Pointer): void {}
 
   onPointerDrag(pointer: Pointer): void {}
+
+  onCollisionEnter(other: Collider): void {}
+
+  onCollisionStay(other: Collider): void {}
+
+  onCollisionExit(other: Collider): void {}
+
+  onTriggerEnter(other: Collider): void {}
+
+  onTriggerStay(other: Collider): void {}
+
+  onTriggerExit(other: Collider): void {}
 
   updateByJson(): void {}
 

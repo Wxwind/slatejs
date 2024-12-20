@@ -20,8 +20,8 @@ export class PxPhysicsCapsuleCollider extends PxPhysicsCollider implements ICaps
   _scaleAbs = new Vector3(1, 1, 1);
   private _upAxis: ColliderUpAxis = ColliderUpAxis.Y;
 
-  constructor(pxPhysics: PxPhysics, radius: number, height: number, material: PxPhysicsMaterial) {
-    super(pxPhysics);
+  constructor(pxPhysics: PxPhysics, id: number, radius: number, height: number, material: PxPhysicsMaterial) {
+    super(pxPhysics, id);
     this._radius = radius;
     this._halfHeight = height / 2;
     const geo = new this._px.PxCapsuleGeometry(radius, height / 2);

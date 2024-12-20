@@ -2,6 +2,7 @@ import { ComponentBase } from '../component';
 import { Collider } from './collider';
 import { Quaternion, Vector3 } from 'three';
 import { IRigidbody } from './interface';
+import { Entity } from '../entity';
 
 export abstract class RigidbodyComponent extends ComponentBase<any> {
   abstract _nativeRigidbody: IRigidbody;
@@ -10,6 +11,12 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
 
   /** @internal */
   _index = -1;
+
+  private static _idGenerator = 0;
+
+  constructor(entity: Entity) {
+    super(entity);
+  }
 
   override _onEnable(): void {
     const physics = this.scene.physicsScene;
@@ -39,7 +46,7 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
   _onColliderLateUpdate() {}
 
   addCollider(collider: Collider) {
-    const rb = collider._attachedRigidbody;
+    const rb = collider.rigidbody;
     if (rb === this) return;
 
     if (rb) {
@@ -47,7 +54,7 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
     }
 
     this._colliders.push(collider);
-    collider._attachedRigidbody = this;
+    collider._rigidbody = this;
     this._nativeRigidbody.addCollider(collider._nativeCollider);
   }
 
@@ -56,7 +63,7 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
     if (index === -1) return;
 
     this._colliders.splice(index, 1);
-    collider._attachedRigidbody = null;
+    collider._rigidbody = null;
     this._nativeRigidbody.removeCollider(collider._nativeCollider);
   }
 

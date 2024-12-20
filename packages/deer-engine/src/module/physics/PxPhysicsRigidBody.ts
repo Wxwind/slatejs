@@ -9,7 +9,7 @@ export abstract class PxPhysicsRigidBody implements IRigidbody {
   abstract _pxRigidBody: PhysX.PxRigidActor;
   protected _tempPxTransform: PhysX.PxTransform;
 
-  constructor(px: typeof PhysX & typeof PhysX.PxTopLevelFunctions) {
+  constructor(protected px: typeof PhysX & typeof PhysX.PxTopLevelFunctions) {
     this._tempPxTransform = new px.PxTransform();
   }
 

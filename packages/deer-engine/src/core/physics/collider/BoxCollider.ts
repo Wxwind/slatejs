@@ -18,8 +18,9 @@ export class BoxCollider extends Collider {
   constructor() {
     super();
     this._nativeCollider = PhysicsScene._nativePhysics.createBoxCollider(
+      this._id,
       this.size,
-      this._material._nativeMaterial,
+      this._material._nativeMaterial
     );
   }
 }

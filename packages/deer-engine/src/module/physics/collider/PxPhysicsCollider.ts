@@ -27,11 +27,21 @@ export abstract class PxPhysicsCollider implements ICollider {
 
   private _filterData: PhysX.PxFilterData;
 
-  constructor(pxPhysics: PxPhysics) {
+  _id: number;
+
+  constructor(pxPhysics: PxPhysics, id: number) {
     this._pxPhysics = pxPhysics._pxPhysics;
     this._px = pxPhysics._physX;
-    this._filterData = new this._px.PxFilterData(1, 1, 0, 0);
+
+    const PxPairFlagEnum = this._px.PxPairFlagEnum;
+    this._filterData = new this._px.PxFilterData(
+      1,
+      1,
+      PxPairFlagEnum.eNOTIFY_TOUCH_FOUND | PxPairFlagEnum.eNOTIFY_TOUCH_LOST | PxPairFlagEnum.eNOTIFY_TOUCH_PERSISTS,
+      0
+    );
     this._tempPxTransform = new pxPhysics._physX.PxTransform();
+    this._id = id;
   }
 
   /**

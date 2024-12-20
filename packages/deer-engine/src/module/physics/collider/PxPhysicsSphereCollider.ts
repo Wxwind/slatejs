@@ -10,8 +10,8 @@ export class PxPhysicsSphereCollider extends PxPhysicsCollider implements ISpher
   _maxScale: number = 1;
   _radius: number;
 
-  constructor(pxPhysics: PxPhysics, radius: number, material: PxPhysicsMaterial) {
-    super(pxPhysics);
+  constructor(pxPhysics: PxPhysics, id: number, radius: number, material: PxPhysicsMaterial) {
+    super(pxPhysics, id);
     this._radius = radius;
     const geo = new this._px.PxSphereGeometry(radius);
     this._pxGeometry = geo;

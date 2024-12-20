@@ -15,8 +15,8 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
   private _tempVec1: PhysX.PxVec3;
 
   constructor(
-    private px: typeof PhysX & typeof PhysX.PxTopLevelFunctions,
-    private pxPhysics: PhysX.PxPhysics,
+    px: typeof PhysX & typeof PhysX.PxTopLevelFunctions,
+    pxPhysics: PhysX.PxPhysics,
     position: IVector3,
     rotation: Quaternion
   ) {

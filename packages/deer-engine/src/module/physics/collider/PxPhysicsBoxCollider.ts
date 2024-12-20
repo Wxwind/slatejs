@@ -17,8 +17,8 @@ export class PxPhysicsBoxCollider extends PxPhysicsCollider implements IBoxColli
   private _tempVec3 = new Vector3();
   private _tempPxVec3: PhysX.PxVec3;
 
-  constructor(pxPhysics: PxPhysics, size: IVector3, material: PxPhysicsMaterial) {
-    super(pxPhysics);
+  constructor(pxPhysics: PxPhysics, id: number, size: IVector3, material: PxPhysicsMaterial) {
+    super(pxPhysics, id);
     const halfSize = new Vector3(size.x / 2, size.y / 2, size.z / 2);
     const geo = new this._px.PxBoxGeometry(halfSize.x, halfSize.y, halfSize.z);
     this._pxGeometry = geo;

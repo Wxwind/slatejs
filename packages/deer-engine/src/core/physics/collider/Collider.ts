@@ -45,7 +45,11 @@ export abstract class Collider {
   }
 
   /** @readonly */
-  _attachedRigidbody: RigidbodyComponent | null = null;
+  _rigidbody: RigidbodyComponent | null = null;
+
+  get rigidbody(): RigidbodyComponent {
+    return this._rigidbody!;
+  }
 
   constructor() {
     this._id = Collider._idGenerator++;

@@ -20,8 +20,10 @@ import {
   IPhysicsMaterial,
   IPhysicsScene,
   IPlaneCollider,
+  IRigidbody,
   ISphereCollider,
   IStaticRigidBody,
+  PhysicsEventCallbacks,
 } from '@/core/physics/interface';
 
 /** wrapper of PhysX.PxPhysics */
@@ -72,16 +74,8 @@ export class PxPhysics implements IPhysics {
     this._pxPhysics = physics;
   }
 
-  createScene(
-    gravity: IVector3,
-    onContactBegin?: (obj1: number, obj2: number) => void,
-    onContactEnd?: (obj1: number, obj2: number) => void,
-    onContactStay?: (obj1: number, obj2: number) => void,
-    onTriggerBegin?: (obj1: number, obj2: number) => void,
-    onTriggerEnd?: (obj1: number, obj2: number) => void,
-    onTriggerStay?: (obj1: number, obj2: number) => void
-  ): IPhysicsScene {
-    const scene = new PxPhysicsScene(this, gravity);
+  createScene(gravity: IVector3, eventCallbacks?: PhysicsEventCallbacks): IPhysicsScene {
+    const scene = new PxPhysicsScene(this, gravity, eventCallbacks);
     return scene;
   }
 
@@ -112,19 +106,19 @@ export class PxPhysics implements IPhysics {
     );
   }
 
-  createBoxCollider(size: Vector3, material: PxPhysicsMaterial): IBoxCollider {
-    return new PxPhysicsBoxCollider(this, size, material);
+  createBoxCollider(id: number, size: Vector3, material: PxPhysicsMaterial): IBoxCollider {
+    return new PxPhysicsBoxCollider(this, id, size, material);
   }
 
-  createSphereCollider(radius: number, material: PxPhysicsMaterial): ISphereCollider {
-    return new PxPhysicsSphereCollider(this, radius, material);
+  createSphereCollider(id: number, radius: number, material: PxPhysicsMaterial): ISphereCollider {
+    return new PxPhysicsSphereCollider(this, id, radius, material);
   }
 
-  createCapsuleCollider(radius: number, height: number, material: PxPhysicsMaterial): ICapsuleCollider {
-    return new PxPhysicsCapsuleCollider(this, radius, height, material);
+  createCapsuleCollider(id: number, radius: number, height: number, material: PxPhysicsMaterial): ICapsuleCollider {
+    return new PxPhysicsCapsuleCollider(this, id, radius, height, material);
   }
 
-  createPlaneCollider(material: PxPhysicsMaterial): IPlaneCollider {
-    return new PxPhysicsPlaneCollider(this, material);
+  createPlaneCollider(id: number, material: PxPhysicsMaterial): IPlaneCollider {
+    return new PxPhysicsPlaneCollider(this, id, material);
   }
 }
