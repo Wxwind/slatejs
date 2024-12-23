@@ -40,6 +40,6 @@ export const IDirectableToLocalTime = (directable: IDirectable, time: number) =>
   return MathUtil.clamp(time - directable.startTime, 0, directable.endTime - directable.startTime);
 };
 
-export const IDirectableGetLengh = (directable: IDirectable) => {
+export const IDirectableGetLength = (directable: IDirectable) => {
   return directable.endTime - directable.startTime;
 };

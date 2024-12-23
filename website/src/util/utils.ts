@@ -14,11 +14,11 @@ function isObject(a: unknown) {
  */
 export function deepCloneRecursive<T>(target: T): T {
   const map = new Map();
-  const helper = (target: any, map: Map<string, unknown>) => {
+  const helper = (target: any, map: Map<any, unknown>) => {
     // 基础类型和函数直接浅拷贝
     if (!isObject(target)) return target;
 
-    // 深拷贝拷贝Map,Set
+    // 深拷贝Map,Set
 
     // 判断循环引用
     if (map.has(target)) {
@@ -53,7 +53,7 @@ export function deepCloneRecursive<T>(target: T): T {
     map.set(target, res);
     for (const key in target) {
       if (Object.hasOwnProperty.call(target, key)) {
-        res[key] = helper(target[key], map);
+        res[key] = helper((target as any)[key], map);
       }
     }
     return res as T;
