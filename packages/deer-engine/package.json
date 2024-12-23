@@ -10,8 +10,6 @@
     "build": "rimraf dist && rollup --config rollup.config.js",
     "watch": "node scripts/watch.cjs",
     "lint:ts": "tsc -p ./tsconfig.json",
-    "babel-run": "babel-node src/index -x .ts --config-file ./babel.config.json",
-    "babel-build": "babel src/index.ts -o src/index.cjs",
     "test": "jest"
   },
   "files": [

@@ -120,6 +120,6 @@ watcher.on('event', (event) => {
 });
 
 process.on('exit', () => {
-  // 停止监听
+  // stop watcher
   watcher.close();
 });

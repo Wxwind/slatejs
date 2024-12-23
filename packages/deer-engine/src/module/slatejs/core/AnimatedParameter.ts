@@ -69,7 +69,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     return !!this.paramPath && !!this.metadataProp;
   }
 
-  static constructFromJson = (clip: ActionClip, data: AnimatedParameterJson) => {
+  static constructFromJson(clip: ActionClip, data: AnimatedParameterJson) {
     const { type, paramPath, keyableId, curves } = data;
     const c: AnimationCurve[] = curves.map((curve) => AnimationCurve.fromJSON(curve));
 
@@ -94,9 +94,9 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
       throw new Error(`type ${data.paramType} is not surpported in animatedParameter.`);
     }
     return a;
-  };
+  }
 
-  static construct = (keyable: IKeyable, type: string, paramPath: string) => {
+  static construct(keyable: IKeyable, type: string, paramPath: string) {
     const metadataProp = getRelativeProp(type, paramPath);
     const paramType = metadataProp.typeName;
     if (isNil(paramType)) {
@@ -123,7 +123,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
       throw new Error(`type ${paramType} is not surpported in animatedParameter.`);
     }
     return a;
-  };
+  }
 
   setEnabled = (value: boolean, time: number) => {
     if (this.enabled === value) {

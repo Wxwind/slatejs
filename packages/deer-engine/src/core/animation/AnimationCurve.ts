@@ -70,13 +70,13 @@ export class AnimationCurve {
     };
   }
 
-  static fromJSON = (json: AnimationCurveJson) => {
+  static fromJSON(json: AnimationCurveJson) {
     const curve = new AnimationCurve();
     curve.keys.push(...json.keys);
     curve.postExtrapolation = json.postExtrapolation;
     curve.preExtrapolation = json.preExtrapolation;
     return curve;
-  };
+  }
 
   addKey = (keyframe: Keyframe) => {
     let index: number = 0;

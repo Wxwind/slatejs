@@ -24,16 +24,16 @@ export class AnimatedParameterCollection implements IAnimatable {
     updated: new Signal<[]>(),
   };
 
-  static constructFromJson = (clip: ActionClip, data: AnimatedParameterCollectionJson) => {
+  static constructFromJson(clip: ActionClip, data: AnimatedParameterCollectionJson) {
     const array = data.animatedParamArray.map((a) => AnimatedParameter.constructFromJson(clip, a));
     const a = new AnimatedParameterCollection();
     a.animatedParamArray = array;
     return a;
-  };
+  }
 
-  static construct = () => {
+  static construct() {
     return new AnimatedParameterCollection();
-  };
+  }
 
   addParameter = (keyable: IKeyable, type: string, paramPath: string) => {
     const animatedParam = AnimatedParameter.construct(keyable, type, paramPath);
