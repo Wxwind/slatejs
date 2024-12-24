@@ -35,6 +35,9 @@ export class PxPhysicsCharacterController implements ICharacterController {
       collider._pxMaterial
     );
     this._pxController = controller;
+    console.log('cct', controller);
+    // const shapePtr = controller.getActor().getShapes();
+    //  this._pxScene._onColliderAdd(rb)
 
     return true;
   }

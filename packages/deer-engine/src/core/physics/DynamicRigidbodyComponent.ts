@@ -188,10 +188,6 @@ export class DynamicRigidbodyComponent extends RigidbodyComponent {
     this._nativeRigidbody.wakeUp();
   }
 
-  _onDestroy(): void {
-    this._nativeRigidbody.destroy();
-  }
-
   updateByJson(data: any, sync: boolean): void {}
 
   onSerialize() {}

@@ -8,12 +8,10 @@ import {
   FileManager,
   SceneManager,
   StaticRigidbodyComponent,
-  DynamicRigidbodyComponent,
   BoxCollider,
   THREE,
   CharacterControllerComponent,
   ResourceManager,
-  IVector3,
   CapsuleCollider,
 } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
@@ -21,7 +19,7 @@ import { Message } from '@arco-design/web-react';
 import { FileUpload } from '@/components';
 import { useCutsceneEditorStore, useEngineStore } from '@/store';
 import { CharacterControllerScript } from '@/scripts/CharacterControllerScript';
-import { FirstPersonCameraControllerScript, ShootScript } from '@/scripts';
+import { ShootScript } from '@/scripts/ShootScript';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -314,6 +312,14 @@ export const Header: FC<HeaderProps> = (props) => {
               onSelect={logSceneNode}
             >
               LogSceneNode
+            </Menubar.Item>
+            <Menubar.Item
+              className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
+              onSelect={() => {
+                console.log(scene?.physicsScene);
+              }}
+            >
+              LogPhysicsScene
             </Menubar.Item>
           </Menubar.Content>
         </Menubar.Portal>

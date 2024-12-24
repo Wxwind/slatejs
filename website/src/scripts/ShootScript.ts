@@ -1,4 +1,5 @@
 import { BoxCollider, DynamicRigidbodyComponent, InputManager, Keys, MeshComponent, Script, THREE } from 'deer-engine';
+import { ColliderTestScript } from './ColliderTestScript';
 
 export class ShootScript extends Script {
   private _tempVec31 = new THREE.Vector3();
@@ -24,6 +25,7 @@ export class ShootScript extends Script {
     const mesh = e.addComponentByNew(MeshComponent);
     mesh.color = new THREE.Color('red');
     const rb = e.addComponentByNew(DynamicRigidbodyComponent);
+    e.addComponentByNew(ColliderTestScript);
     const boxCollider = new BoxCollider();
     boxCollider.size = size;
     rb.addCollider(boxCollider);

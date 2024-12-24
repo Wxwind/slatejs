@@ -5,7 +5,7 @@ import { PxPhysicsRigidBody } from './PxPhysicsRigidBody';
 import { PxPhysicsCharacterController } from './PxPhysicsCharacterController';
 import { IVector3 } from '@/type';
 import { ICharacterController, ICollider, IPhysicsScene, PhysicsEventCallbacks } from '@/core/physics/interface';
-import { castPxPointer } from './pxExtensions';
+import { castPxObject, castPxPointer } from './pxExtensions';
 import { SimpleObjectPool } from './eventPool';
 import { DisorderedArray } from '@/core/DisorderedMap';
 import { PxPhysicsCollider } from './collider';
@@ -37,11 +37,7 @@ export class PxPhysicsScene implements IPhysicsScene {
   // map<shapeId, map<shapeId,event> >
   private _triggerEventTable: Record<number, Record<number, TriggerEvent>> = {};
   private _triggerEventPool = new SimpleObjectPool(TriggerEvent);
-  /**
-   * _triggerEventTable record latest trigger state of rigidBody pair.
-   * _currentEvents record all states for each rigidBody pair
-   * especially helpful when colliders enter and exit in one frame to make sure both onTriggerBegin and onTriggerStay can be raised.
-   */
+  // flat of _triggerEventTable
   private _currentEvents: DisorderedArray<TriggerEvent> = new DisorderedArray<TriggerEvent>();
 
   private _onTriggerBegin?: (obj1: number, obj2: number) => void;
@@ -70,16 +66,26 @@ export class PxPhysicsScene implements IPhysicsScene {
 
     simulationEventCallbackImpl.onContact = (pairHeaderPointer, pairsPointer, nbPairs) => {
       const px = this._px;
-      // const pairHeader = castPxPointer(px, pairHeaderPointer, px.PxContactPairHeader) as any;
-
       console.log(`onContact nbPairs:${nbPairs}`);
 
+      const nativeArrayHelper = this._px.NativeArrayHelpers.prototype;
       for (let i = 0; i < nbPairs; i++) {
-        const pair = this._px.NativeArrayHelpers.prototype.getContactPairAt(pairsPointer, i);
+        const pair = nativeArrayHelper.getContactPairAt(pairsPointer, i);
+        // pair.shape is defined as "PxShape* shapes[]" in source code but get likely "the pointer of pair.shapes[0]" here.
+        console.log('contact pair.shapes', pair.shapes, pair);
         const event = pair.events;
-        const shapeA = this._pxColliderMap[(pair.shapes[0] as any).ptr]?._id;
-        const shapeB = this._pxColliderMap[(pair.shapes[1] as any).ptr]?._id;
-        console.log('contact shape', shapeA, shapeB);
+
+        const nativeShape0 = nativeArrayHelper.getShapeAt(pair.shapes as any, 0) as any;
+        const nativeShape1 = nativeArrayHelper.getShapeAt(pair.shapes as any, 1) as any;
+
+        console.log(nativeShape0, nativeShape1);
+        const shapeA = this._pxColliderMap[nativeShape0.ptr]?._id;
+        const shapeB = this._pxColliderMap[nativeShape1.ptr]?._id;
+
+        if (!shapeA || !shapeB) {
+          console.error(`pxShape binding is null. ShapeA: ${shapeA} ShapeB: ${shapeB}`);
+          return;
+        }
 
         if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_FOUND)) {
           console.log('begin contact', shapeA, shapeB);
@@ -184,8 +190,7 @@ export class PxPhysicsScene implements IPhysicsScene {
   }
 
   _onColliderAdd(collider: PxPhysicsCollider) {
-    this._pxColliderMap[collider._id] = collider;
-    this._pxColliderMap[(collider as any).ptr] = collider;
+    this._pxColliderMap[(collider._pxShape as any).ptr] = collider;
     this._triggerEventTable[collider._id] = {};
   }
 
@@ -196,7 +201,7 @@ export class PxPhysicsScene implements IPhysicsScene {
       _triggerEventPool: triggerEventPool,
     } = this;
 
-    delete this._pxColliderMap[collider._id];
+    delete this._pxColliderMap[(collider._pxShape as any).ptr];
 
     currentEvents.forEach((event, i) => {
       if (event._obj1 === collider._id) {
@@ -217,12 +222,18 @@ export class PxPhysicsScene implements IPhysicsScene {
     this._fireEvents();
   }
 
+  private actors: any[] = [];
   addRigidbody(rb: PxPhysicsRigidBody) {
     this._pxScene.addActor(rb._pxRigidBody);
+    this.actors.push(rb._pxRigidBody);
+    rb._scene = this;
+    rb.activeInScene = true;
   }
 
   removeRigidbody(rb: PxPhysicsRigidBody) {
     this._pxScene.removeActor(rb._pxRigidBody);
+    rb.activeInScene = false;
+    rb._scene = null;
   }
 
   createCharacterController(): ICharacterController {

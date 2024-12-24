@@ -46,8 +46,8 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
     return this._entity.sceneObject;
   }
 
-  // actual active, only true when this._enabled && entity._activeInScene.
-  private _active = false;
+  /** actual active, only true when this._enabled && entity._activeInScene. */
+  protected _active = false;
 
   /**
    * Whether this component is enabled (like local active in entity).

@@ -3,7 +3,7 @@ import { RigidbodyComponent } from './RigidbodyComponent';
 import { ComponentManager } from '../manager';
 import { DisorderedArray } from '../DisorderedMap';
 import { Vector3 } from 'three';
-import { IPhysics, IPhysicsScene, PhysicsEventCallbacks } from './interface';
+import { ICollider, IPhysics, IPhysicsScene, PhysicsEventCallbacks } from './interface';
 import { CharacterControllerComponent } from './CharacterControllerComponent';
 import { Script } from '../component';
 import { Collider } from './collider';
@@ -86,6 +86,14 @@ export class PhysicsScene {
       this._currentFrame++;
       this._accumulatedFrameCountPerSecond++;
     }
+  }
+
+  _onColliderAdd(collider: Collider) {
+    this._nativeShapeMap[collider._id] = collider;
+  }
+
+  _onColliderRemove(collider: Collider) {
+    delete this._nativeShapeMap[collider._id];
   }
 
   ////// PhysicsEventCallbacks //////
@@ -277,6 +285,9 @@ export class PhysicsScene {
     }
 
     this._nativePhysicsScene.addRigidbody(rb._nativeRigidbody);
+    for (const collider of rb._colliders) {
+      this._onColliderAdd(collider);
+    }
   }
 
   _addCharacterController(cct: CharacterControllerComponent) {
@@ -291,6 +302,9 @@ export class PhysicsScene {
     replaced && (replaced._index = rb._index);
     rb._index = -1;
     this._nativePhysicsScene.removeRigidbody(rb._nativeRigidbody);
+    for (const collider of rb._colliders) {
+      this._onColliderRemove(collider);
+    }
   }
 
   _removeCharacterController(cct: CharacterControllerComponent) {
