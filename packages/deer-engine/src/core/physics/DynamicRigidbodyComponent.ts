@@ -16,8 +16,8 @@ export class DynamicRigidbodyComponent extends RigidbodyComponent {
     super(entity);
 
     this._nativeRigidbody = PhysicsScene._nativePhysics.createDynamicRigidBody(
-      this.sceneObject.position,
-      this.sceneObject.quaternion
+      this.sceneObject.getWorldPosition(new Vector3()),
+      this.sceneObject.getWorldQuaternion(new Quaternion())
     );
   }
 

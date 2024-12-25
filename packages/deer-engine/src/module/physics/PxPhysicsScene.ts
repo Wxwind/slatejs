@@ -222,10 +222,8 @@ export class PxPhysicsScene implements IPhysicsScene {
     this._fireEvents();
   }
 
-  private actors: any[] = [];
   addRigidbody(rb: PxPhysicsRigidBody) {
     this._pxScene.addActor(rb._pxRigidBody);
-    this.actors.push(rb._pxRigidBody);
     rb._scene = this;
     rb.activeInScene = true;
   }

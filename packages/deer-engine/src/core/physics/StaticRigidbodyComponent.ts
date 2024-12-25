@@ -2,6 +2,7 @@ import { PhysicsScene } from './PhysicsScene';
 import { Entity } from '../entity';
 import { RigidbodyComponent } from './RigidbodyComponent';
 import { IStaticRigidBody } from './interface';
+import { Quaternion, Vector3 } from 'three';
 
 export class StaticRigidbodyComponent extends RigidbodyComponent {
   type = 'StaticRigidbodyComponent' as const;
@@ -12,8 +13,8 @@ export class StaticRigidbodyComponent extends RigidbodyComponent {
     super(entity);
 
     this._nativeRigidbody = PhysicsScene._nativePhysics.createStaticRigidBody(
-      this.sceneObject.position,
-      this.sceneObject.quaternion
+      this.sceneObject.getWorldPosition(new Vector3()),
+      this.sceneObject.getWorldQuaternion(new Quaternion())
     );
   }
 

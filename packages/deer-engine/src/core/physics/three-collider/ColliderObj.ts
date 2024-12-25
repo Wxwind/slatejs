@@ -27,7 +27,11 @@ export abstract class ColliderObj extends Object3D {
     const scale = this.getWorldScale(this._worldScale);
     const position = this.getWorldPosition(this._worldPosition);
     const quaternion = this.getWorldQuaternion(this._worldQuaternion);
-    console.log('碰撞体的世界位置为', JSON.stringify(this.position), '世界缩放为', JSON.stringify(scale));
+    console.log(
+      `collider obj's world position: ${JSON.stringify(position)}, world rotation: ${JSON.stringify(
+        scale
+      )} world scale: ${JSON.stringify(scale)}`
+    );
     this._collider.position = position;
     this._collider.rotation = quaternion;
     this._collider._nativeCollider.setWorldScale(scale);
