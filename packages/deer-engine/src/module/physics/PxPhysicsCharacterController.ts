@@ -9,6 +9,7 @@ import { ICharacterController } from '@/core/physics/interface';
 import { castPxObject } from './pxExtensions';
 
 export class PxPhysicsCharacterController implements ICharacterController {
+  _px: typeof PhysX & typeof PhysX.PxTopLevelFunctions;
   _pxController: PhysX.PxCapsuleController | undefined = undefined;
   _tempVec3: PhysX.PxVec3;
   _tempExtendedVec3: PhysX.PxExtendedVec3;
@@ -17,11 +18,13 @@ export class PxPhysicsCharacterController implements ICharacterController {
 
   _worldPosition = new Vector3();
 
+  _collider: PxPhysicsCollider | null = null;
+
   constructor(pxScene: PxPhysicsScene) {
     this._pxScene = pxScene;
-    const _px = pxScene._px;
-    this._tempVec3 = new _px.PxVec3();
-    this._tempExtendedVec3 = new _px.PxExtendedVec3();
+    this._px = pxScene._px;
+    this._tempVec3 = new this._px.PxVec3();
+    this._tempExtendedVec3 = new this._px.PxExtendedVec3();
   }
 
   addCollider(collider: PxPhysicsCollider): boolean {
@@ -36,14 +39,20 @@ export class PxPhysicsCharacterController implements ICharacterController {
     );
     this._pxController = controller;
     console.log('cct', controller);
-    // const shapePtr = controller.getActor().getShapes();
-    //  this._pxScene._onColliderAdd(rb)
+    const shape = (this._px.SupportFunctions.prototype as any).PxActor_getShape(controller.getActor(), 0);
+    console.log('controller native shape', shape);
+
+    collider._pxShape = shape;
+    this._collider = collider;
+    this._pxScene._onColliderAdd(this._collider);
 
     return true;
   }
 
   removeCollider(collider: PxPhysicsCollider, wakeOnLostTouch?: boolean): void {
     this._destroyController();
+    this._pxScene._onColliderRemove(this._collider!);
+    this._collider = null;
   }
 
   setRadius(radius: number): void {

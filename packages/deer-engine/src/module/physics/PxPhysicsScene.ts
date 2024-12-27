@@ -66,19 +66,16 @@ export class PxPhysicsScene implements IPhysicsScene {
 
     simulationEventCallbackImpl.onContact = (pairHeaderPointer, pairsPointer, nbPairs) => {
       const px = this._px;
-      console.log(`onContact nbPairs:${nbPairs}`);
+      // console.log(`onContact nbPairs:${nbPairs}`);
 
       const nativeArrayHelper = this._px.NativeArrayHelpers.prototype;
       for (let i = 0; i < nbPairs; i++) {
         const pair = nativeArrayHelper.getContactPairAt(pairsPointer, i);
-        // pair.shape is defined as "PxShape* shapes[]" in source code but get likely "the pointer of pair.shapes[0]" here.
-        console.log('contact pair.shapes', pair.shapes, pair);
         const event = pair.events;
+        9;
+        const nativeShape0 = (pair as any).get_shapes(0);
+        const nativeShape1 = (pair as any).get_shapes(1);
 
-        const nativeShape0 = nativeArrayHelper.getShapeAt(pair.shapes as any, 0) as any;
-        const nativeShape1 = nativeArrayHelper.getShapeAt(pair.shapes as any, 1) as any;
-
-        console.log(nativeShape0, nativeShape1);
         const shapeA = this._pxColliderMap[nativeShape0.ptr]?._id;
         const shapeB = this._pxColliderMap[nativeShape1.ptr]?._id;
 
@@ -88,14 +85,14 @@ export class PxPhysicsScene implements IPhysicsScene {
         }
 
         if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_FOUND)) {
-          console.log('begin contact', shapeA, shapeB);
+          // console.log('begin contact', shapeA, shapeB);
           eventCallbacks?.onContactBegin?.(shapeA, shapeB);
         } else if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_LOST)) {
+          // console.log('end contact', shapeA, shapeB);
           eventCallbacks?.onContactEnd?.(shapeA, shapeB);
-          console.log('end contact', shapeA, shapeB);
         } else if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_PERSISTS)) {
+          // console.log('stay contact', shapeA, shapeB);
           eventCallbacks?.onContactStay?.(shapeA, shapeB);
-          console.log('stay contact', shapeA, shapeB);
         }
       }
     };
@@ -245,5 +242,6 @@ export class PxPhysicsScene implements IPhysicsScene {
 
   destroy() {
     this._pxScene.release();
+    this._pxScene = null!;
   }
 }

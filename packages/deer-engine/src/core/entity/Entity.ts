@@ -134,6 +134,7 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     const components = this.compArray;
     for (let i = 0, n = components.length; i < n; i++) {
       const comp = components[i];
+      // comp.awake is triggered even if comp is disabled
       (comp.enabled || !comp._isAwoken) && activeChangedComponent.push(comp);
     }
 
@@ -145,9 +146,7 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
 
   _processInActive() {
     if (this._activeChangedComponents) {
-      throw new Error(
-        "Note: can't set the 'main inActive entity' active in hierarchy, if the operation is in main inActive entity or it's children script's onDisable Event."
-      );
+      throw "Note: can't set the 'main active entity' inActive in hierarchy, if the operation is in main active entity or it's children script's onEnable Event.";
     }
 
     // inactive all enabled components
@@ -296,6 +295,7 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
     }
 
     this.active = false;
+    this._destroyed = true;
   };
 
   serialize: () => EntityJson = () => {

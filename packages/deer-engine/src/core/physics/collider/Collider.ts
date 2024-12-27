@@ -52,7 +52,7 @@ export abstract class Collider {
   }
 
   constructor() {
-    this._id = Collider._idGenerator++;
+    this._id = ++Collider._idGenerator;
     this._material = new PhysicsMaterial();
   }
 

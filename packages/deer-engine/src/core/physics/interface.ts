@@ -332,16 +332,6 @@ export interface IPhysicsScene {
    * Create ICharacterController.
    */
   createCharacterController(): ICharacterController;
-  // /**
-  //  * Add ICharacterController into the manager.
-  //  * @param characterController The Character Controller.
-  //  */
-  // addCharacterController(characterController: ICharacterController): void;
-  // /**
-  //  * Remove ICharacterController.
-  //  * @param characterController The Character Controller.
-  //  */
-  // removeCharacterController(characterController: ICharacterController): void;
   /**
    * Call on every frame to update pose of objects.
    * @param elapsedTime - Step time of update.

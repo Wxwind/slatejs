@@ -20,7 +20,6 @@ import {
   IPhysicsMaterial,
   IPhysicsScene,
   IPlaneCollider,
-  IRigidbody,
   ISphereCollider,
   IStaticRigidBody,
   PhysicsEventCallbacks,
@@ -120,5 +119,10 @@ export class PxPhysics implements IPhysics {
 
   createPlaneCollider(id: number, material: PxPhysicsMaterial): IPlaneCollider {
     return new PxPhysicsPlaneCollider(this, id, material);
+  }
+
+  destroy() {
+    this._pxPhysics.release();
+    this._pxPhysics = null!;
   }
 }

@@ -3,8 +3,6 @@ import { Object3D } from 'three';
 
 export abstract class ColliderObj extends Object3D {
   protected _worldScale = new THREE.Vector3();
-  protected _worldPosition = new THREE.Vector3();
-  protected _worldQuaternion = new THREE.Quaternion();
 
   protected _comp: Component;
   abstract _collider: Collider;
@@ -25,8 +23,8 @@ export abstract class ColliderObj extends Object3D {
 
   _setLocalPose() {
     const scale = this.getWorldScale(this._worldScale);
-    const position = this.getWorldPosition(this._worldPosition);
-    const quaternion = this.getWorldQuaternion(this._worldQuaternion);
+    const position = this.position;
+    const quaternion = this.quaternion;
     console.log(
       `collider obj's world position: ${JSON.stringify(position)}, world rotation: ${JSON.stringify(
         scale
