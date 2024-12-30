@@ -1,0 +1,21 @@
+{
+  "name": "vite-plugin-log-buildinfo",
+  "version": "0.1.0",
+  "description": "output build info in production",
+  "type": "module",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc -p ."
+  },
+  "keywords": [],
+  "author": "wxwind",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^4.5.0"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13"
+  }
+}

@@ -5,16 +5,11 @@
   "type": "module",
   "packageManager": "pnpm@8.8.0",
   "scripts": {
-    "dev": "concurrently -n engine,canvas,website \"pnpm --filter deer-engine watch\" \"pnpm --filter deer-canvas watch\" \"pnpm --filter website dev\"",
+    "dev": "concurrently -n engine,canvas,website \"pnpm --filter deer-engine watch\" \"pnpm --filter deer-canvas watch\" \"pnpm --filter deer-website dev\"",
     "dev:bp": "concurrently -n bp,bp-website \"pnpm --filter deer-blueprint watch\" \"pnpm --filter deer-blueprint-example dev\"",
-    "build": "pnpm --filter website... build",
-    "build:website": "pnpm --filter website build",
-    "build:eg": "pnpm --filter deer-engine build",
-    "build:canvas": "pnpm --filter deer-canvas build",
-    "lint": "pnpm --filter website... lint:ts",
-    "lint:eg": "pnpm --filter deer-engine lint:ts",
-    "lint:canvas": "pnpm --filter deer-canvas lint:ts",
-    "preview": "pnpm --filter website preview",
+    "build": "pnpm --filter deer-website... build",
+    "lint": "pnpm --filter deer-website... lint:ts",
+    "preview": "pnpm --filter deer-website preview",
     "test": "jest"
   },
   "devDependencies": {
@@ -37,13 +32,13 @@
     "jest-matcher-deep-close-to": "^3.0.2",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
-    "rollup": "^3.25.3",
-    "rollup-plugin-dts": "^5.3.1",
+    "rollup": "^4.29.1",
+    "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.0",
-    "typescript": "^5.3.3",
+    "typescript": "^5.7.2",
     "vite": "^4.3.9"
   }
 }
