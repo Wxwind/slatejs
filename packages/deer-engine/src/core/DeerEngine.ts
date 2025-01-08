@@ -4,7 +4,7 @@ import { FileManager } from './manager/FileManager/FileManager';
 import { AbstractManager, IManager } from './interface';
 import { Time } from './Time';
 import { PhysicsScene } from './physics/PhysicsScene';
-import { PxPhysics } from '../module/physics';
+import { PxPhysics } from '../module/physx-physics';
 
 export class DeerEngine {
   private _time = new Time();

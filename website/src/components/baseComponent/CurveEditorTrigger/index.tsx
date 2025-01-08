@@ -14,8 +14,8 @@ interface CurveEditorTriggerProps {
 export function CurveEditorTrigger(props: CurveEditorTriggerProps) {
   const { value, onChange } = props;
   const container = useRef<HTMLDivElement | null>(null);
-  const curve = useRef<Curve>();
-  const curvesEditor = useRef<DeerCanvas>();
+  const curve = useRef<Curve>(undefined);
+  const curvesEditor = useRef<DeerCanvas>(undefined);
 
   useEffect(() => {
     if (isNil(container.current)) return;

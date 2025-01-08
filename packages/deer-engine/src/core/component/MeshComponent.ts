@@ -46,13 +46,8 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
     this.mesh = cube;
   }
 
-  _onAwake: () => void = () => {};
-
-  _onEnable: () => void = () => {};
-
-  _onDisable: () => void = () => {};
-
-  _onDestroy: () => void = () => {
+  override _onDestroy() {
+    super._onDestroy();
     if (isNil(this.mesh)) {
       console.warn("mesh doesn't exist");
       return;
@@ -63,7 +58,7 @@ export class MeshComponent extends ComponentBase<'MeshComponent'> {
       this.mesh.material.dispose();
     }
     this.mesh.geometry.dispose();
-  };
+  }
 
   updateByJson: (data: MeshComponentJson) => void = (data) => {};
 

@@ -5,7 +5,7 @@ import { CutsceneEditorPanel } from '@/module/slatejs';
 export const Timeline: FC = () => {
   const [pos, setPos] = useState<{ x: number; y: number }>();
 
-  const nodeRef = useRef(null);
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   const handleDrag = (e: DraggableEvent, ui: DraggableData) => {
     const { x, y } = pos || { x: 0, y: 0 };

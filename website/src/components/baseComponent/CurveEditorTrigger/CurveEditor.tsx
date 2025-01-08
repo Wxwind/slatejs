@@ -11,8 +11,8 @@ interface CurveEditorProps {
 
 export function CurveEditor(props: CurveEditorProps) {
   const { value, onChange } = props;
-  const curve = useRef<Curve>();
-  const editor = useRef<DeerCanvas>();
+  const curve = useRef<Curve>(undefined);
+  const editor = useRef<DeerCanvas>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

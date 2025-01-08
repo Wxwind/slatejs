@@ -7,11 +7,11 @@ import { property } from '../decorator';
 import { ISerializable } from '@/interface';
 import { DeerScene } from '../DeerScene';
 import { Object3D } from 'three';
-import { SceneObject } from '../base';
+import { EngineObject } from '../base';
 import { Script } from '../component/Script';
 import { DisorderedArray } from '../DisorderedMap';
 
-export class Entity extends SceneObject implements ISerializable<EntityJson> {
+export class Entity extends EngineObject implements ISerializable<EntityJson> {
   @property({ type: String })
   id: string = '0';
 
@@ -21,6 +21,12 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
   sceneObject: Object3D;
 
   _isRoot = false;
+
+  protected _scene: DeerScene;
+
+  public get scene(): DeerScene {
+    return this._scene;
+  }
 
   /** local active */
   @property({ type: Boolean })
@@ -107,10 +113,10 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
   _scripts: DisorderedArray<Script> = new DisorderedArray<Script>();
 
   constructor(scene: DeerScene) {
-    super(scene);
+    super(scene.engine);
+    this._scene = scene;
     this.id = genUUID(UUID_PREFIX_ENTITY);
     const transformComp = new TransformComponent(this);
-    transformComp.entity = this;
     this._addComponent(transformComp);
     this.transform = transformComp;
     this.sceneObject = new Object3D();
@@ -190,7 +196,6 @@ export class Entity extends SceneObject implements ISerializable<EntityJson> {
   };
 
   _addComponent = (comp: Component) => {
-    comp.entity = this;
     comp._setActive(true);
     this.compMap.set(comp.id, comp);
     this.compArray.push(comp);

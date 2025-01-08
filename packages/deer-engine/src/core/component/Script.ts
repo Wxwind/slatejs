@@ -1,6 +1,5 @@
 import { ComponentManager, Pointer } from '../manager';
 import { Collider } from '../physics';
-import { RigidbodyComponent } from '../physics/RigidbodyComponent';
 import { ComponentBase } from './ComponentBase';
 
 export class Script extends ComponentBase {
@@ -29,6 +28,8 @@ export class Script extends ComponentBase {
   }
 
   override _onDestroy(): void {
+    super._onDestroy();
+    // TODO: destroy at the end of frame loop
     this.onDestroy();
   }
 

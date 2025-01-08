@@ -1,3 +1,4 @@
+export * from './base';
 export * from './DeerEngine';
 export * from './DeerScene';
 export * from './entity';

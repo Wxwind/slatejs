@@ -5,11 +5,12 @@ import { Signal } from 'eventtool';
 import { property } from '../decorator';
 import { ISerializable } from '@/interface';
 import { Object3D } from 'three';
-import { SceneObject } from '../base';
+import { EngineObject } from '../base';
 import { ComponentType, ComponentData, ComponentTypeToJsonObjMap } from './type';
+import { DeerScene } from '../DeerScene';
 
 export abstract class ComponentBase<T extends ComponentType = ComponentType>
-  extends SceneObject
+  extends EngineObject
   implements ISerializable<ComponentData<T>>
 {
   /** @internal */
@@ -20,9 +21,6 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
 
   /** @internal */
   _onFixedUpdateIndex: number = -1;
-
-  /** @internal */
-  _isDestroyed = false;
 
   _isAwoken = false;
   _isStarted = false;
@@ -38,8 +36,8 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
     return this._entity;
   }
 
-  set entity(value: Entity) {
-    this._entity = value;
+  public get scene(): DeerScene {
+    return this._entity.scene;
   }
 
   get sceneObject(): Object3D {
@@ -77,7 +75,7 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
   };
 
   constructor(entity: Entity) {
-    super(entity.scene);
+    super(entity.engine);
     this._entity = entity;
     this.id = genUUID(UUID_PREFIX_COMP);
   }
@@ -108,16 +106,12 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
 
   _onDisable() {}
 
-  destroy = () => {
-    if (this._isDestroyed) return;
-    this._isDestroyed = true;
+  override _onDestroy() {
+    super._onDestroy();
     if (this._enabled) {
       this.entity._activeInScene && this._onDisable();
     }
-    this._onDestroy();
-  };
-
-  _onDestroy() {}
+  }
 
   abstract updateByJson(data: ComponentTypeToJsonObjMap[T], sync: boolean): void;
 

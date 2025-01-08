@@ -11,14 +11,14 @@ export default function LogInfo(): Plugin {
   };
   const msg = `
   const styles = [
-    'color: blue',
-    'font-size: 18px',
+    'color: #4adddd',
+    'font-size: 16px',
     'padding: 5px',
   ].join(';');
   const appInfo= ${JSON.stringify(__APP_INFO__)};
-  console.log("%c 名称: ${__APP_INFO__.name}",styles);
-  console.log("%c 版本号: ${__APP_INFO__.version}",styles);
-  console.log("%c 上次构建时间: ${__APP_INFO__.lastBuildTime}",styles);
+  console.log("%c App: ${__APP_INFO__.name}",styles);
+  console.log("%c Version: ${__APP_INFO__.version}",styles);
+  console.log("%c Last Build Time: ${__APP_INFO__.lastBuildTime}",styles);
   `;
   return {
     name: 'vite-plugin-loginfo',

@@ -61,16 +61,6 @@ export class TransformComponent extends ComponentBase<'TransformComponent'> {
     this._updateFlag = true;
   }
 
-  _onAwake() {}
-
-  _onEnable() {}
-
-  _onDisable() {}
-
-  update(dt: number) {}
-
-  _onDestroy() {}
-
   updateByJson(data: TransformComponentJson, sync: boolean) {
     this.sceneObject.position.set(data.position.x, data.position.y, data.position.z);
     this.sceneObject.rotation.set(

@@ -23,6 +23,8 @@
     "gl-matrix": "^3.4.3",
     "immer": "^10.0.3",
     "lodash": "^4.17.21",
+    "mobx": "^6.13.5",
+    "mobx-react-lite": "^4.1.0",
     "monaco-editor": "^0.52.2",
     "physx-js-webidl": "^2.4.2",
     "react": "^18.2.0",
@@ -48,7 +50,7 @@
     "sass": "^1.66.1",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.7.2",
-    "vite": "^4.3.9",
+    "vite": "^6.0.6",
     "vite-plugin-cdn-import": "^1.0.1",
     "vite-plugin-externals": "^0.6.2"
   }

@@ -50,13 +50,8 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
     this.animations = model?.animations || [];
   };
 
-  _onEnable: () => void = () => {};
-
-  _onDisable: () => void = () => {};
-
-  update: (dt: number) => void = () => {};
-
-  _onDestroy: () => void = () => {
+  override _onDestroy() {
+    super._onDestroy();
     if (isNil(this.model)) {
       console.warn("mesh doesn't exist");
       return;
@@ -65,7 +60,7 @@ export class ModelComponent extends ComponentBase<'ModelComponent'> {
     this.model.clear();
     this.materials.forEach((m) => m.dispose());
     this.geomatries.forEach((geo) => geo.dispose());
-  };
+  }
 
   updateByJson: (data: ModelComponentJson, sync: boolean) => void = (data, sync) => {};
 

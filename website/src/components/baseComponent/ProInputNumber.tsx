@@ -15,7 +15,7 @@ export interface ProInputNumberProps extends Omit<InputProps, 'onChange' | 'valu
 }
 
 export const ProInputNumber: FC<ProInputNumberProps> = (props) => {
-  const { value, name, min, max, precisionOnShow, precisionOnSave, onBlur, onChange, ...rest } = props;
+  const { value, name, min, max, precisionOnShow, precisionOnSave, onBlur, onChange, onFocus, ...rest } = props;
 
   const [showValue, setShowValue] = React.useState<string | undefined>(undefined);
   const [isInputing, setIsInputing] = React.useState(false);
@@ -107,6 +107,7 @@ export const ProInputNumber: FC<ProInputNumberProps> = (props) => {
       onFocus={(e) => {
         setIsInputing(true);
         setShowValue(value?.toString());
+        onFocus?.(e);
         // 如果setShowValue了新数字，则直接调用select()无效果
         requestAnimationFrame(() => {
           e.target.select();

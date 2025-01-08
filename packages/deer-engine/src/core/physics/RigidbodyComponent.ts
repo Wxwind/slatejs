@@ -27,6 +27,7 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
   }
 
   _tempVec3 = new Vector3();
+
   /** copy real scene to physical scene */
   _onColliderUpdate() {
     if (this.entity.transform._updateFlag) {
@@ -54,7 +55,7 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
     this._colliders.push(collider);
     collider._rigidbody = this;
     this._nativeRigidbody.addCollider(collider._nativeCollider);
-    this._active && this._scene.physicsScene._onColliderAdd(collider);
+    this._active && this.scene.physicsScene._onColliderAdd(collider);
   }
 
   removeCollider(collider: Collider) {
@@ -64,7 +65,7 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
     this._colliders.splice(index, 1);
     collider._rigidbody = null;
     this._nativeRigidbody.removeCollider(collider._nativeCollider);
-    this._active && this._scene.physicsScene._onColliderRemove(collider);
+    this._active && this.scene.physicsScene._onColliderRemove(collider);
   }
 
   getTransform(outPosition: Vector3, outRotation: Quaternion): void {
@@ -81,12 +82,13 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
       collider.destroy();
       collider._rigidbody = null;
       this._nativeRigidbody.removeCollider(collider._nativeCollider);
-      this._scene.physicsScene._onColliderRemove(collider);
+      this.scene.physicsScene._onColliderRemove(collider);
     }
     this._colliders.length = 0;
   }
 
   override _onDestroy() {
+    super._onDestroy();
     this.removeAllColliders();
     this._nativeRigidbody.destroy();
   }

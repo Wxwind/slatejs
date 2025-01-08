@@ -18,7 +18,7 @@ export class FileManager extends AbstractManager {
     return this.builtinAssetManifest[name];
   }
 
-  init = () => {
+  init() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME);
 
@@ -45,7 +45,7 @@ export class FileManager extends AbstractManager {
         objectStore.createIndex('name', 'name', { unique: true });
       };
     });
-  };
+  }
 
   getAsset: (uuid: string) => Promise<AssetFile | undefined> = (uuid: string) => {
     return new Promise((resolve, reject) => {
