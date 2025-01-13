@@ -31,7 +31,7 @@ export class ResizePlugin implements IRenderingPlugin {
         resizeObserver.unobserve(container);
       };
 
-      renderingSystem.hooks.destory.tap(() => {
+      renderingSystem.hooks.destroy.tap(() => {
         dispose();
       });
     });

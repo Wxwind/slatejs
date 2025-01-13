@@ -41,7 +41,7 @@ export class RenderingSystem {
      */
     endFrame: new SyncHook<[]>(),
 
-    destory: new SyncHook<[]>(),
+    destroy: new SyncHook<[]>(),
   };
 
   constructor(private context: CanvasContext) {}
@@ -51,7 +51,7 @@ export class RenderingSystem {
   };
 
   dispose = () => {
-    this.hooks.destory.call();
+    this.hooks.destroy.call();
   };
 
   render: () => void = () => {

@@ -3,7 +3,7 @@ import { StyleRenderer } from './interface';
 import { Circle } from '@/drawable/Circle';
 import { CanvasContext } from '@/interface';
 
-export class CirleRenderer implements StyleRenderer {
+export class CircleRenderer implements StyleRenderer {
   render = (ctx: CanvasRenderingContext2D, object: DisplayObject, context: CanvasContext) => {
     const { center, radius } = (object as Circle).style;
     const canvas = context.renderingContext.root.ownerCanvas;

@@ -87,7 +87,7 @@ export class ControlPlugin implements IRenderingPlugin {
       root.addEventListener('wheel', this.onScroll);
     });
 
-    context.renderingSystem.hooks.destory.tap(() => {
+    context.renderingSystem.hooks.destroy.tap(() => {
       this.hammer.off('panstart', onPanStart);
       this.hammer.off('panmove', onPanMove);
       this.hammer.off('panend', onPanEnd);

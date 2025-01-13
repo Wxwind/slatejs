@@ -29,12 +29,12 @@ export interface ICanvas {
    */
   canvas2Viewport: (canvas: Vector2) => Vector2;
   /**
-   * Transform point from canvas screen spcace to browser pos.
+   * Transform point from canvas screen space to browser pos.
    * @param viewport viewport point in canvas
    */
   viewport2Client: (viewport: Vector2) => Vector2;
   /**
-   * Transform point from browser pos to canvas screen spcace.
+   * Transform point from browser pos to canvas screen space.
    * @param client client point in browser scope
    */
   client2Viewport: (client: Vector2) => Vector2;

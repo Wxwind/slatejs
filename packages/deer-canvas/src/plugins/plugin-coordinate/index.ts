@@ -11,7 +11,7 @@ export interface RulerScale {
 }
 
 export type CoordinatePluginOpts = {
-  minstep: number;
+  minStep: number;
   maxStep: number;
 
   /** style */
@@ -20,7 +20,7 @@ export type CoordinatePluginOpts = {
   fontFamily: string;
   fontWeight: number;
   textColor: string;
-  gridSubkeyColor: string;
+  gridSubKeyColor: string;
   gridKeyColor: string;
 
   showCoordinate?: boolean;
@@ -29,7 +29,7 @@ export type CoordinatePluginOpts = {
 export class CoordinatePlugin implements IRenderingPlugin {
   name = 'Coordinate';
 
-  minstep = 0.05 * 16;
+  minStep = 0.05 * 16;
   maxStep = 100 * 16;
 
   rulerTextOffset: vec2;
@@ -40,7 +40,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
   fontFamily = 'monospace';
   fontWeight = 100;
   textColor = '#757881';
-  gridSubkeyColor = '#CCCCCC20';
+  gridSubKeyColor = '#CCCCCC20';
   gridKeyColor = '#CCCCCC40';
   originColor = '#ffffff88';
 
@@ -49,14 +49,14 @@ export class CoordinatePlugin implements IRenderingPlugin {
 
   constructor(opts?: Partial<CoordinatePluginOpts>) {
     if (opts) {
-      opts.minstep && (this.minstep = opts.minstep);
+      opts.minStep && (this.minStep = opts.minStep);
       opts.maxStep && (this.maxStep = opts.maxStep);
       opts.lineWidth && (this.lineWidth = opts.lineWidth);
       opts.fontSize && (this.fontSize = opts.fontSize);
       opts.fontFamily && (this.fontFamily = opts.fontFamily);
       opts.fontWeight && (this.fontWeight = opts.fontWeight);
       opts.textColor && (this.textColor = opts.textColor);
-      opts.gridSubkeyColor && (this.gridSubkeyColor = opts.gridSubkeyColor);
+      opts.gridSubKeyColor && (this.gridSubKeyColor = opts.gridSubKeyColor);
       opts.gridKeyColor && (this.gridKeyColor = opts.gridKeyColor);
       opts.showCoordinate && (this.showCoordinate = opts.showCoordinate);
     }
@@ -116,7 +116,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
   private calculateRulerScale(length: number, scale: number, flip: boolean, begin: number, end: number): RulerScale[] {
     const list: RulerScale[] = [];
 
-    //  const step = clamp(scale, this.minstep, this.maxStep);
+    //  const step = clamp(scale, this.minStep, this.maxStep);
     const step = scale;
 
     // console.log(
@@ -131,7 +131,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
 
     const be = end - begin;
 
-    // be         keyunit
+    // be         keyUnit
     // 0 ~ 0.5 -   0.05
     // 0.5 ~ 1 -   0.1
     // 1 ~ 5   -   0.5
@@ -213,7 +213,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       ctx.moveTo(a.position, 0);
       ctx.lineTo(a.position, height);
       if (a.num === 0) ctx.strokeStyle = this.originColor;
-      else ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubkeyColor;
+      else ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubKeyColor;
       ctx.closePath();
       ctx.lineWidth = this.lineWidth;
       ctx.setLineDash([]);
@@ -224,7 +224,7 @@ export class CoordinatePlugin implements IRenderingPlugin {
       ctx.moveTo(0, a.position);
       ctx.lineTo(width, a.position);
       if (a.num === 0) ctx.strokeStyle = this.originColor;
-      else ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubkeyColor;
+      else ctx.strokeStyle = a.isPrimaryKey ? this.gridKeyColor : this.gridSubKeyColor;
       ctx.closePath();
       ctx.lineWidth = this.lineWidth;
       ctx.setLineDash([]);

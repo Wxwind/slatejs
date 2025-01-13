@@ -45,7 +45,7 @@ export class EventPlugin implements IRenderingPlugin {
     renderingSystem.hooks.init.tap(() => {
       this.addEvents(canvasEl);
     });
-    renderingSystem.hooks.destory.tap(() => {
+    renderingSystem.hooks.destroy.tap(() => {
       this.removeEvents(canvasEl);
     });
   }

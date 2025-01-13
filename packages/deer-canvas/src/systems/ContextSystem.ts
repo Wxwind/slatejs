@@ -1,5 +1,5 @@
 /**
- * manage CanvasKit, Canvas2D, CanvaElement, ContainerElement
+ * manage CanvasKit, Canvas2D, CanvasElement, ContainerElement
  */
 export interface ContextSystem<Context = unknown> {
   init?: () => void;

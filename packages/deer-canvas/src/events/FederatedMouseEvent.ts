@@ -59,7 +59,7 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
   }
 
   /**
-   * The pointer coordinates in sceen space, from native event.
+   * The pointer coordinates in screen space, from native event.
    */
   screen: Point = new Point();
   get screenX(): number {

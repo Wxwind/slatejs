@@ -92,7 +92,7 @@ export class Camera implements ICamera {
    * - Camera posZ > focalPoint posZ is 0
    * - CameraType.TRACKING - Increasing anti-clockwise in HCS
    * - CameraType.EXPLORING and ORBITING - Increasing clockwise in HCS (when rotate world = false)
-   * - CameraType.EXPLORING's rotate world flag is true by defult, so it will increasing anti-clockwise like CameraType.TRACKING
+   * - CameraType.EXPLORING's rotate world flag is true by default, so it will increasing anti-clockwise like CameraType.TRACKING
    */
   protected azimuth = 0;
   protected elevation = 0;
