@@ -271,7 +271,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
     this.parameterModel.setDirect(obj, this.metadataProp, numbers);
   };
 
-  // TODO: support weight from IDirectable.blenin / IDirectable.blendout
+  // TODO: support weight from IDirectable.blendin / IDirectable.blendout
   evaluate: (curTime: number, prevTime: number) => void = (curTime, prevTime) => {
     if (this.disabled || isNil(this.target)) {
       return;

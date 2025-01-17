@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassFieldDecorator, IPropertyOptions } from '../type';
-import { DecoratorMetadataObjectForRF, MetadataProp, getClassName, getClassStathFromMetadata } from './util';
+import { DecoratorMetadataObjectForRF, MetadataProp, getClassName, getClassStashFromMetadata } from './util';
 import merge from 'lodash/merge';
 
 // @property({})
 export function property<This, Value>(options: IPropertyOptions): ClassFieldDecorator<This, Value> {
   const decorator = (target: undefined, context: ClassFieldDecoratorContext<This, Value>) => {
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
-    const classStash = getClassStathFromMetadata(metadata);
+    const classStash = getClassStashFromMetadata(metadata);
 
     const { type, animatable } = options;
     const typeName = type ? getClassName(type) : undefined;
@@ -49,7 +49,7 @@ export function accessor<This, Value>(
       | ClassAccessorDecoratorContext<This, Value>
   ) => {
     const metadata = context.metadata as DecoratorMetadataObjectForRF;
-    const classStash = getClassStathFromMetadata(metadata);
+    const classStash = getClassStashFromMetadata(metadata);
     const originStash = classStash[context.name];
     const { type, animatable } = options;
     const typeName = type ? getClassName(type) : undefined;

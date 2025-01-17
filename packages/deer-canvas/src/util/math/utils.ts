@@ -34,14 +34,31 @@ export function createVec3(x: number | vec2 | vec3 | vec4, y = 0, z = 0) {
 }
 
 /**
- * assume z from -1 to 1 (NDC), OpenGl (Y up, right hands,camera in +z look to -z)
+ * Assume view space is left hand (+X to right, +Y to top)
+ * So z axis of view space is look at from +z to -z of world space (assume right hands).
+ * (Otherwise, m22 and m32 will be '(f + n) / (f - n)' and 1)
+
+ * Besides, OpenGL is only knows NDC(and also clipping space, which +X to right, +Y to top, +z into screen). So you doesn't care about if it is used left-handed in view space and user space are worked in right-handed coordinate system.
+ * to learn more, see <href>https://stackoverflow.com/questions/4124041/is-opengl-coordinate-system-left-handed-or-right-handed/12336360#12336360</href>
+
+ * NDC space: OpenGL/WebGL (Y up, X right, z is -1 ~ 1, 0 < near < far)
+
   [
   (2n) / (r - l),      0,             (r + l) / (r - l),          0,
   0,               (2n) / (t - b),    (t + b) / (t - b),          0,
   0,                   0,            -(f + n) / (f - n),   -(2f * n) / (f - n),
   0,                   0,                   -1,                   0
   ]
- */
+
+* NDC space: WebGPU/Metal/DirectX (Y up, X right, z is 0 ~ 1, 0 < near < far)
+
+  [
+  (2n) / (r - l),      0,             (r + l) / (r - l),          0,
+  0,               (2n) / (t - b),    (t + b) / (t - b),          0,
+  0,                   0,                 -f  / (f - n),   -(f * n) / (f - n),
+  0,                   0,                   -1,                   0
+  ]
+*/
 export function makePerspective(
   out: mat4,
   left: number,

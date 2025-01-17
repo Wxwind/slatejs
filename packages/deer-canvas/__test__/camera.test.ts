@@ -2,8 +2,9 @@ import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { Camera, CameraProjectionMode, CameraTrackingMode, CameraType, ClipSpaceNearZ } from '../src/camera';
 import { DeerCanvas } from '../src/DeerCanvas';
 import 'isomorphic-fetch'; // for init CanvasKit
-import { mat4, vec3 } from 'gl-matrix';
-import { deg2rad } from '@/util';
+import { mat4, vec3, vec4 } from 'gl-matrix';
+import { deg2rad, makeOrthoGraphic, makePerspective } from '@/util';
+import { clipToNDC } from './utils';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
@@ -47,15 +48,15 @@ describe('Camera', () => {
         0,
         0,
         0,
-        -0,
+        0,
         0.004000000189989805,
-        -0,
-        -0,
+        0,
+        0,
         0,
         0,
         -0.0020002000965178013,
         0,
-        -0,
+        0,
         0,
         -1.0002000331878662,
         1
@@ -65,19 +66,19 @@ describe('Camera', () => {
     expect(camera.ProjectionInverse).toBeDeepCloseTo(
       mat4.fromValues(
         300,
-        -0,
-        -0,
-        -0,
+        0,
+        0,
+        0,
         0,
         249.99998474121094,
-        -0,
-        -0,
         0,
-        -0,
+        0,
+        0,
+        0,
         -499.9499816894531,
-        -0,
-        -0,
-        -0,
+        0,
+        0,
+        0,
         -500.04998779296875,
         1
       )
@@ -141,7 +142,7 @@ describe('Camera', () => {
         0,
         -0.0020002000965178013,
         0,
-        -0,
+        0,
         0,
         -0.00010001000191550702,
         1
@@ -182,7 +183,7 @@ describe('Camera', () => {
         0,
         -1.0002000331878662,
         -1,
-        -0,
+        0,
         0,
         -0.20002000033855438,
         0
@@ -224,7 +225,7 @@ describe('Camera', () => {
         0,
         -1.0002000331878662,
         -1,
-        -0,
+        0,
         0,
         -0.10001000016927719,
         0
@@ -410,5 +411,135 @@ describe('Camera', () => {
     expect(camera.FocalPoint).toBeDeepCloseTo(exvec2);
     expect(camera.Distance).toBeCloseTo(500);
     expect(camera.Position).toBeDeepCloseTo(camPos);
+  });
+
+  describe('makePerspective(NDC space: z from -1 ~ 1)', () => {
+    test('should z at far will be 1', () => {
+      const fov = deg2rad(90);
+      const aspect = 600 / 800;
+      const near = 0.1;
+      const far = 80;
+
+      const expected = mat4.perspectiveNO(mat4.create(), fov, aspect, near, far);
+
+      const t = near * Math.tan(fov / 2); // 0.1
+      const b = -t; // -0.1
+      const r = t * aspect; // 0.178
+      const l = -r; // -0.178
+
+      const res = makePerspective(mat4.create(), l, r, t, b, near, far);
+
+      // camera/view space
+      const pointer = vec4.fromValues(60, 80, -80, 1);
+      const p1 = vec4.transformMat4(vec4.create(), pointer, res);
+      const pExpected = clipToNDC(vec4.transformMat4(vec4.create(), pointer, expected));
+
+      const ndcP1 = clipToNDC(p1);
+
+      expect(res).toBeDeepCloseTo(expected);
+      expect(ndcP1).toBeDeepCloseTo(pExpected);
+      expect(ndcP1).toBeDeepCloseTo(vec4.fromValues(1, 1, 1, 1));
+    });
+
+    test('should z at near will be -1', () => {
+      const fov = deg2rad(90);
+      const aspect = 600 / 800;
+      const near = 0.1;
+      const far = 80;
+
+      const expected = mat4.perspective(mat4.create(), fov, aspect, near, far);
+
+      const t = near * Math.tan(fov / 2); // 0.1
+      const b = -t; // -0.1
+      const r = t * aspect; // 0.178
+      const l = -r; // -0.178
+
+      const res = makePerspective(mat4.create(), l, r, t, b, near, far);
+
+      // camera/view space
+      const pointer = vec4.fromValues(0.1 * aspect, 0.1, -0.1, 1);
+      const p1 = vec4.transformMat4(vec4.create(), pointer, res);
+      const pExpected = clipToNDC(vec4.transformMat4(vec4.create(), pointer, expected));
+
+      const ndcP1 = clipToNDC(p1);
+
+      expect(res).toBeDeepCloseTo(expected);
+      expect(ndcP1).toBeDeepCloseTo(pExpected);
+      expect(ndcP1).toBeDeepCloseTo(vec4.fromValues(1, 1, -1, 1));
+    });
+  });
+
+  describe('makePerspective(NDC space: z from 0 ~ 1)', () => {
+    test('should z at far will be 1', () => {
+      const fov = deg2rad(90);
+      const aspect = 600 / 800;
+      const near = 0.1;
+      const far = 80;
+
+      const expected = mat4.perspectiveZO(mat4.create(), fov, aspect, near, far);
+
+      const t = near * Math.tan(fov / 2); // 0.1
+      const b = -t; // -0.1
+      const r = t * aspect; // 0.178
+      const l = -r; // -0.178
+
+      const res = makePerspective(mat4.create(), l, r, t, b, near, far, true);
+
+      // camera/view space
+      const pointer = vec4.fromValues(60, 80, -80, 1);
+      const p1 = vec4.transformMat4(vec4.create(), pointer, res);
+      const pExpected = clipToNDC(vec4.transformMat4(vec4.create(), pointer, expected));
+
+      const ndcP1 = clipToNDC(p1);
+
+      expect(res).toBeDeepCloseTo(expected);
+      expect(ndcP1).toBeDeepCloseTo(pExpected);
+      expect(ndcP1).toBeDeepCloseTo(vec4.fromValues(1, 1, 1, 1));
+    });
+
+    test('should z at near will be 0', () => {
+      const fov = deg2rad(90);
+      const aspect = 600 / 800;
+      const near = 0.1;
+      const far = 80;
+
+      const expected = mat4.perspectiveZO(mat4.create(), fov, aspect, near, far);
+
+      const t = near * Math.tan(fov / 2); // 0.1
+      const b = -t; // -0.1
+      const r = t * aspect; // 0.178
+      const l = -r; // -0.178
+
+      const res = makePerspective(mat4.create(), l, r, t, b, near, far, true);
+
+      // camera/view space
+      const pointer = vec4.fromValues(0.1 * aspect, 0.1, -0.1, 1);
+      const p1 = vec4.transformMat4(vec4.create(), pointer, res);
+      const pExpected = clipToNDC(vec4.transformMat4(vec4.create(), pointer, expected));
+
+      const ndcP1 = clipToNDC(p1);
+
+      expect(res).toBeDeepCloseTo(expected);
+      expect(ndcP1).toBeDeepCloseTo(pExpected);
+      expect(ndcP1).toBeDeepCloseTo(vec4.fromValues(1, 1, 0, 1));
+    });
+  });
+
+  test('makeOrthographic(NDC space: z from 0 ~ 1)', () => {
+    const near = 0.1;
+    const far = 80;
+
+    const t = 80;
+    const b = -t;
+    const r = 60;
+    const l = -r;
+
+    const res = makeOrthoGraphic(mat4.create(), l, r, t, b, near, far);
+
+    // camera/view space
+    const pointer = vec4.fromValues(60, 80, -80, 1);
+    const p1 = clipToNDC(vec4.transformMat4(vec4.create(), pointer, res));
+
+    expect(p1).toBeDeepCloseTo(vec4.fromValues(1, 1, 1, 1));
   });
 });

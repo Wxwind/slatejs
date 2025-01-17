@@ -94,7 +94,7 @@ export class AnimatedVector3Model implements IAnimatedParameterModel<IVector3> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const TypeToAnimParamModelMapInstance: Record<string, new () => any> = {
+export const TypeToAnimParamModelMapInstance: Record<string, new () => IAnimatedParameterModel<any>> = {
   Number: AnimatedNumberModel,
   Bool: AnimatedBoolModel,
   IVector3: AnimatedVector3Model,

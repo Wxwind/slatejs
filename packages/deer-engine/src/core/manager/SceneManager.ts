@@ -40,8 +40,8 @@ export class SceneManager extends AbstractManager {
 
   loadScene = (sceneJson: DeerSceneJson, mode: DeerSceneMode, loadSceneMode: LoadSceneMode) => {
     const scene = new DeerScene(this.engine, this.engine.container, mode);
-    scene.deserialize(sceneJson);
     scene.init();
+    scene.deserialize(sceneJson);
     if (loadSceneMode === LoadSceneMode.Single) {
       for (const s of this._scenes.getLoopArray()) {
         s.destroy();

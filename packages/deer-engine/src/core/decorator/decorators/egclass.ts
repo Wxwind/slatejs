@@ -3,7 +3,7 @@
 import { isNil } from '@/util';
 import { globalTypeMap } from '../GlobalTypeMap';
 import { ClassClassDecorator } from '../type';
-import { DecoratorMetadataObjectForRF, getClassName, getClassStath, hasClassStash } from './util';
+import { DecoratorMetadataObjectForRF, getClassName, getClassStash, hasClassStash } from './util';
 import { Entity, ComponentBase } from '@/core';
 
 // FIXME fix with Class extends new () => any
@@ -18,7 +18,7 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
     target.prototype.toJsonObject = function () {
       const toJson = (ctor: new () => unknown | (new () => unknown)[], thisObj: any) => {
         const obj: Record<string, any> = {};
-        const stash = getClassStath(ctor);
+        const stash = getClassStash(ctor);
 
         for (const key in stash) {
           const metaProp = stash[key];
@@ -83,7 +83,7 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
         thisObj: any
       ) => {
         const constructFromCtor = (ctor: new () => unknown, json: Record<string, any>, thisObj: any) => {
-          const stash = getClassStath(ctor);
+          const stash = getClassStash(ctor);
           for (const key in stash) {
             const metaProp = stash[key];
             if (!(key in json)) {

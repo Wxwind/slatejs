@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isNil } from '@/util';
-import { GroupOptions } from '../type';
-import { CutsceneTrack } from '@/module';
 
 export type DecoratorMetadataObjectForRF = Partial<{
   __propertyCache__: MetadataClass;
@@ -32,12 +30,12 @@ export function getMetadataFromCtor(ctor: AnyCtor) {
   return ctor[Symbol.metadata] as DecoratorMetadataObjectForRF;
 }
 
-export function getClassStath(ctor: abstract new (...args: any[]) => any): MetadataClass {
+export function getClassStash(ctor: abstract new (...args: any[]) => any): MetadataClass {
   const metadata = ctor[Symbol.metadata];
   if (isNil(metadata)) {
     ctor[Symbol.metadata] = {};
   }
-  return getClassStathFromMetadata(ctor[Symbol.metadata]!);
+  return getClassStashFromMetadata(ctor[Symbol.metadata]!);
 }
 
 export function hasClassStash(ctor: abstract new (...args: any[]) => any): boolean {
@@ -49,7 +47,7 @@ export function hasClassStash(ctor: abstract new (...args: any[]) => any): boole
   return ok;
 }
 
-export function getClassStathFromMetadata(metadata: DecoratorMetadataObject): MetadataClass {
+export function getClassStashFromMetadata(metadata: DecoratorMetadataObject): MetadataClass {
   const m = metadata as DecoratorMetadataObjectForRF;
   if (isNil(m.__propertyCache__)) {
     m.__propertyCache__ = {};
