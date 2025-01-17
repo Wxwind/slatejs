@@ -27,6 +27,9 @@ export abstract class PxPhysicsCollider implements ICollider {
 
   private _filterData: PhysX.PxFilterData;
 
+  private _realRotation = new Quaternion();
+  private _realPosition = new Vector3();
+
   _id: number;
 
   constructor(pxPhysics: PxPhysics, id: number) {
@@ -78,7 +81,6 @@ export abstract class PxPhysicsCollider implements ICollider {
     this._setLocalPose();
   }
 
-  private _realRotation: Quaternion = new Quaternion();
   setRotation(rotation: Quaternion) {
     this._rotation.copy(rotation);
     this._realRotation.copy(this._rotation);
@@ -114,11 +116,8 @@ export abstract class PxPhysicsCollider implements ICollider {
   }
 
   protected _setLocalPose() {
-    // this._position.multiply(this._worldScale);
-    // console.log(
-    //   `set pxCollider position ${JSON.stringify(this._position)}, rotation: ${JSON.stringify(this._realRotation)}`
-    // );
-    this._pxShape.setLocalPose(toPxTransform(this._position, this._realRotation, this._tempPxTransform));
+    this._realPosition.multiplyVectors(this._position, this._worldScale);
+    this._pxShape.setLocalPose(toPxTransform(this._realPosition, this._realRotation, this._tempPxTransform));
   }
 
   destroy() {
