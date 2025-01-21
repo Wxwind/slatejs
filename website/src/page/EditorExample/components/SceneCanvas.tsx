@@ -37,6 +37,7 @@ export const SceneCanvas: FC = (props) => {
 
       setCutsceneEditor(cutsceneEditor);
       setEngine(deerEngine);
+      (window as any)['engine'] = deerEngine;
     };
 
     initEngine();

@@ -23,16 +23,16 @@
   "devDependencies": {
     "@types/hammerjs": "^2.0.45",
     "@types/uuid": "^9.0.6",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^6.9.0",
-    "eslint": "^8.52.0"
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "eslint": "^9.18.0"
   },
   "dependencies": {
     "canvaskit-wasm": "^0.39.1",
     "deer-engine": "workspace:*",
+    "eventtool": "workspace:*",
     "gl-matrix": "^3.4.3",
     "hammerjs": "^2.0.8",
-    "uuid": "^9.0.1",
-    "eventtool": "workspace:*"
+    "uuid": "^9.0.1"
   }
 }

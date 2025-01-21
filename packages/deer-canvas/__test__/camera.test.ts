@@ -2,7 +2,7 @@ import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { Camera, CameraProjectionMode, CameraTrackingMode, CameraType, ClipSpaceNearZ } from '../src/camera';
 import { DeerCanvas } from '../src/DeerCanvas';
 import 'isomorphic-fetch'; // for init CanvasKit
-import { mat4, vec3, vec4 } from 'gl-matrix';
+import { glMatrix, mat4, vec3, vec4 } from 'gl-matrix';
 import { deg2rad, makeOrthoGraphic, makePerspective } from '@/util';
 import { clipToNDC } from './utils';
 
@@ -189,6 +189,11 @@ describe('Camera', () => {
         0
       )
     );
+
+    camera.rotate(0, 90, 0);
+    const viewMatrix = mat4.lookAt(mat4.create(), camera.Position, camera.FocalPoint, camera.Up);
+
+    expect(camera.ViewTransform).toBeDeepCloseTo(viewMatrix);
   });
 
   test('create the perspective(near0-1) camera', () => {

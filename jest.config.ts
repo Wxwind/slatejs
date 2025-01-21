@@ -13,7 +13,7 @@ const config: JestConfigWithTsJest = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
-  projects: ['packages/deer-canvas', 'packages/deer-engine'],
+  projects: ['packages/*'],
 };
 
 export default config;

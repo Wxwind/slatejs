@@ -31,16 +31,16 @@
     "@types/lodash": "^4.14.202",
     "@types/three": "^0.157.2",
     "@types/uuid": "^9.0.6",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^6.9.0",
-    "eslint": "^8.52.0"
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "eslint": "^9.18.0"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^25.0.0",
     "eventtool": "workspace:*",
     "fflate": "^0.8.1",
     "lodash": "^4.17.21",
-    "physx-js-webidl": "^2.5.0",
+    "physx-js-webidl": "^2.4.2",
     "three": "^0.157.0",
     "uuid": "^9.0.1"
   }
