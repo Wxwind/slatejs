@@ -34,29 +34,38 @@ export function createVec3(x: number | vec2 | vec3 | vec4, y = 0, z = 0) {
 }
 
 /**
- * Assume view space is left hand (+X to right, +Y to top)
- * So z axis of view space is look at from +z to -z of world space (assume right hands).
- * (Otherwise, m22 and m32 will be '(f + n) / (f - n)' and 1)
+ * View to Clip space
+ * Assume clip space is left-handed (+X to right, +Y to top, +Z into screen), view space is right-handed.
+ * (If view space is also left-handed (+X to right, +Y to top, +Z into screen), m22 and m32 will be '(f + n) / (f - n)' and 1)
 
- * Besides, OpenGL is only knows NDC(and also clipping space, which +X to right, +Y to top, +z into screen). So you doesn't care about if it is used left-handed in view space and user space are worked in right-handed coordinate system.
+ * Besides, OpenGL is only knows NDC(and also clipping space, which +X to right, +Y to top, +Z into screen). So you doesn't care about if it is used left-handed in clip space and view space work in right-handed coordinate system.
  * to learn more, see <href>https://stackoverflow.com/questions/4124041/is-opengl-coordinate-system-left-handed-or-right-handed/12336360#12336360</href>
 
- * NDC space: OpenGL/WebGL (Y up, X right, z is -1 ~ 1, 0 < near < far)
+ * NDC space: OpenGL/WebGL (Y up, X right, z is -1 ~ 1 into screen, 0 < near < far)
 
   [
-  (2n) / (r - l),      0,             (r + l) / (r - l),          0,
-  0,               (2n) / (t - b),    (t + b) / (t - b),          0,
+  (2n) / (r - l),      0,             (r + l) / (r - l),           0,
+  0,              (2n) / (t - b),     (t + b) / (t - b),           0,
   0,                   0,            -(f + n) / (f - n),   -(2f * n) / (f - n),
-  0,                   0,                   -1,                   0
+  0,                   0,                    -1,                   0
   ]
 
-* NDC space: WebGPU/Metal/DirectX (Y up, X right, z is 0 ~ 1, 0 < near < far)
+* NDC space: WebGPU/Metal/DirectX (Y up, X right, z is 0 ~ 1 into screen, 0 < near < far)
 
   [
-  (2n) / (r - l),      0,             (r + l) / (r - l),          0,
-  0,               (2n) / (t - b),    (t + b) / (t - b),          0,
+  (2n) / (r - l),      0,             (r + l) / (r - l),           0,
+  0,              (2n) / (t - b),     (t + b) / (t - b),           0,
   0,                   0,                 -f  / (f - n),   -(f * n) / (f - n),
-  0,                   0,                   -1,                   0
+  0,                   0,                    -1,                   0
+  ]
+
+  PS: If use Vulkan (Y down, X right, z is 0 ~ 1 into screen, 0 < near < far), NDC:
+
+  [
+  (2n) / (r - l),      0,             (r + l) / (r - l),           0,
+  0,             -(2n) / (t - b),     (t + b) / (t - b),           0,
+  0,                   0,                 -f  / (f - n),   -(f * n) / (f - n),
+  0,                   0,                    -1,                   0
   ]
 */
 export function makePerspective(
