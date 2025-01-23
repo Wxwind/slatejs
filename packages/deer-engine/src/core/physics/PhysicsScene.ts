@@ -3,7 +3,14 @@ import { RigidbodyComponent } from './RigidbodyComponent';
 import { ComponentManager } from '../manager';
 import { DisorderedArray } from '../DisorderedMap';
 import { Vector3 } from 'three';
-import { ICollider, IPhysics, IPhysicsScene, PhysicsEventCallbacks } from './interface';
+import {
+  InternalControllerColliderHit,
+  ICollider,
+  IPhysics,
+  IPhysicsScene,
+  PhysicsEventCallbacks,
+  ControllerColliderHit,
+} from './interface';
 import { CharacterControllerComponent } from './CharacterControllerComponent';
 import { Script } from '../component';
 import { Collider } from './collider';
@@ -24,6 +31,7 @@ export class PhysicsScene {
   _nativePhysicsScene: IPhysicsScene;
 
   private _rigidbodies = new DisorderedArray<RigidbodyComponent>();
+  private _controllerMap: Record<number, CharacterControllerComponent> = {};
 
   private _gravity: Vector3 = new Vector3(0, -9.81, 0);
 
@@ -59,6 +67,7 @@ export class PhysicsScene {
       onTriggerBegin: this._onTriggerBegin,
       onTriggerEnd: this._onTriggerEnd,
       onTriggerStay: this._onTriggerStay,
+      onControllerHit: this._controllerColliderHit,
     };
     this._nativePhysicsScene = PhysicsScene._nativePhysics.createScene(this.gravity, eventCallbacks);
   }
@@ -102,7 +111,7 @@ export class PhysicsScene {
     const coll1 = this._nativeShapeMap[obj1];
     const coll2 = this._nativeShapeMap[obj2];
     if (!coll1 || !coll2) {
-      console.error(`native collider lost binding`);
+      console.error(`native collider ${coll1}(${obj1}) or ${coll2}${obj2} lost binding`);
       return;
     }
 
@@ -129,7 +138,7 @@ export class PhysicsScene {
     const coll1 = this._nativeShapeMap[obj1];
     const coll2 = this._nativeShapeMap[obj2];
     if (!coll1 || !coll2) {
-      console.error(`native collider lost binding`);
+      console.error(`native collider ${coll1}(${obj1}) or ${coll2}${obj2} lost binding`);
       return;
     }
 
@@ -156,7 +165,7 @@ export class PhysicsScene {
     const coll1 = this._nativeShapeMap[obj1];
     const coll2 = this._nativeShapeMap[obj2];
     if (!coll1 || !coll2) {
-      console.error(`native collider lost binding`);
+      console.error(`native collider ${coll1}(${obj1}) or ${coll2}${obj2} lost binding`);
       return;
     }
 
@@ -183,7 +192,7 @@ export class PhysicsScene {
     const coll1 = this._nativeShapeMap[obj1];
     const coll2 = this._nativeShapeMap[obj2];
     if (!coll1 || !coll2) {
-      console.error(`native collider lost binding`);
+      console.error(`native collider ${coll1}(${obj1}) or ${coll2}${obj2} lost binding`);
       return;
     }
 
@@ -210,7 +219,7 @@ export class PhysicsScene {
     const coll1 = this._nativeShapeMap[obj1];
     const coll2 = this._nativeShapeMap[obj2];
     if (!coll1 || !coll2) {
-      console.error(`native collider lost binding`);
+      console.error(`native collider ${coll1}(${obj1}) or ${coll2}${obj2} lost binding`);
       return;
     }
 
@@ -237,7 +246,7 @@ export class PhysicsScene {
     const coll1 = this._nativeShapeMap[obj1];
     const coll2 = this._nativeShapeMap[obj2];
     if (!coll1 || !coll2) {
-      console.error(`native collider lost binding`);
+      console.error(`native collider ${coll1}(${obj1}) or ${coll2}${obj2} lost binding`);
       return;
     }
 
@@ -253,6 +262,34 @@ export class PhysicsScene {
     coll2.rigidbody.entity._scripts.forEach(
       (script) => {
         script.onTriggerExit(coll1);
+      },
+      (element: Script, index: number) => {
+        element._entityScriptsIndex = index;
+      }
+    );
+  };
+
+  _controllerColliderHit = (controllerId: number, hit: InternalControllerColliderHit) => {
+    const controller = this._controllerMap[controllerId];
+    if (!controller) {
+      console.error(`native controller ${controllerId} lost binding`);
+      return;
+    }
+
+    const collider = this._nativeShapeMap[hit.colliderId];
+
+    const hitInfo: ControllerColliderHit = {
+      collider,
+      controller,
+      normal: hit.normal,
+      point: hit.point,
+      moveDirection: hit.direction,
+      moveLength: hit.length,
+    };
+
+    controller.entity._scripts.forEach(
+      (script) => {
+        script.onControllerColliderHit(hitInfo);
       },
       (element: Script, index: number) => {
         element._entityScriptsIndex = index;
@@ -294,13 +331,17 @@ export class PhysicsScene {
     if (cct._index === -1) {
       cct._index = this._rigidbodies.length;
       this._rigidbodies.add(cct);
+      this._controllerMap[cct._id] = cct;
     }
+
+    this._nativePhysicsScene.addCharacterController(cct._nativeRigidbody);
   }
 
   _removeRigidbody(rb: RigidbodyComponent) {
     const replaced = this._rigidbodies.deleteByIndex(rb._index);
     replaced && (replaced._index = rb._index);
     rb._index = -1;
+
     this._nativePhysicsScene.removeRigidbody(rb._nativeRigidbody);
     for (const collider of rb._colliders) {
       this._onColliderRemove(collider);
@@ -311,6 +352,9 @@ export class PhysicsScene {
     const replaced = this._rigidbodies.deleteByIndex(cct._index);
     replaced && (replaced._index = cct._index);
     cct._index = -1;
+    delete this._controllerMap[cct._id];
+
+    this._nativePhysicsScene.removeCharacterController(cct._nativeRigidbody);
   }
 
   destroy() {

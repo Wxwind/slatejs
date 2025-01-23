@@ -29,3 +29,10 @@ export function toPxTransform(position: IVector3, rotation: Quaternion, out: Phy
   toPxQuat(rotation, out.q);
   return out;
 }
+
+export function fromPxVec3Like(value: PhysX.PxVec3 | PhysX.PxExtendedVec3, out: IVector3): IVector3 {
+  out.x = value.x;
+  out.y = value.y;
+  out.z = value.z;
+  return out;
+}

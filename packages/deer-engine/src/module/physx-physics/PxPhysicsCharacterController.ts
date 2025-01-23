@@ -2,7 +2,7 @@ import PhysX from 'physx-js-webidl';
 import { PxPhysicsScene } from './PxPhysicsScene';
 import { PhysicsControllerNonWalkableModeEnum, PhysicsControllerCollisionFlag } from '../../core/physics/enum';
 import { Quaternion, Vector3 } from 'three';
-import { toPxExtendVec3, toPxVec3 } from './utils';
+import { fromPxVec3Like, toPxExtendVec3, toPxVec3 } from './utils';
 import { IVector3 } from '@/type';
 import { PxPhysicsCapsuleCollider, PxPhysicsCollider } from './collider';
 import { ICharacterController } from '@/core/physics/interface';
@@ -14,45 +14,90 @@ export class PxPhysicsCharacterController implements ICharacterController {
   _tempVec3: PhysX.PxVec3;
   _tempExtendedVec3: PhysX.PxExtendedVec3;
 
-  _pxScene: PxPhysicsScene;
+  _scene: PxPhysicsScene;
 
   _worldPosition = new Vector3();
 
-  _collider: PxPhysicsCollider | null = null;
+  _collider: PxPhysicsCapsuleCollider | null = null;
 
-  constructor(pxScene: PxPhysicsScene) {
-    this._pxScene = pxScene;
+  _id: number;
+
+  private _activeInScene: boolean = false;
+
+  set activeInScene(v: boolean) {
+    if (this._activeInScene === v) return;
+    this._activeInScene = v;
+    const collider = this._collider;
+    if (v) {
+      if (collider) {
+        const controller = this._createPXController(
+          this._scene,
+          collider._radius,
+          collider._halfHeight * 2,
+          collider._pxMaterial
+        );
+        this._pxController = controller;
+        const shape = (this._px.SupportFunctions.prototype as any).PxActor_getShape(controller.getActor(), 0);
+        collider._pxShape = shape;
+        this._collider = collider;
+        this._scene._onColliderAdd(collider);
+        this._scene._onControllerAdd(this);
+      }
+    } else {
+      if (collider) {
+        this._scene._onColliderRemove(collider);
+        this._scene._onControllerRemove(this);
+      }
+    }
+  }
+
+  get activeInScene(): boolean {
+    return this._activeInScene;
+  }
+
+  constructor(pxScene: PxPhysicsScene, id: number) {
+    this._scene = pxScene;
     this._px = pxScene._px;
     this._tempVec3 = new this._px.PxVec3();
     this._tempExtendedVec3 = new this._px.PxExtendedVec3();
+    this._id = id;
   }
 
   addCollider(collider: PxPhysicsCollider): boolean {
     if (!(collider instanceof PxPhysicsCapsuleCollider)) {
       throw new Error('only support PxPhysicsCapsuleCollider');
     }
+
+    if (!this._activeInScene) {
+      // don't create pxController if disabled
+      this._collider = collider;
+      return true;
+    }
     const controller = this._createPXController(
-      this._pxScene,
+      this._scene,
       collider._radius,
       collider._halfHeight * 2,
       collider._pxMaterial
     );
     this._pxController = controller;
-    console.log('cct', controller);
     const shape = (this._px.SupportFunctions.prototype as any).PxActor_getShape(controller.getActor(), 0);
-    console.log('controller native shape', shape);
-
     collider._pxShape = shape;
     this._collider = collider;
-    this._pxScene._onColliderAdd(this._collider);
+    this._scene._onColliderAdd(this._collider);
+    this._scene._onControllerAdd(this);
 
     return true;
   }
 
   removeCollider(collider: PxPhysicsCollider, wakeOnLostTouch?: boolean): void {
-    this._destroyController();
-    this._pxScene._onColliderRemove(this._collider!);
-    this._collider = null;
+    if (!this._collider) return;
+
+    if (this._activeInScene) {
+      this._destroyController();
+      this._scene._onColliderRemove(this._collider);
+      this._scene._onControllerRemove(this);
+      this._collider = null;
+    }
   }
 
   setRadius(radius: number): void {
@@ -107,6 +152,27 @@ export class PxPhysicsCharacterController implements ICharacterController {
 
     desc.material = material;
 
+    const reportCallback = new px.PxUserControllerHitReportImpl();
+
+    reportCallback.onShapeHit = (hitPointer: PhysX.PxControllerShapeHit) => {
+      const hit = this._px.NativeArrayHelpers.prototype.getControllerShapeHitAt(hitPointer, 0);
+      const cct = hit.controller as any;
+      const nativeShape = hit.shape as any;
+      const shape = this._scene._pxColliderMap[nativeShape.ptr]?._id;
+      const cctId = this._scene._pxControllerMap[cct.ptr]._id;
+
+      this._scene._onCharacterControllerHit?.(this._id, {
+        colliderId: shape,
+        controllerId: cctId,
+        normal: fromPxVec3Like(hit.worldNormal, this._tempVec31),
+        point: fromPxVec3Like(hit.worldPos, this._tempVec32),
+        direction: fromPxVec3Like(hit.dir, this._tempVec33),
+        length: hit.length,
+      });
+    };
+
+    desc.reportCallback = reportCallback;
+
     return castPxObject(px, pxControllerManager.createController(desc), px.PxCapsuleController);
   }
 
@@ -121,7 +187,7 @@ export class PxPhysicsCharacterController implements ICharacterController {
     filters?: PhysX.PxControllerFilters,
     obstacles?: PhysX.PxObstacleContext | undefined
   ): number {
-    filters ??= new this._pxScene._px.PxControllerFilters();
+    filters ??= new this._scene._px.PxControllerFilters();
     if (!this._pxController) return PhysicsControllerCollisionFlag.COLLISION_SIDES;
     const flag = this._pxController.move(toPxVec3(disp, this._tempVec3), minDist, elapsedTime, filters, obstacles);
 
@@ -130,7 +196,7 @@ export class PxPhysicsCharacterController implements ICharacterController {
 
   private _toPhysicsControllerCollisionFlagsNumber(flag: PhysX.PxControllerCollisionFlags): number {
     let mask = 0;
-    const px = this._pxScene._px;
+    const px = this._scene._px;
     if (flag.isSet(px.PxControllerCollisionFlagEnum.eCOLLISION_DOWN)) {
       mask |= PhysicsControllerCollisionFlag.COLLISION_DOWN;
     }
@@ -181,4 +247,8 @@ export class PxPhysicsCharacterController implements ICharacterController {
     if (!this._pxController) return;
     this._pxController.setPosition(toPxExtendVec3(this._worldPosition, this._tempExtendedVec3));
   }
+
+  private _tempVec31 = { x: 0, y: 0, z: 0 };
+  private _tempVec32 = { x: 0, y: 0, z: 0 };
+  private _tempVec33 = { x: 0, y: 0, z: 0 };
 }

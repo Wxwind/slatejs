@@ -2,6 +2,38 @@ import PhysX from 'physx-js-webidl';
 import { IVector3 } from '@/type';
 import { PhysicsControllerNonWalkableModeEnum, PhysicsCombineMode } from './enum';
 import { Quaternion } from 'three';
+import { CharacterControllerComponent } from './CharacterControllerComponent';
+import { Collider } from './collider';
+
+export interface ControllerColliderHit {
+  /** The collider that was hit by the controller. */
+  collider: Collider;
+  /** The controller that hit the collider. */
+  controller: CharacterControllerComponent | null;
+  /** The normal of the surface we collided with in world space. */
+  normal: IVector3;
+  /** The impact point in world space. */
+  point: IVector3;
+  /** The direction the CharacterController was moving in when the collision occured. */
+  moveDirection: IVector3;
+  /**	How far the character has travelled until it hit the collider. */
+  moveLength: number;
+}
+
+export interface InternalControllerColliderHit {
+  /** The collider that was hit by the controller. */
+  colliderId: number;
+  /** The controller that hit the collider. */
+  controllerId: number | null;
+  /** The normal of the surface we collided with in world space. */
+  normal: IVector3;
+  /** The impact point in world space. */
+  point: IVector3;
+  /** The direction the CharacterController was moving in when the collision occured. */
+  direction: IVector3;
+  /**	How far the character has travelled until it hit the collider. */
+  length: number;
+}
 
 export type PhysicsEventCallbacks = {
   onContactBegin?: (obj1: number, obj2: number) => void;
@@ -10,6 +42,7 @@ export type PhysicsEventCallbacks = {
   onTriggerBegin?: (obj1: number, obj2: number) => void;
   onTriggerEnd?: (obj1: number, obj2: number) => void;
   onTriggerStay?: (obj1: number, obj2: number) => void;
+  onControllerHit?: (controllerId: number, hit: InternalControllerColliderHit) => void;
 };
 
 export interface IPhysics {
@@ -329,9 +362,19 @@ export interface IPhysicsScene {
    */
   removeRigidbody(rigidbody: IRigidbody): void;
   /**
+   * Add ICharacterController
+   * @param controller - ICharacterController
+   */
+  addCharacterController(controller: ICharacterController): void;
+  /**
+   * Remove ICharacterController
+   * @param controller - ICharacterController
+   */
+  removeCharacterController(controller: ICharacterController): void;
+  /**
    * Create ICharacterController.
    */
-  createCharacterController(): ICharacterController;
+  createCharacterController(id: number): ICharacterController;
   /**
    * Call on every frame to update pose of objects.
    * @param elapsedTime - Step time of update.

@@ -1,5 +1,6 @@
 import { ComponentManager, Pointer } from '../manager';
 import { Collider } from '../physics';
+import { ControllerColliderHit, InternalControllerColliderHit } from '../physics/interface';
 import { ComponentBase } from './ComponentBase';
 
 export class Script extends ComponentBase {
@@ -92,6 +93,8 @@ export class Script extends ComponentBase {
   onTriggerStay(other: Collider): void {}
 
   onTriggerExit(other: Collider): void {}
+
+  onControllerColliderHit(hit: ControllerColliderHit): void {}
 
   updateByJson(): void {}
 

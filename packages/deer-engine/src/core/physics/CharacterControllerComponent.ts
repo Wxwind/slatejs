@@ -5,6 +5,7 @@ import { ICharacterController } from './interface';
 import { objectToLocalPosition } from '@/util';
 import { Vector3 } from 'three';
 import { PhysicsControllerNonWalkableModeEnum } from './enum';
+import { Collider } from './collider';
 
 export class CharacterControllerComponent extends RigidbodyComponent {
   public type = 'CharacterControllerComponent' as const;
@@ -69,7 +70,7 @@ export class CharacterControllerComponent extends RigidbodyComponent {
 
   constructor(entity: Entity) {
     super(entity);
-    this._nativeRigidbody = this.scene.physicsScene._nativePhysicsScene.createCharacterController();
+    this._nativeRigidbody = this.scene.physicsScene._nativePhysicsScene.createCharacterController(this._id);
   }
 
   override _onEnable(): void {
@@ -100,6 +101,13 @@ export class CharacterControllerComponent extends RigidbodyComponent {
     this._syncWorldPositionFromPhysicalPosition();
     this.entity.transform._updateFlag = false;
   }
+
+  override addCollider(collider: Collider): void {
+    super.addCollider(collider);
+    this.scene.physicsScene._onColliderAdd;
+  }
+
+  override removeCollider(collider: Collider): void {}
 
   move(disp: IVector3, minDist: number, elapsedTime: number) {
     const flag = this._nativeRigidbody.move(disp, minDist, elapsedTime);

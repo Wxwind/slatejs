@@ -13,6 +13,7 @@ import {
   CharacterControllerComponent,
   ResourceManager,
   CapsuleCollider,
+  DynamicRigidbodyComponent,
 } from 'deer-engine';
 import { downLoad, isNil } from '@/util';
 import { Message } from '@arco-design/web-react';
@@ -20,6 +21,7 @@ import { FileUpload } from '@/components';
 import { useCutsceneEditorStore, useEngineStore } from '@/store';
 import { CharacterControllerScript } from '@/scripts/CharacterControllerScript';
 import { ShootScript } from '@/scripts/ShootScript';
+import { CollEventTestScript } from '@/scripts/CollEventTest';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -103,6 +105,7 @@ export const Header: FC<HeaderProps> = (props) => {
     // const fpCameraController = e.addComponentByNew(FirstPersonCameraControllerScript);
     // controller._isFirstPerson = true;
     const shooter = e.addComponentByNew(ShootScript);
+    e.addComponentByNew(CollEventTestScript);
   };
 
   const handleCreateFloor = () => {
@@ -121,6 +124,30 @@ export const Header: FC<HeaderProps> = (props) => {
     const boxCollider = new BoxCollider();
     rb.addCollider(boxCollider);
     handleCreateSlope();
+  };
+
+  const handleCreateCube = () => {
+    if (isNil(scene)) {
+      console.error('create entity failed: no activated scene');
+      return;
+    }
+    const e = scene.entityManager.createEntity('Cube', scene.entityManager.selectedEntity);
+    e.transform.scale = {
+      x: 1,
+      y: 1,
+      z: 1,
+    };
+    e.transform.position = {
+      x: 0,
+      y: 2,
+      z: 2,
+    };
+    e.addComponentByNew(MeshComponent);
+    const rb = e.addComponentByNew(DynamicRigidbodyComponent);
+    rb.isKinematic = true;
+    const boxCollider = new BoxCollider();
+    boxCollider.isTrigger = true;
+    rb.addCollider(boxCollider);
   };
 
   const handleCreateSlope = () => {
@@ -269,6 +296,12 @@ export const Header: FC<HeaderProps> = (props) => {
               onSelect={handleCreateFloor}
             >
               New Floor
+            </Menubar.Item>
+            <Menubar.Item
+              className="text-sm group rounded flex items-center h-6 px-3 relative select-none outline-none hover:text-white hover:bg-blue-400"
+              onSelect={handleCreateCube}
+            >
+              New Cube
             </Menubar.Item>
             <Menubar.Separator className="h-[1px] bg-slate-400 m-[5px]" />
           </Menubar.Content>

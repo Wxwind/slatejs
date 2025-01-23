@@ -4,11 +4,17 @@ import { Vector3 } from 'three';
 import { PxPhysicsRigidBody } from './PxPhysicsRigidBody';
 import { PxPhysicsCharacterController } from './PxPhysicsCharacterController';
 import { IVector3 } from '@/type';
-import { ICharacterController, ICollider, IPhysicsScene, PhysicsEventCallbacks } from '@/core/physics/interface';
+import {
+  InternalControllerColliderHit,
+  ICharacterController,
+  ICollider,
+  IPhysicsScene,
+  PhysicsEventCallbacks,
+} from '@/core/physics/interface';
 import { castPxObject, castPxPointer } from './pxExtensions';
 import { SimpleObjectPool } from './eventPool';
 import { DisorderedArray } from '@/core/DisorderedMap';
-import { PxPhysicsCollider } from './collider';
+import { PxPhysicsBoxCollider, PxPhysicsCollider } from './collider';
 
 enum TriggerState {
   None,
@@ -32,7 +38,8 @@ export class PxPhysicsScene implements IPhysicsScene {
   _px: typeof PhysX & typeof PhysX.PxTopLevelFunctions;
 
   // all created collider
-  private _pxColliderMap: Record<number, PxPhysicsCollider> = {};
+  _pxColliderMap: Record<number, PxPhysicsCollider> = {};
+  _pxControllerMap: Record<number, PxPhysicsCharacterController> = {};
 
   // map<shapeId, map<shapeId,event> >
   private _triggerEventTable: Record<number, Record<number, TriggerEvent>> = {};
@@ -43,6 +50,7 @@ export class PxPhysicsScene implements IPhysicsScene {
   private _onTriggerBegin?: (obj1: number, obj2: number) => void;
   private _onTriggerEnd?: (obj1: number, obj2: number) => void;
   private _onTriggerStay?: (obj1: number, obj2: number) => void;
+  _onCharacterControllerHit?: (characterController: number, hit: InternalControllerColliderHit) => void;
 
   constructor(pxPhysics: PxPhysics, gravity: IVector3, eventCallbacks?: PhysicsEventCallbacks) {
     const nativePxPhysics = pxPhysics._pxPhysics;
@@ -52,6 +60,7 @@ export class PxPhysicsScene implements IPhysicsScene {
     this._onTriggerBegin = eventCallbacks?.onTriggerBegin;
     this._onTriggerEnd = eventCallbacks?.onTriggerEnd;
     this._onTriggerStay = eventCallbacks?.onTriggerStay;
+    this._onCharacterControllerHit = eventCallbacks?.onControllerHit;
 
     const g = new px.PxVec3(gravity.x, gravity.y, gravity.z);
     const sceneDesc = new px.PxSceneDesc(nativePxPhysics.getTolerancesScale());
@@ -103,8 +112,8 @@ export class PxPhysicsScene implements IPhysicsScene {
         const pair = px.NativeArrayHelpers.prototype.getTriggerPairAt(pairs, i);
         const isEnter = pair.status === px.PxPairFlagEnum.eNOTIFY_TOUCH_FOUND;
 
-        const trigger = this._pxColliderMap[(pair.triggerActor as any).ptr]?._id;
-        const other = this._pxColliderMap[(pair.otherActor as any).ptr]?._id;
+        const trigger = this._pxColliderMap[(pair.triggerShape as any).ptr]?._id;
+        const other = this._pxColliderMap[(pair.otherShape as any).ptr]?._id;
 
         if (!trigger || !other) {
           console.error('trigger or other actor is null');
@@ -186,11 +195,13 @@ export class PxPhysicsScene implements IPhysicsScene {
     return event;
   }
 
+  /** registered into scene's colliderMap if any collider is attached to scene */
   _onColliderAdd(collider: PxPhysicsCollider) {
     this._pxColliderMap[(collider._pxShape as any).ptr] = collider;
     this._triggerEventTable[collider._id] = {};
   }
 
+  /** registered into scene's colliderMap if any collider is removed from scene */
   _onColliderRemove(collider: PxPhysicsCollider) {
     const {
       _currentEvents: currentEvents,
@@ -213,6 +224,14 @@ export class PxPhysicsScene implements IPhysicsScene {
     delete triggerEventTable[collider._id];
   }
 
+  _onControllerAdd(controller: PxPhysicsCharacterController) {
+    this._pxControllerMap[(controller._pxController as any).ptr] = controller;
+  }
+
+  _onControllerRemove(controller: PxPhysicsCharacterController) {
+    delete this._pxControllerMap[(controller._pxController as any).ptr];
+  }
+
   update(deltaTime: number) {
     this._simulate(deltaTime);
     this._fetchResult();
@@ -231,8 +250,18 @@ export class PxPhysicsScene implements IPhysicsScene {
     rb._scene = null;
   }
 
-  createCharacterController(): ICharacterController {
-    const controller = new PxPhysicsCharacterController(this);
+  addCharacterController(controller: PxPhysicsCharacterController) {
+    // TODO
+    controller.activeInScene = true;
+  }
+
+  removeCharacterController(controller: PxPhysicsCharacterController) {
+    // TODO
+    controller.activeInScene = false;
+  }
+
+  createCharacterController(id: number): ICharacterController {
+    const controller = new PxPhysicsCharacterController(this, id);
     return controller;
   }
 
