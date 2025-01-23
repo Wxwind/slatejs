@@ -29,10 +29,15 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
   _tempVec3 = new Vector3();
 
   /** copy real scene to physical scene */
+  _worldPosition = new Vector3();
+  _worldQuaternion = new Quaternion();
   _onColliderUpdate() {
     if (this.entity.transform._updateFlag) {
       const obj = this.sceneObject;
-      this._nativeRigidbody.setWorldTransform(obj.position, obj.quaternion);
+      this._nativeRigidbody.setWorldTransform(
+        obj.getWorldPosition(this._worldPosition),
+        obj.getWorldQuaternion(this._worldQuaternion)
+      );
       const scale = obj.getWorldScale(this._tempVec3);
       for (const collider of this._colliders) {
         collider._nativeCollider.setWorldScale(scale);

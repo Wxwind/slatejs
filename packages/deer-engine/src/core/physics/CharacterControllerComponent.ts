@@ -120,6 +120,7 @@ export class CharacterControllerComponent extends RigidbodyComponent {
 
     this._nativeRigidbody.getWorldPosition(this._tempPosition);
     const pos = objectToLocalPosition(obj, this._tempPosition);
+
     this.entity.transform.position = pos;
   }
 
