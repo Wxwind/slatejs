@@ -37,6 +37,10 @@ export abstract class PxPhysicsRigidBody implements IRigidbody {
     this._tempPxTransform = new px.PxTransform();
   }
 
+  setGravityFlag(enable: boolean) {
+    this._pxRigidBody.setActorFlag(this.px.PxActorFlagEnum.eDISABLE_GRAVITY, !enable);
+  }
+
   getWorldTransform(outPosition: Vector3, outRotation: Quaternion): void {
     const pose = this._pxRigidBody.getGlobalPose();
     outPosition.set(pose.p.x, pose.p.y, pose.p.z);

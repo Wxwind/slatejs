@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { MathUtil } from '@/util';
+import { MathUtils } from '@/math';
 import {
   InterpMode,
   Keyframe,
@@ -118,7 +118,7 @@ export class AnimationCurve {
       // PreExtrap
       if (keyLength > 1 && this.preExtrapolation === AnimationCurveExtrapolation.Linaer) {
         const dt = this.keys[1].time - this.keys[0].time;
-        if (MathUtil.isNearlyZero(dt)) {
+        if (MathUtils.isNearlyZero(dt)) {
           val = this.keys[0].value;
         } else {
           const dx = this.keys[1].value - this.keys[0].value;
@@ -146,7 +146,7 @@ export class AnimationCurve {
       // PostExtrap
       if (this.postExtrapolation === AnimationCurveExtrapolation.Linaer) {
         const dt = this.keys[keyLength - 1].time - this.keys[keyLength - 2].time;
-        if (MathUtil.isNearlyZero(dt)) {
+        if (MathUtils.isNearlyZero(dt)) {
           val = this.keys[keyLength - 1].value;
         } else {
           const dx = this.keys[keyLength - 1].value - this.keys[keyLength - 2].value;
@@ -224,7 +224,7 @@ export class AnimationCurve {
   private evalTwoKeys: (key1: Keyframe, key2: Keyframe, time: number) => number = (key1, key2, time) => {
     const dt = key2.time - key1.time;
 
-    if (MathUtil.isNearlyZero(dt)) {
+    if (MathUtils.isNearlyZero(dt)) {
       return key1.value;
     }
 
@@ -237,7 +237,7 @@ export class AnimationCurve {
         const t = (time - key1.time) / dt;
         const p0 = key1.value;
         const p3 = key2.value;
-        return MathUtil.lerp(p0, p3, t);
+        return MathUtils.lerp(p0, p3, t);
       }
 
       case InterpMode.Cubic: {

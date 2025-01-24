@@ -22,6 +22,7 @@ import { useCutsceneEditorStore, useEngineStore } from '@/store';
 import { CharacterControllerScript } from '@/scripts/CharacterControllerScript';
 import { ShootScript } from '@/scripts/ShootScript';
 import { CollEventTestScript } from '@/scripts/CollEventTest';
+import { CubeMoveScript } from '@/scripts/CubeMoveScript';
 
 interface HeaderProps {
   scene: DeerScene | undefined;
@@ -143,6 +144,8 @@ export const Header: FC<HeaderProps> = (props) => {
       z: 2,
     };
     e.addComponentByNew(MeshComponent);
+    e.addComponentByNew(CubeMoveScript);
+    e.addComponentByNew(CollEventTestScript);
     const rb = e.addComponentByNew(DynamicRigidbodyComponent);
     rb.isKinematic = true;
     const boxCollider = new BoxCollider();

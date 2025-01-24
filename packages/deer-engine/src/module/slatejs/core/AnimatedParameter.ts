@@ -14,14 +14,14 @@ import {
 } from '@/core';
 import { IAnimatable } from './IAnimatable';
 import { IKeyable } from './IKeyable';
-import { MathUtil, isNil, isValidKey } from '@/util';
+import { isNil, isValidKey } from '@/util';
 import {
   IAnimatedParameterModel,
   TypeToAnimParamModelMapInstance,
   AnimatedParameterType,
 } from './AnimatedParameterModel';
 import { ActionClip } from './ActionClip';
-import { FVector3 } from '@/math';
+import { FVector3, MathUtils } from '@/math';
 
 export type AnimatedParameterJson = {
   keyableId: string;
@@ -208,7 +208,7 @@ export class AnimatedParameter<T extends AnimatedParameterType = AnimatedParamet
       const keys = curve.keys;
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (MathUtil.isNearly(key.time, time)) {
+        if (MathUtils.isNearly(key.time, time)) {
           curve.removeKey(i);
           isAdded = true;
         }
@@ -310,7 +310,7 @@ function addKeyInCurve(curve: AnimationCurve, time: number, value: number, mode:
   const keys = curve.keys;
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    if (MathUtil.isNearly(key.time, time)) {
+    if (MathUtils.isNearly(key.time, time)) {
       key.time = time;
       key.value = value;
       return false;

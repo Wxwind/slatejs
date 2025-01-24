@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { MathUtil } from './util';
+import { MathUtils } from './math';
 
 export interface IVector2 {
   x: number;
@@ -43,16 +43,16 @@ export namespace IVector3 {
   }
 
   export function clamp<T extends IVector3 = IVector3>(src: T, min: number, max: number) {
-    src.x = MathUtil.clamp(src.x, min, max);
-    src.y = MathUtil.clamp(src.y, min, max);
-    src.z = MathUtil.clamp(src.z, min, max);
+    src.x = MathUtils.clamp(src.x, min, max);
+    src.y = MathUtils.clamp(src.y, min, max);
+    src.z = MathUtils.clamp(src.z, min, max);
     return src;
   }
 
   export function clampVector3<T extends IVector3 = IVector3>(src: T, clampMinMax: T, out: T) {
-    out.x = MathUtil.clamp(src.x, -clampMinMax.x, clampMinMax.x);
-    out.y = MathUtil.clamp(src.y, -clampMinMax.y, clampMinMax.y);
-    out.z = MathUtil.clamp(src.z, -clampMinMax.z, clampMinMax.z);
+    out.x = MathUtils.clamp(src.x, -clampMinMax.x, clampMinMax.x);
+    out.y = MathUtils.clamp(src.y, -clampMinMax.y, clampMinMax.y);
+    out.z = MathUtils.clamp(src.z, -clampMinMax.z, clampMinMax.z);
     return out;
   }
 
@@ -60,6 +60,13 @@ export namespace IVector3 {
     out.x = src.x;
     out.y = src.y;
     out.z = src.z;
+    return out;
+  }
+
+  export function lerp<T extends IVector3 = IVector3>(out: T, start: IVector3, end: IVector3, t: number): T {
+    out.x = MathUtils.lerp(start.x, end.x, t);
+    out.y = MathUtils.lerp(start.y, end.y, t);
+    out.z = MathUtils.lerp(start.z, end.z, t);
     return out;
   }
 }

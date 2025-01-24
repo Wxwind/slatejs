@@ -45,6 +45,7 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     this._pxRigidBody.setAngularVelocity(toPxVec3(value, this._tempVec1));
   }
 
+  // Changing this transform will not update the linear velocity reported by getLinearVelocity() to account for the shift in center of mass. If the shift should be accounted for, the user should update the velocity using setLinearVelocity().
   setCenterOfMass(position: Vector3, rotation: Quaternion): void {
     this._pxRigidBody.setCMassLocalPose(toPxTransform(position, rotation, this._tempPxTransform));
   }
@@ -110,6 +111,7 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     this._pxRigidBody.wakeUp();
   }
 
+  // setMass() does not update the inertial properties of the body, to change the  inertia tensor use setMassSpaceInertiaTensor() or the PhysX extensions method PxRigidBodyExt::updateMassAndInertia().
   setMass(mass: number): void {
     this._pxRigidBody.setMass(mass);
   }
@@ -123,10 +125,10 @@ export class PxPhysicsDynamicRigidBody extends PxPhysicsRigidBody implements IDy
     const tempPosition = PxPhysicsDynamicRigidBody._tempPosition;
     const tempRotation = PxPhysicsDynamicRigidBody._tempRotation;
     this.getWorldTransform(tempPosition, tempRotation);
-    if (positionOrRotation instanceof Vector3) {
-      this._pxRigidBody.setKinematicTarget(toPxTransform(positionOrRotation, tempRotation, this._tempPxTransform));
+    if (positionOrRotation instanceof Quaternion) {
+      this._pxRigidBody.setKinematicTarget(toPxTransform(tempPosition, positionOrRotation, this._tempPxTransform));
     } else {
-      this._pxRigidBody.setKinematicTarget(toPxTransform(tempPosition, tempRotation, this._tempPxTransform));
+      this._pxRigidBody.setKinematicTarget(toPxTransform(positionOrRotation, tempRotation, this._tempPxTransform));
     }
   }
 

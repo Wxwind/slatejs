@@ -1,4 +1,4 @@
-import { MathUtil } from '@/util';
+import { MathUtils } from '@/math';
 import { MetadataProp } from '@/core';
 import { IVector3 } from '@/type';
 
@@ -50,7 +50,7 @@ export class AnimatedBoolModel implements IAnimatedParameterModel<boolean> {
   };
 
   convertToObject: (numbers: number[]) => boolean = (numbers: number[]) => {
-    return MathUtil.isNearly(numbers[0], 0) ? false : true;
+    return MathUtils.isNearly(numbers[0], 0) ? false : true;
   };
 
   setDirect: (target: object, metadataProp: MetadataProp, numbers: number[]) => void = (

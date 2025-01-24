@@ -12,6 +12,15 @@ export abstract class RigidbodyComponent extends ComponentBase<any> {
   /** @internal */
   _index = -1;
 
+  private _enableGravity: boolean = true;
+  public get enableGravity(): boolean {
+    return this._enableGravity;
+  }
+  public set enableGravity(v: boolean) {
+    this._enableGravity = v;
+    this._nativeRigidbody.setGravityFlag(v);
+  }
+
   constructor(entity: Entity) {
     super(entity);
   }

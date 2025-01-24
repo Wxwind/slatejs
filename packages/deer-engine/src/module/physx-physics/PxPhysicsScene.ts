@@ -108,8 +108,14 @@ export class PxPhysicsScene implements IPhysicsScene {
 
     simulationEventCallbackImpl.onTrigger = (pairsPointer, count) => {
       const pairs = pairsPointer;
+      const px = this._px;
       for (let i = 0; i < count; i++) {
         const pair = px.NativeArrayHelpers.prototype.getTriggerPairAt(pairs, i);
+        if (
+          pair.flags.isSet(px.PxTriggerPairFlagEnum.eREMOVED_SHAPE_OTHER) ||
+          pair.flags.isSet(px.PxTriggerPairFlagEnum.eREMOVED_SHAPE_TRIGGER)
+        )
+          continue;
         const isEnter = pair.status === px.PxPairFlagEnum.eNOTIFY_TOUCH_FOUND;
 
         const trigger = this._pxColliderMap[(pair.triggerShape as any).ptr]?._id;
@@ -191,7 +197,7 @@ export class PxPhysicsScene implements IPhysicsScene {
 
   private _unRegisterTriggerRelation(id1: number, id2: number) {
     const event = this._triggerEventTable[id1][id2];
-    delete this._triggerEventTable[id1];
+    delete this._triggerEventTable[id1][id2];
     return event;
   }
 

@@ -2,7 +2,7 @@ import { FC, useCallback, useState } from 'react';
 import { ActionClip, CutsceneEditor, CutsceneTrack } from 'deer-engine';
 import { useScaleStore } from './store';
 import { BsDiamond } from 'react-icons/bs';
-import { MathUtil } from 'deer-engine';
+import { MathUtils } from 'deer-engine';
 import { useDumbState, useBindSignal } from '@/hooks';
 import classNames from 'classnames';
 import { ContextListItem, ProContextMenu } from '@/components/baseComponent';
@@ -74,7 +74,7 @@ export const TimelineActionClip: FC<TimelineActionClipProps> = (props) => {
         const mx = e.movementX;
 
         const offset = mx / scale;
-        const startTime = MathUtil.clamp(object.startTime + offset, 0, object.endTime);
+        const startTime = MathUtils.clamp(object.startTime + offset, 0, object.endTime);
 
         object.updateData({
           startTime,

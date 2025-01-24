@@ -1,7 +1,6 @@
 export * from './typeGuard';
 export * from './replaceEqualDeep';
 export * from './utils';
-export * from './math';
 export * from './type';
 export * from './debounce';
 export * from './file';

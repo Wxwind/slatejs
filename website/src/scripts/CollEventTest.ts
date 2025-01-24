@@ -17,7 +17,7 @@ export class CollEventTestScript extends Script {
     console.log(`${this.entity.name} onTriggerExit: ${other._rigidbody?.entity.name}`);
   }
 
-  override onControllerColliderHit(hit: ControllerColliderHit): void {
-    console.log(`${this.entity.name} onControllerColliderHit: ${hit.collider.rigidbody.entity.name}`);
-  }
+  // override onControllerColliderHit(hit: ControllerColliderHit): void {
+  //   console.log(`${this.entity.name} onControllerColliderHit: ${hit.collider.rigidbody.entity.name}`);
+  // }
 }

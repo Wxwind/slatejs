@@ -1,5 +1,5 @@
 import { SLATEJS_VERSION } from '@/config';
-import { MathUtil, isNil } from '@/util';
+import { isNil } from '@/util';
 import { CutsceneGroup } from './CutsceneGroup';
 import { IDirectableTimePointer, UpdateTimePointer, StartTimePointer, EndTimePointer } from './TimePointer';
 import { ActorGroup } from './groups';
@@ -19,6 +19,7 @@ import { DeerEngine, SceneManager } from '@/core';
 import { Signal } from 'eventtool';
 import { CutsceneEditor } from './CutsceneEditor';
 import { ISerializable } from '@/interface';
+import { MathUtils } from '@/math';
 
 /**
  * Play timeline in edit mode.
@@ -65,7 +66,7 @@ export class Cutscene implements ISerializable<CutsceneData> {
   }
 
   public set playTimeMin(v: number) {
-    this._playTimeMin = MathUtil.clamp(v, 0, this.playTimeMax);
+    this._playTimeMin = MathUtils.clamp(v, 0, this.playTimeMax);
     this.signals.settingsUpdated.emit();
   }
 
@@ -74,7 +75,7 @@ export class Cutscene implements ISerializable<CutsceneData> {
   }
 
   public set playTimeMax(v: number) {
-    this._playTimeMax = MathUtil.clamp(v, this.playTimeMin, this.length);
+    this._playTimeMax = MathUtils.clamp(v, this.playTimeMin, this.length);
     this.signals.settingsUpdated.emit();
   }
 

@@ -1,4 +1,4 @@
-import { MathUtil } from '@/util';
+import { MathUtils } from '@/math';
 import { Cutscene } from './Cutscene';
 import { Entity } from '@/core';
 
@@ -37,7 +37,7 @@ export interface IDirectable {
 }
 
 export const IDirectableToLocalTime = (directable: IDirectable, time: number) => {
-  return MathUtil.clamp(time - directable.startTime, 0, directable.endTime - directable.startTime);
+  return MathUtils.clamp(time - directable.startTime, 0, directable.endTime - directable.startTime);
 };
 
 export const IDirectableGetLength = (directable: IDirectable) => {

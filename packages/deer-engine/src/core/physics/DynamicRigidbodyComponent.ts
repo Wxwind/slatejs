@@ -180,6 +180,29 @@ export class DynamicRigidbodyComponent extends RigidbodyComponent {
     this._nativeRigidbody.addTorque(torque);
   }
 
+  /**
+   * Moves kinematically controlled dynamic actors through the game world.
+   * @param position - The desired position for the kinematic actor
+   */
+  move(position: IVector3): void;
+
+  /**
+   * Moves kinematically controlled dynamic actors through the game world.
+   * @param rotation - The desired rotation for the kinematic actor
+   */
+  move(rotation: Quaternion): void;
+
+  /**
+   * Moves kinematically controlled dynamic actors through the game world.
+   * @param position - The desired position for the kinematic actor
+   * @param rotation - The desired rotation for the kinematic actor
+   */
+  move(position: IVector3, rotation: Quaternion): void;
+
+  move(positionOrRotation: IVector3 | Quaternion, rotation?: Quaternion): void {
+    this._nativeRigidbody.move(positionOrRotation, rotation);
+  }
+
   sleep() {
     this._nativeRigidbody.sleep();
   }

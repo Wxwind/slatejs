@@ -63,6 +63,10 @@ export class PxPhysicsCharacterController implements ICharacterController {
     this._id = id;
   }
 
+  setGravityFlag(enable: boolean): void {
+    this._pxController?.getActor().setActorFlag(this._px.PxActorFlagEnum.eDISABLE_GRAVITY, !enable);
+  }
+
   addCollider(collider: PxPhysicsCollider): boolean {
     if (!(collider instanceof PxPhysicsCapsuleCollider)) {
       throw new Error('only support PxPhysicsCapsuleCollider');

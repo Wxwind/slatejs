@@ -8,7 +8,7 @@ import {
   PhysicsControllerCollisionFlag,
   objectToLocalQuaternion,
   IVector3,
-  MathUtil,
+  MathUtils,
 } from 'deer-engine';
 
 export enum ForceMode {
@@ -142,16 +142,16 @@ export class CharacterControllerScript extends Script {
     if (currentVelocity.y < this._maxFallVelocity) currentVelocity.y = this._maxFallVelocity;
 
     // 仅在没有操作输入即将停止时做damping
-    if (MathUtil.isNearly(newVelocity.x, 0)) {
-      currentVelocity.x = MathUtil.lerp(currentVelocity.x, 0, this._moveDamping * deltaTime);
-      if (MathUtil.isNearlyZero(currentVelocity.x)) currentVelocity.x = 0;
+    if (MathUtils.isNearly(newVelocity.x, 0)) {
+      currentVelocity.x = MathUtils.lerp(currentVelocity.x, 0, this._moveDamping * deltaTime);
+      if (MathUtils.isNearlyZero(currentVelocity.x)) currentVelocity.x = 0;
     } else {
       currentVelocity.x = newVelocity.x;
     }
 
-    if (MathUtil.isNearly(newVelocity.z, 0)) {
-      currentVelocity.z = MathUtil.lerp(currentVelocity.z, 0, this._moveDamping * deltaTime);
-      if (MathUtil.isNearlyZero(currentVelocity.z)) currentVelocity.z = 0;
+    if (MathUtils.isNearly(newVelocity.z, 0)) {
+      currentVelocity.z = MathUtils.lerp(currentVelocity.z, 0, this._moveDamping * deltaTime);
+      if (MathUtils.isNearlyZero(currentVelocity.z)) currentVelocity.z = 0;
     } else {
       currentVelocity.z = newVelocity.z;
     }

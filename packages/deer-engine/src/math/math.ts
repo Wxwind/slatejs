@@ -2,7 +2,7 @@ const DEG2RAD = Math.PI / 180;
 const RAD2DEG = 180 / Math.PI;
 const EPSILON = 10e-5;
 
-export class MathUtil {
+export class MathUtils {
   static clamp(num: number, min: number, max: number) {
     if (min > max) {
       const a = min;
@@ -63,7 +63,7 @@ export class MathUtil {
    */
   static smoothStep(t1: number, t2: number, x: number) {
     if (t1 === t2) return t1;
-    x = MathUtil.clamp((x - t1) / (t2 - t1), 0, 1);
+    x = MathUtils.clamp((x - t1) / (t2 - t1), 0, 1);
     return x * x * (3 - 2 * x);
   }
 

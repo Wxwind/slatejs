@@ -65,6 +65,11 @@ export interface IPhysics {
 
 export interface IRigidbody {
   /**
+   * Enable gravity for this rigidbody
+   * @param enable  - if gravity enabled
+   */
+  setGravityFlag(enable: boolean): void;
+  /**
    * Add collider on rigidbody.
    * @param collider - The collider shape attached
    */
