@@ -84,8 +84,22 @@ export class PxPhysicsCharacterController implements ICharacterController {
       collider._pxMaterial
     );
     this._pxController = controller;
-    const shape = (this._px.SupportFunctions.prototype as any).PxActor_getShape(controller.getActor(), 0);
+
+    const shape = (this._px.SupportFunctions.prototype as any).PxActor_getShape(
+      controller.getActor(),
+      0
+    ) as PhysX.PxShape;
     collider._pxShape = shape;
+    const PxPairFlagEnum = this._px.PxPairFlagEnum;
+    shape.setSimulationFilterData(
+      new this._px.PxFilterData(
+        1,
+        1,
+        PxPairFlagEnum.eNOTIFY_TOUCH_FOUND | PxPairFlagEnum.eNOTIFY_TOUCH_LOST | PxPairFlagEnum.eNOTIFY_TOUCH_PERSISTS,
+        0
+      )
+    );
+
     this._collider = collider;
     this._scene._onColliderAdd(this._collider);
     this._scene._onControllerAdd(this);
