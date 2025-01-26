@@ -9,6 +9,11 @@ import commonjs from '@rollup/plugin-commonjs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    commonjsOptions: {
+      include: /node_modules|physx-js-webidl/,
+    },
+  },
   plugins: [
     commonjs(),
     react(),
