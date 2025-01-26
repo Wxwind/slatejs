@@ -6,7 +6,7 @@ import { fromPxVec3Like, toPxExtendVec3, toPxVec3 } from './utils';
 import { IVector3 } from '@/type';
 import { PxPhysicsCapsuleCollider, PxPhysicsCollider } from './collider';
 import { ICharacterController } from '@/core/physics/interface';
-import { castPxObject } from './pxExtensions';
+import { castPxObject, castPxPointer } from './pxExtensions';
 
 export class PxPhysicsCharacterController implements ICharacterController {
   _px: typeof PhysX & typeof PhysX.PxTopLevelFunctions;
@@ -19,6 +19,7 @@ export class PxPhysicsCharacterController implements ICharacterController {
   _worldPosition = new Vector3();
 
   _collider: PxPhysicsCapsuleCollider | null = null;
+  _filters: PhysX.PxControllerFilters;
 
   _id: number;
 
@@ -56,11 +57,23 @@ export class PxPhysicsCharacterController implements ICharacterController {
   }
 
   constructor(pxScene: PxPhysicsScene, id: number) {
+    const px = pxScene._px;
     this._scene = pxScene;
-    this._px = pxScene._px;
-    this._tempVec3 = new this._px.PxVec3();
-    this._tempExtendedVec3 = new this._px.PxExtendedVec3();
+    this._px = px;
+    this._tempVec3 = new px.PxVec3();
+    this._tempExtendedVec3 = new px.PxExtendedVec3();
     this._id = id;
+    this._filters = new px.PxControllerFilters();
+    const queryFilterCallback = new px.PxQueryFilterCallbackImpl();
+    queryFilterCallback.simplePreFilter = (data, shape, actor, flag) => {
+      const obj = castPxPointer(px, shape, px.PxShape);
+      if (px.IsTriggerShape(obj)) {
+        return px.PxQueryHitType.eNONE;
+      }
+      return px.PxQueryHitType.eBLOCK;
+    };
+    this._filters.mFilterCallback = queryFilterCallback;
+    this._filters.mFilterFlags.raise(px.PxQueryFlagEnum.ePREFILTER);
   }
 
   setGravityFlag(enable: boolean): void {
@@ -194,20 +207,10 @@ export class PxPhysicsCharacterController implements ICharacterController {
     return castPxObject(px, pxControllerManager.createController(desc), px.PxCapsuleController);
   }
 
-  /**
-   *
-
-   */
-  move(
-    disp: IVector3,
-    minDist: number,
-    elapsedTime: number,
-    filters?: PhysX.PxControllerFilters,
-    obstacles?: PhysX.PxObstacleContext | undefined
-  ): number {
-    filters ??= new this._scene._px.PxControllerFilters();
+  move(disp: IVector3, minDist: number, elapsedTime: number): number {
+    const filters = this._filters;
     if (!this._pxController) return PhysicsControllerCollisionFlag.COLLISION_SIDES;
-    const flag = this._pxController.move(toPxVec3(disp, this._tempVec3), minDist, elapsedTime, filters, obstacles);
+    const flag = this._pxController.move(toPxVec3(disp, this._tempVec3), minDist, elapsedTime, filters, undefined);
 
     return this._toPhysicsControllerCollisionFlagsNumber(flag);
   }

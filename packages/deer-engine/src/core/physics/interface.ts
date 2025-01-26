@@ -303,13 +303,7 @@ export interface ICharacterController extends IRigidbody {
    * @param filters filtering parameters similar to the ones used in the SDK. Use these to control what the character should collide with.
    * @param obstacles obstacle objects with which the character should collide. Those objects are fully controlled by users and do not need to have counterpart SDK objects. Note that touched obstacles are cached, meaning that the cache needs to be invalidated if the collection of obstacles changes
    */
-  move(
-    disp: IVector3,
-    minDist: number,
-    elapsedTime: number,
-    filters?: PhysX.PxControllerFilters,
-    obstacles?: PhysX.PxObstacleContext | undefined
-  ): number;
+  move(disp: IVector3, minDist: number, elapsedTime: number): number;
   /**
    * Sets controller's world position.
    * @param position The new (center) position for the controller.
