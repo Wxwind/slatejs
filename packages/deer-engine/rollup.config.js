@@ -5,13 +5,14 @@ import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 
+const excludes = ['physx-js-webidl'];
+
 export default [
   {
     input: 'src/index.ts',
     plugins: [
       resolve({
         resolveOnly: (module) => {
-          const excludes = ['physx-js-webidl'];
           const needInclue = !excludes.includes(module);
           if (!needInclue) {
             console.log(`module ${module} is excluded.`);
@@ -55,7 +56,6 @@ export default [
     plugins: [
       resolve({
         resolveOnly: (module) => {
-          const excludes = ['physx-js-webidl'];
           const needInclue = !excludes.includes(module);
           if (!needInclue) {
             console.log(`module ${module} is excluded.`);

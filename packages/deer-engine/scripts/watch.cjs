@@ -6,6 +6,8 @@ const babel = require('@rollup/plugin-babel');
 const resolve = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
 
+const excludes = ['physx-js-webidl'];
+
 const watchOptions = [
   {
     input: 'src/index.ts',
@@ -22,7 +24,6 @@ const watchOptions = [
     plugins: [
       resolve({
         resolveOnly: (module) => {
-          const excludes = ['physx-js-webidl'];
           const needInclue = !excludes.includes(module);
           if (!needInclue) {
             console.log(`module ${module} is excluded.`);
@@ -54,7 +55,6 @@ const watchOptions = [
     plugins: [
       resolve({
         resolveOnly: (module) => {
-          const excludes = ['physx-js-webidl'];
           const needInclue = !excludes.includes(module);
           if (!needInclue) {
             console.log(`module ${module} is excluded.`);

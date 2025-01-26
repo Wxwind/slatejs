@@ -69,7 +69,9 @@ export class PxPhysicsScene implements IPhysicsScene {
     // 0 means no worker thread are initialized and simulation tasks will be executed on the thread that calls PxScene::simulate()
     sceneDesc.cpuDispatcher = px.DefaultCpuDispatcherCreate(0);
     // The custom filter shader to use for collision filtering.
-    sceneDesc.filterShader = px.DefaultFilterShader();
+    sceneDesc.filterShader = px.TriggersUsingFilterShader();
+    sceneDesc.kineKineFilteringMode = px.PxPairFilteringModeEnum.eKEEP;
+    sceneDesc.staticKineFilteringMode = px.PxPairFilteringModeEnum.eKEEP;
 
     const simulationEventCallbackImpl = new px.PxSimulationEventCallbackImpl();
 
@@ -93,19 +95,28 @@ export class PxPhysicsScene implements IPhysicsScene {
           return;
         }
 
+        const isTriggerPair = px.IsTriggerShape(nativeShape0) || px.IsTriggerShape(nativeShape1);
+
         if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_FOUND)) {
           // console.log('begin contact', shapeA, shapeB);
-          eventCallbacks?.onContactBegin?.(shapeA, shapeB);
+          isTriggerPair
+            ? eventCallbacks?.onTriggerBegin?.(shapeA, shapeB)
+            : eventCallbacks?.onContactBegin?.(shapeA, shapeB);
         } else if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_LOST)) {
           // console.log('end contact', shapeA, shapeB);
-          eventCallbacks?.onContactEnd?.(shapeA, shapeB);
+          isTriggerPair
+            ? eventCallbacks?.onTriggerEnd?.(shapeA, shapeB)
+            : eventCallbacks?.onContactEnd?.(shapeA, shapeB);
         } else if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_PERSISTS)) {
           // console.log('stay contact', shapeA, shapeB);
-          eventCallbacks?.onContactStay?.(shapeA, shapeB);
+          isTriggerPair
+            ? eventCallbacks?.onTriggerStay?.(shapeA, shapeB)
+            : eventCallbacks?.onContactStay?.(shapeA, shapeB);
         }
       }
     };
 
+    // not used because we use onContact to simulate trigger events
     simulationEventCallbackImpl.onTrigger = (pairsPointer, count) => {
       const pairs = pairsPointer;
       const px = this._px;

@@ -62,8 +62,9 @@ export abstract class PxPhysicsCollider implements ICollider {
   }
 
   setIsTrigger(value: boolean) {
-    this.setShapeFlag(PhysicsShapeFlag.SIMULATION_SHAPE, !value);
-    this.setShapeFlag(PhysicsShapeFlag.TRIGGER_SHAPE, value);
+    // use SIMULATION_SHAPE to implements trigger-trigger events
+    this._filterData.word3 = value ? this._filterData.word3 | 1 : this._filterData.word3 & ~1;
+    this._pxShape.setSimulationFilterData(this._filterData);
   }
 
   setShapeFlags(flags: PhysicsShapeFlag) {
