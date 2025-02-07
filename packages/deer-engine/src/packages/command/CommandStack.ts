@@ -16,7 +16,7 @@ export class CommandStack {
     }
     this.nowIndex++;
 
-    // clear if here were dirty cmds.
+    // clear if here are dirty cmds.
     if (this.history[this.nowIndex] !== undefined) {
       this.history.splice(this.nowIndex);
     }
@@ -24,8 +24,8 @@ export class CommandStack {
   };
 
   undo = () => {
-    if (this.history.length === 0) return null;
-    const cmd = this.history[this.history.length - 1];
+    if (this.history.length === 0 || this.nowIndex < 0) return null;
+    const cmd = this.history[this.nowIndex];
     const isOk = cmd.undo();
     if (!isOk) {
       console.warn('undo failed: %s', cmd.toString());
@@ -37,7 +37,11 @@ export class CommandStack {
   redo = () => {
     if (this.history[this.nowIndex + 1] === undefined) return null;
     const cmd = this.history[this.nowIndex + 1];
-    cmd.execute();
+    const isOk = cmd.execute();
+    if (!isOk) {
+      console.warn('redo failed: %s', cmd);
+      return;
+    }
     this.nowIndex++;
     return cmd;
   };

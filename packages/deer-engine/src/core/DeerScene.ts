@@ -180,7 +180,7 @@ export class DeerScene {
     }
     this._isDestroyed = true;
     this.entityManager.destory();
-    // this.scene.clear();
+    this.rootEntities.forEach((entity) => entity.destroy());
 
     // destroy renderer
     this._renderer.dispose();
