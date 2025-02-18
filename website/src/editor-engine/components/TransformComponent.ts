@@ -1,3 +1,5 @@
+import { TransformComponent } from 'deer-engine';
 import { EngineObjectProxy } from '../core';
+import { EditorComponent } from './EditorComponent';
 
-export class TransformComponent extends EngineObjectProxy {}
+export class TransformComponentModel extends EditorComponent {}

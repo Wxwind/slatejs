@@ -2,10 +2,9 @@ import { DeerScene } from '../DeerScene';
 import { RigidbodyComponent } from './RigidbodyComponent';
 import { ComponentManager } from '../manager';
 import { DisorderedArray } from '../DisorderedMap';
-import { Vector3 } from 'three';
+import { Vector, Vector3 } from 'three';
 import {
   InternalControllerColliderHit,
-  ICollider,
   IPhysics,
   IPhysicsScene,
   PhysicsEventCallbacks,
@@ -14,6 +13,8 @@ import {
 import { CharacterControllerComponent } from './CharacterControllerComponent';
 import { Script } from '../component';
 import { Collider } from './collider';
+import { IVector3 } from '@/type';
+import { HitResult } from './HitResult';
 
 export class PhysicsScene {
   private _accumulator: number = 0;
@@ -70,6 +71,10 @@ export class PhysicsScene {
       onControllerHit: this._controllerColliderHit,
     };
     this._nativePhysicsScene = PhysicsScene._nativePhysics.createScene(this.gravity, eventCallbacks);
+  }
+
+  destroy() {
+    this._nativePhysicsScene.destroy();
   }
 
   update(deltaTime: number) {
@@ -357,7 +362,20 @@ export class PhysicsScene {
     this._nativePhysicsScene.removeCharacterController(cct._nativeRigidbody);
   }
 
-  destroy() {
-    this._nativePhysicsScene.destroy();
+  raycast(origin: IVector3, direction: IVector3, distance: number, outHitResult?: HitResult): boolean {
+    if (outHitResult) {
+      const onHit = (id: number, distance: number, position: Vector3, normal: Vector3) => {
+        const hitCollider = this._nativeShapeMap[id] || null;
+        outHitResult.distance = distance;
+        outHitResult.point = position;
+        outHitResult.normal = normal;
+        outHitResult.collider = hitCollider;
+        outHitResult.entity = hitCollider?._rigidbody?.entity || null;
+      };
+
+      return this._nativePhysicsScene.raycast(origin, direction, distance, onHit);
+    }
+
+    return this._nativePhysicsScene.raycast(origin, direction, distance);
   }
 }

@@ -1,6 +1,6 @@
 import { DisorderedArray } from '@/core/DisorderedMap';
 import { WebCanvas } from '@/core/WebCanvas';
-import { ComponentBase, DeerScene, Entity, THREE } from '@/index';
+import { Component, DeerScene, Entity, THREE } from '@/index';
 import { IInput } from '../interface/IInput';
 import { _pointerDec2BinMap, PointerButton } from '../enums/PointerButton';
 import { PointerPhase } from '../enums/PointerPhase';

@@ -1,9 +1,9 @@
 import { ComponentManager, Pointer } from '../manager';
 import { Collider } from '../physics';
 import { ControllerColliderHit, InternalControllerColliderHit } from '../physics/interface';
-import { ComponentBase } from './ComponentBase';
+import { Component } from './Component';
 
-export class Script extends ComponentBase {
+export class Script extends Component {
   public type = 'Script' as const;
 
   private _started: boolean = false;

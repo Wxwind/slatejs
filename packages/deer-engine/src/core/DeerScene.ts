@@ -41,6 +41,7 @@ export class DeerScene {
 
   readonly physicsScene = new PhysicsScene(this);
 
+  // TODO: remove entityManager
   readonly entityManager = new EntityManager(this);
 
   private _managerMap = new Map<new () => AbstractSceneManager, AbstractSceneManager>();

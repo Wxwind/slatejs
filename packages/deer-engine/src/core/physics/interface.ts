@@ -1,7 +1,7 @@
 import PhysX from 'physx-js-webidl';
 import { IVector3 } from '@/type';
 import { PhysicsControllerNonWalkableModeEnum, PhysicsCombineMode } from './enum';
-import { Quaternion } from 'three';
+import { Quaternion, Vector3 } from 'three';
 import { CharacterControllerComponent } from './CharacterControllerComponent';
 import { Collider } from './collider';
 
@@ -286,6 +286,10 @@ export interface IPhysicsMaterial {
  */
 export interface ICharacterController extends IRigidbody {
   /**
+   * Release native physics scene
+   */
+  destroy(): void;
+  /**
    * set radius of characterController's capsuleCollider.
    * @param radius the capsuleCollider's radius
    */
@@ -346,6 +350,10 @@ export interface ICharacterController extends IRigidbody {
  */
 export interface IPhysicsScene {
   /**
+   * Release native physics scene
+   */
+  destroy(): void;
+  /**
    * Set gravity.
    * @param gravity - Physics gravity
    */
@@ -380,9 +388,19 @@ export interface IPhysicsScene {
    */
   update(elapsedTime: number): void;
   /**
-   * Release native physics scene
+   * Casts a ray, from point origin, in direction direction, of length maxDistance, against all colliders in the Scene.
+   * @param origin - The starting point of the ray in world coordinates.
+   * @param direction - The direction of the ray..
+   * @param maxDistance - The max distance the ray should check for collisions.
+   * @param onHit - Callback fired when the ray hits something.
+   * @returns bool Returns true if the ray intersects with a Collider, otherwise false.
    */
-  destroy(): void;
+  raycast(
+    origin: IVector3,
+    direction: IVector3,
+    maxDistance: number,
+    onHit?: (id: number, distance: number, position: Vector3, normal: Vector3) => void
+  ): boolean;
 }
 
 export interface IBoxCollider extends ICollider {

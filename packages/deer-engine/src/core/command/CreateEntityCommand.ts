@@ -18,7 +18,7 @@ export class CreateEntityCommand implements ICommand {
 
   execute: () => boolean = () => {
     const cube = this.scene.entityManager.createEntity(this.name, this.parent);
-    cube.addComponentByNew(MeshComponent);
+    cube.addComponent(MeshComponent);
     this.obj = cube;
     return true;
   };

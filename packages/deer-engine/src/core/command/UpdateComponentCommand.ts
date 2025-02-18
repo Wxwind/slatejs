@@ -1,19 +1,19 @@
 import { ICommand } from '@/packages/command';
 import { DeerScene } from '../DeerScene';
 import { CommandType } from './type';
-import { ComponentBase, ComponentData, ComponentJson } from '../component';
+import { Component } from '../component';
 import { isNil } from '@/util';
 import { JsonModule } from '../decorator';
 
 export class UpdateComponentCommand implements ICommand {
   type: CommandType = 'UpdateComponent';
-  oldCompConfig: ComponentJson | undefined;
+  oldCompConfig: any | undefined;
 
   constructor(
     private scene: DeerScene,
     private entityId: string,
     private compId: string,
-    private compInfo: ComponentData
+    private compInfo: any
   ) {}
 
   execute: () => boolean = () => {
@@ -23,7 +23,7 @@ export class UpdateComponentCommand implements ICommand {
       return false;
     }
     if (comp.type === this.compInfo.type) {
-      const c = comp as ComponentBase<typeof comp.type>;
+      const c = comp as Component;
       this.oldCompConfig = JsonModule.toJsonObject(c);
       c.updateByJson(this.compInfo.config, true);
       return true;
@@ -43,7 +43,7 @@ export class UpdateComponentCommand implements ICommand {
       return false;
     }
     if (comp.type === this.compInfo.type) {
-      const c = comp as ComponentBase<typeof comp.type>;
+      const c = comp as Component;
       c.updateByJson(this.oldCompConfig, true);
       return true;
     } else {

@@ -1,10 +1,10 @@
-import { ComponentBase } from '../component';
+import { Component } from '../component';
 import { Collider } from './collider';
 import { Quaternion, Vector3 } from 'three';
 import { IRigidbody } from './interface';
 import { Entity } from '../entity';
 
-export abstract class RigidbodyComponent extends ComponentBase<any> {
+export abstract class RigidbodyComponent extends Component {
   abstract _nativeRigidbody: IRigidbody;
 
   readonly _colliders: Collider[] = [];

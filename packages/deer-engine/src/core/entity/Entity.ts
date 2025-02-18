@@ -186,7 +186,7 @@ export class Entity extends EngineObject implements ISerializable<EntityJson> {
 
   getCompArray = () => this.compArray;
 
-  addComponentByNew = <T extends Component>(compCtor: new (entity: Entity) => T) => {
+  addComponent = <T extends Component>(compCtor: new (entity: Entity) => T) => {
     const comp = new compCtor(this);
     comp._setActive(true);
 

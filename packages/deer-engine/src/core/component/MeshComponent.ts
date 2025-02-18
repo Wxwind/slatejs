@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import { ComponentBase } from './ComponentBase';
+import { Component } from './Component';
 import { isNil } from '@/util';
 import { accessor, egclass } from '../decorator';
 import { MeshComponentJson } from './type';
 import { Entity } from '../entity';
 
 @egclass()
-export class MeshComponent extends ComponentBase<'MeshComponent'> {
+export class MeshComponent extends Component {
   type = 'MeshComponent' as const;
 
   private _mesh!: THREE.Mesh;

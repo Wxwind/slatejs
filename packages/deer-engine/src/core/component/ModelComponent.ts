@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ComponentBase } from './ComponentBase';
+import { Component } from './Component';
 import { isNil } from '@/util';
 
 import { egclass } from '../decorator';
@@ -7,7 +7,7 @@ import { ResourceManager } from '../manager/ResourceManager';
 import { ModelComponentJson } from './type';
 
 @egclass()
-export class ModelComponent extends ComponentBase<'ModelComponent'> {
+export class ModelComponent extends Component {
   type = 'ModelComponent' as const;
 
   private _model: THREE.Object3D | undefined;

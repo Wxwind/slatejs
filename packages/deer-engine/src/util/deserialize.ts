@@ -1,8 +1,8 @@
-import { Component, ComponentData, MeshComponent, TransformComponent, Entity } from '@/core';
+import { Component, MeshComponent, TransformComponent, Entity } from '@/core';
 import { CameraComponent } from '@/core/component/CameraComponent';
 import { ModelComponent } from '@/core/component/ModelComponent';
 
-export function deserializeComponent(data: ComponentData, entity: Entity): Component {
+export function deserializeComponent(data: any, entity: Entity): Component {
   switch (data.type) {
     case 'MeshComponent': {
       const comp = new MeshComponent(entity);

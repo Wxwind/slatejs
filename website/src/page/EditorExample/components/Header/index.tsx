@@ -100,13 +100,13 @@ export const Header: FC<HeaderProps> = (props) => {
     boxCollider.radius = 0.25;
     boxCollider.height = 0.5;
 
-    const cct = e.addComponentByNew(CharacterControllerComponent);
+    const cct = e.addComponent(CharacterControllerComponent);
     cct.addCollider(boxCollider);
-    const controller = e.addComponentByNew(CharacterControllerScript);
-    // const fpCameraController = e.addComponentByNew(FirstPersonCameraControllerScript);
+    const controller = e.addComponent(CharacterControllerScript);
+    // const fpCameraController = e.addComponent(FirstPersonCameraControllerScript);
     // controller._isFirstPerson = true;
-    const shooter = e.addComponentByNew(ShootScript);
-    e.addComponentByNew(CollEventTestScript);
+    const shooter = e.addComponent(ShootScript);
+    e.addComponent(CollEventTestScript);
   };
 
   const handleCreateFloor = () => {
@@ -120,8 +120,8 @@ export const Header: FC<HeaderProps> = (props) => {
       y: 1,
       z: 20,
     };
-    e.addComponentByNew(MeshComponent);
-    const rb = e.addComponentByNew(StaticRigidbodyComponent);
+    e.addComponent(MeshComponent);
+    const rb = e.addComponent(StaticRigidbodyComponent);
     const boxCollider = new BoxCollider();
     rb.addCollider(boxCollider);
     handleCreateSlope();
@@ -143,10 +143,10 @@ export const Header: FC<HeaderProps> = (props) => {
       y: 2,
       z: 2,
     };
-    e.addComponentByNew(MeshComponent);
-    e.addComponentByNew(CubeMoveScript);
-    e.addComponentByNew(CollEventTestScript);
-    const rb = e.addComponentByNew(DynamicRigidbodyComponent);
+    e.addComponent(MeshComponent);
+    e.addComponent(CubeMoveScript);
+    e.addComponent(CollEventTestScript);
+    const rb = e.addComponent(DynamicRigidbodyComponent);
     rb.isKinematic = true;
     const boxCollider = new BoxCollider();
     boxCollider.isTrigger = true;
@@ -174,9 +174,9 @@ export const Header: FC<HeaderProps> = (props) => {
       y: 0,
       z: -6,
     };
-    const mesh = e.addComponentByNew(MeshComponent);
+    const mesh = e.addComponent(MeshComponent);
     mesh.color = new THREE.Color(0xffff00);
-    const rb = e.addComponentByNew(StaticRigidbodyComponent);
+    const rb = e.addComponent(StaticRigidbodyComponent);
     const boxCollider = new BoxCollider();
     rb.addCollider(boxCollider);
   };

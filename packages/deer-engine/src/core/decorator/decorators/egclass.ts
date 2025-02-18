@@ -4,9 +4,8 @@ import { isNil } from '@/util';
 import { globalTypeMap } from '../GlobalTypeMap';
 import { ClassClassDecorator } from '../type';
 import { DecoratorMetadataObjectForRF, getClassName, getClassStash, hasClassStash } from './util';
-import { Entity, ComponentBase } from '@/core';
+import { Entity, Component } from '@/core';
 
-// FIXME fix with Class extends new () => any
 export function egclass<Class extends new (...args: any[]) => any>(name?: string): ClassClassDecorator<Class> {
   return (target: Class, context: ClassDecoratorContext<Class>) => {
     globalTypeMap.set(name || getClassName(target), target);
@@ -43,8 +42,8 @@ export function egclass<Class extends new (...args: any[]) => any>(name?: string
           }
 
           // TODO: entity/component reference
-          // if (ctor instanceof Entity || ctor instanceof ComponentBase) {
-          //   const prop = metaProp.get?.(thisObj) as Entity | ComponentBase;
+          // if (ctor instanceof Entity || ctor instanceof Component) {
+          //   const prop = metaProp.get?.(thisObj) as Entity | Component;
           //   obj[key] = prop.id;
           // }
           const prop = metaProp.get?.(thisObj);

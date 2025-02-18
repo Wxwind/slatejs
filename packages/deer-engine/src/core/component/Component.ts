@@ -6,13 +6,10 @@ import { property } from '../decorator';
 import { ISerializable } from '@/interface';
 import { Object3D } from 'three';
 import { EngineObject } from '../base';
-import { ComponentType, ComponentData, ComponentTypeToJsonObjMap } from './type';
+
 import { DeerScene } from '../DeerScene';
 
-export abstract class ComponentBase<T extends ComponentType = ComponentType>
-  extends EngineObject
-  implements ISerializable<ComponentData<T>>
-{
+export abstract class Component extends EngineObject implements ISerializable<any> {
   /** @internal */
   _onStartIndex: number = -1;
 
@@ -28,7 +25,7 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
   @property({ type: String })
   public id: string;
 
-  public abstract readonly type: T; // equals class' name
+  public abstract readonly type: string; // equals class' name
 
   private _entity: Entity;
 
@@ -113,21 +110,21 @@ export abstract class ComponentBase<T extends ComponentType = ComponentType>
     }
   }
 
-  abstract updateByJson(data: ComponentTypeToJsonObjMap[T], sync: boolean): void;
+  abstract updateByJson(data: any, sync: boolean): void;
 
-  abstract onSerialize(): ComponentTypeToJsonObjMap[T];
+  abstract onSerialize(): any;
 
-  abstract onDeserialize(data: ComponentTypeToJsonObjMap[T]): void;
+  abstract onDeserialize(data: any): void;
 
-  serialize(): ComponentData<T> {
+  serialize(): any {
     return {
       id: this.id,
       type: this.type,
       config: this.onSerialize(),
-    } as ComponentData<T>;
+    };
   }
 
-  deserialize(data: ComponentData<T>) {
+  deserialize(data: any) {
     if (data.type !== this.type) {
       throw new Error(`Parse component error, required ${this.type} but received ${data.type}`);
     }

@@ -1,4 +1,4 @@
-import { ComponentBase } from './ComponentBase';
+import { Component } from './Component';
 import { accessor, egclass } from '../decorator';
 import { FVector3 } from '@/math';
 import { TransformComponentJson } from './type';
@@ -7,7 +7,7 @@ import { IVector3, IVector4 } from '@/type';
 import { MathUtils } from '@/math';
 
 @egclass()
-export class TransformComponent extends ComponentBase<'TransformComponent'> {
+export class TransformComponent extends Component {
   type = 'TransformComponent' as const;
 
   _updateFlag = true;

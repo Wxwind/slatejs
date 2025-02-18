@@ -1,4 +1,4 @@
-export * from './ComponentBase';
+export * from './Component';
 export * from './MeshComponent';
 export * from './TransformComponent';
 export * from './type';

@@ -1,8 +1,6 @@
-import { ComponentData } from '../component';
-
 export type EntityJson = {
   id: string;
   name: string;
-  components: ComponentData[];
+  components: any[];
   children: EntityJson[];
 };

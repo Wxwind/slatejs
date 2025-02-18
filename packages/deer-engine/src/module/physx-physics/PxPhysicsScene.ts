@@ -15,6 +15,8 @@ import { castPxObject, castPxPointer } from './pxExtensions';
 import { SimpleObjectPool } from './eventPool';
 import { DisorderedArray } from '@/core/DisorderedMap';
 import { PxPhysicsBoxCollider, PxPhysicsCollider } from './collider';
+import { toPxVec3 } from './utils';
+import { HitResult } from '@/core/physics/HitResult';
 
 enum TriggerState {
   None,
@@ -52,11 +54,20 @@ export class PxPhysicsScene implements IPhysicsScene {
   private _onTriggerStay?: (obj1: number, obj2: number) => void;
   _onCharacterControllerHit?: (characterController: number, hit: InternalControllerColliderHit) => void;
 
+  private _tempVec1: PhysX.PxVec3;
+  private _tempVec2: PhysX.PxVec3;
+  private _raycastBuffer: PhysX.PxRaycastBuffer10;
+  private _raycastFlags: PhysX.PxHitFlags;
+
   constructor(pxPhysics: PxPhysics, gravity: IVector3, eventCallbacks?: PhysicsEventCallbacks) {
     const nativePxPhysics = pxPhysics._pxPhysics;
     this._pxPhysics = nativePxPhysics;
     const px = pxPhysics._physX;
     this._px = px;
+    this._tempVec1 = new px.PxVec3();
+    this._tempVec2 = new px.PxVec3();
+    this._raycastBuffer = new px.PxRaycastBuffer10();
+    this._raycastFlags = new px.PxHitFlags(px.PxHitFlagEnum.eNORMAL | px.PxHitFlagEnum.ePOSITION);
     this._onTriggerBegin = eventCallbacks?.onTriggerBegin;
     this._onTriggerEnd = eventCallbacks?.onTriggerEnd;
     this._onTriggerStay = eventCallbacks?.onTriggerStay;
@@ -162,6 +173,11 @@ export class PxPhysicsScene implements IPhysicsScene {
     scene.setSimulationEventCallback(simulationEventCallbackImpl);
     this._pxScene = scene;
     this._pxControllerManager = px.CreateControllerManager(scene);
+  }
+
+  destroy() {
+    this._pxScene.release();
+    this._pxScene = null!;
   }
 
   private _simulate(deltaTime: number) {
@@ -286,8 +302,36 @@ export class PxPhysicsScene implements IPhysicsScene {
     this._pxScene.setGravity(new this._px.PxVec3(gravity.x, gravity.y, gravity.z));
   }
 
-  destroy() {
-    this._pxScene.release();
-    this._pxScene = null!;
+  private _tempPosition: Vector3 = new Vector3();
+  private _tempNormal: Vector3 = new Vector3();
+  raycast(
+    origin: IVector3,
+    direction: IVector3,
+    maxDistance: number,
+    onHit?: (id: number, distance: number, position: Vector3, normal: Vector3) => void
+  ): boolean {
+    const { _raycastBuffer: raycastBuffer, _raycastFlags: rayCastFlags } = this;
+
+    const isHit = this._pxScene.raycast(
+      toPxVec3(origin, this._tempVec1),
+      toPxVec3(direction, this._tempVec2),
+      maxDistance,
+      raycastBuffer,
+      rayCastFlags
+    );
+
+    if (onHit) {
+      const hit = raycastBuffer.block;
+      const distance = hit.distance;
+      IVector3.copy(this._tempNormal, hit.normal);
+      IVector3.copy(this._tempPosition, hit.position);
+      const id = this._pxColliderMap[(hit.shape as any).ptr]?._id || null;
+      if (!id) {
+        throw new Error('collider not found');
+      }
+      onHit(id, distance, this._tempPosition, this._tempNormal);
+    }
+
+    return isHit;
   }
 }

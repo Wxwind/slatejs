@@ -23,10 +23,10 @@ export class ShootScript extends Script {
     const e = this.scene.entityManager.createEntity('obstacle', undefined);
     e.transform.position = position;
     e.transform.scale = size;
-    const mesh = e.addComponentByNew(MeshComponent);
+    const mesh = e.addComponent(MeshComponent);
     mesh.color = new THREE.Color('red');
-    const rb = e.addComponentByNew(DynamicRigidbodyComponent);
-    e.addComponentByNew(CollEventTestScript);
+    const rb = e.addComponent(DynamicRigidbodyComponent);
+    e.addComponent(CollEventTestScript);
     const boxCollider = new BoxCollider();
     boxCollider.size = size;
     rb.addCollider(boxCollider);

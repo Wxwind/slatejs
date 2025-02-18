@@ -40,7 +40,7 @@ export class CommandStack {
     const isOk = cmd.execute();
     if (!isOk) {
       console.warn('redo failed: %s', cmd);
-      return;
+      return null;
     }
     this.nowIndex++;
     return cmd;
