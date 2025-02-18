@@ -17,3 +17,35 @@
 .timeline-timeMark {
   background: linear-gradient(90deg, transparent 8px, #f00 8px, #f00 9px, transparent 9px) 0% 0% / 16px 16px repeat-y;
 }
+
+.drag-inside {
+  background-color: #333641;
+}
+
+.drag-above::before {
+  top: 0;
+  transform: translateY(-50%);
+}
+
+.drag-below::after {
+  bottom: 0;
+  transform: translateY(50%);
+}
+
+.drag-above::before,
+.drag-below::after {
+  background-clip: padding-box;
+  background-color: #fff;
+  border: 3px solid #fff;
+  border-radius: 0;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  box-sizing: border-box;
+  content: '';
+  display: block;
+  height: 8px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 11;
+}

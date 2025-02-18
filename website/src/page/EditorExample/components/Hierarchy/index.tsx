@@ -12,7 +12,8 @@ interface HierarchyProps {
 export const Hierarchy: FC<HierarchyProps> = (props) => {
   const { className, scene } = props;
 
-  const selectedEntity = scene?.entityManager.selectedEntity;
+  const selectedEntities =
+    scene && scene.entityManager.selectedEntity ? [scene.entityManager.selectedEntity] : undefined;
   const hierarchyData = scene?.entityManager.toTree();
 
   const refresh = useDumbState();
@@ -29,7 +30,7 @@ export const Hierarchy: FC<HierarchyProps> = (props) => {
       <EntityTree
         data={hierarchyData || []}
         depth={1}
-        selectedEntity={selectedEntity}
+        selectedEntities={selectedEntities}
         onTreeNodeSelected={(entityId) => {
           scene?.entityManager.select(entityId);
         }}
