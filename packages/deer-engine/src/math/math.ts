@@ -1,3 +1,5 @@
+import { Ref } from '@/util';
+
 const DEG2RAD = Math.PI / 180;
 const RAD2DEG = 180 / Math.PI;
 const EPSILON = 10e-5;
@@ -65,6 +67,42 @@ export class MathUtils {
     if (t1 === t2) return t1;
     x = MathUtils.clamp((x - t1) / (t2 - t1), 0, 1);
     return x * x * (3 - 2 * x);
+  }
+
+  // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Mathf.cs#L309
+  static smoothDamp(
+    current: number,
+    target: number,
+    currentVelocityRef: Ref<number>,
+    smoothTime: number,
+    maxSpeed: number,
+    deltaTime: number
+  ): number {
+    // Based on Game Programming Gems 4 Chapter 1.10
+    smoothTime = Math.max(0.0001, smoothTime);
+    let omega = 2 / smoothTime;
+
+    let x = omega * deltaTime;
+    let exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+    let change = current - target;
+    let originalTo = target;
+
+    // Clamp maximum speed
+    let maxChange = maxSpeed * smoothTime;
+    change = MathUtils.clamp(change, -maxChange, maxChange);
+    target = current - change;
+
+    let temp = (currentVelocityRef.value + omega * change) * deltaTime;
+    currentVelocityRef.value = (currentVelocityRef.value - omega * temp) * exp;
+    let output = target + (change + temp) * exp;
+
+    // Prevent overshooting
+    if (originalTo - current > 0.0 === output > originalTo) {
+      output = originalTo;
+      currentVelocityRef.value = (output - originalTo) / deltaTime;
+    }
+
+    return output;
   }
 
   static isNearly(value: number, other: number, tolerance: number = EPSILON) {
