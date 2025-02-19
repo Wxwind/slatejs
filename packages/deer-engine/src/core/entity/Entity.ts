@@ -2,7 +2,6 @@ import { isNil, deserializeComponent, genUUID } from '@/util';
 import { Component, TransformComponent } from '../component';
 import { UUID_PREFIX_ENTITY } from '@/config';
 import { EntityJson } from './type';
-
 import { property } from '../decorator';
 import { ISerializable } from '@/interface';
 import { DeerScene } from '../DeerScene';
@@ -64,40 +63,27 @@ export class Entity extends EngineObject implements ISerializable<EntityJson> {
 
   _visible = true;
 
-  private _parent: Entity | undefined;
+  private _parent: Entity | null = null;
 
-  public get parent(): Entity | undefined {
+  public get parent(): Entity | null {
     return this._parent;
   }
 
-  public set parent(parent: Entity | undefined) {
-    if (parent === this.parent) return;
-    if (this._parent !== undefined) {
-      if (parent && this._parent.scene !== parent.scene) {
-        console.warn('cannot move component between scenes.');
-        return;
-      }
+  public set parent(parent: Entity | null) {
+    this._setParent(parent);
+  }
+
+  _siblingIndex = -1;
+  get siblingIndex(): number {
+    return this._siblingIndex;
+  }
+
+  set siblingIndex(value: number) {
+    if (this._siblingIndex === -1 || this._parent == null) {
+      throw new Error(`Set sibling index failed: The entity ${this.name} is not attached to the scene`);
     }
 
-    this._parent = parent;
-    if (parent) {
-      parent._addToChildren(this);
-
-      this._isRoot = false;
-      if (parent) {
-        // inactive if parent is inactive in global and this is active in global
-        if (!parent._activeInScene && this._activeInScene) {
-          this._processInActive();
-        }
-
-        // active if this is active in local but inactive in global, and new parent is active in global
-        if (parent._activeInScene && !this._activeInScene && this.active) {
-          this._processActive();
-        }
-      }
-    } else {
-      this._processInActive();
-    }
+    this._setSiblingIndex(this._isRoot ? this._scene._rootEntities : this._parent.children, value);
   }
 
   public readonly transform: TransformComponent;
@@ -258,26 +244,48 @@ export class Entity extends EngineObject implements ISerializable<EntityJson> {
   };
 
   addChild = (child: Entity) => {
-    child.parent = this;
+    child._setParent(this);
   };
 
-  removeChild = (child: Entity) => {
-    child.parent = undefined;
-  };
+  removeChild(child: Entity) {
+    child._setParent(null);
+  }
 
-  _addToChildren: (child: Entity) => void = (child) => {
-    this.children.push(child);
-    this.sceneObject.add(child.sceneObject);
-  };
+  _addToChildren(child: Entity, index?: number): void {
+    if (index === undefined) {
+      child.siblingIndex = this.children.length;
+      this.children.push(child);
+    } else {
+      const children = this.children;
+      const childCount = children.length;
+      if (index < 0 || index > childCount) {
+        throw new Error(`Set sibling index failed: index out of bounds [0,${childCount}]`);
+      }
 
-  _removeFromChildren: (child: Entity) => void = (child) => {
-    const a = this.children.findIndex((a) => a === child);
-    if (a === -1) {
-      return;
+      children.splice(index, 0, child);
+      for (let i = index + 1; i < childCount + 1; i++) {
+        children[i]._siblingIndex++;
+      }
     }
-    this.children.splice(a, 1);
-    this.sceneObject.remove(child.sceneObject);
-  };
+
+    this.sceneObject.add(child.sceneObject);
+  }
+
+  _removeFromParent(): void {
+    const oldParent = this._parent;
+
+    if (oldParent) {
+      const oldSibling = oldParent.children;
+      oldSibling.splice(this._siblingIndex, 1);
+      const oldIndex = this._siblingIndex;
+      this._siblingIndex = -1;
+      for (let i = oldIndex; i < oldSibling.length; i++) {
+        oldSibling[i]._siblingIndex--;
+      }
+      this._parent == null;
+      oldParent.sceneObject.remove(this.sceneObject);
+    }
+  }
 
   destroy = () => {
     if (this._destroyed) return;
@@ -296,7 +304,7 @@ export class Entity extends EngineObject implements ISerializable<EntityJson> {
     if (this._isRoot) {
       this._scene.removeRootEntity(this);
     } else {
-      this.parent = undefined;
+      this.parent = null;
     }
 
     this.active = false;
@@ -329,4 +337,56 @@ export class Entity extends EngineObject implements ISerializable<EntityJson> {
       entity.parent = this;
     }
   };
+
+  _setParent(parent: Entity | null, siblingIndex?: number) {
+    if (parent === this.parent) return;
+    if (this._isRoot) {
+      this.scene._removeFromRootEntities(this);
+      this._parent = parent;
+      this._isRoot = false;
+      parent && parent._addToChildren(this, siblingIndex);
+    } else {
+      this._removeFromParent();
+      this._parent = parent;
+      parent && parent._addToChildren(this, siblingIndex);
+    }
+
+    if (parent) {
+      // inactive if parent is inactive in global and this is active in global
+      if (!parent._activeInScene && this._activeInScene) {
+        this._processInActive();
+      }
+
+      // active if this is active in local but inactive in global, and new parent is active in global
+      if (parent._activeInScene && !this._activeInScene && this.active) {
+        this._processActive();
+      }
+    } else {
+      this._processInActive();
+    }
+  }
+
+  _setSiblingIndex(sibling: Entity[], newIndex: number) {
+    if (newIndex < 0 || newIndex >= sibling.length) {
+      throw new Error(`Set sibling index failed: index out of bounds`);
+    }
+
+    const oldIndex = this._siblingIndex;
+    if (newIndex !== oldIndex) {
+      if (newIndex < oldIndex) {
+        for (let i = oldIndex; i >= newIndex; i--) {
+          const child = i === newIndex ? this : sibling[i - 1];
+          sibling[i] = child;
+          this._siblingIndex = i;
+        }
+      } else {
+        // newIndex > oldIndex
+        for (let i = oldIndex; i <= newIndex; i++) {
+          const child = i === newIndex ? this : sibling[i + 1];
+          sibling[i] = child;
+          this._siblingIndex = i;
+        }
+      }
+    }
+  }
 }

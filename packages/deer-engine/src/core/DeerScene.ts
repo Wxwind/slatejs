@@ -48,13 +48,14 @@ export class DeerScene {
 
   readonly control: Control;
 
-  rootEntities: Entity[] = [];
+  _rootEntities: Entity[] = [];
 
   private _renderer: WebGLRenderer;
   private _viewHelper: ViewHelper;
 
   isInitialized = false;
 
+  // not used yet, designed to indicate the hierarchy visibility
   active = true;
 
   private _updateManagers: AbstractSceneManager[] = [];
@@ -152,28 +153,74 @@ export class DeerScene {
     this.canvas.height = height;
   };
 
-  loadHDR = async (fileId: string) => {
+  async loadHDR(fileId: string) {
     const assetManager = this.engine.getManager(ResourceManager);
     const t = (await assetManager.loadTextureAsync(fileId)) || null;
     this.sceneObject.environment = t;
     this.sceneObject.background = t;
-  };
+  }
 
-  addRootEntity = (entity: Entity) => {
-    this.rootEntities.push(entity);
-    this.sceneObject.add(entity.sceneObject);
-    this.active ? entity._processActive() : entity._processInActive;
-  };
+  addRootEntity(child: Entity, index?: number): void {
+    const isRoot = child._isRoot;
+    const oldScene = child.scene;
+    if (!isRoot) {
+      child._removeFromParent();
+      child._isRoot = true;
+    } else if (oldScene !== this) {
+      oldScene._removeFromRootEntities(child);
+    }
+    this._addToRootEntities(child, index);
+    if (child._activeInScene && oldScene !== this) {
+      // inActive first then activate it
+      child._processInActive();
+    }
+    if (child._active && (!child._activeInScene || oldScene !== this)) {
+      child._processActive();
+    }
+  }
 
-  createRootEntity = (name?: string) => {
+  createRootEntity(name?: string) {
     const entity = new Entity(this);
     this.addRootEntity(entity);
     return entity;
-  };
+  }
 
-  removeRootEntity = (entity: Entity) => {
-    this.rootEntities.filter((a) => a !== entity);
-  };
+  removeRootEntity(entity: Entity): void {
+    if (entity._isRoot && entity.scene === this) {
+      this._removeFromRootEntities(entity);
+      entity._isRoot = false;
+      entity._activeInScene && entity._processInActive();
+    }
+  }
+
+  private _addToRootEntities(child: Entity, index?: number) {
+    if (index === undefined) {
+      child.siblingIndex = this._rootEntities.length;
+      this._rootEntities.push(child);
+    } else {
+      const rootEntities = this._rootEntities;
+      const rootEntitiesCount = rootEntities.length;
+      if (index < 0 || index > rootEntitiesCount) {
+        throw new Error(`Set sibling index failed: index out of bounds [0,${rootEntitiesCount}]`);
+      }
+      this._rootEntities.splice(index, 0, child);
+      for (let i = index + 1; i < rootEntitiesCount + 1; i++) {
+        rootEntities[i]._siblingIndex++;
+      }
+    }
+
+    this.sceneObject.add(child.sceneObject);
+  }
+
+  _removeFromRootEntities(entity: Entity) {
+    const rootEntities = this._rootEntities;
+    const index = entity._siblingIndex;
+    rootEntities.splice(index, 1);
+    for (let i = index; i < rootEntities.length; i++) {
+      rootEntities[i]._siblingIndex--;
+    }
+    this.sceneObject.remove(entity.sceneObject);
+  }
 
   destroy = () => {
     if (this._isDestroyed) {
@@ -181,7 +228,10 @@ export class DeerScene {
     }
     this._isDestroyed = true;
     this.entityManager.destory();
-    this.rootEntities.forEach((entity) => entity.destroy());
+
+    for (let i = this._rootEntities.length - 1; i >= 0; i--) {
+      this._rootEntities[i].destroy();
+    }
 
     // destroy renderer
     this._renderer.dispose();
@@ -195,7 +245,7 @@ export class DeerScene {
     return {
       id: this.id,
       name: this.name,
-      entities: this.rootEntities.map((a) => a.serialize()),
+      entities: this._rootEntities.map((a) => a.serialize()),
     };
   }
 

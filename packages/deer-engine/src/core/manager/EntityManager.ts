@@ -82,7 +82,7 @@ export class EntityManager {
   };
 
   toTree: () => EntityForHierarchy[] = () => {
-    const rootEntity = this.scene.rootEntities;
+    const rootEntity = this.scene._rootEntities;
     const tree: EntityForHierarchy[] = rootEntity.map(this.mapEntityForHierarchy);
     return tree;
   };
