@@ -56,6 +56,24 @@ export class MathUtils {
     return x * (1 - t) + y * t;
   }
 
+  // Loops the value t, so that it is never larger than length and never smaller than 0.
+  static repeat(t: number, length: number): number {
+    return MathUtils.clamp(t - Math.floor(t / length) * length, 0, length);
+  }
+
+  // PingPongs the value t, so that it is never larger than length and never smaller than 0.
+  static pingPong(t: number, length: number): number {
+    t = MathUtils.repeat(t, length * 2);
+    return length - Math.abs(t - length);
+  }
+
+  // Calculates the shortest difference between two given angles.
+  static deltaAngle(current: number, target: number) {
+    let delta = MathUtils.repeat(target - current, 360.0);
+    if (delta > 180.0) delta -= 360.0;
+    return delta;
+  }
+
   /**
    *
    * @param t1 min
@@ -103,6 +121,18 @@ export class MathUtils {
     }
 
     return output;
+  }
+
+  static smoothDampAngle(
+    current: number,
+    target: number,
+    currentVelocityRef: Ref<number>,
+    smoothTime: number,
+    maxSpeed: number,
+    deltaTime: number
+  ) {
+    target = current + MathUtils.deltaAngle(current, target);
+    return MathUtils.smoothDamp(current, target, currentVelocityRef, smoothTime, maxSpeed, deltaTime);
   }
 
   static isNearly(value: number, other: number, tolerance: number = EPSILON) {
