@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { LuLock, LuLockOpen } from 'react-icons/lu';
+import { AiOutlineLock, AiOutlineUnlock } from 'react-icons/ai';
 
 interface LockIconProps {
   value: boolean;
@@ -16,7 +16,7 @@ export const LockIcon: FC<LockIconProps> = (props) => {
         onChange(!value);
       }}
     >
-      {value ? <LuLock /> : <LuLockOpen />}
+      {value ? <AiOutlineLock /> : <AiOutlineUnlock />}
     </div>
   );
 };
