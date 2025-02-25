@@ -195,7 +195,7 @@ export class DeerScene {
 
   private _addToRootEntities(child: Entity, index?: number) {
     if (index === undefined) {
-      child.siblingIndex = this._rootEntities.length;
+      child._siblingIndex = this._rootEntities.length;
       this._rootEntities.push(child);
     } else {
       const rootEntities = this._rootEntities;

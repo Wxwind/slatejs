@@ -253,7 +253,7 @@ export class Entity extends EngineObject implements ISerializable<EntityJson> {
 
   _addToChildren(child: Entity, index?: number): void {
     if (index === undefined) {
-      child.siblingIndex = this.children.length;
+      child._siblingIndex = this.children.length;
       this.children.push(child);
     } else {
       const children = this.children;
