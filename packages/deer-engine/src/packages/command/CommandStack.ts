@@ -9,41 +9,45 @@ export class CommandStack {
   }
 
   execute = (cmd: ICommand) => {
-    const isOk = cmd.execute();
-    if (!isOk) {
-      console.warn('execute failed: %s', cmd.toString());
-      return;
-    }
-    this.nowIndex++;
+    try {
+      cmd.execute();
+      this.nowIndex++;
 
-    // clear if here are dirty cmds.
-    if (this.history[this.nowIndex] !== undefined) {
-      this.history.splice(this.nowIndex);
+      // clear if here are dirty cmds.
+      if (this.history[this.nowIndex] !== undefined) {
+        this.history.splice(this.nowIndex);
+      }
+      this.history.push(cmd);
+    } catch (err) {
+      console.warn('execute failed: %s', cmd.toString());
+      throw err;
     }
-    this.history.push(cmd);
   };
 
   undo = () => {
     if (this.history.length === 0 || this.nowIndex < 0) return null;
     const cmd = this.history[this.nowIndex];
-    const isOk = cmd.undo();
-    if (!isOk) {
+    try {
+      cmd.undo();
+      this.nowIndex--;
+      return cmd;
+    } catch (err) {
       console.warn('undo failed: %s', cmd.toString());
+      throw err;
     }
-    this.nowIndex--;
-    return cmd;
   };
 
   redo = () => {
     if (this.history[this.nowIndex + 1] === undefined) return null;
     const cmd = this.history[this.nowIndex + 1];
-    const isOk = cmd.execute();
-    if (!isOk) {
+    try {
+      cmd.execute();
+      this.nowIndex++;
+      return cmd;
+    } catch (err) {
       console.warn('redo failed: %s', cmd);
-      return null;
+      throw err;
     }
-    this.nowIndex++;
-    return cmd;
   };
 
   top = () => {
