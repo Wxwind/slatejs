@@ -253,7 +253,7 @@ export class DeerScene {
     this.id = data.id;
     this.name = data.name;
     const deserializeEntity = (entityJson: EntityJson, parent: undefined | Entity) => {
-      const entity = this.entityManager.createEntity(entityJson.name, undefined);
+      const entity = this.entityManager.createEntity(entityJson.name, null);
       entity.id = entityJson.id;
       entityJson.components.forEach((comp) => deserializeComponent(comp, entity));
 

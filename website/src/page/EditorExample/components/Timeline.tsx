@@ -1,6 +1,6 @@
 import { FC, useRef, useState } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
-import { CutsceneEditorPanel } from '@/module/slatejs';
+import { CutsceneEditorPanel, CutsceneEditorPanelMemo } from '@/module/slatejs';
 
 export const Timeline: FC = () => {
   const [pos, setPos] = useState<{ x: number; y: number }>();
@@ -21,9 +21,16 @@ export const Timeline: FC = () => {
   };
 
   return (
-    <Draggable nodeRef={nodeRef} handle=".controls" position={pos} onDrag={handleDrag}>
-      <div ref={nodeRef} className="w-3/4 h-80 absolute bottom-20 left-0 right-0 m-auto">
-        <CutsceneEditorPanel />
+    <Draggable
+      nodeRef={nodeRef}
+      bounds="parent"
+      handle=".controls"
+      position={pos}
+      onDrag={handleDrag}
+      defaultPosition={{ x: 0, y: 0 }}
+    >
+      <div ref={nodeRef} className="w-3/4 h-80 absolute bottom-20">
+        <CutsceneEditorPanelMemo />
       </div>
     </Draggable>
   );

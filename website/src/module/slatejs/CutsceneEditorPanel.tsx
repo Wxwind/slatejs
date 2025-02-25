@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo, useMemo } from 'react';
 import { Controls } from './Controls';
 import { Timeline } from './Timeline';
 import { CutsceneGroupPanel } from './CutsceneGroupPanel';
@@ -68,3 +68,5 @@ export const CutsceneEditorPanel: FC<CutsceneEditorPanelProps> = (props) => {
     </div>
   );
 };
+
+export const CutsceneEditorPanelMemo = memo(CutsceneEditorPanel);

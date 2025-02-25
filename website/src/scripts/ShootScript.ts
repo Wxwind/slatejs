@@ -20,7 +20,7 @@ export class ShootScript extends Script {
   }
 
   createBullet(position: THREE.Vector3, size: THREE.Vector3): DynamicRigidbodyComponent {
-    const e = this.scene.entityManager.createEntity('obstacle', undefined);
+    const e = this.scene.entityManager.createEntity('obstacle', null);
     e.transform.position = position;
     e.transform.scale = size;
     const mesh = e.addComponent(MeshComponent);

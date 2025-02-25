@@ -28,13 +28,12 @@ export class EntityManager {
     this.scene = scene;
   }
 
-  createEntity = (name: string, parent: Entity | string | null | undefined) => {
-    const p =
-      typeof parent === 'string' ? this.findEntityById(parent) || undefined : isNil(parent) ? undefined : parent;
+  createEntity = (name: string, parent: Entity | string | null) => {
+    const p = typeof parent === 'string' ? this.findEntityById(parent) || null : isNil(parent) ? null : parent;
     const e = new Entity(this.scene);
     e.name = name;
     e.parent = p;
-    if (e.parent === undefined) {
+    if (e.parent === null) {
       this.scene.addRootEntity(e);
     }
 

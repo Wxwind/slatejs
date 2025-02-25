@@ -1,4 +1,4 @@
-import { MathUtils } from '@/math';
+import { FVector3, MathUtils } from '@/math';
 import { MetadataProp } from '@/core';
 import { IVector3 } from '@/type';
 
@@ -93,9 +93,36 @@ export class AnimatedVector3Model implements IAnimatedParameterModel<IVector3> {
   };
 }
 
+export class AnimatedFVector3Model implements IAnimatedParameterModel<FVector3> {
+  requiredCurveCount: number = 3;
+  isBool: boolean = false;
+
+  convertToNumbers(value: FVector3) {
+    return [value.x, value.y, value.z];
+  }
+
+  convertToObject(numbers: number[]) {
+    return new FVector3(numbers[0], numbers[1], numbers[2]);
+  }
+
+  setDirect: (target: object, metadataProp: MetadataProp, numbers: number[]) => void = (
+    target,
+    metadataProp,
+    numbers
+  ) => {
+    metadataProp.set?.(target, new FVector3(numbers[0], numbers[1], numbers[2]));
+  };
+
+  getDirect: (target: object, metadataProp: MetadataProp) => number[] = (target, metadataProp) => {
+    const v = metadataProp.get?.(target) as FVector3;
+    return this.convertToNumbers(v);
+  };
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TypeToAnimParamModelMapInstance: Record<string, new () => IAnimatedParameterModel<any>> = {
   Number: AnimatedNumberModel,
   Bool: AnimatedBoolModel,
   IVector3: AnimatedVector3Model,
+  FVector3: AnimatedFVector3Model,
 };

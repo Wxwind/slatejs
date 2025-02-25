@@ -79,7 +79,7 @@ export const Header: FC<HeaderProps> = (props) => {
       console.error('create entity failed: no activated scene');
       return;
     }
-    const e = scene.entityManager.createEntity('Soldier', scene.entityManager.selectedEntity);
+    const e = scene.entityManager.createEntity('Soldier', scene.entityManager.selectedEntity || null);
     e.transform.position = {
       x: 0,
       y: 3,
@@ -114,7 +114,7 @@ export const Header: FC<HeaderProps> = (props) => {
       console.error('create entity failed: no activated scene');
       return;
     }
-    const e = scene.entityManager.createEntity('Plane', scene.entityManager.selectedEntity);
+    const e = scene.entityManager.createEntity('Plane', scene.entityManager.selectedEntity || null);
     e.transform.scale = {
       x: 20,
       y: 1,
@@ -132,7 +132,7 @@ export const Header: FC<HeaderProps> = (props) => {
       console.error('create entity failed: no activated scene');
       return;
     }
-    const e = scene.entityManager.createEntity('Cube', scene.entityManager.selectedEntity);
+    const e = scene.entityManager.createEntity('Cube', scene.entityManager.selectedEntity || null);
     e.transform.scale = {
       x: 1,
       y: 1,
@@ -197,7 +197,7 @@ export const Header: FC<HeaderProps> = (props) => {
 
   const logSceneNode = () => {
     if (!deerEngine) return;
-    console.log(deerEngine.getManager(SceneManager).mainScene?.rootEntities);
+    console.log(deerEngine.getManager(SceneManager).mainScene?._rootEntities);
   };
 
   const handleRunEngine = () => {
