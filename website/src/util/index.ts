@@ -7,3 +7,4 @@ export * from './throttle';
 export * from './bezier';
 export * from './file';
 export * from './math';
+export * from './copyToClipboard';
