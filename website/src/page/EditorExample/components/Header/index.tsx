@@ -158,7 +158,7 @@ export const Header: FC<HeaderProps> = (props) => {
       console.error('create entity failed: no activated scene');
       return;
     }
-    const e = scene.entityManager.createEntity('Slope', scene.entityManager.selectedEntity);
+    const e = scene.entityManager.createEntity('Slope', scene.entityManager.selectedEntity || null);
     e.transform.scale = {
       x: 20,
       y: 1,
