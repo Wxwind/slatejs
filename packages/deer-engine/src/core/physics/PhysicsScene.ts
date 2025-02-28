@@ -15,6 +15,7 @@ import { Script } from '../component';
 import { Collider } from './collider';
 import { IVector3 } from '@/type';
 import { HitResult } from './HitResult';
+import { isDynamicRigidBody } from './utils';
 
 export class PhysicsScene {
   private _accumulator: number = 0;
@@ -120,6 +121,10 @@ export class PhysicsScene {
       return;
     }
 
+    if (!(isDynamicRigidBody(coll1.rigidbody) || isDynamicRigidBody(coll1.rigidbody))) {
+      return;
+    }
+
     coll1.rigidbody.entity._scripts.forEach(
       (script) => {
         script.onCollisionEnter(coll2);
@@ -147,6 +152,10 @@ export class PhysicsScene {
       return;
     }
 
+    if (!(isDynamicRigidBody(coll1.rigidbody) || isDynamicRigidBody(coll1.rigidbody))) {
+      return;
+    }
+
     coll1.rigidbody.entity._scripts.forEach(
       (script) => {
         script.onCollisionStay(coll2);
@@ -171,6 +180,10 @@ export class PhysicsScene {
     const coll2 = this._nativeShapeMap[obj2];
     if (!coll1 || !coll2) {
       console.error(`native collider ${coll1}(${obj1}) or ${coll2}${obj2} lost binding`);
+      return;
+    }
+
+    if (!(isDynamicRigidBody(coll1.rigidbody) || isDynamicRigidBody(coll1.rigidbody))) {
       return;
     }
 

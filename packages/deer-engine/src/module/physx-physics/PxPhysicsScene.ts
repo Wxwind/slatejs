@@ -98,15 +98,15 @@ export class PxPhysicsScene implements IPhysicsScene {
         const nativeShape0 = (pair as any).get_shapes(0);
         const nativeShape1 = (pair as any).get_shapes(1);
 
+        const isTriggerPair = px.IsTriggerShape(nativeShape0) || px.IsTriggerShape(nativeShape1);
+
         const shapeA = this._pxColliderMap[nativeShape0.ptr]?._id;
         const shapeB = this._pxColliderMap[nativeShape1.ptr]?._id;
 
         if (!shapeA || !shapeB) {
-          console.error(`pxShape binding is null. ShapeA: ${shapeA} ShapeB: ${shapeB}`);
+          console.error(`pxShape binding is null. ShapeA: ${nativeShape0} ShapeB: ${nativeShape1}`);
           return;
         }
-
-        const isTriggerPair = px.IsTriggerShape(nativeShape0) || px.IsTriggerShape(nativeShape1);
 
         if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_FOUND)) {
           // console.log('begin contact', shapeA, shapeB);
