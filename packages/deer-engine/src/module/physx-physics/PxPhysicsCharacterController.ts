@@ -202,6 +202,10 @@ export class PxPhysicsCharacterController implements ICharacterController {
       });
     };
 
+    reportCallback.onControllerHit = (hitPointer: PhysX.PxControllerHit) => {};
+
+    reportCallback.onObstacleHit = (hitPointer: PhysX.PxControllerHit) => {};
+
     desc.reportCallback = reportCallback;
 
     return castPxObject(px, pxControllerManager.createController(desc), px.PxCapsuleController);

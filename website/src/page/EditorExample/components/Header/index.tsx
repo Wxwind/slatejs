@@ -133,15 +133,10 @@ export const Header: FC<HeaderProps> = (props) => {
       return;
     }
     const e = scene.entityManager.createEntity('Cube', scene.entityManager.selectedEntity || null);
-    e.transform.scale = {
-      x: 1,
-      y: 1,
-      z: 1,
-    };
     e.transform.position = {
       x: 0,
-      y: 2,
-      z: 2,
+      y: 4,
+      z: 0,
     };
     e.addComponent(MeshComponent);
     e.addComponent(CubeMoveScript);
@@ -149,7 +144,7 @@ export const Header: FC<HeaderProps> = (props) => {
     const rb = e.addComponent(DynamicRigidbodyComponent);
     rb.isKinematic = true;
     const boxCollider = new BoxCollider();
-    boxCollider.isTrigger = true;
+    // boxCollider.isTrigger = true;
     rb.addCollider(boxCollider);
   };
 

@@ -102,11 +102,6 @@ export class CharacterControllerComponent extends RigidbodyComponent {
     this.entity.transform._updateFlag = false;
   }
 
-  override addCollider(collider: Collider): void {
-    super.addCollider(collider);
-    this.scene.physicsScene._onColliderAdd;
-  }
-
   override removeCollider(collider: Collider): void {}
 
   move(disp: IVector3, minDist: number, elapsedTime: number) {
