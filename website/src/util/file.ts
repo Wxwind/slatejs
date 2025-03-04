@@ -41,10 +41,14 @@ export const getFileNameAndExt = (file: File | string, length = 32) => {
   return { fileName, ext };
 };
 
-export const sliceFileName = (fileName: string, length = 32) => {
-  const ext = fileName.slice(fileName.lastIndexOf('.') + 1).toLocaleLowerCase();
+export const sliceFileName = (fileName: string, length = 32, includesExt = false) => {
+  const extIndex = fileName.lastIndexOf('.');
+  if (extIndex === -1) return fileName.slice(0, length);
+  const ext = fileName.slice(extIndex + 1).toLocaleLowerCase();
   if (fileName.length > length) {
-    return `${fileName.slice(0, length - 1 - ext.length)}.${ext}`;
+    return includesExt
+      ? `${fileName.slice(0, length - 1 - ext.length)}.${ext}`
+      : `${fileName.slice(0, length - 1 - ext.length)}`;
   }
-  return fileName;
+  return includesExt ? fileName : `${fileName.slice(0, fileName.length - 1 - ext.length)}`;
 };
