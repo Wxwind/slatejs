@@ -7,21 +7,21 @@ export class CommandManager extends AbstractManager {
 
   init(): void {}
 
-  execute = (cmd: ICommand) => {
-    this.commandStack.execute(cmd);
-  };
+  async execute(cmd: ICommand) {
+    await this.commandStack.execute(cmd);
+  }
 
-  undo = () => {
-    const cmd = this.commandStack.undo();
+  async undo() {
+    const cmd = await this.commandStack.undo();
     if (isNil(cmd)) return;
     console.log(`undo the cmd ${cmd.type}`);
-  };
+  }
 
-  redo = () => {
-    const cmd = this.commandStack.redo();
+  async redo() {
+    const cmd = await this.commandStack.redo();
     if (isNil(cmd)) return;
     console.log(`redo the cmd ${cmd.type}`);
-  };
+  }
 
   destroy(): void {
     this.commandStack.clear();

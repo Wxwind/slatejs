@@ -2,9 +2,9 @@ import { CommandType } from '@/core';
 
 export interface ICommand {
   type: CommandType;
-  execute: () => void;
+  execute: (isRedo: boolean) => PromiseAble<void>;
 
-  undo: () => void;
+  undo: () => PromiseAble<void>;
 
   toString: () => string;
 }
