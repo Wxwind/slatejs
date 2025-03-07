@@ -16,21 +16,18 @@ export class CreateEntityCommand implements ICommand {
     private name: string
   ) {}
 
-  execute: () => boolean = () => {
+  execute() {
     const cube = this.scene.entityManager.createEntity(this.name, this.parent);
     cube.addComponent(MeshComponent);
     this.obj = cube;
-    return true;
-  };
+  }
 
-  undo: () => boolean = () => {
+  undo() {
     if (isNil(this.obj)) {
-      console.warn("obj doesn't exist");
-      return false;
+      throw new Error("obj doesn't exist");
     }
     this.obj.destroy();
-    return true;
-  };
+  }
 
   private getParentName = () => {
     if (typeof this.parent === 'string') {

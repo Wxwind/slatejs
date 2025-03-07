@@ -12,15 +12,13 @@ export class SelectEntityCommand implements ICommand {
     private entityId: string | undefined
   ) {}
 
-  execute: () => boolean = () => {
+  execute() {
     this.scene.entityManager.select(this.entityId);
-    return true;
-  };
+  }
 
-  undo: () => boolean = () => {
+  undo() {
     this.scene.entityManager.select(this.oldSelectedId);
-    return true;
-  };
+  }
 
   toString: () => string = () => {
     return `${this.type}Command: entityId = ${this.entityId}`;

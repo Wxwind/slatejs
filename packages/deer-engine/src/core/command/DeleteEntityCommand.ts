@@ -10,15 +10,13 @@ export class DeleteEntityCommand implements ICommand {
     private entityId: string
   ) {}
 
-  execute: () => boolean = () => {
+  execute() {
     this.scene.entityManager.removeEntityById(this.entityId);
-    return true;
-  };
+  }
 
-  undo: () => boolean = () => {
+  undo() {
     // TODO: undo delete entity
-    return true;
-  };
+  }
 
   toString: () => string = () => {
     return `${this.type}Command: entityId = ${this.entityId}`;

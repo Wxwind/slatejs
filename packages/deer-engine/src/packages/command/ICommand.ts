@@ -1,4 +1,5 @@
 import { CommandType } from '@/core';
+import { PromiseAble } from './type';
 
 export interface ICommand {
   type: CommandType;
