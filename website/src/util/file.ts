@@ -52,3 +52,21 @@ export const sliceFileName = (fileName: string, length = 32, includesExt = false
   }
   return includesExt ? fileName : `${fileName.slice(0, fileName.length - 1 - ext.length)}`;
 };
+
+export interface FileChunk {
+  chunk: Blob;
+  index: number;
+}
+export const DEFAULT_CHUNK_SIZE = 10 * 1024 * 1024;
+
+export const sliceFile = (file: Blob, size = DEFAULT_CHUNK_SIZE) => {
+  let chunkIndex = 0;
+  const fileChunks: FileChunk[] = [];
+  for (let cur = 0; cur < file.size; cur += size) {
+    fileChunks.push({
+      index: chunkIndex++,
+      chunk: file.slice(cur, cur + size),
+    });
+  }
+  return fileChunks;
+};
