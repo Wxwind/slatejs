@@ -12,7 +12,7 @@ export const sliceFileName = (fileName: string, length = 32, includesExt = false
 
 export const getFileNameAndExt = (file: File | string, length = 32) => {
   const f = typeof file === 'string' ? file : file.name;
-  const name = sliceFileName(f, length);
+  const name = sliceFileName(f, length, true);
   const index = name.lastIndexOf('.');
   const fileName = index === -1 ? name : name.substring(0, index);
   const ext = index === -1 ? '' : name.slice(index + 1).toLocaleLowerCase();
