@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type ResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | (string & {});
 
+// copy from three
 export async function requestFile(
   req: string,
   callbacks?: {
@@ -13,9 +13,6 @@ export async function requestFile(
   if (response.status === 200 || response.status === 0) {
     // Some browsers return HTTP Status 0 when using non-http protocol
     // e.g. 'file://' or 'data://'. Handle as success.
-
-    // Workaround: Checking if response.body === undefined for Alipay browser #23548
-
     if (
       typeof ReadableStream === 'undefined' ||
       response.body === null ||
