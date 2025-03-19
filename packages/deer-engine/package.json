@@ -30,10 +30,7 @@
     "@rollup/plugin-babel": "^6.0.4",
     "@types/lodash": "^4.14.202",
     "@types/three": "^0.157.2",
-    "@types/uuid": "^9.0.6",
-    "@typescript-eslint/eslint-plugin": "^8.21.0",
-    "@typescript-eslint/parser": "^8.21.0",
-    "eslint": "^9.18.0"
+    "@types/uuid": "^9.0.6"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^25.0.0",
