@@ -1,5 +1,8 @@
 export class Token {
-  constructor(public tokenType: TokenType, public value: string) {}
+  constructor(
+    public tokenType: TokenType,
+    public value: string
+  ) {}
 
   public toString() {
     return `tokenType= ${this.tokenType}, value= ${this.value}`;

@@ -1,9 +1,9 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 
-let _xColumn = new Vector3();
-let _yColumn = new Vector3();
-let _zColumn = new Vector3();
-let _vec31 = new Vector3();
+const _xColumn = new Vector3();
+const _yColumn = new Vector3();
+const _zColumn = new Vector3();
+const _vec31 = new Vector3();
 
 export class Camera {
   private _main: PerspectiveCamera;

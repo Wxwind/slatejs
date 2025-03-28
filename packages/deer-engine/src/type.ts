@@ -27,7 +27,6 @@ export interface IVector3 {
   z: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace IVector3 {
   export function scale<T extends IVector3 = IVector3>(a: T, b: number, out: T) {
     out.x = a.x * b;
@@ -87,10 +86,10 @@ export namespace IVector3 {
 
     // Based on Game Programming Gems 4 Chapter 1.10
     smoothTime = Math.max(0.0001, smoothTime);
-    let omega = 2 / smoothTime;
+    const omega = 2 / smoothTime;
 
-    let x = omega * deltaTime;
-    let exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+    const x = omega * deltaTime;
+    const exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
 
     let change_x = current.x - target.x;
     let change_y = current.y - target.y;
@@ -98,12 +97,12 @@ export namespace IVector3 {
     const originalTo = target;
 
     // Clamp maximum speed
-    let maxChange = maxSpeed * smoothTime;
+    const maxChange = maxSpeed * smoothTime;
 
-    let maxChangeSq = maxChange * maxChange;
-    let sqrmag = change_x * change_x + change_y * change_y + change_z * change_z;
+    const maxChangeSq = maxChange * maxChange;
+    const sqrmag = change_x * change_x + change_y * change_y + change_z * change_z;
     if (sqrmag > maxChangeSq) {
-      var mag = Math.sqrt(sqrmag);
+      const mag = Math.sqrt(sqrmag);
       change_x = (change_x / mag) * maxChange;
       change_y = (change_y / mag) * maxChange;
       change_z = (change_z / mag) * maxChange;
@@ -113,9 +112,9 @@ export namespace IVector3 {
     target.y = current.y - change_y;
     target.z = current.z - change_z;
 
-    let temp_x = (currentVelocity.x + omega * change_x) * deltaTime;
-    let temp_y = (currentVelocity.y + omega * change_y) * deltaTime;
-    let temp_z = (currentVelocity.z + omega * change_z) * deltaTime;
+    const temp_x = (currentVelocity.x + omega * change_x) * deltaTime;
+    const temp_y = (currentVelocity.y + omega * change_y) * deltaTime;
+    const temp_z = (currentVelocity.z + omega * change_z) * deltaTime;
 
     currentVelocity.x = (currentVelocity.x - omega * temp_x) * exp;
     currentVelocity.y = (currentVelocity.y - omega * temp_y) * exp;
@@ -126,12 +125,12 @@ export namespace IVector3 {
     output_z = target.z + (change_z + temp_z) * exp;
 
     // Prevent overshooting
-    let origMinusCurrent_x = originalTo.x - current.x;
-    let origMinusCurrent_y = originalTo.y - current.y;
-    let origMinusCurrent_z = originalTo.z - current.z;
-    let outMinusOrig_x = output_x - originalTo.x;
-    let outMinusOrig_y = output_y - originalTo.y;
-    let outMinusOrig_z = output_z - originalTo.z;
+    const origMinusCurrent_x = originalTo.x - current.x;
+    const origMinusCurrent_y = originalTo.y - current.y;
+    const origMinusCurrent_z = originalTo.z - current.z;
+    const outMinusOrig_x = output_x - originalTo.x;
+    const outMinusOrig_y = output_y - originalTo.y;
+    const outMinusOrig_z = output_z - originalTo.z;
 
     if (
       origMinusCurrent_x * outMinusOrig_x + origMinusCurrent_y * outMinusOrig_y + origMinusCurrent_z * outMinusOrig_z >

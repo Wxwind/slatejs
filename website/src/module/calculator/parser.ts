@@ -23,10 +23,7 @@ export class Parser {
 
   private expr: () => ASTNode = () => {
     let node = this.term();
-    while (
-      this.curToken.tokenType === TokenType.PLUS ||
-      this.curToken.tokenType === TokenType.MINUS
-    ) {
+    while (this.curToken.tokenType === TokenType.PLUS || this.curToken.tokenType === TokenType.MINUS) {
       const tmpToken = this.curToken;
       this.match(this.curToken.tokenType);
       node = new BinOpNode(tmpToken, node, this.term());
@@ -36,10 +33,7 @@ export class Parser {
 
   private term: () => ASTNode = () => {
     let node = this.factor();
-    while (
-      this.curToken.tokenType === TokenType.MUTIPLICATION ||
-      this.curToken.tokenType === TokenType.DIVISION
-    ) {
+    while (this.curToken.tokenType === TokenType.MUTIPLICATION || this.curToken.tokenType === TokenType.DIVISION) {
       const tmpToken = this.curToken;
       this.match(this.curToken.tokenType);
       node = new BinOpNode(tmpToken, node, this.term());

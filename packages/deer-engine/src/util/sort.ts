@@ -16,7 +16,6 @@ function insertionSort<T>(a: T[], from: number, to: number, compareFunc: (a: T, 
 }
 
 export function quickSort<T>(a: T[], from: number, to: number, compareFunc: (a: T, b: T) => number): void {
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     // Insertion sort is faster for short arrays.
     if (to - from <= 10) {

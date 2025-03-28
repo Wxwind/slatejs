@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassFieldDecorator, IPropertyOptions } from '../type';
 import { DecoratorMetadataObjectForRF, MetadataProp, getClassName, getClassStashFromMetadata } from './util';
 import merge from 'lodash/merge';

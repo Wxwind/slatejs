@@ -1,4 +1,3 @@
-/* eslint-disable no-bitwise */
 export class PriorityQueue<T> {
   private queue: T[] = [];
 

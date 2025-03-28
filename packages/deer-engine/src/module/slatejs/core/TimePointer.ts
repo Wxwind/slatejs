@@ -1,4 +1,4 @@
-import { IDirectable, IDirectableGetLength , IDirectableToLocalTime } from './IDirectable';
+import { IDirectable, IDirectableGetLength, IDirectableToLocalTime } from './IDirectable';
 
 export interface IDirectableTimePointer {
   get target(): IDirectable;

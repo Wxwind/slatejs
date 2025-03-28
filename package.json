@@ -8,7 +8,8 @@
     "dev": "concurrently -n engine,canvas,website \"pnpm --filter deer-engine watch\" \"pnpm --filter deer-canvas watch\" \"pnpm --filter deer-website dev\"",
     "dev:bp": "concurrently -n bp,bp-website \"pnpm --filter deer-blueprint watch\" \"pnpm --filter deer-blueprint-example dev\"",
     "build": "pnpm --filter deer-website... build",
-    "lint": "pnpm --filter deer-website... lint:ts",
+    "tsc": "pnpm --filter deer-website... lint:ts",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 -c eslint.config.js --fix",
     "preview": "pnpm --filter deer-website preview",
     "test": "jest"
   },

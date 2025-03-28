@@ -74,12 +74,7 @@ export class Lexer {
   }
 
   private skipWhitespace = () => {
-    while (
-      this.nextChar === ' ' ||
-      this.nextChar === '\t' ||
-      this.nextChar === '\n' ||
-      this.nextChar === '\r'
-    ) {
+    while (this.nextChar === ' ' || this.nextChar === '\t' || this.nextChar === '\n' || this.nextChar === '\r') {
       this.moveNext();
     }
   };

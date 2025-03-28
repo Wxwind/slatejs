@@ -96,7 +96,7 @@ export interface IRigidbody {
   destroy(): void;
 }
 
-export interface IStaticRigidBody extends IRigidbody {}
+export type IStaticRigidBody = IRigidbody;
 
 /**
  * Interface of physics dynamic rigidbody.
@@ -416,4 +416,4 @@ export interface ICapsuleCollider extends ICollider {
   setHeight(height: number): void;
 }
 
-export interface IPlaneCollider extends ICollider {}
+export type IPlaneCollider = ICollider;

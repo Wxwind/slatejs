@@ -32,6 +32,8 @@ export default tseslint.config(
       'no-empty-pattern': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
     },
   },
   {

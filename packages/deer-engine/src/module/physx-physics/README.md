@@ -6,6 +6,8 @@
   5. overlapTest(overlapBox / overlapSphere / overlapCapsule)
   6. pass id to native pxShape to avoid using map<shape ptr, shape id>
   7. layer mask support for scene query
+## Known Bugs
+  1.
 ## FEATURE
   1. static / dynamic rigidbody
   2. box / sphere / capsule collider

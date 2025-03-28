@@ -27,9 +27,7 @@ export class Interpreter {
       case '/':
         return this.visit(left) / this.visit(right);
       default:
-        throw new Error(
-          `runtime error: the binary operation '${node.root.value}' is not supported`,
-        );
+        throw new Error(`runtime error: the binary operation '${node.root.value}' is not supported`);
     }
   };
 

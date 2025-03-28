@@ -7,16 +7,13 @@ import { IVector3 } from '@/type';
 import {
   InternalControllerColliderHit,
   ICharacterController,
-  ICollider,
   IPhysicsScene,
   PhysicsEventCallbacks,
 } from '@/core/physics/interface';
-import { castPxObject, castPxPointer } from './pxExtensions';
 import { SimpleObjectPool } from './eventPool';
 import { DisorderedArray } from '@/core/DisorderedMap';
-import { PxPhysicsBoxCollider, PxPhysicsCollider } from './collider';
+import { PxPhysicsCollider } from './collider';
 import { toPxVec3 } from './utils';
-import { HitResult } from '@/core/physics/HitResult';
 
 enum TriggerState {
   None,
@@ -94,7 +91,6 @@ export class PxPhysicsScene implements IPhysicsScene {
       for (let i = 0; i < nbPairs; i++) {
         const pair = nativeArrayHelper.getContactPairAt(pairsPointer, i);
         const event = pair.events;
-        9;
         const nativeShape0 = (pair as any).get_shapes(0);
         const nativeShape1 = (pair as any).get_shapes(1);
 
