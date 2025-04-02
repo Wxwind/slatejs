@@ -7,7 +7,8 @@
   6. pass id to native pxShape to avoid using map<shape ptr, shape id>
   7. layer mask support for scene query
 ## Known Bugs
-  1.
+  1. rigidbody's transform may not work right when entity has parent
+  2. cct may emit collision event when colliding with dynamic or kinematic collider in some case. So px.TriggersUsingFilterShader needs to exclude collision events between cct and dynamic collider
 ## FEATURE
   1. static / dynamic rigidbody
   2. box / sphere / capsule collider
