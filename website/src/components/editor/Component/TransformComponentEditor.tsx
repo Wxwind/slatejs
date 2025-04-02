@@ -1,9 +1,8 @@
-import { CollapseBox, FormItemsInRow, ImmerFormItem, Vector3FormItem } from '@/components/baseComponent';
+import { CollapseBox, Vector3FormItem } from '@/components/baseComponent';
 import { JsonModule, TransformComponentJson, TransformComponent } from 'deer-engine';
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import set from 'lodash/set';
-import { ProInputNumber } from '@/components/baseComponent/ProInputNumber';
 import { useBindSignal } from '@/hooks';
 import { EditorComp, registerEditor } from '@/decorator';
 import { deepClone } from '@/util';

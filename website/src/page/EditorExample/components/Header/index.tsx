@@ -139,12 +139,12 @@ export const Header: FC<HeaderProps> = (props) => {
       z: 0,
     };
     e.addComponent(MeshComponent);
-    e.addComponent(CubeMoveScript);
+    // e.addComponent(CubeMoveScript);
     e.addComponent(CollEventTestScript);
     const rb = e.addComponent(DynamicRigidbodyComponent);
-    rb.isKinematic = true;
+    rb.isKinematic = false;
     const boxCollider = new BoxCollider();
-    // boxCollider.isTrigger = true;
+    boxCollider.isTrigger = false;
     rb.addCollider(boxCollider);
   };
 

@@ -84,10 +84,9 @@ export class PxPhysicsScene implements IPhysicsScene {
     const simulationEventCallbackImpl = new px.PxSimulationEventCallbackImpl();
 
     simulationEventCallbackImpl.onContact = (pairHeaderPointer, pairsPointer, nbPairs) => {
-      const px = this._px;
       // console.log(`onContact nbPairs:${nbPairs}`);
 
-      const nativeArrayHelper = this._px.NativeArrayHelpers.prototype;
+      const nativeArrayHelper = px.NativeArrayHelpers.prototype;
       for (let i = 0; i < nbPairs; i++) {
         const pair = nativeArrayHelper.getContactPairAt(pairsPointer, i);
         const event = pair.events;
@@ -105,12 +104,12 @@ export class PxPhysicsScene implements IPhysicsScene {
         }
 
         if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_FOUND)) {
-          // console.log('begin contact', shapeA, shapeB);
+          console.log('begin contact', shapeA, shapeB, isTriggerPair);
           isTriggerPair
             ? eventCallbacks?.onTriggerBegin?.(shapeA, shapeB)
             : eventCallbacks?.onContactBegin?.(shapeA, shapeB);
         } else if (event.isSet(px.PxPairFlagEnum.eNOTIFY_TOUCH_LOST)) {
-          // console.log('end contact', shapeA, shapeB);
+          console.log('end contact', shapeA, shapeB, isTriggerPair);
           isTriggerPair
             ? eventCallbacks?.onTriggerEnd?.(shapeA, shapeB)
             : eventCallbacks?.onContactEnd?.(shapeA, shapeB);
@@ -126,7 +125,6 @@ export class PxPhysicsScene implements IPhysicsScene {
     // not used because we use onContact to simulate trigger events
     simulationEventCallbackImpl.onTrigger = (pairsPointer, count) => {
       const pairs = pairsPointer;
-      const px = this._px;
       for (let i = 0; i < count; i++) {
         const pair = px.NativeArrayHelpers.prototype.getTriggerPairAt(pairs, i);
         if (
