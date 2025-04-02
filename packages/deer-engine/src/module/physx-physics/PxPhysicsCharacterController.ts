@@ -74,6 +74,7 @@ export class PxPhysicsCharacterController implements ICharacterController {
     };
     this._filters.mFilterCallback = queryFilterCallback;
     this._filters.mFilterFlags.raise(px.PxQueryFlagEnum.ePREFILTER);
+    this._tempPxVec1 = new px.PxVec3();
   }
 
   setGravityFlag(enable: boolean): void {
@@ -153,6 +154,7 @@ export class PxPhysicsCharacterController implements ICharacterController {
 
   setUpDirection(up: Vector3): void {
     if (!this._pxController) return;
+    this._pxController.setUpDirection(toPxVec3(up, this._tempPxVec1));
   }
 
   setSlopeLimit(slopeLimit: number): void {
@@ -273,7 +275,8 @@ export class PxPhysicsCharacterController implements ICharacterController {
     this._pxController.setPosition(toPxExtendVec3(this._worldPosition, this._tempExtendedVec3));
   }
 
-  private _tempVec31 = { x: 0, y: 0, z: 0 };
-  private _tempVec32 = { x: 0, y: 0, z: 0 };
-  private _tempVec33 = { x: 0, y: 0, z: 0 };
+  private _tempPxVec1: PhysX.PxVec3;
+  private _tempVec31: IVector3 = { x: 0, y: 0, z: 0 };
+  private _tempVec32: IVector3 = { x: 0, y: 0, z: 0 };
+  private _tempVec33: IVector3 = { x: 0, y: 0, z: 0 };
 }
