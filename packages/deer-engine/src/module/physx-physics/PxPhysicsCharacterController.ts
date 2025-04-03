@@ -40,7 +40,18 @@ export class PxPhysicsCharacterController implements ICharacterController {
         this._pxController = controller;
         const shape = (this._px.SupportFunctions.prototype as any).PxActor_getShape(controller.getActor(), 0);
         collider._pxShape = shape;
-        this._collider = collider;
+        const PxPairFlagEnum = this._px.PxPairFlagEnum;
+        shape.setSimulationFilterData(
+          new this._px.PxFilterData(
+            1,
+            1,
+            PxPairFlagEnum.eNOTIFY_TOUCH_FOUND |
+              PxPairFlagEnum.eNOTIFY_TOUCH_LOST |
+              PxPairFlagEnum.eNOTIFY_TOUCH_PERSISTS,
+            0
+          )
+        );
+
         this._scene._onColliderAdd(collider);
         this._scene._onControllerAdd(this);
       }
@@ -134,11 +145,13 @@ export class PxPhysicsCharacterController implements ICharacterController {
 
   setRadius(radius: number): void {
     if (!this._pxController) return;
+    this._collider && (this._collider._radius = radius);
     this._pxController.setRadius(radius);
   }
 
   setHeight(height: number): void {
     if (!this._pxController) return;
+    this._collider && (this._collider._halfHeight = height / 2);
     this._pxController.setHeight(height);
   }
 

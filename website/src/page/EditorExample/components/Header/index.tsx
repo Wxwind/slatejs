@@ -96,12 +96,11 @@ export const Header: FC<HeaderProps> = (props) => {
     };
     loadModel('/model/people.glb');
 
-    const boxCollider = new CapsuleCollider();
-    boxCollider.radius = 0.25;
-    boxCollider.height = 0.5;
-
+    const capsuleCollider = new CapsuleCollider();
     const cct = e.addComponent(CharacterControllerComponent);
-    cct.addCollider(boxCollider);
+    cct.addCollider(capsuleCollider);
+    cct.radius = 0.25;
+    cct.height = 0.5;
     const controller = e.addComponent(CharacterControllerScript);
     // const fpCameraController = e.addComponent(FirstPersonCameraControllerScript);
     // controller._isFirstPerson = true;
