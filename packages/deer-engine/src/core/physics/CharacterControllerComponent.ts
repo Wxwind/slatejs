@@ -87,12 +87,20 @@ export class CharacterControllerComponent extends RigidbodyComponent {
   override _onColliderUpdate(): void {
     if (this.entity.transform._updateFlag) {
       const obj = this.sceneObject;
-
       this._nativeRigidbody.setWorldPosition(obj.getWorldPosition(this._worldPosition));
       const scale = obj.getWorldScale(this._tempVec3);
-      for (const collider of this._colliders) {
-        collider._nativeCollider.setWorldScale(scale);
-      }
+
+      // FIXME: call cct's collider shape will let cct push dynamic collider accidentally somehow, even if collider's position were not changed.
+      // for (const collider of this._colliders) {
+      //   const realPos = (collider._nativeCollider as any)._pxShape.getLocalPose().p;
+      //   console.log('collider real pos before', realPos.x, realPos.y, realPos.z);
+
+      //   collider._nativeCollider.setWorldScale(scale);
+
+      //   const realPos2 = (collider._nativeCollider as any)._pxShape.getLocalPose().p;
+      //   console.log('collider real pos after', realPos2.x, realPos2.y, realPos2.z);
+      // }
+
       this.entity.transform._updateFlag = false;
     }
   }
