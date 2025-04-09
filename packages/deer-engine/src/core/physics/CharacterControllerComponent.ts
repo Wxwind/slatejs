@@ -114,6 +114,7 @@ export class CharacterControllerComponent extends RigidbodyComponent {
 
   move(disp: IVector3, minDist: number, elapsedTime: number) {
     const flag = this._nativeRigidbody.move(disp, minDist, elapsedTime);
+    // TODO: uncomment this and test if world position changed after this func called in script's onUpdate()
     //  this._syncWorldPositionFromPhysicalPosition();
     return flag;
   }

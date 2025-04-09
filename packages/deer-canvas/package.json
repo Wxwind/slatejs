@@ -25,7 +25,6 @@
     "@types/uuid": "^9.0.6"
   },
   "dependencies": {
-    "canvaskit-wasm": "^0.39.1",
     "deer-engine": "workspace:*",
     "eventtool": "workspace:*",
     "gl-matrix": "^3.4.3",

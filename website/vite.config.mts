@@ -9,8 +9,15 @@ import logBuildInfo from 'vite-plugin-log-buildinfo';
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    commonjsOptions: {
-      include: /node_modules|physx-js-webidl/,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'deer-engine': ['deer-engine'],
+          'deer-canvas': ['deer-canvas'],
+          lodash: ['lodash'],
+        },
+      },
     },
   },
   plugins: [
