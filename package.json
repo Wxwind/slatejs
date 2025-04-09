@@ -11,7 +11,8 @@
     "tsc": "pnpm --filter deer-website... lint:ts",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0 -c eslint.config.js --fix",
     "preview": "pnpm --filter deer-website preview",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
@@ -28,10 +29,12 @@
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.0.0",
+    "husky": "^9.1.7",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-matcher-deep-close-to": "^3.0.2",
+    "lint-staged": "^15.5.0",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
     "rollup": "^4.29.1",

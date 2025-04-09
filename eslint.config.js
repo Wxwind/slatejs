@@ -23,7 +23,7 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    ignores: ['dist', 'eslint.config.js', 'node_modules'],
+    ignores: ['dist', 'eslint.config.js', 'node_modules', 'lint-staged.config.mjs'],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts}'],

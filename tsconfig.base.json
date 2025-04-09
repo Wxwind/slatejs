@@ -17,5 +17,6 @@
     "stripInternal": true,
     "paths": {},
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": ["lint-staged.config.mjs"]
 }
