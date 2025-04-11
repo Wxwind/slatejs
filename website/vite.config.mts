@@ -15,7 +15,7 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'deer-engine': ['deer-engine'],
           'deer-canvas': ['deer-canvas'],
-          lodash: ['lodash'],
+          'lodash-es': ['lodash-es'],
         },
       },
     },

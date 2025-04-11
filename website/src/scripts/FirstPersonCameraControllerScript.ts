@@ -1,5 +1,5 @@
 import { THREE, Script, InputManager, Keys, IVector2 } from 'deer-engine';
-import { clamp } from 'lodash';
+import { clamp } from 'lodash-es';
 
 export class FirstPersonCameraControllerScript extends Script {
   /** sensitivity */

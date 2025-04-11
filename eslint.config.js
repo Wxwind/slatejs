@@ -26,7 +26,7 @@ export default tseslint.config(
     ignores: ['dist', 'eslint.config.js', 'node_modules', 'lint-staged.config.mjs', 'commitlint.config.js'],
   },
   {
-    files: ['**/*.{js,mjs,cjs,ts}'],
+    files: ['**/*.{js,mjs,cjs,ts,tsx,jsx}'],
     rules: {
       '@typescript-eslint/no-empty-interface': 'warn',
       'no-empty-pattern': 'warn',

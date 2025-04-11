@@ -28,7 +28,7 @@
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-typescript": "^7.23.3",
     "@rollup/plugin-babel": "^6.0.4",
-    "@types/lodash": "^4.14.202",
+    "@types/lodash-es": "^4.17.12",
     "@types/three": "^0.157.2",
     "@types/uuid": "^9.0.6"
   },
@@ -36,7 +36,7 @@
     "@tweenjs/tween.js": "^25.0.0",
     "eventtool": "workspace:*",
     "fflate": "^0.8.1",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "physx-js-webidl": "workspace:^",
     "three": "^0.157.0",
     "uuid": "^9.0.1"

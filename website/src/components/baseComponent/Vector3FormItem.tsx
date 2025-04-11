@@ -2,7 +2,7 @@ import { FC, useRef, useState } from 'react';
 import { ProInputNumber, ProInputNumberProps } from './ProInputNumber';
 import { FormItemsInRow } from './FormItemsInRow';
 import { IVector3 } from 'deer-engine';
-import { set } from 'lodash';
+import { set } from 'lodash-es';
 import { ImmerFormItem } from './ImmerFormItem';
 import { LockIcon } from './LockIcon';
 import { toScaledVec3 } from '@/util';

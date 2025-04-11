@@ -1,6 +1,6 @@
 import { ClassFieldDecorator, IPropertyOptions } from '../type';
 import { DecoratorMetadataObjectForRF, MetadataProp, getClassName, getClassStashFromMetadata } from './util';
-import merge from 'lodash/merge';
+import { merge } from 'lodash-es';
 
 // @property({})
 export function property<This, Value>(options: IPropertyOptions): ClassFieldDecorator<This, Value> {

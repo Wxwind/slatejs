@@ -2,7 +2,7 @@ import { CollapseBox, Vector3FormItem } from '@/components/baseComponent';
 import { JsonModule, TransformComponentJson, TransformComponent } from 'deer-engine';
 import { useEffect } from 'react';
 import { useImmer } from 'use-immer';
-import set from 'lodash/set';
+import { set } from 'lodash-es';
 import { useBindSignal } from '@/hooks';
 import { EditorComp, registerEditor } from '@/decorator';
 import { deepClone } from '@/util';
