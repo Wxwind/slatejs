@@ -43,8 +43,12 @@ export class EventEmitter<E extends ValidEventTypes = string | symbol, ARGS exte
   removeListener = this.off;
 
   emit: <T extends EventNames<E>>(event: T, ...args: EventArgs<E, T, ARGS>) => void = (event, ...args) => {
-    this.listeners[event]?.forEach((fn) => {
+    const listeners = this.listeners[event]?.slice();
+    if (!listeners) return;
+
+    for (let index = 0; index < listeners.length; index++) {
+      const fn = listeners[index];
       fn(...(args as ARGS));
-    });
+    }
   };
 }
