@@ -36,4 +36,6 @@ export class ResizePlugin implements IRenderingPlugin {
       });
     });
   }
+
+  destroy(): void {}
 }

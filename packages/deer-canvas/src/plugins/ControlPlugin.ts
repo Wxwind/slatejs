@@ -122,4 +122,8 @@ export class ControlPlugin implements IRenderingPlugin {
     a = !isNil(max) ? Math.min(max, a) : a;
     return a;
   };
+
+  destroy(): void {
+    this.hammer.destroy();
+  }
 }

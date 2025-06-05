@@ -109,4 +109,6 @@ export class Canvas2DRendererPlugin implements IRenderingPlugin {
     if (!isNil(strokeStyle)) ctx.strokeStyle = strokeStyle;
     if (!isNil(lineWidth)) ctx.lineWidth = lineWidth;
   };
+
+  destroy(): void {}
 }

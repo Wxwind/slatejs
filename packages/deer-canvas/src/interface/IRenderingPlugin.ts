@@ -6,4 +6,5 @@ import { CanvasContext } from './canvas';
 export interface IRenderingPlugin {
   name: string;
   apply(context: CanvasContext): void;
+  destroy(): void;
 }

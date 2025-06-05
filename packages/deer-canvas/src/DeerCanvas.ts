@@ -1,18 +1,10 @@
-import { ShapeCtor, debounce, isNil, isString } from '@/util';
-import {
-  CanvasConfig,
-  CanvasContext,
-  RenderingContext,
-  ICanvas,
-  IRenderingPlugin,
-  DisplayObjectConfig,
-  BaseStyleProps,
-} from './interface';
+import { ShapeCtor, isNil, isString } from '@/util';
+import { CanvasConfig, CanvasContext, RenderingContext, ICanvas, IRenderingPlugin, BaseStyleProps } from './interface';
 import { Group } from './drawable';
 import { Vector2 } from './util';
 import { RenderingSystem, EventSystem } from './systems';
 import { DisplayObject } from './core/DisplayObject';
-import { EventPlugin, Canvas2DRendererPlugin, CullingPlugin, CoordinatePlugin, ControlPlugin } from './plugins';
+import { EventPlugin, CullingPlugin } from './plugins';
 import { Camera, ClipSpaceNearZ, ICamera } from './camera';
 import { Canvas2DContextSystem } from './plugins/plugin-canvas2d-renderer/Canvas2dContextSystem';
 import { mat4, vec3 } from 'gl-matrix';
@@ -238,5 +230,8 @@ export class DeerCanvas implements ICanvas {
     this.container.removeChild(this.canvasEl);
     this.context.renderingSystem.dispose();
     this.animateID && cancelAnimationFrame(this.animateID);
+    this.plugins.forEach((plugin) => {
+      plugin.destroy();
+    });
   };
 }

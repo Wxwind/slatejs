@@ -49,6 +49,7 @@ export class PxPhysics implements IPhysics {
     // await PhysX({ locateFile: () => wasmUrl })
     const physX = await PhysX({});
     this._physX = physX;
+
     this._initialize(physX);
     this._isInitialized = true;
   }

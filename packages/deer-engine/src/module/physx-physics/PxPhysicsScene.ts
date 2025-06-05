@@ -167,6 +167,8 @@ export class PxPhysicsScene implements IPhysicsScene {
     scene.setSimulationEventCallback(simulationEventCallbackImpl);
     this._pxScene = scene;
     this._pxControllerManager = px.CreateControllerManager(scene);
+    px.destroy(sceneDesc);
+    px.destroy(simulationEventCallbackImpl);
   }
 
   destroy() {

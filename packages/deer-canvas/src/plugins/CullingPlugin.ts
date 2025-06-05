@@ -8,4 +8,6 @@ export class CullingPlugin implements IRenderingPlugin {
       return object;
     });
   }
+
+  destroy(): void {}
 }

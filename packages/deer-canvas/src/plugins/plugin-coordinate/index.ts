@@ -231,6 +231,8 @@ export class CoordinatePlugin implements IRenderingPlugin {
       ctx.stroke();
     }
   }
+
+  destroy(): void {}
 }
 
 function setFont(

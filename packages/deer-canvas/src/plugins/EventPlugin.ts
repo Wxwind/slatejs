@@ -397,4 +397,6 @@ export class EventPlugin implements IRenderingPlugin {
       return this.canvas.client2Viewport(new Point(clientX, clientY));
     }
   }
+
+  destroy(): void {}
 }
