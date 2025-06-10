@@ -228,10 +228,10 @@ export class DeerScene {
     }
     this._isDestroyed = true;
     this.entityManager.destory();
-
     for (let i = this._rootEntities.length - 1; i >= 0; i--) {
       this._rootEntities[i].destroy();
     }
+    this.physicsScene.destroy();
 
     // destroy renderer
     this._renderer.dispose();

@@ -56,6 +56,8 @@ export class PxPhysicsScene implements IPhysicsScene {
   private _raycastBuffer: PhysX.PxRaycastBuffer10;
   private _raycastFlags: PhysX.PxHitFlags;
 
+  _onDestroy: () => void;
+
   constructor(pxPhysics: PxPhysics, gravity: IVector3, eventCallbacks?: PhysicsEventCallbacks) {
     const nativePxPhysics = pxPhysics._pxPhysics;
     this._pxPhysics = nativePxPhysics;
@@ -167,11 +169,15 @@ export class PxPhysicsScene implements IPhysicsScene {
     scene.setSimulationEventCallback(simulationEventCallbackImpl);
     this._pxScene = scene;
     this._pxControllerManager = px.CreateControllerManager(scene);
-    px.destroy(sceneDesc);
-    px.destroy(simulationEventCallbackImpl);
+
+    this._onDestroy = () => {
+      px.destroy(sceneDesc);
+      px.destroy(simulationEventCallbackImpl);
+    };
   }
 
   destroy() {
+    this._onDestroy();
     this._pxScene.release();
     this._pxScene = null!;
   }

@@ -30,6 +30,7 @@ export class PxPhysics implements IPhysics {
   private _isInitialized = false;
 
   _pxPhysics!: PhysX.PxPhysics;
+  _pxFoundation!: PhysX.PxFoundation;
   _physX!: typeof PhysX & typeof PhysX.PxTopLevelFunctions;
 
   async initialize(): Promise<void> {
@@ -72,6 +73,7 @@ export class PxPhysics implements IPhysics {
     const physics = Px.CreatePhysics(version, foundation, new Px.PxTolerancesScale());
 
     this._pxPhysics = physics;
+    this._pxFoundation = foundation;
   }
 
   createScene(gravity: IVector3, eventCallbacks?: PhysicsEventCallbacks): IPhysicsScene {
@@ -124,6 +126,8 @@ export class PxPhysics implements IPhysics {
 
   destroy() {
     this._pxPhysics.release();
+    this._pxFoundation.release();
     this._pxPhysics = null!;
+    this._pxFoundation = null!;
   }
 }
