@@ -8,8 +8,12 @@ export class Signal<T extends unknown[] = []> {
   addListener = this.on;
 
   emit = (...args: T) => {
-    for (const fn of this.listeners) {
-      fn.apply(this, args);
+    const listeners = this.listeners.slice();
+    if (!listeners) return;
+
+    for (let index = 0; index < listeners.length; index++) {
+      const fn = listeners[index];
+      fn(...args);
     }
   };
 
