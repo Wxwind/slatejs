@@ -37,7 +37,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['website/**/*.{js,mjs,cjs,jsx,ts,tsx}'],
+    files: ['website/**/*.{jsx,tsx}'],
     ...reactPlugin.configs.flat.recommended,
     ...reactPlugin.configs.flat['jsx-runtime'],
     languageOptions: {
@@ -48,7 +48,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['website/**/*.{js,mjs,cjs,jsx,ts,tsx}'],
+    files: ['website/**/*.{jsx,tsx}'],
     plugins: { 'react-hooks': reactHooks },
     rules: {
       'react-hooks/rules-of-hooks': 'error',
