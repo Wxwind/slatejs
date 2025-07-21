@@ -1,28 +1,20 @@
-import { Component, SphereCollider, THREE } from '@/index';
+import { Component, PlaneCollider, THREE } from 'deer-engine';
 import { ColliderObj } from './ColliderObj';
 
-export class SphereColliderObj extends ColliderObj {
-  _collider: SphereCollider = new SphereCollider();
+export class PlaneColliderObj extends ColliderObj {
+  _collider: PlaneCollider = new PlaneCollider();
 
-  private _geo: THREE.SphereGeometry = new THREE.SphereGeometry();
+  private _geo: THREE.PlaneGeometry = new THREE.PlaneGeometry();
   private _mesh: THREE.LineSegments = new THREE.LineSegments();
 
-  constructor(comp: Component) {
-    super(comp);
+  constructor(comp: Component, userId: string) {
+    super(comp, userId);
     this._comp.sceneObject.add(this);
     this._renderSceneObject();
   }
 
-  public get radius(): number {
-    return this._collider.radius;
-  }
-  public set radius(v: number) {
-    this._collider.radius = v;
-    this._renderSceneObject();
-  }
-
   private _renderSceneObject() {
-    this._geo = new THREE.SphereGeometry(this.radius);
+    this._geo = new THREE.PlaneGeometry(1000, 1000);
     const edges = new THREE.EdgesGeometry(this._geo);
     const material = new THREE.LineBasicMaterial({ color: '#FAF65C' });
     this._comp.sceneObject.add(this);

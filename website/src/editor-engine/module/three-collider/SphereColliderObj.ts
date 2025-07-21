@@ -1,14 +1,14 @@
-import { CapsuleCollider, Component, THREE } from '@/index';
+import { Component, SphereCollider, THREE } from 'deer-engine';
 import { ColliderObj } from './ColliderObj';
 
-export class CapsuleColliderObj extends ColliderObj {
-  _collider: CapsuleCollider = new CapsuleCollider();
+export class SphereColliderObj extends ColliderObj {
+  _collider: SphereCollider = new SphereCollider();
 
-  private _geo: THREE.CapsuleGeometry = new THREE.CapsuleGeometry();
+  private _geo: THREE.SphereGeometry = new THREE.SphereGeometry();
   private _mesh: THREE.LineSegments = new THREE.LineSegments();
 
-  constructor(comp: Component) {
-    super(comp);
+  constructor(comp: Component, userId: string) {
+    super(comp, userId);
     this._comp.sceneObject.add(this);
     this._renderSceneObject();
   }
@@ -21,16 +21,8 @@ export class CapsuleColliderObj extends ColliderObj {
     this._renderSceneObject();
   }
 
-  public get height(): number {
-    return this._collider.height;
-  }
-  public set height(v: number) {
-    this._collider.height = v;
-    this._renderSceneObject();
-  }
-
   private _renderSceneObject() {
-    this._geo = new THREE.CapsuleGeometry(this.radius, this.height);
+    this._geo = new THREE.SphereGeometry(this.radius);
     const edges = new THREE.EdgesGeometry(this._geo);
     const material = new THREE.LineBasicMaterial({ color: '#FAF65C' });
     this._comp.sceneObject.add(this);

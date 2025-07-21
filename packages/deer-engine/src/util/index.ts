@@ -8,3 +8,4 @@ export * from './deserialize';
 export * from './SafeLoopArray';
 export * from './three';
 export * from './sort';
+export * from './BoundingBox';

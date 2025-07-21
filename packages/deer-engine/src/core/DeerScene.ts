@@ -1,4 +1,4 @@
-import { PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
 import { EntityManager } from './manager/EntityManager';
 import { DeerEngine } from './DeerEngine';
 import { Entity, EntityJson } from './entity';
@@ -12,6 +12,7 @@ import { Control } from './Control';
 import { WebCanvas } from './WebCanvas';
 import { InputManager } from './manager';
 import { Camera } from './Camera';
+import { IVector2, IVector3 } from '@/type';
 
 export interface DeerSceneJson {
   id: string;
@@ -59,6 +60,10 @@ export class DeerScene {
   active = true;
 
   private _updateManagers: AbstractSceneManager[] = [];
+
+  get renderer() {
+    return this._renderer;
+  }
 
   constructor(engine: DeerEngine, container: HTMLElement, mode: DeerSceneMode) {
     this.engine = engine;
@@ -267,4 +272,69 @@ export class DeerScene {
       deserializeEntity(entityJson, undefined);
     }
   }
+
+  ////// 辅助函数 //////
+
+  ndcToScreenPos<T extends IVector2>(ndcPos: IVector3, out: T): T {
+    const rect = this.canvas._webCanvas.getBoundingClientRect();
+    out.x = (ndcPos.x * 0.5 + 0.5) * rect.width;
+    out.y = (-ndcPos.y * 0.5 + 0.5) * rect.height;
+
+    return out;
+  }
+
+  /**
+   * 屏幕坐标转NDC坐标
+   * @param screenPos 屏幕坐标，直接传入event.clientX / event.clientY即可
+   * @param out 输出参数
+   * @returns 等于out
+   */
+  screenToNdcPos<T extends IVector2>(screenPos: IVector2, out: T): T {
+    const rect = this.canvas._webCanvas.getBoundingClientRect();
+    const pos = {
+      x: screenPos.x - rect.left,
+      y: screenPos.y - rect.top,
+    };
+    out.x = (pos.x / rect.width - 0.5) * 2;
+    out.y = -(pos.y / rect.height - 0.5) * 2;
+
+    return out;
+  }
+
+  worldToScreenPos<T extends IVector2>(worldPos: Vector3, out: T): T {
+    const ndc = worldPos.clone().project(this.camera.main);
+    this.ndcToScreenPos(ndc, out);
+
+    return out;
+  }
+
+  screenToWorldPos(screenPos: Vector2, out: Vector3): Vector3 {
+    this.screenToNdcPos(screenPos, out);
+    out.unproject(this.camera.main);
+
+    return out;
+  }
+
+  /**
+   * 获取鼠标所在屏幕坐标
+   * @param x 来自pointEvent.clientX
+   * @param y 来自pointEvent.clientY
+   * @returns
+   */
+  getMouseCoords(x: number, y: number): Vector2 {
+    const rect = this.canvas._webCanvas.getBoundingClientRect();
+    const pos = {
+      x: rect ? x - rect.left : 0,
+      y: rect ? y - rect.top : 0,
+    };
+    const pickPosition = new Vector2();
+    if (pos && rect) {
+      pickPosition.x = (pos.x / rect.width) * 2 - 1;
+      pickPosition.y = (pos.y / rect.height) * -2 + 1; // note we flip Y
+    }
+
+    return pickPosition;
+  }
+
+  ///////////////////
 }

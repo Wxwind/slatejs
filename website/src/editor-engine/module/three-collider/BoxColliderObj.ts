@@ -1,4 +1,4 @@
-import { BoxCollider, Component, IVector3, THREE } from '@/index';
+import { BoxCollider, Component, IVector3, THREE } from 'deer-engine';
 import { ColliderObj } from './ColliderObj';
 
 export class BoxColliderObj extends ColliderObj {
@@ -7,8 +7,8 @@ export class BoxColliderObj extends ColliderObj {
   private _geo: THREE.BoxGeometry = new THREE.BoxGeometry();
   private _mesh: THREE.LineSegments = new THREE.LineSegments();
 
-  constructor(comp: Component) {
-    super(comp);
+  constructor(comp: Component, userId: string) {
+    super(comp, userId);
     this._comp.sceneObject.add(this);
     this._renderSceneObject();
   }

@@ -1,4 +1,4 @@
-import { Blackboard } from './blackboard';
+import { Blackboard } from './Blackboard';
 import { FsmState } from './FsmState';
 
 export class Fsm<T = any> {

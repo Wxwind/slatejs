@@ -1,7 +1,7 @@
-import { Collider, Component, THREE } from '@/index';
-import { Object3D } from 'three';
+import { Collider, Component, THREE } from 'deer-engine';
+import { meshMaterialSettings } from '../collider-editor/constants';
 
-export abstract class ColliderObj extends Object3D {
+export abstract class ColliderObj extends THREE.Object3D {
   protected _worldScale = new THREE.Vector3();
 
   protected _comp: Component;
@@ -14,9 +14,24 @@ export abstract class ColliderObj extends Object3D {
     this._collider.isTrigger = v;
   }
 
-  constructor(comp: Component) {
+  userId: string;
+
+  private _material: THREE.MeshPhongMaterial;
+
+  get material() {
+    return this._material;
+  }
+
+  get comp() {
+    return this._comp;
+  }
+
+  constructor(comp: Component, userId: string) {
     super();
     this._comp = comp;
+    this.userId = userId;
+    const material = new THREE.MeshPhongMaterial(meshMaterialSettings);
+    this._material = material;
   }
 
   protected abstract onTransformUpdated(): void;

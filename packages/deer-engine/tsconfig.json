@@ -16,5 +16,5 @@
     },
     "types": ["jest"]
   },
-  "include": ["src", "__test__"]
+  "include": ["src", "__test__", "../../website/src/editor-engine/module/three-collider"]
 }

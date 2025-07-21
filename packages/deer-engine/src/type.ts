@@ -28,6 +28,20 @@ export interface IVector3 {
 }
 
 export namespace IVector3 {
+  export function add<T extends IVector3 = IVector3>(a: T, b: IVector3, out: T) {
+    out.x = a.x + b.x;
+    out.y = a.y + b.y;
+    out.z = a.z + b.z;
+    return out;
+  }
+
+  export function sub<T extends IVector3 = IVector3>(a: T, b: IVector3, out: T) {
+    out.x = a.x - b.x;
+    out.y = a.y - b.y;
+    out.z = a.z - b.z;
+    return out;
+  }
+
   export function scale<T extends IVector3 = IVector3>(a: T, b: number, out: T) {
     out.x = a.x * b;
     out.y = a.y * b;
@@ -35,7 +49,7 @@ export namespace IVector3 {
     return out;
   }
 
-  export function scaleVector<T extends IVector3 = IVector3>(a: T, b: T, out: T) {
+  export function scaleVector<T extends IVector3 = IVector3>(a: T, b: IVector3, out: T) {
     out.x = a.x * b.x;
     out.y = a.y * b.y;
     out.z = a.z * b.z;
@@ -49,7 +63,7 @@ export namespace IVector3 {
     return src;
   }
 
-  export function clampVector3<T extends IVector3 = IVector3>(src: T, clampMinMax: T, out: T) {
+  export function clampVector3<T extends IVector3 = IVector3>(src: T, clampMinMax: IVector3, out: T) {
     out.x = MathUtils.clamp(src.x, -clampMinMax.x, clampMinMax.x);
     out.y = MathUtils.clamp(src.y, -clampMinMax.y, clampMinMax.y);
     out.z = MathUtils.clamp(src.z, -clampMinMax.z, clampMinMax.z);

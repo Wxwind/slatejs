@@ -27,7 +27,12 @@ export class Control {
     this.controls.update(dt);
   };
 
-  setPosition() {
-    this.controls;
+  setPosition() {}
+
+  get enabled() {
+    return this.controls.enabled;
+  }
+  set enabled(v: boolean) {
+    this.controls.enabled = v;
   }
 }

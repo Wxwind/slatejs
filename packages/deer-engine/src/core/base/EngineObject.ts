@@ -1,6 +1,7 @@
+import { EventEmitter } from 'eventtool';
 import { DeerEngine } from '../DeerEngine';
 
-export abstract class EngineObject {
+export abstract class EngineObject extends EventEmitter {
   private static _idGenerator = 0;
   readonly _id: number = ++EngineObject._idGenerator;
 
@@ -12,6 +13,7 @@ export abstract class EngineObject {
   }
 
   constructor(engine: DeerEngine) {
+    super();
     this._engine = engine;
   }
 
